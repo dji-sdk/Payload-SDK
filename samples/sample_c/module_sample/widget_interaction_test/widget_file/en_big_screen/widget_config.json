@@ -1,0 +1,339 @@
+{
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "main_interface": {
+    "floating_window": {
+      "is_enable": true
+    },
+    "widget_list": [
+      {
+        "widget_index": 0,
+        "widget_type": "button",
+        "widget_name": "Button_1",
+        "icon_file_set": {
+          "icon_file_name_selected": "icon_button1.png",
+          "icon_file_name_unselected": "icon_button1.png"
+        },
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 0
+        }
+      },
+      {
+        "widget_index": 1,
+        "widget_type": "button",
+        "widget_name": "Button_2",
+        "icon_file_set": {
+          "icon_file_name_selected": "icon_button2.png",
+          "icon_file_name_unselected": "icon_button2.png"
+        },
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 1
+        }
+      },
+      {
+        "widget_index": 2,
+        "widget_type": "list",
+        "widget_name": "List",
+        "list_item": [
+          {
+            "item_name": "Item_1",
+            "icon_file_set": {
+              "icon_file_name_selected": "icon_list_item1.png",
+              "icon_file_name_unselected": "icon_list_item1.png"
+            }
+          },
+          {
+            "item_name": "Item_2",
+            "icon_file_set": {
+              "icon_file_name_selected": "icon_list_item2.png",
+              "icon_file_name_unselected": "icon_list_item2.png"
+            }
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 2
+        }
+      },
+      {
+        "widget_index": 3,
+        "widget_type": "switch",
+        "widget_name": "Switch",
+        "icon_file_set": {
+          "icon_file_name_selected": "icon_switch_select.png",
+          "icon_file_name_unselected": "icon_switch_unselect.png"
+        },
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 3
+        }
+      },
+      {
+        "widget_index": 4,
+        "widget_type": "scale",
+        "widget_name": "Scale",
+        "icon_file_set": {
+          "icon_file_name_selected": "icon_scale.png",
+          "icon_file_name_unselected": "icon_scale.png"
+        },
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 4,
+          "button_value_step_length": 5
+        }
+      }
+    ]
+  },
+  "config_interface": {
+    "text_input_box": {
+      "widget_name": "TextInputBox",
+      "placeholder_text": "Please input message",
+      "is_enable": true
+    },
+    "widget_list": [
+      {
+        "widget_index": 5,
+        "widget_type": "button",
+        "widget_name": "Button 5",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 5
+        }
+      },
+      {
+        "widget_index": 6,
+        "widget_type": "scale",
+        "widget_name": "Scale 6",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 6,
+          "button_value_step_length": 5
+        }
+      },
+      {
+        "widget_index": 7,
+        "widget_type": "int_input_box",
+        "widget_name": "Integer Input Box 7",
+        "int_input_box_hint": "unit:s"
+      },
+      {
+        "widget_index": 8,
+        "widget_type": "button",
+        "widget_name": "=========>> [Extension Port Test] <<=========",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 7
+        }
+      },
+      {
+        "widget_index": 9,
+        "widget_type": "switch",
+        "widget_name": "Unlock flight control restrictions (Special attention)",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 8
+        }
+      },
+      {
+        "widget_index": 10,
+        "widget_type": "list",
+        "widget_name": "Please Select Payload Index",
+        "list_item": [
+          {
+            "item_name": "payload_index1"
+          },
+          {
+            "item_name": "payload_index2"
+          },
+          {
+            "item_name": "payload_index3"
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 9
+        }
+      },
+      {
+        "widget_index": 11,
+        "widget_type": "list",
+        "widget_name": "Please Select Perception Camera Index",
+        "list_item": [
+          {
+            "item_name": "Down"
+          },
+          {
+            "item_name": "Front"
+          },
+          {
+            "item_name": "Rear"
+          },
+          {
+            "item_name": "Up"
+          },
+          {
+            "item_name": "Left"
+          },
+          {
+            "item_name": "Right"
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 10
+        }
+      },
+      {
+        "widget_index": 12,
+        "widget_type": "list",
+        "widget_name": "Please Select Camera Function",
+        "list_item": [
+          {
+            "item_name": "set camera shutter speed"
+          },
+          {
+            "item_name": "set camera aperture"
+          },
+          {
+            "item_name": "set camera exposure compensation"
+          },
+          {
+            "item_name": "set camera ISO"
+          },
+          {
+            "item_name": "set camera focus point"
+          },
+          {
+            "item_name": "camera tap zoom"
+          },
+          {
+            "item_name": "camera optical zoom"
+          },
+          {
+            "item_name": "shoot single photo"
+          },
+          {
+            "item_name": "shoot AEB photo"
+          },
+          {
+            "item_name": "shoot burst photo"
+          },
+          {
+            "item_name": "shoot interval photo"
+          },
+          {
+            "item_name": "record video"
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 11
+        }
+      },
+      {
+        "widget_index": 13,
+        "widget_type": "list",
+        "widget_name": "Please Select Sample",
+        "list_item": [
+          {
+            "item_name": "fc_subscription"
+          },
+          {
+            "item_name": "waypoint_v2"
+          },
+          {
+            "item_name": "flight_ctrl_takeoff_landing"
+          },
+          {
+            "item_name": "flight_ctrl_position_ctrl"
+          },
+          {
+            "item_name": "flight_ctrl_force_landing"
+          },
+          {
+            "item_name": "flight_ctrl_velocity_ctrl"
+          },
+          {
+            "item_name": "flight_ctrl_arrest_flying"
+          },
+          {
+            "item_name": "flight_ctrl_set_get_param"
+          },
+          {
+            "item_name": "hms_info"
+          },
+          {
+            "item_name": "camera_manager"
+          },
+          {
+            "item_name": "gimbal_manager_free_mode"
+          },
+          {
+            "item_name": "gimbal_manager_yaw_follow_mode"
+          },
+          {
+            "item_name": "liveview"
+          },
+          {
+            "item_name": "perception"
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 12
+        }
+      },
+      {
+        "widget_index": 14,
+        "widget_type": "button",
+        "widget_name": "Run",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 13
+        }
+      },
+      {
+        "widget_index": 15,
+        "widget_type": "button",
+        "widget_name": "=========>> [Payload Port Test] <<=========",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 14
+        }
+      },
+      {
+        "widget_index": 16,
+        "widget_type": "list",
+        "widget_name": "Please Select Sample",
+        "list_item": [
+          {
+            "item_name": "change_alias"
+          },
+          {
+            "item_name": "fc_subscription_log_on/off"
+          },
+          {
+            "item_name": "collaboration_log_on/off"
+          }
+        ],
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 15
+        }
+      },
+      {
+        "widget_index": 17,
+        "widget_type": "button",
+        "widget_name": "Run",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 16
+        }
+      }
+    ]
+  }
+}
