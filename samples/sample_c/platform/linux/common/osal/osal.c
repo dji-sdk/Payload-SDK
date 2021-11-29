@@ -294,10 +294,6 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
 
 void *Osal_Malloc(uint32_t size)
 {
-    if (size == 0) {
-        return NULL;
-    }
-
     return malloc(size);
 }
 
