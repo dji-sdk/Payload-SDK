@@ -1,0 +1,119 @@
+{
+    "version":  {
+        "major" :  1,
+        "minor" :  0
+    },
+    "main_interface": {
+        "floating_window": {
+            "is_enable": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 0,
+                "widget_type": "button",
+                "widget_name": "Button_1",
+                "icon_file_set":  {
+                    "icon_file_name_selected" :  "icon_button1.png",
+                    "icon_file_name_unselected" :  "icon_button1.png"
+                }
+            },
+            {
+                "widget_index": 1,
+                "widget_type": "button",
+                "widget_name": "Button_2",
+                "icon_file_set":  {
+                    "icon_file_name_selected" :  "icon_button2.png",
+                    "icon_file_name_unselected" :  "icon_button2.png"
+                }
+            },
+            {
+              "widget_index": 2,
+              "widget_type": "list",
+              "widget_name": "List_3",
+              "list_item": [
+                {
+                  "item_name": "Item_1",
+                  "icon_file_set": {
+                    "icon_file_name_selected": "icon_list_item1.png",
+                    "icon_file_name_unselected": "icon_list_item1.png"
+                  }
+                },
+                {
+                  "item_name": "Item_2",
+                        "icon_file_set":  {
+                            "icon_file_name_selected" :  "icon_list_item2.png",
+                            "icon_file_name_unselected" :  "icon_list_item2.png"
+                        }
+                    }
+                ]
+            },
+          {
+            "widget_index": 3,
+            "widget_type": "switch",
+            "widget_name": "Switch_4",
+            "icon_file_set": {
+              "icon_file_name_selected": "icon_switch_select.png",
+              "icon_file_name_unselected": "icon_switch_unselect.png"
+            }
+          },
+          {
+            "widget_index": 4,
+            "widget_type": "scale",
+            "widget_name": "Scale_5",
+            "icon_file_set": {
+              "icon_file_name_selected": "icon_scale.png",
+              "icon_file_name_unselected": "icon_scale.png"
+            }
+          }
+        ]
+    },
+    "config_interface": {
+        "text_input_box": {
+            "widget_name": "TextInputBox",
+            "placeholder_text": "Please input message",
+            "is_enable": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 5,
+                "widget_type": "button",
+              "widget_name": "Button_6"
+            },
+            {
+                "widget_index": 6,
+                "widget_type": "scale",
+              "widget_name": "Scale_7"
+            },
+          {
+            "widget_index": 7,
+            "widget_type": "int_input_box",
+            "widget_name": "IntegerInputBox_8",
+            "int_input_box_hint": "unit:s"
+          },
+            {
+                "widget_index": 8,
+                "widget_type": "switch",
+              "widget_name": "Switch_9"
+            },
+          {
+            "widget_index": 9,
+            "widget_type": "list",
+            "widget_name": "List_10",
+            "list_item": [
+              {
+                "item_name": "Item 1"
+              },
+              {
+                "item_name": "Item 2"
+              },
+              {
+                "item_name": "Item 3"
+              },
+                    {
+                        "item_name": "Item 4"
+                    }
+                ]
+            }
+        ]
+    }
+}

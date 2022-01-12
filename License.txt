@@ -1,0 +1,476 @@
+The following portions of the DJI’s Payload SDK (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is available at https://opensource.org/licenses/MIT.
+
+Payload-SDK
+├── doc
+│   ├── psdk_other_docs
+│   │   └── psdk_code_style
+│   │       ├── psdk_template.c
+│   │       └── psdk_template.h
+│   └── simple_model
+│       ├── M200.STEP
+│       ├── M200_V2.STEP
+│       ├── M210_RTK.STEP
+│       ├── M210_RTK_V2.stp
+│       ├── M210.STEP
+│       ├── M210_V2.stp
+│       ├── M300_RTK_1.stp
+│       ├── M300_RTK_2.stp
+│       ├── M300_RTK_3.stp
+│       ├── Skyport_Adapter_2.stp
+│       └── X-Port 80mm.stp
+├── EULA.txt
+├── License.txt
+├── psdk_lib
+│   ├── api_headers
+│   │   ├── psdk_aircraft_info.h
+│   │   ├── psdk_core.h
+│   │   ├── psdk_data_channel.h
+│   │   ├── psdk_data_subscription.h
+│   │   ├── psdk_data_transmission.h
+│   │   ├── psdk_error.h
+│   │   ├── psdk_gimbal.h
+│   │   ├── psdk_logger.h
+│   │   ├── psdk_mop_channel.h
+│   │   ├── psdk_payload_camera.h
+│   │   ├── psdk_payload_collaboration.h
+│   │   ├── psdk_platform.h
+│   │   ├── psdk_positioning.h
+│   │   ├── psdk_power_management.h
+│   │   ├── psdk_product_info.h
+│   │   ├── psdk_time_sync.h
+│   │   ├── psdk_typedef.h
+│   │   ├── psdk_upgrade.h
+│   │   ├── psdk_version.h
+│   │   ├── psdk_widget.h
+│   │   └── psdk_xport.h
+│   └── lib
+│       ├── aarch64-himix100-linux-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── aarch64-linux-gnu-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── armcc_cortex-m4
+│       │   └── payloadsdk.lib
+│       ├── arm-himix100-linux-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-himix200-linux-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-hisiv300-linux-uclibcgnueabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-hisiv400-linux-gnueabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-hisiv500-linux-uclibcgnueabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-hisiv600-linux-gnueabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-linux-androideabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-linux-gnueabi-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       ├── arm-linux-gnueabihf-gcc
+│       │   ├── libpayloadsdk.a
+│       │   └── version.log
+│       └── x86_64-linux-gnu-gcc
+│           ├── libpayloadsdk.a
+│           └── version.log
+├── README.txt
+├── sample
+│   ├── api_sample
+│   │   ├── camera_emu
+│   │   │   ├── test_payload_cam_emu.c
+│   │   │   └── test_payload_cam_emu.h
+│   │   ├── camera_media_emu
+│   │   │   ├── media_file
+│   │   │   │   ├── PSDK_0001_ORG.jpg
+│   │   │   │   ├── PSDK_0002_ORG.jpg
+│   │   │   │   ├── PSDK_0003_ORG.jpg
+│   │   │   │   ├── PSDK_0004_ORG.mp4
+│   │   │   │   └── PSDK_0006.h264
+│   │   │   ├── psdk_media_file_manage
+│   │   │   │   ├── psdk_media_file_core.c
+│   │   │   │   ├── psdk_media_file_core.h
+│   │   │   │   ├── psdk_media_file_jpg.c
+│   │   │   │   ├── psdk_media_file_jpg.h
+│   │   │   │   ├── psdk_media_file_mp4.c
+│   │   │   │   └── psdk_media_file_mp4.h
+│   │   │   ├── test_payload_cam_media.c
+│   │   │   └── test_payload_cam_media.h
+│   │   ├── data_channel
+│   │   │   ├── test_data_channel.c
+│   │   │   └── test_data_channel.h
+│   │   ├── data_subscription
+│   │   │   ├── test_data_subscription.c
+│   │   │   └── test_data_subscription.h
+│   │   ├── data_transmission
+│   │   │   ├── test_data_transmission.c
+│   │   │   └── test_data_transmission.h
+│   │   ├── gimbal_emu
+│   │   │   ├── test_payload_gimbal_emu.c
+│   │   │   └── test_payload_gimbal_emu.h
+│   │   ├── mop_channel
+│   │   │   ├── mop_channel_test_file
+│   │   │   │   └── mop_send_test_file.mp4
+│   │   │   ├── test_mop_channel.c
+│   │   │   └── test_mop_channel.h
+│   │   ├── payload_collaboration
+│   │   │   ├── test_payload_collaboration.c
+│   │   │   └── test_payload_collaboration.h
+│   │   ├── positioning
+│   │   │   ├── test_positioning.c
+│   │   │   └── test_positioning.h
+│   │   ├── power_management
+│   │   │   ├── test_power_management.c
+│   │   │   └── test_power_management.h
+│   │   ├── time_synchronization
+│   │   │   ├── test_time_sync.c
+│   │   │   └── test_time_sync.h
+│   │   ├── upgrade
+│   │   │   ├── test_upgrade.c
+│   │   │   ├── test_upgrade_common_file_transfer.c
+│   │   │   ├── test_upgrade_common_file_transfer.h
+│   │   │   ├── test_upgrade_common.h
+│   │   │   ├── test_upgrade.h
+│   │   │   ├── test_upgrade_platform_opt.c
+│   │   │   └── test_upgrade_platform_opt.h
+│   │   ├── utils
+│   │   │   ├── util_buffer.c
+│   │   │   ├── util_buffer.h
+│   │   │   ├── util_file.c
+│   │   │   ├── util_file.h
+│   │   │   ├── util_math.c
+│   │   │   ├── util_math.h
+│   │   │   ├── util_md5.c
+│   │   │   ├── util_md5.h
+│   │   │   ├── util_misc.c
+│   │   │   ├── util_misc.h
+│   │   │   ├── util_time.c
+│   │   │   └── util_time.h
+│   │   ├── widget
+│   │   │   ├── file_binary_array_list_en.c
+│   │   │   ├── file_binary_array_list_en.h
+│   │   │   ├── test_widget.c
+│   │   │   ├── test_widget.h
+│   │   │   ├── widget_file
+│   │   │   │   ├── cn_big_screen
+│   │   │   │   │   ├── icon_button1.png
+│   │   │   │   │   ├── icon_button2.png
+│   │   │   │   │   ├── icon_list_item1.png
+│   │   │   │   │   ├── icon_list_item2.png
+│   │   │   │   │   ├── icon_scale.png
+│   │   │   │   │   ├── icon_switch_select.png
+│   │   │   │   │   ├── icon_switch_unselect.png
+│   │   │   │   │   └── widget_config.json
+│   │   │   │   └── en_big_screen
+│   │   │   │       ├── icon_button1.png
+│   │   │   │       ├── icon_button2.png
+│   │   │   │       ├── icon_list_item1.png
+│   │   │   │       ├── icon_list_item2.png
+│   │   │   │       ├── icon_scale.png
+│   │   │   │       ├── icon_switch_select.png
+│   │   │   │       ├── icon_switch_unselect.png
+│   │   │   │       └── widget_config.json
+│   │   │   └── widget_file_c
+│   │   │       └── en_big_screen
+│   │   │           ├── icon_button1_png.h
+│   │   │           ├── icon_button2_png.h
+│   │   │           ├── icon_list_item1_png.h
+│   │   │           ├── icon_list_item2_png.h
+│   │   │           ├── icon_scale_png.h
+│   │   │           ├── icon_switch_select_png.h
+│   │   │           ├── icon_switch_unselect_png.h
+│   │   │           └── widget_config_json.h
+│   │   └── xport
+│   │       ├── test_xport.c
+│   │       └── test_xport.h
+│   └── platform
+│       ├── linux
+│       │   ├── common
+│       │   │   ├── monitor
+│       │   │   │   ├── sys_monitor.c
+│       │   │   │   └── sys_monitor.h
+│       │   │   ├── osal
+│       │   │   │   ├── osal.c
+│       │   │   │   └── osal.h
+│       │   │   └── upgrade_platform_opt
+│       │   │       ├── upgrade_platform_opt_linux.c
+│       │   │       └── upgrade_platform_opt_linux.h
+│       │   └── manifold2
+│       │       ├── application
+│       │       │   ├── app_info.h
+│       │       │   ├── main.c
+│       │       │   └── psdk_config.h
+│       │       ├── hal
+│       │       │   ├── hal_network.c
+│       │       │   ├── hal_network.h
+│       │       │   ├── hal_uart.c
+│       │       │   └── hal_uart.h
+│       │       ├── project
+│       │       │   └── CMakeLists.txt
+│       │       └── README.txt
+│       └── rtos_freertos
+│           ├── common
+│           │   └── osal
+│           │       ├── osal.c
+│           │       └── osal.h
+│           ├── high-speed_transmission_demo
+│           │   ├── application
+│           │   │   └── test_high_speed_transmission.c
+│           │   ├── project
+│           │   │   └── CMakeLists.txt
+│           │   └── README.txt
+│           ├── psdk_development_board_1.0
+│           │   ├── application
+│           │   │   ├── app_info.h
+│           │   │   ├── application.c
+│           │   │   ├── application.h
+│           │   │   ├── FreeRTOSConfig.h
+│           │   │   ├── main.c
+│           │   │   └── psdk_config.h
+│           │   ├── bootloader
+│           │   │   ├── common.c
+│           │   │   ├── common.h
+│           │   │   ├── main.c
+│           │   │   ├── main.h
+│           │   │   ├── menu.c
+│           │   │   ├── menu.h
+│           │   │   └── ymodem.c
+│           │   ├── drivers
+│           │   │   ├── BSP
+│           │   │   │   ├── button.c
+│           │   │   │   ├── button.h
+│           │   │   │   ├── dji_ringbuffer.c
+│           │   │   │   ├── dji_ringbuffer.h
+│           │   │   │   ├── flash_if.c
+│           │   │   │   ├── flash_if.h
+│           │   │   │   ├── pps.c
+│           │   │   │   ├── pps.h
+│           │   │   │   ├── stm32f4xx_conf.h
+│           │   │   │   ├── stm32f4xx_hal_conf.h
+│           │   │   │   ├── stm32f4xx_hal_msp.c
+│           │   │   │   ├── stm32f4xx_it.c
+│           │   │   │   ├── stm32f4xx_it.h
+│           │   │   │   ├── uart.c
+│           │   │   │   ├── uart_enable.c
+│           │   │   │   ├── uart_enable.h
+│           │   │   │   ├── uart.h
+│           │   │   │   ├── upgrade_platform_opt_stm32.c
+│           │   │   │   └── upgrade_platform_opt_stm32.h
+│           │   ├── hal
+│           │   │   ├── hal_uart.c
+│           │   │   └── hal_uart.h
+│           │   ├── project
+│           │   │   ├── mdk_bootloader
+│           │   │   │   ├── DebugConfig
+│           │   │   │   │   └── psdk_bootloader_STM32F407IGHx.dbgconf
+│           │   │   │   └── psdk_demo_bootloader.uvprojx
+│           │   │   └── mdk_release
+│           │   │       ├── DebugConfig
+│           │   │       │   └── Psdk_Demo_Release_Use_Bootloader_STM32F407IGHx.dbgconf
+│           │   │       └── psdk_demo.uvprojx
+│           │   └── README.txt
+│           └── stm32f4_eval
+│               ├── application
+│               │   ├── app_info.h
+│               │   ├── application.c
+│               │   ├── application.h
+│               │   ├── FreeRTOSConfig.h
+│               │   ├── main.c
+│               │   └── psdk_config.h
+│               ├── bootloader
+│               │   ├── common.c
+│               │   ├── common.h
+│               │   ├── main.c
+│               │   ├── main.h
+│               │   ├── menu.c
+│               │   ├── menu.h
+│               │   └── ymodem.c
+│               ├── drivers
+│               │   ├── BSP
+│               │   │   ├── apply_high_power.c
+│               │   │   ├── apply_high_power.h
+│               │   │   ├── button.c
+│               │   │   ├── button.h
+│               │   │   ├── dji_ringbuffer.c
+│               │   │   ├── dji_ringbuffer.h
+│               │   │   ├── flash_if.c
+│               │   │   ├── flash_if.h
+│               │   │   ├── pps.c
+│               │   │   ├── pps.h
+│               │   │   ├── stm32f4xx_conf.h
+│               │   │   ├── stm32f4xx_hal_conf.h
+│               │   │   ├── stm32f4xx_hal_msp.c
+│               │   │   ├── stm32f4xx_it.c
+│               │   │   ├── stm32f4xx_it.h
+│               │   │   ├── uart.c
+│               │   │   ├── uart.h
+│               │   │   ├── upgrade_platform_opt_stm32.c
+│               │   │   └── upgrade_platform_opt_stm32.h
+│               ├── hal
+│               │   ├── hal_uart.c
+│               │   └── hal_uart.h
+│               ├── project
+│               │   ├── mdk_bootloader
+│               │   │   ├── DebugConfig
+│               │   │   │   └── psdk_bootloader_STM32F407IGHx.dbgconf
+│               │   │   └── psdk_demo_bootloader.uvprojx
+│               │   └── mdk_release
+│               │       ├── DebugConfig
+│               │       │   └── Psdk_Demo_Release_Use_Bootloader_STM32F407IGHx.dbgconf
+│               │       └── psdk_demo.uvprojx
+│               └── README.txt
+└── tools
+    └── file2c
+        ├── file2c.exe
+        └── readme.txt
+
+Unless otherwise agreed, all other portions of DJI’s Payload SDK are and will be made available under the SDK End User License Agreement (EULA). A copy of the SDK EULA is distributed with this software and is available at https://developer.dji.com/policies/eula/.
+-------------------------------------------------------------
+Copyright (c) 2018-2019 DJI.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+===============================================================
+DJI’s Payload SDK uses libraries of List and MD5, whose license is as below.
+
+-------------------------------------------------------------
+crypto-algorithms
+=================
+About
+---
+These are basic implementations of standard cryptography algorithms, written by Brad Conte (brad@bradconte.com) from
+scratch and without any cross-licensing. They exist to provide publically accessible, restriction-free implementations
+of popular cryptographic algorithms, like AES and SHA-1. These are primarily intended for educational and pragmatic
+purposes (such as comparing a specification to actual implementation code, or for building an internal application
+that computes test vectors for a product). The algorithms have been tested against standard test vectors.
+This code is released into the public domain free of any restrictions. The author requests acknowledgement if the code
+is used, but does not require it. This code is provided free of any liability and without any quality claims by the
+author.
+Note that these are *not* cryptographically secure implementations. They have no resistence to side-channel attacks
+and should not be used in contexts that need cryptographically secure implementations.
+These algorithms are not optimized for speed or space. They are primarily designed to be easy to read, although some
+basic optimization techniques have been employed.
+Building
+The source code for each algorithm will come in a pair of a source code file and a header file. There should be no
+inter-header file dependencies, no additional libraries, no platform-specific header files, or any other complicating
+matters. Compiling them should be as easy as adding the relevent source code to the project.
+===============================================================
+DJI’s Payload SDK uses libraries of CMSIS (https://developer.arm.com/tools-and-software/embedded/cmsis), which is licensed under the Apache License, Version 2.0. A copy of the Apache license is provided below and is also available at http://www.apache.org/licenses/LICENSE-2.0.
+
+-------------------------------------------------------------
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1. Definitions.
+
+"License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
+
+"Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
+
+"Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
+
+"You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
+
+"Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
+
+"Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
+
+"Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
+
+"Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
+
+"Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
+
+"Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
+
+2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
+
+3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.
+
+4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:
+
+You must give any other recipients of the Work or Derivative Works a copy of this License; and
+You must cause any modified files to carry prominent notices stating that You changed the files; and
+You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and
+If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.
+
+You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.
+5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.
+
+6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.
+
+7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
+
+8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
+
+9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
+
+END OF TERMS AND CONDITIONS
+===============================================================
+DJI’s Payload SDK uses unmodified libraries of cJSON, whose license is as below.
+
+-------------------------------------------------------------
+  Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+===============================================================
+DJI’s Payload SDK uses unmodified libraries of freeRTOS (http://www.FreeRTOS.org), which is licensed under the MIT License. Full license text is available on the following link: http://www.freertos.org/a00114.html. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+
+-------------------------------------------------------------
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+===============================================================
+DJI’s Payload SDK uses unmodified libraries of STM32F4xx_HAL_Driver, BSP STM324xG_EVAL libraries and STM32 Projects libraries in STM32CubeF4 package, which is licensed by ST under BSD 3-Clause license. A copy of the license is provided below and is also available at opensource.org/licenses/BSD-3-Clause.
+
+-------------------------------------------------------------
+Note: This license has also been called the "New BSD License" or "Modified BSD License". See also the 2-clause BSD License.
+
+Copyright <YEAR> <COPYRIGHT HOLDER>
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

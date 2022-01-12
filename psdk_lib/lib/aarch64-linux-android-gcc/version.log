@@ -1,0 +1,9 @@
+Android (5058415 based on r339409) clang version 8.0.2 (https://android.googlesource.com/toolchain/clang 40173bab62ec746213857d083c0e8b0abb568790) (https://android.googlesource.com/toolchain/llvm 7a6618d69e7e8111e1d49dc9e7813767c5ca756a) (based on LLVM 8.0.2svn)
+Target: aarch64-unknown-linux-android28
+Thread model: posix
+InstalledDir: /opt/aarch64-linux-android-gcc/bin
+Found candidate GCC installation: /opt/aarch64-linux-android-gcc/bin/../lib/gcc/aarch64-linux-android/4.9.x
+Selected GCC installation: /opt/aarch64-linux-android-gcc/bin/../lib/gcc/aarch64-linux-android/4.9.x
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+clang80: warning: argument unused during compilation: '-fno-addrsig' [-Wunused-command-line-argument]
