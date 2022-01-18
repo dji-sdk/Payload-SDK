@@ -28,7 +28,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define UART_DEV_NAME_STR_SIZE             (128)
-#define DJI_SYSTEM_CMD_MAX_SIZE            (64)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE        (64)
 #define DJI_SYSTEM_RESULT_STR_MAX_SIZE     (128)
 
 /* Private types -------------------------------------------------------------*/
@@ -48,7 +48,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
     struct flock lock;
     T_DjiReturnCode returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char uartName[UART_DEV_NAME_STR_SIZE];
-    char systemCmd[DJI_SYSTEM_CMD_MAX_SIZE];
+    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
     char *ret = NULL;
     char lineBuf[DJI_SYSTEM_RESULT_STR_MAX_SIZE] = {0};
     FILE *fp;

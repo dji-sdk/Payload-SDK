@@ -78,6 +78,10 @@ void DjiUser_StartTask(void const *argument)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    DjiTestDataTransmissionConfig dataTransmissionConfig = {
+        .isEnableHighSpeedDataChannel = false,
+        .isEnableLowSpeedDataChannel = true,
+    };
     T_DjiOsalHandler osalHandler = {
         .TaskCreate = Osal_TaskCreate,
         .TaskDestroy = Osal_TaskDestroy,
@@ -214,7 +218,7 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
-        returnCode = DjiTest_DataTransmissionStartService();
+        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget sample init error");
         }

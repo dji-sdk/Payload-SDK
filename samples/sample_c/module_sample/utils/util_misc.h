@@ -47,6 +47,7 @@ extern "C" {
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiUserUtil_GetCurrentFileDirPath(const char *filePath, uint32_t pathBufferSize, char *dirPath);
 void DjiUserUtil_PrintProgressBar(uint16_t currentProgress, uint16_t totalProgress, char *userData);
+T_DjiReturnCode DjiUserUtil_RunSystemCmd(const char *systemCmdStr);
 
 #ifdef __cplusplus
 }
