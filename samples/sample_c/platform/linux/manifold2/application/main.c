@@ -59,8 +59,9 @@
 #define DJI_LOG_FOLDER_NAME             "Logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
-#define DJI_LOG_SYSTEM_CMD_MAX_SIZE     (64)
 #define DJI_LOG_MAX_COUNT               (10)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
+#define DJI_SYSTEM_RESULT_STR_MAX_SIZE  (128)
 
 #define DJI_USE_WIDGET_INTERACTION       0
 
@@ -84,6 +85,7 @@ static T_DjiReturnCode DjiUser_LocalWriteFsInit(const char *path);
 static void *DjiUser_MonitorTask(void *argument);
 static T_DjiReturnCode DjiTest_HighPowerApplyPinInit();
 static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState);
+static bool DjiUser_CheckNetCableConnectStatus(void);
 
 /* Exported functions definition ---------------------------------------------*/
 int main(int argc, char **argv)
@@ -91,6 +93,7 @@ int main(int argc, char **argv)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    DjiTestDataTransmissionConfig dataTransmissionConfig;
     T_DjiOsalHandler osalHandler = {
         .TaskCreate = Osal_TaskCreate,
         .TaskDestroy = Osal_TaskDestroy,
@@ -250,7 +253,10 @@ int main(int argc, char **argv)
     }
 
     if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
-        returnCode = DjiTest_DataTransmissionStartService();
+        dataTransmissionConfig.isEnableLowSpeedDataChannel = true;
+        dataTransmissionConfig.isEnableHighSpeedDataChannel = false;
+
+        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("data transmission init error");
         }
@@ -285,9 +291,11 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON
-        returnCode = DjiTest_CameraEmuMediaStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("camera emu media init error");
+        if (DjiUser_CheckNetCableConnectStatus() == true) {
+            returnCode = DjiTest_CameraEmuMediaStartService();
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("camera emu media init error");
+            }
         }
 #endif
 
@@ -330,7 +338,9 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
-        returnCode = DjiTest_DataTransmissionStartService();
+        dataTransmissionConfig.isEnableLowSpeedDataChannel = true;
+        dataTransmissionConfig.isEnableHighSpeedDataChannel = DjiUser_CheckNetCableConnectStatus();
+        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget sample init error");
         }
@@ -465,7 +475,7 @@ static T_DjiReturnCode DjiUser_LocalWriteFsInit(const char *path)
 {
     T_DjiReturnCode djiReturnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char filePath[DJI_LOG_PATH_MAX_SIZE];
-    char systemCmd[DJI_LOG_SYSTEM_CMD_MAX_SIZE];
+    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
     char folderName[DJI_LOG_FOLDER_NAME_MAX_SIZE];
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
@@ -610,5 +620,26 @@ static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinSta
 }
 
 #pragma GCC diagnostic pop
+
+static bool DjiUser_CheckNetCableConnectStatus(void)
+{
+    FILE *fp;
+    char *ret = NULL;
+    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE] = {0};
+    char lineBuf[DJI_SYSTEM_RESULT_STR_MAX_SIZE] = {0};
+
+    sprintf(systemCmd, "ifconfig %s | grep RUNNING", LINUX_NETWORK_DEV);
+    fp = popen(systemCmd, "r");
+    if (fp == NULL) {
+        return false;
+    }
+
+    ret = fgets(lineBuf, sizeof(lineBuf), fp);
+    if (ret == NULL) {
+        return false;
+    }
+
+    return true;
+}
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/
