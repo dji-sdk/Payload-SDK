@@ -124,7 +124,7 @@ T_DjiReturnCode Osal_UdpSendData(T_DjiSocketHandle socketHandle, const char *ipA
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(ipAddr);
 
-    ret = sendto(socketHandleStruct->socketFd, buf, len, MSG_DONTWAIT, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
+    ret = sendto(socketHandleStruct->socketFd, buf, len, 0, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
     if (ret >= 0) {
         *realLen = ret;
     } else {

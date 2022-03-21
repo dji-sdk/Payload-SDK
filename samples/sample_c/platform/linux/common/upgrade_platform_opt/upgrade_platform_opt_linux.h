@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
-#define DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH     "/usr/local/bin/dji_sdk_demo"
+#define DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH     "/usr/local/bin/dji_sdk_demo_linux"
 #define DJI_TEST_UPGRADE_FILE_DIR              "/upgrade/"
 
 /* Exported types ------------------------------------------------------------*/

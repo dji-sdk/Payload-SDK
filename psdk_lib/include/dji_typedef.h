@@ -90,6 +90,7 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_UNKNOWN = 0,
     DJI_AIRCRAFT_SERIES_M200_V2 = 1,
     DJI_AIRCRAFT_SERIES_M300 = 2,
+    DJI_AIRCRAFT_SERIES_M30 = 3,
 } E_DjiAircraftSeries;
 
 typedef enum {
@@ -98,6 +99,8 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M210_V2 = 45, /*!< Aircraft type is Matrice 220 V2. */
     DJI_AIRCRAFT_TYPE_M210RTK_V2 = 46, /*!< Aircraft type is Matrice 210 RTK V2. */
     DJI_AIRCRAFT_TYPE_M300_RTK = 60, /*!< Aircraft type is Matrice 300 RTK. */
+    DJI_AIRCRAFT_TYPE_M30 = 67, /*!< Aircraft type is Matrice 30. */
+    DJI_AIRCRAFT_TYPE_M30T = 68, /*!< Aircraft type is Matrice 30T. */
 } E_DjiAircraftType;
 
 /**
@@ -113,6 +116,8 @@ typedef enum {
     DJI_CAMERA_TYPE_H20T = 43, /*!< Camera type is H20T. */
     DJI_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
     DJI_CAMERA_TYPE_L1, /*!< Camera type is L1. */
+    DJI_CAMERA_TYPE_M30, /*!< Camera type is M30. */
+    DJI_CAMERA_TYPE_M30T, /*!< Camera type is M30T. */
 } E_DjiCameraType;
 
 /**

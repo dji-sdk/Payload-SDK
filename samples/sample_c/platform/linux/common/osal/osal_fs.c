@@ -271,7 +271,7 @@ T_DjiReturnCode Osal_Stat(const char *filePath, T_DjiFileInfo *fileInfo)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    fileTm = localtime(&(st.st_ctime));
+    fileTm = localtime(&(st.st_mtim));
     if (fileTm == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
@@ -279,7 +279,7 @@ T_DjiReturnCode Osal_Stat(const char *filePath, T_DjiFileInfo *fileInfo)
     fileInfo->size = st.st_size;
 
     fileInfo->createTime.year = fileTm->tm_year + 1900 - 1980;
-    fileInfo->createTime.month = fileTm->tm_mon;
+    fileInfo->createTime.month = fileTm->tm_mon + 1;
     fileInfo->createTime.day = fileTm->tm_mday;
     fileInfo->createTime.hour = fileTm->tm_hour;
     fileInfo->createTime.minute = fileTm->tm_min;

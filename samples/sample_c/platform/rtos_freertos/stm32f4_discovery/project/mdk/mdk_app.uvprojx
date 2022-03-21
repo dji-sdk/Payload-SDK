@@ -500,6 +500,11 @@
 </File>
 <File>
 <FileType>1</FileType>
+<FileName>test_waypoint_v3.c</FileName>
+<FilePath>..\..\..\..\..\module_sample\waypoint_v3\test_waypoint_v3.c</FilePath>
+</File>
+<File>
+<FileType>1</FileType>
 <FileName>test_widget.c</FileName>
 <FilePath>..\..\..\..\..\module_sample\widget\test_widget.c</FilePath>
 </File>
@@ -507,6 +512,11 @@
 <FileType>1</FileType>
 <FileName>test_widget_interaction.c</FileName>
 <FilePath>..\..\..\..\..\module_sample\widget_interaction_test\test_widget_interaction.c</FilePath>
+</File>
+<File>
+<FileType>1</FileType>
+<FileName>test_widget_speaker.c</FileName>
+<FilePath>..\..\..\..\..\module_sample\widget\test_widget_speaker.c</FilePath>
 </File>
 <File>
 <FileType>1</FileType>
@@ -1022,6 +1032,11 @@
 <FileType>5</FileType>
 <FileName>dji_waypoint_v2_type.h</FileName>
 <FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_waypoint_v2_type.h</FilePath>
+</File>
+<File>
+<FileType>5</FileType>
+<FileName>dji_waypoint_v3.h</FileName>
+<FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_waypoint_v3.h</FilePath>
 </File>
 <File>
 <FileType>5</FileType>

@@ -509,6 +509,17 @@ typedef struct {
     uint8_t progressInPercent;
 } T_DjiDownloadFilePacketInfo;
 
+typedef struct {
+    dji_f64_t longitude; /*! Range: [-180,180] */
+    dji_f64_t latitude; /*! Range: [-90,90] */
+    int32_t altitude; /*! Unit: 0.1m */
+    int32_t distance; /*! Unit: 0.1m */
+    int16_t screenX; /*! Unit: 0.1% */
+    int16_t screenY; /*! Unit: 0.1% */
+    bool enable_lidar;
+    bool exception;
+} T_DjiCameraManagerLaserRangingInfo;
+
 typedef T_DjiReturnCode (*DjiCameraManagerDownloadFileDataCallback)(T_DjiDownloadFilePacketInfo packetInfo,
                                                                     const uint8_t *data,
                                                                     uint16_t dataLen);
@@ -976,6 +987,14 @@ T_DjiReturnCode DjiCameraManager_DownloadFileByIndex(E_DjiMountPosition position
  */
 T_DjiReturnCode DjiCameraManager_DeleteFileByIndex(E_DjiMountPosition position, uint32_t fileIndex);
 
+/**
+ * @brief Get the camera laser ranging info of the selected camera mounted position.
+ * @param position: the mount position of the camera
+ * @param laserRangingInfo: the pointer to the camera laser ranging info
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetLaserRangingInfo(E_DjiMountPosition position,
+                                                     T_DjiCameraManagerLaserRangingInfo *laserRangingInfo);
 #ifdef __cplusplus
 }
 #endif

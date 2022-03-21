@@ -95,7 +95,7 @@ out:
 }
 
 T_DjiReturnCode DjiUpgradePlatformLinux_GetUpgradeRebootState(bool *isUpgradeReboot,
-                                                                T_DjiUpgradeEndInfo *upgradeEndInfo)
+                                                              T_DjiUpgradeEndInfo *upgradeEndInfo)
 {
     FILE *rebootStateFile;
     size_t res;
@@ -162,7 +162,7 @@ DjiUpgradePlatformLinux_WriteUpgradeProgramFile(uint32_t offset, const uint8_t *
 }
 
 T_DjiReturnCode DjiUpgradePlatformLinux_ReadUpgradeProgramFile(uint32_t offset, uint16_t readDataLen, uint8_t *data,
-                                                                 uint16_t *realLen)
+                                                               uint16_t *realLen)
 {
     uint32_t readRtn;
 

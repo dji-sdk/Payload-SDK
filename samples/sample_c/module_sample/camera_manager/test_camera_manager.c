@@ -51,6 +51,8 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_H20T,    "Zenmuse H20T"},
     {DJI_CAMERA_TYPE_P1,      "Zenmuse P1"},
     {DJI_CAMERA_TYPE_L1,      "Zenmuse L1"},
+    {DJI_CAMERA_TYPE_M30,     "Zenmuse M30"},
+    {DJI_CAMERA_TYPE_M30T,    "Zenmuse M30T"},
 };
 
 static FILE *s_downloadMediaFile = NULL;

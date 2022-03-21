@@ -43,6 +43,7 @@
 #include "dji_aircraft_info.h"
 #include "dji_core.h"
 #include <payload_collaboration/test_payload_collaboration.h>
+#include <waypoint_v3/test_waypoint_v3.h>
 
 /* Private constants ---------------------------------------------------------*/
 #define WIDGET_DIR_PATH_LEN_MAX         (256)
@@ -55,18 +56,19 @@
 typedef enum {
     E_DJI_SAMPLE_INDEX_FC_SUBSCRIPTION = 0,
     E_DJI_SAMPLE_INDEX_WAYPOINT_V2 = 1,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_LANDING = 2,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_POSITION_CTRL_LANDING = 3,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_GO_HOME_FORCE_LANDING = 4,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_VELOCITY_CTRL_LANDING = 5,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_ARREST_FLYING = 6,
-    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_SET_GET_PARAM = 7,
-    E_DJI_SAMPLE_INDEX_HMS = 8,
-    E_DJI_SAMPLE_INDEX_CAMERA_MANAGER = 9,
-    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE = 10,
-    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE = 11,
-    E_DJI_SAMPLE_INDEX_LIVEVIEW = 12,
-    E_DJI_SAMPLE_INDEX_PERCEPTION = 13,
+    E_DJI_SAMPLE_INDEX_WAYPOINT_V3 = 2,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_LANDING = 3,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_POSITION_CTRL_LANDING = 4,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_GO_HOME_FORCE_LANDING = 5,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_VELOCITY_CTRL_LANDING = 6,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_ARREST_FLYING = 7,
+    E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_SET_GET_PARAM = 8,
+    E_DJI_SAMPLE_INDEX_HMS = 9,
+    E_DJI_SAMPLE_INDEX_CAMERA_MANAGER = 10,
+    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE = 11,
+    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE = 12,
+    E_DJI_SAMPLE_INDEX_LIVEVIEW = 13,
+    E_DJI_SAMPLE_INDEX_PERCEPTION = 14,
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
 
@@ -333,6 +335,14 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 case E_DJI_SAMPLE_INDEX_WAYPOINT_V2:
                     if (s_isallowRunFlightControlSample == true) {
                         DjiTest_WaypointV2RunSample();
+                    } else {
+                        DjiTest_WidgetLogAppend("Please turn on the 'unlock flight control restrictions'");
+                        USER_LOG_WARN("Please turn on the 'unlock flight control restrictions' switch.");
+                    }
+                    break;
+                case E_DJI_SAMPLE_INDEX_WAYPOINT_V3:
+                    if (s_isallowRunFlightControlSample == true) {
+                        DjiTest_WaypointV3RunSample();
                     } else {
                         DjiTest_WidgetLogAppend("Please turn on the 'unlock flight control restrictions'");
                         USER_LOG_WARN("Please turn on the 'unlock flight control restrictions' switch.");

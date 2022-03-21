@@ -32,8 +32,9 @@
 
 #include "../common/osal/osal.h"
 #include "../common/osal/osal_fs.h"
-#include "../manifold2//hal/hal_usb_bulk.h"
-#include "../manifold2//hal/hal_uart.h"
+#include "../common/osal/osal_socket.h"
+#include "../manifold2/hal/hal_usb_bulk.h"
+#include "../manifold2/hal/hal_uart.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define DJI_LOG_PATH                    "Logs/DJI"
@@ -41,7 +42,7 @@
 #define DJI_LOG_FOLDER_NAME             "Logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
-#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
+#define DJI_LOG_SYSTEM_CMD_MAX_SIZE     (64)
 #define DJI_LOG_MAX_COUNT               (10)
 
 #define USER_UTIL_UNUSED(x)                                 ((x) = (x))
@@ -62,7 +63,7 @@ Application::Application(int argc, char **argv)
     Application::DjiUser_SetupEnvironment();
     Application::DjiUser_ApplicationStart();
 
-    Osal_TaskSleepMs(1000);
+    Osal_TaskSleepMs(3000);
 }
 
 Application::~Application()
@@ -78,6 +79,18 @@ void Application::DjiUser_SetupEnvironment()
     T_DjiLoggerConsole printConsole;
     T_DjiLoggerConsole localRecordConsole;
     T_DjiFileSystemHandler fileSystemHandler;
+    T_DjiSocketHandler socketHandler;
+
+    socketHandler.Socket = Osal_Socket;
+    socketHandler.Bind = Osal_Bind;
+    socketHandler.Close = Osal_Close;
+    socketHandler.UdpSendData = Osal_UdpSendData;
+    socketHandler.UdpRecvData = Osal_UdpRecvData;
+    socketHandler.TcpListen = Osal_TcpListen;
+    socketHandler.TcpAccept = Osal_TcpAccept;
+    socketHandler.TcpConnect = Osal_TcpConnect;
+    socketHandler.TcpSendData = Osal_TcpSendData;
+    socketHandler.TcpRecvData = Osal_TcpRecvData;
 
     osalHandler.TaskCreate = Osal_TaskCreate;
     osalHandler.TaskDestroy = Osal_TaskDestroy;
@@ -143,6 +156,11 @@ void Application::DjiUser_SetupEnvironment()
     returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         throw std::runtime_error("Register hal usb bulk handler error.");
+    }
+
+    returnCode = DjiPlatform_RegSocketHandler(&socketHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("register osal socket handler error");
     }
 
     returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);
@@ -272,7 +290,7 @@ T_DjiReturnCode Application::DjiUser_LocalWriteFsInit(const char *path)
 {
     T_DjiReturnCode djiReturnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char filePath[DJI_LOG_PATH_MAX_SIZE];
-    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
+    char systemCmd[DJI_LOG_SYSTEM_CMD_MAX_SIZE];
     char folderName[DJI_LOG_FOLDER_NAME_MAX_SIZE];
     time_t currentTime = time(nullptr);
     struct tm *localTime = localtime(&currentTime);

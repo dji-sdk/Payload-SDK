@@ -36,9 +36,11 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
+
 /* Exported types ------------------------------------------------------------*/
 typedef T_DjiReturnCode (*WaypointV2EventCbFunc)(T_DjiWaypointV2MissionEventPush eventData);
 typedef T_DjiReturnCode (*WaypointV2StateCbFunc)(T_DjiWaypointV2MissionStatePush stateData);
+
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialise waypoint v2 module, and user should call this function
