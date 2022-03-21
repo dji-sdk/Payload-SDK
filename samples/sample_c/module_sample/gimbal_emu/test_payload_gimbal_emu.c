@@ -127,6 +127,12 @@ T_DjiReturnCode DjiTest_GimbalStartService(void)
     s_commonHandler.Reset = Reset;
     s_commonHandler.FineTuneAngle = FineTuneAngle;
 
+    djiStat = DjiFcSubscription_Init();
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("init data subscription module error.");
+        return djiStat;
+    }
+
     if (osalHandler->MutexCreate(&s_commonMutex) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("mutex create error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
@@ -145,11 +151,13 @@ T_DjiReturnCode DjiTest_GimbalStartService(void)
     djiStat = DjiGimbal_Init();
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("init gimbal module error: 0x%08llX", djiStat);
+        return djiStat;
     }
 
     djiStat = DjiGimbal_RegCommonHandler(&s_commonHandler);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("gimbal register common handler error: 0x%08llX", djiStat);
+        return djiStat;
     }
 
     if (osalHandler->TaskCreate("user_gimbal_task", UserGimbal_Task,
@@ -378,6 +386,14 @@ static void *UserGimbal_Task(void *arg)
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
     USER_UTIL_UNUSED(arg);
+
+    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
+                                               NULL);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Subscribe topic quaternion error.");
+    } else {
+        USER_LOG_DEBUG("Subscribe topic quaternion success.");
+    }
 
     while (1) {
         osalHandler->TaskSleepMs(1000 / PAYLOAD_GIMBAL_TASK_FREQ);

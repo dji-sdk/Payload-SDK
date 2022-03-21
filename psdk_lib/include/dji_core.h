@@ -55,7 +55,7 @@ typedef struct {
 
 /* Exported functions --------------------------------------------------------*/
 /**
- * @brief Initialize the Onboard SDK core in blocking mode.
+ * @brief Initialize the Payload SDK core in blocking mode.
  * @note The call location of this interface requires special attention, The call needs to be completed after the
  * registration of console/OSAL handler functions/HAL handler functions are completed. At the same time, it must be
  * initialized at the beginning of calling other functional module interfaces. You need to fill in the developer
@@ -82,7 +82,7 @@ T_DjiReturnCode DjiCore_Init(const T_DjiUserInfo *userInfo);
 T_DjiReturnCode DjiCore_SetAlias(const char *productAlias);
 
 /**
- * @brief Notify that the Onboard SDK core application starts.
+ * @brief Notify that the Payload SDK core application starts.
  * @note The call location of this interface requires special attention, The call needs to be completed after all the
  * module initialize and register interfaces.
  * @return Execution result.

@@ -147,7 +147,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
 
     USER_LOG_INFO("--> Step 3: Get latest value of the subscribed topics in the next 20s\r\n");
 
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 10; ++i) {
         osalHandler->TaskSleepMs(1000 / FC_SUBSCRIPTION_TASK_FREQ);
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY,
                                                           (uint8_t *) &velocity,

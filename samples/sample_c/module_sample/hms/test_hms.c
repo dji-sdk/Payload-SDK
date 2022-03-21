@@ -78,7 +78,7 @@ T_DjiReturnCode DjiTest_HmsRunSample(void)
         goto out;
     }
 
-    osalHandler->TaskSleepMs(30000);
+    osalHandler->TaskSleepMs(10000);
 
 out:
     USER_LOG_INFO("--> Step 3: Deinit hms sample");

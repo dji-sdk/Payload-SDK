@@ -55,7 +55,6 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode HalNetWork_Init(const char *ipAddr, const char *netMask, T_DjiNetworkHandle *halObj);
-
 T_DjiReturnCode HalNetWork_DeInit(T_DjiNetworkHandle halObj);
 
 #ifdef __cplusplus

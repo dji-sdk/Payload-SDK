@@ -26,11 +26,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
 
 include_directories(../../../module_sample)
+include_directories(../../../../sample_c/module_sample)
 include_directories(../common)
 
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/liveview/*.c*
         ../../../module_sample/perception/*.c*
+        ../../../../sample_c/module_sample/*.c
         )
 file(GLOB_RECURSE MODULE_COMMON_SRC ../common/*.c*)
 file(GLOB_RECURSE MODULE_HAL_SRC hal/*.c*)

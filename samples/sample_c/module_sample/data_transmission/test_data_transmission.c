@@ -48,10 +48,9 @@ static T_DjiReturnCode ReceiveDataFromPayload(const uint8_t *data, uint16_t len)
 /* Private variables ---------------------------------------------------------*/
 static T_DjiTaskHandle s_userDataTransmissionThread;
 static T_DjiAircraftInfoBaseInfo s_aircraftInfoBaseInfo;
-static DjiTestDataTransmissionConfig s_dataTransmissionConfig = {0};
 
 /* Exported functions definition ---------------------------------------------*/
-T_DjiReturnCode DjiTest_DataTransmissionStartService(DjiTestDataTransmissionConfig config)
+T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
 {
     T_DjiReturnCode djiStat;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
@@ -60,8 +59,6 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(DjiTestDataTransmissionConf
         {10, 60, 30};
     char ipAddr[DJI_IP_ADDR_STR_SIZE_MAX];
     uint16_t port;
-
-    memcpy(&s_dataTransmissionConfig, &config, sizeof(DjiTestDataTransmissionConfig));
 
     djiStat = DjiLowSpeedDataChannel_Init();
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -179,20 +176,20 @@ static void *UserDataTransmission_Task(void *arg)
                 USER_LOG_ERROR("get send to onboard computer channel state error.");
             }
 
-            if (s_dataTransmissionConfig.isEnableHighSpeedDataChannel == true) {
-                djiStat = DjiHighSpeedDataChannel_SendDataStreamData(dataToBeSent, sizeof(dataToBeSent));
-                if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
-                    USER_LOG_ERROR("send data to data stream error.");
+#ifdef SYSTEM_ARCH_LINUX
+            djiStat = DjiHighSpeedDataChannel_SendDataStreamData(dataToBeSent, sizeof(dataToBeSent));
+            if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+                USER_LOG_ERROR("send data to data stream error.");
 
-                djiStat = DjiHighSpeedDataChannel_GetDataStreamState(&state);
-                if (djiStat == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_DEBUG(
-                        "data stream state: realtimeBandwidthLimit: %d, realtimeBandwidthBeforeFlowController: %d, busyState: %d.",
-                        state.realtimeBandwidthLimit, state.realtimeBandwidthBeforeFlowController, state.busyState);
-                } else {
-                    USER_LOG_ERROR("get data stream state error.");
-                }
+            djiStat = DjiHighSpeedDataChannel_GetDataStreamState(&state);
+            if (djiStat == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_DEBUG(
+                    "data stream state: realtimeBandwidthLimit: %d, realtimeBandwidthBeforeFlowController: %d, busyState: %d.",
+                    state.realtimeBandwidthLimit, state.realtimeBandwidthBeforeFlowController, state.busyState);
+            } else {
+                USER_LOG_ERROR("get data stream state error.");
             }
+#endif
         } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
             channelAddress = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1;
             djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));

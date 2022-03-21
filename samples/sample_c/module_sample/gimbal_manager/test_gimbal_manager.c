@@ -78,7 +78,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (30, 0, 0) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
 
         osalHandler->TaskSleepMs(1000);
@@ -88,7 +87,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (0, 30, 0) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(1000);
 
@@ -97,7 +95,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (0, 0, 30) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(1000);
 
@@ -105,7 +102,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Reset(mountPosition);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Reset gimbal failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(2000);
     }
@@ -119,7 +115,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (30, 0, 0) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
 
         osalHandler->TaskSleepMs(1000);
@@ -129,7 +124,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (0, 30, 0) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(1000);
 
@@ -138,7 +132,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Rotate(mountPosition, rotation);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Target gimbal pry = (0, 0, 30) failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(1000);
 
@@ -146,7 +139,6 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         returnCode = DjiGimbalManager_Reset(mountPosition);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Reset gimbal failed, error code: 0x%08X", returnCode);
-            goto out;
         }
         osalHandler->TaskSleepMs(2000);
     }

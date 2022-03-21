@@ -244,6 +244,9 @@
             "item_name": "waypoint_v2"
           },
           {
+            "item_name": "waypoint_v3"
+          },
+          {
             "item_name": "flight_ctrl_takeoff_landing"
           },
           {

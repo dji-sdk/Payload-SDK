@@ -67,6 +67,42 @@ typedef enum {
 } E_DjiWidgetSwitchState;
 
 /**
+ * @brief Switch widget speaker work mode.
+ */
+typedef enum {
+    DJI_WIDGET_SPEAKER_WORK_MODE_TTS,
+    DJI_WIDGET_SPEAKER_WORK_MODE_VOICE,
+} E_DjiWidgetSpeakerWorkMode;
+
+/**
+ * @brief Switch widget speaker play mode.
+ */
+typedef enum {
+    DJI_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY,
+    DJI_WIDGET_SPEAKER_PLAY_MODE_LOOP_PLAYBACK,
+} E_DjiWidgetSpeakerPlayMode;
+
+/**
+ * @brief Switch widget speaker state.
+ */
+typedef enum {
+    DJI_WIDGET_SPEAKER_STATE_IDEL,
+    DJI_WIDGET_SPEAKER_STATE_TRANSMITTING,
+    DJI_WIDGET_SPEAKER_STATE_PLAYING,
+    DJI_WIDGET_SPEAKER_STATE_ERROR,
+} E_DjiWidgetSpeakerState;
+
+/**
+ * @brief Switch widget transmit data event.
+ */
+typedef enum {
+    DJI_WIDGET_TRANSMIT_DATA_EVENT_START,
+    DJI_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT,
+    DJI_WIDGET_TRANSMIT_DATA_EVENT_FINISH,
+    DJI_WIDGET_TRANSMIT_DATA_EVENT_ABORT,
+} E_DjiWidgetTransmitDataEvent;
+
+/**
  * @brief Widget file binary array.
  */
 typedef struct {
@@ -131,6 +167,45 @@ typedef struct {
     /*! the user data need used in SetWidgetValue and GetWidgetValue callback function. */
     void *userData;
 } T_DjiWidgetHandlerListItem;
+
+typedef struct {
+    uint16_t size;
+    uint32_t uuid;
+    uint8_t md5Sum[16];
+} T_DjiWidgetTtsDataInfo;
+
+typedef struct {
+    uint16_t size;
+    uint32_t uuid;
+    uint8_t md5Sum[16];
+} T_DjiWidgetVoiceDataInfo;
+
+typedef struct {
+    E_DjiWidgetSpeakerState state;
+    E_DjiWidgetSpeakerWorkMode workMode;
+    E_DjiWidgetSpeakerPlayMode playMode;
+    uint8_t volume;
+    uint32_t uuid;
+} T_DjiWidgetSpeakerState;
+
+typedef struct {
+    T_DjiReturnCode (*GetSpeakerState)(T_DjiWidgetSpeakerState *speakerState);
+
+    T_DjiReturnCode (*SetWorkMode)(E_DjiWidgetSpeakerWorkMode workMode);
+    T_DjiReturnCode (*GetWorkMode)(E_DjiWidgetSpeakerWorkMode *workMode);
+    T_DjiReturnCode (*SetPlayMode)(E_DjiWidgetSpeakerPlayMode playMode);
+    T_DjiReturnCode (*GetPlayMode)(E_DjiWidgetSpeakerPlayMode *playMode);
+    T_DjiReturnCode (*SetVolume)(uint8_t volume);
+    T_DjiReturnCode (*GetVolume)(uint8_t *volume);
+
+    T_DjiReturnCode (*StartPlay)(void);
+    T_DjiReturnCode (*StopPlay)(void);
+
+    T_DjiReturnCode (*ReceiveTtsData)(E_DjiWidgetTransmitDataEvent event,
+                                      uint32_t offset, uint8_t *buf, uint16_t size);
+    T_DjiReturnCode (*ReceiveVoiceData)(E_DjiWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size);
+} T_DjiWidgetSpeakerHandler;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -214,6 +289,15 @@ T_DjiReturnCode DjiWidgetFloatingWindow_ShowMessage(const char *str);
  * @return Execution result.
  */
 T_DjiReturnCode DjiWidgetFloatingWindow_GetChannelState(T_DjiDataChannelState *state);
+
+/**
+ * @brief Register the handler for widget speaker function interfaces.
+ * @note This interface registers the widget speaker function interface, including speaker settings, play operation,
+ * speaker status interface.
+ * @param widgetSpeakerHandler: pointer to the handler for widget speaker functions.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiWidget_RegSpeakerHandler(const T_DjiWidgetSpeakerHandler *widgetSpeakerHandler);
 
 #ifdef __cplusplus
 }

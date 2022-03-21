@@ -78,10 +78,6 @@ void DjiUser_StartTask(void const *argument)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
-    DjiTestDataTransmissionConfig dataTransmissionConfig = {
-        .isEnableHighSpeedDataChannel = false,
-        .isEnableLowSpeedDataChannel = true,
-    };
     T_DjiOsalHandler osalHandler = {
         .TaskCreate = Osal_TaskCreate,
         .TaskDestroy = Osal_TaskDestroy,
@@ -165,19 +161,6 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
-    if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
-#if DJI_EXTENSION_PORT_SUPPORT
-        returnCode = DjiTest_DataTransmissionStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("data transmission init error");
-        }
-
-        returnCode = DjiTest_WidgetStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget sample init error");
-        }
-#endif
-    } else {
 #ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
         T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
             .pinInit = DjiTest_HighPowerApplyPinInit,
@@ -218,7 +201,7 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
-        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
+        returnCode = DjiTest_DataTransmissionStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget sample init error");
         }
@@ -301,7 +284,6 @@ void DjiUser_StartTask(void const *argument)
         printf("psdk upgrade init error");
     }
 #endif
-    }
 
     returnCode = DjiCore_ApplicationStart();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

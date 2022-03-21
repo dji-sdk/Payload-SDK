@@ -1234,7 +1234,8 @@ T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void)
 
     returnCode = DjiPayloadCamera_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("payload camera init error:0x%08llX", returnCode);
+        USER_LOG_ERROR("init payload camera error:0x%08llX", returnCode);
+        return returnCode;
     }
 
     /* Init the SDcard parameters */

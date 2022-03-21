@@ -30,25 +30,26 @@
 #include <errno.h>
 #include <signal.h>
 #include <power_management/test_power_management.h>
-#include <upgrade/test_upgrade.h>
-#include <payload_collaboration/test_payload_collaboration.h>
-#include <mop_channel/test_mop_channel.h>
-#include <xport/test_payload_xport.h>
 #include <gimbal_emu/test_payload_gimbal_emu.h>
 #include <fc_subscription/test_fc_subscription.h>
 #include <camera_emu/test_payload_cam_emu_media.h>
 #include <camera_emu/test_payload_cam_emu_base.h>
+#include <upgrade/test_upgrade.h>
+#include <upgrade_platform_opt/upgrade_platform_opt_linux.h>
+#include <mop_channel/test_mop_channel.h>
+#include <payload_collaboration/test_payload_collaboration.h>
+#include <xport/test_payload_xport.h>
 #include "monitor/sys_monitor.h"
 #include "osal/osal.h"
 #include "osal/osal_fs.h"
 #include "osal/osal_socket.h"
-#include "upgrade_platform_opt/upgrade_platform_opt_linux.h"
 #include "../hal/hal_uart.h"
 #include "../hal/hal_network.h"
 #include "../hal/hal_usb_bulk.h"
 #include "dji_sdk_app_info.h"
 #include "dji_aircraft_info.h"
 #include "widget/test_widget.h"
+#include "widget/test_widget_speaker.h"
 #include "widget_interaction_test/test_widget_interaction.h"
 #include "data_transmission/test_data_transmission.h"
 #include "dji_sdk_config.h"
@@ -59,9 +60,8 @@
 #define DJI_LOG_FOLDER_NAME             "Logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
+#define DJI_LOG_SYSTEM_CMD_MAX_SIZE     (64)
 #define DJI_LOG_MAX_COUNT               (10)
-#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
-#define DJI_SYSTEM_RESULT_STR_MAX_SIZE  (128)
 
 #define DJI_USE_WIDGET_INTERACTION       0
 
@@ -78,6 +78,7 @@ static FILE *s_djiLogFileCnt;
 static pthread_t s_monitorThread = 0;
 
 /* Private functions declaration ---------------------------------------------*/
+static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void);
 static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo);
 static T_DjiReturnCode DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen);
 static T_DjiReturnCode DjiUser_LocalWrite(const uint8_t *data, uint16_t dataLen);
@@ -85,7 +86,6 @@ static T_DjiReturnCode DjiUser_LocalWriteFsInit(const char *path);
 static void *DjiUser_MonitorTask(void *argument);
 static T_DjiReturnCode DjiTest_HighPowerApplyPinInit();
 static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState);
-static bool DjiUser_CheckNetCableConnectStatus(void);
 
 /* Exported functions definition ---------------------------------------------*/
 int main(int argc, char **argv)
@@ -93,7 +93,204 @@ int main(int argc, char **argv)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
-    DjiTestDataTransmissionConfig dataTransmissionConfig;
+
+    USER_UTIL_UNUSED(argc);
+    USER_UTIL_UNUSED(argv);
+
+    /*!< Step 1: Prepare system environment, such as osal, hal uart, console function and so on. */
+    returnCode = DjiUser_PrepareSystemEnvironment();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Prepare system environment error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    /*!< Step 2: Fill your application information in dji_sdk_app_info.h and use this interface to fill it. */
+    returnCode = DjiUser_FillInUserInfo(&userInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Fill user info error, please check user info config");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    /*!< Step 3: Initialize the Payload SDK core by your application information. */
+    returnCode = DjiCore_Init(&userInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Core init error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set alias error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    /*!< Step 4: Initialize the selected modules by macros in dji_sdk_config.h . */
+#ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
+    T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
+        .pinInit = DjiTest_HighPowerApplyPinInit,
+        .pinWrite = DjiTest_WriteHighPowerApplyPin,
+    };
+
+    returnCode = DjiTest_RegApplyHighPowerHandler(&applyHighPowerHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("regsiter apply high power handler error");
+    }
+
+    returnCode = DjiTest_PowerManagementStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("power management init error");
+    }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
+    returnCode = DjiTest_DataTransmissionStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("widget sample init error");
+    }
+#endif
+
+    if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK) {
+        returnCode = DjiTest_WidgetInteractionStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget interaction sample init error");
+        }
+    } else {
+#ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
+        returnCode = DjiTest_CameraEmuBaseStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("camera emu common init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON
+        returnCode = DjiTest_CameraEmuMediaStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("camera emu media init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
+        returnCode = DjiTest_FcSubscriptionStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("data subscription sample init error\n");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+            if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("psdk gimbal init error");
+            }
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_XPORT_ON
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
+            if (DjiTest_XPortStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("psdk xport init error");
+            }
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
+#if DJI_USE_WIDGET_INTERACTION
+        returnCode = DjiTest_WidgetInteractionStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget interaction test init error");
+        }
+#else
+        returnCode = DjiTest_WidgetStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget sample init error");
+        }
+#endif
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+            returnCode = DjiTest_WidgetSpeakerStartService();
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("widget speaker test init error");
+            }
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
+            returnCode = DjiTest_MopChannelStartService();
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("mop channel sample init error");
+            }
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
+            returnCode = DjiTest_PayloadCollaborationStartService();
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Payload collaboration sample init error\n");
+            }
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
+        T_DjiTestUpgradePlatformOpt linuxUpgradePlatformOpt = {
+            .rebootSystem = DjiUpgradePlatformLinux_RebootSystem,
+            .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea,
+            .createUpgradeProgramFile = DjiUpgradePlatformLinux_CreateUpgradeProgramFile,
+            .writeUpgradeProgramFile = DjiUpgradePlatformLinux_WriteUpgradeProgramFile,
+            .readUpgradeProgramFile = DjiUpgradePlatformLinux_ReadUpgradeProgramFile,
+            .closeUpgradeProgramFile = DjiUpgradePlatformLinux_CloseUpgradeProgramFile,
+            .replaceOldProgram = DjiUpgradePlatformLinux_ReplaceOldProgram,
+            .setUpgradeRebootState = DjiUpgradePlatformLinux_SetUpgradeRebootState,
+            .getUpgradeRebootState = DjiUpgradePlatformLinux_GetUpgradeRebootState,
+            .cleanUpgradeRebootState = DjiUpgradePlatformLinux_CleanUpgradeRebootState,
+        };
+        T_DjiTestUpgradeConfig testUpgradeConfig = {
+            .firmwareVersion = {1, 0, 0, 0},
+            .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
+            .needReplaceProgramBeforeReboot = true
+        };
+        if (DjiTest_UpgradeStartService(&linuxUpgradePlatformOpt, testUpgradeConfig) !=
+            DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("psdk upgrade init error");
+        }
+#endif
+    }
+
+    /*!< Step 5: Tell the DJI Pilot you are ready. */
+    returnCode = DjiCore_ApplicationStart();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("start sdk application error");
+    }
+
+    if (pthread_create(&s_monitorThread, NULL, DjiUser_MonitorTask, NULL) != 0) {
+        USER_LOG_ERROR("create monitor task fail.");
+    }
+
+    if (pthread_setname_np(s_monitorThread, "monitor task") != 0) {
+        USER_LOG_ERROR("set name for monitor task fail.");
+    }
+
+    while (1) {
+        sleep(1);
+    }
+}
+
+/* Private functions definition-----------------------------------------------*/
+static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
+{
+    T_DjiReturnCode returnCode;
     T_DjiOsalHandler osalHandler = {
         .TaskCreate = Osal_TaskCreate,
         .TaskDestroy = Osal_TaskDestroy,
@@ -112,6 +309,7 @@ int main(int argc, char **argv)
         .GetTimeMs = Osal_GetTimeMs,
         .GetTimeUs = Osal_GetTimeUs,
     };
+
     T_DjiLoggerConsole printConsole = {
         .func = DjiUser_PrintConsole,
         .consoleLevel = DJI_LOGGER_CONSOLE_LOG_LEVEL_INFO,
@@ -121,7 +319,7 @@ int main(int argc, char **argv)
     T_DjiLoggerConsole localRecordConsole = {
         .consoleLevel = DJI_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
         .func = DjiUser_LocalWrite,
-        .isSupportColor = false,
+        .isSupportColor = true,
     };
 
     T_DjiHalUartHandler uartHandler = {
@@ -227,211 +425,15 @@ int main(int argc, char **argv)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    returnCode = DjiUser_FillInUserInfo(&userInfo);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        osalHandler.TaskSleepMs(1000);
-        USER_LOG_ERROR("fill user info error, please check user info config");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiCore_Init(&userInfo);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("core init error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("get aircraft base info error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("set alias error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
-        dataTransmissionConfig.isEnableLowSpeedDataChannel = true;
-        dataTransmissionConfig.isEnableHighSpeedDataChannel = false;
-
-        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("data transmission init error");
-        }
-
-        returnCode = DjiTest_WidgetInteractionStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget interaction sample init error");
-        }
-    } else {
-#ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
-        T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
-            .pinInit = DjiTest_HighPowerApplyPinInit,
-            .pinWrite = DjiTest_WriteHighPowerApplyPin,
-        };
-
-        returnCode = DjiTest_RegApplyHighPowerHandler(&applyHighPowerHandler);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("regsiter apply high power handler error");
-        }
-
-        returnCode = DjiTest_PowerManagementStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("power management init error");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
-        returnCode = DjiTest_CameraEmuBaseStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("camera emu common init error");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON
-        if (DjiUser_CheckNetCableConnectStatus() == true) {
-            returnCode = DjiTest_CameraEmuMediaStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("camera emu media init error");
-            }
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
-        returnCode = DjiTest_FcSubscriptionStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("data subscription sample init error\n");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
-            if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("psdk gimbal init error");
-            }
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_XPORT_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
-            if (DjiTest_XPortStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("psdk xport init error");
-            }
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
-#if DJI_USE_WIDGET_INTERACTION
-        returnCode = DjiTest_WidgetInteractionStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget interaction test init error");
-        }
-#else
-        returnCode = DjiTest_WidgetStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget sample init error");
-        }
-#endif
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
-        dataTransmissionConfig.isEnableLowSpeedDataChannel = true;
-        dataTransmissionConfig.isEnableHighSpeedDataChannel = DjiUser_CheckNetCableConnectStatus();
-        returnCode = DjiTest_DataTransmissionStartService(dataTransmissionConfig);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget sample init error");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
-        returnCode = DjiTest_MopChannelStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("mop channel sample init error");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON
-        returnCode = DjiTest_PayloadCollaborationStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Payload collaboration sample init error\n");
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
-        T_DjiTestUpgradePlatformOpt linuxUpgradePlatformOpt = {
-            .rebootSystem = DjiUpgradePlatformLinux_RebootSystem,
-            .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea,
-            .createUpgradeProgramFile = DjiUpgradePlatformLinux_CreateUpgradeProgramFile,
-            .writeUpgradeProgramFile = DjiUpgradePlatformLinux_WriteUpgradeProgramFile,
-            .readUpgradeProgramFile = DjiUpgradePlatformLinux_ReadUpgradeProgramFile,
-            .closeUpgradeProgramFile = DjiUpgradePlatformLinux_CloseUpgradeProgramFile,
-            .replaceOldProgram = DjiUpgradePlatformLinux_ReplaceOldProgram,
-            .setUpgradeRebootState = DjiUpgradePlatformLinux_SetUpgradeRebootState,
-            .getUpgradeRebootState = DjiUpgradePlatformLinux_GetUpgradeRebootState,
-            .cleanUpgradeRebootState = DjiUpgradePlatformLinux_CleanUpgradeRebootState,
-        };
-        T_DjiTestUpgradeConfig testUpgradeConfig = {
-            .firmwareVersion = {1, 0, 0, 0},
-            .transferType = DJI_FIRMWARE_TRANSFER_TYPE_FTP,
-            .needReplaceProgramBeforeReboot = true
-        };
-        if (DjiTest_UpgradeStartService(&linuxUpgradePlatformOpt, testUpgradeConfig) !=
-            DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("psdk upgrade init error");
-        }
-#endif
-    }
-
-    returnCode = DjiCore_ApplicationStart();
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("start sdk application error");
-    }
-
-    if (pthread_create(&s_monitorThread, NULL, DjiUser_MonitorTask, NULL) != 0) {
-        USER_LOG_ERROR("create monitor task fail.");
-    }
-
-    if (pthread_setname_np(s_monitorThread, "monitor task") != 0) {
-        USER_LOG_ERROR("set name for monitor task fail.");
-    }
-
-    while (1) {
-        sleep(1);
-    }
-}
-
-/* Private functions definition-----------------------------------------------*/
-static T_DjiReturnCode DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen)
-{
-    USER_UTIL_UNUSED(dataLen);
-
-    printf("%s", data);
-
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
-
-static T_DjiReturnCode DjiUser_LocalWrite(const uint8_t *data, uint16_t dataLen)
-{
-    int32_t realLen;
-
-    if (s_djiLogFile == NULL) {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    realLen = fwrite(data, 1, dataLen, s_djiLogFile);
-    fflush(s_djiLogFile);
-    if (realLen == dataLen) {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-    } else {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
 }
 
 static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
 {
+    if (userInfo == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     memset(userInfo->appName, 0, sizeof(userInfo->appName));
     memset(userInfo->appId, 0, sizeof(userInfo->appId));
     memset(userInfo->appKey, 0, sizeof(userInfo->appKey));
@@ -446,6 +448,7 @@ static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
         strlen(USER_DEVELOPER_ACCOUNT) >= sizeof(userInfo->developerAccount) ||
         strlen(USER_BAUD_RATE) > sizeof(userInfo->baudRate)) {
         USER_LOG_ERROR("Length of user information string is beyond limit. Please check.");
+        sleep(1);
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 
@@ -457,6 +460,7 @@ static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
         !strcmp(USER_BAUD_RATE, "your_baud_rate")) {
         USER_LOG_ERROR(
             "Please fill in correct user information to 'samples/sample_c/platform/linux/manifold2/application/dji_sdk_app_info.h' file.");
+        sleep(1);
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 
@@ -471,11 +475,37 @@ static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+static T_DjiReturnCode DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen)
+{
+    USER_UTIL_UNUSED(dataLen);
+
+    printf("%s", data);
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiUser_LocalWrite(const uint8_t *data, uint16_t dataLen)
+{
+    uint32_t realLen;
+
+    if (s_djiLogFile == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    realLen = fwrite(data, 1, dataLen, s_djiLogFile);
+    fflush(s_djiLogFile);
+    if (realLen == dataLen) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    } else {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+}
+
 static T_DjiReturnCode DjiUser_LocalWriteFsInit(const char *path)
 {
     T_DjiReturnCode djiReturnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char filePath[DJI_LOG_PATH_MAX_SIZE];
-    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
+    char systemCmd[DJI_LOG_SYSTEM_CMD_MAX_SIZE];
     char folderName[DJI_LOG_FOLDER_NAME_MAX_SIZE];
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
@@ -620,26 +650,5 @@ static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinSta
 }
 
 #pragma GCC diagnostic pop
-
-static bool DjiUser_CheckNetCableConnectStatus(void)
-{
-    FILE *fp;
-    char *ret = NULL;
-    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE] = {0};
-    char lineBuf[DJI_SYSTEM_RESULT_STR_MAX_SIZE] = {0};
-
-    sprintf(systemCmd, "ifconfig %s | grep RUNNING", LINUX_NETWORK_DEV);
-    fp = popen(systemCmd, "r");
-    if (fp == NULL) {
-        return false;
-    }
-
-    ret = fgets(lineBuf, sizeof(lineBuf), fp);
-    if (ret == NULL) {
-        return false;
-    }
-
-    return true;
-}
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

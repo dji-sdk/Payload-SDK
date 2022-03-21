@@ -38,13 +38,10 @@ extern "C" {
 
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct {
-    bool isEnableLowSpeedDataChannel;
-    bool isEnableHighSpeedDataChannel;
-} DjiTestDataTransmissionConfig;
+
 
 /* Exported functions --------------------------------------------------------*/
-T_DjiReturnCode DjiTest_DataTransmissionStartService(DjiTestDataTransmissionConfig config);
+T_DjiReturnCode DjiTest_DataTransmissionStartService(void);
 
 #ifdef __cplusplus
 }
