@@ -67,7 +67,7 @@ T_PsdkReturnCode UtilFile_GetCreateTime(const char *filePath, T_UtilFileCreateTi
     createTime->day = fileTm->tm_mday;
     createTime->hour = fileTm->tm_hour;
     createTime->minute = fileTm->tm_min;
-    createTime->second = fileTm->tm_sec;
+    createTime->second = (fileTm->tm_sec / 2);
 
     return PSDK_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

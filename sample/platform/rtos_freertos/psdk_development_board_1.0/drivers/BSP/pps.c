@@ -41,7 +41,7 @@
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
-static uint32_t s_ppsNewestTriggerLocalTimeMs = 0;
+static uint64_t s_ppsNewestTriggerLocalTimeMs = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 
@@ -72,7 +72,7 @@ T_PsdkReturnCode PsdkTest_GetNewestPpsTriggerLocalTimeUs(uint64_t *localTimeUs)
         return PSDK_ERROR_SYSTEM_MODULE_CODE_BUSY;
     }
 
-    *localTimeUs = s_ppsNewestTriggerLocalTimeMs * 1000;
+    *localTimeUs = (uint64_t)(s_ppsNewestTriggerLocalTimeMs * 1000);
 
     return PSDK_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

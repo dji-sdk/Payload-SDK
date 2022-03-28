@@ -39,7 +39,7 @@ extern "C" {
 #define PSDK_VERSION_MINOR     2 /*!< Payload SDK minor version num, when add functionality in a backwards compatible manner changes. Range from 0 to 99. */
 #define PSDK_VERSION_MODIFY    1 /*!< Payload SDK modify version num, when have backwards compatible bug fixes changes. Range from 0 to 99. */
 #define PSDK_VERSION_BETA      0 /*!< Payload SDK version beta info, release version will be 0, when beta version release changes. Range from 0 to 255. */
-#define PSDK_VERSION_BUILD     324 /*!< Payload SDK version build info, when jenkins trigger build changes. Range from 0 to 65535. */
+#define PSDK_VERSION_BUILD     327 /*!< Payload SDK version build info, when jenkins trigger build changes. Range from 0 to 65535. */
 
 /* Exported types ------------------------------------------------------------*/
 
