@@ -39,7 +39,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 
-
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_DataTransmissionStartService(void);
 

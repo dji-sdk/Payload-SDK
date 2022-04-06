@@ -271,7 +271,7 @@ T_DjiReturnCode Osal_Stat(const char *filePath, T_DjiFileInfo *fileInfo)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    fileTm = localtime(&(st.st_mtim));
+    fileTm = localtime((const time_t *) &(st.st_mtim));
     if (fileTm == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }

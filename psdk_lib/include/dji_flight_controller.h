@@ -252,6 +252,10 @@ typedef struct {
     dji_f64_t latitude;  /*!< unit: rad */
     dji_f64_t longitude; /*!< unit: rad */
 } T_DjiFlightControllerHomeLocation; // pack(1)
+
+typedef struct {
+    char serialNum[16];
+} T_DjiFlightControllerGeneralInfo;
 #pragma pack()
 
 /* Exported functions --------------------------------------------------------*/
@@ -584,6 +588,14 @@ T_DjiReturnCode DjiFlightController_ExecuteEmergencyBrakeAction(void);
  * @return Execution result.
  */
 T_DjiReturnCode DjiFlightController_CancelEmergencyBrakeAction(void);
+
+/**
+ * @brief Get general info of the aircraft.
+ * @param generalInfo: the struct stored the serial num which contains a array of chars var in case the user gives an
+ * illegal length character pointer
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetGeneralInfo(T_DjiFlightControllerGeneralInfo *generalInfo);
 
 #ifdef __cplusplus
 }

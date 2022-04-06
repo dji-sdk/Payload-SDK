@@ -42,7 +42,7 @@
 #define DJI_LOG_FOLDER_NAME             "Logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
-#define DJI_LOG_SYSTEM_CMD_MAX_SIZE     (64)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
 #define DJI_LOG_MAX_COUNT               (10)
 
 #define USER_UTIL_UNUSED(x)                                 ((x) = (x))
@@ -290,7 +290,7 @@ T_DjiReturnCode Application::DjiUser_LocalWriteFsInit(const char *path)
 {
     T_DjiReturnCode djiReturnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char filePath[DJI_LOG_PATH_MAX_SIZE];
-    char systemCmd[DJI_LOG_SYSTEM_CMD_MAX_SIZE];
+    char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
     char folderName[DJI_LOG_FOLDER_NAME_MAX_SIZE];
     time_t currentTime = time(nullptr);
     struct tm *localTime = localtime(&currentTime);

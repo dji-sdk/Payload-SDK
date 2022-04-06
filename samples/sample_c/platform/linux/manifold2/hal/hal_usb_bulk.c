@@ -178,8 +178,8 @@ T_DjiReturnCode HalUsbBulk_ReadData(T_DjiUsbBulkHandle usbBulkHandle, uint8_t *b
 T_DjiReturnCode HalUsbBulk_GetDeviceInfo(T_DjiHalUsbBulkDeviceInfo *deviceInfo)
 {
     //attention: need confirm your usb config in device mode.
-    deviceInfo->vid = 0x7020;
-    deviceInfo->pid = 0x9055;
+    deviceInfo->vid = 0x0955;
+    deviceInfo->pid = 0x7020;
 
     deviceInfo->bulkChannelNum = 2;
 

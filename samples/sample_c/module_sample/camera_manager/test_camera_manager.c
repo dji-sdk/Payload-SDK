@@ -1203,12 +1203,33 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 
     if (s_meidaFileList.totalCount > 0) {
         for (int i = 0; i < s_meidaFileList.totalCount; ++i) {
-            USER_LOG_INFO("Media file_%03d name: %s, index: %d, size: %d, type: %d",
-                          i, s_meidaFileList.fileListInfo[i].fileName,
-                          s_meidaFileList.fileListInfo[i].fileIndex,
-                          s_meidaFileList.fileListInfo[i].fileSize,
-                          s_meidaFileList.fileListInfo[i].type);
-            osalHandler->TaskSleepMs(10);
+            if (s_meidaFileList.fileListInfo[i].fileSize < 1 * 1024 * 1024) {
+                USER_LOG_INFO(
+                    "Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d",
+                    i, s_meidaFileList.fileListInfo[i].fileName,
+                    s_meidaFileList.fileListInfo[i].fileIndex,
+                    s_meidaFileList.fileListInfo[i].createTime.year,
+                    s_meidaFileList.fileListInfo[i].createTime.month,
+                    s_meidaFileList.fileListInfo[i].createTime.day,
+                    s_meidaFileList.fileListInfo[i].createTime.hour,
+                    s_meidaFileList.fileListInfo[i].createTime.minute,
+                    s_meidaFileList.fileListInfo[i].createTime.second,
+                    (dji_f32_t) s_meidaFileList.fileListInfo[i].fileSize / 1024,
+                    s_meidaFileList.fileListInfo[i].type);
+            } else {
+                USER_LOG_INFO(
+                    "Media file_%03d name: %s, index: %d,  time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d",
+                    i, s_meidaFileList.fileListInfo[i].fileName,
+                    s_meidaFileList.fileListInfo[i].fileIndex,
+                    s_meidaFileList.fileListInfo[i].createTime.year,
+                    s_meidaFileList.fileListInfo[i].createTime.month,
+                    s_meidaFileList.fileListInfo[i].createTime.day,
+                    s_meidaFileList.fileListInfo[i].createTime.hour,
+                    s_meidaFileList.fileListInfo[i].createTime.minute,
+                    s_meidaFileList.fileListInfo[i].createTime.second,
+                    (dji_f32_t) s_meidaFileList.fileListInfo[i].fileSize / (1024 * 1024),
+                    s_meidaFileList.fileListInfo[i].type);
+            }
         }
 
         osalHandler->TaskSleepMs(1000);
@@ -1226,6 +1247,8 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
             USER_LOG_ERROR("Delete media file by index failed, error code: 0x%08X.", returnCode);
             return returnCode;
         }
+
+        osalHandler->TaskSleepMs(1000);
     } else {
         USER_LOG_WARN("Media file is not existed in sdcard.");
     }
@@ -1242,10 +1265,6 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
 
     sprintf(extendInfo, " FileIndex: %d", packetInfo.fileIndex);
 
-#ifdef SYSTEM_ARCH_LINUX
-    DjiUserUtil_PrintProgressBar(packetInfo.progressInPercent, 100, extendInfo);
-#endif
-
     if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_START) {
         for (i = 0; i < s_meidaFileList.totalCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileIndex == packetInfo.fileIndex) {
@@ -1253,17 +1272,23 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
             }
         }
         sprintf(fileName, "%s", s_meidaFileList.fileListInfo[i].fileName);
+        USER_LOG_INFO("Start download media file %s", s_meidaFileList.fileListInfo[i].fileName);
         s_downloadMediaFile = fopen(fileName, "wb+");
         if (s_downloadMediaFile == NULL) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
         fwrite(data, 1, len, s_downloadMediaFile);
     } else if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_TRANSFER) {
-        fwrite(data, 1, len, s_downloadMediaFile);
+        if (s_downloadMediaFile != NULL) {
+            fwrite(data, 1, len, s_downloadMediaFile);
+        }
     } else if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_END) {
-        fwrite(data, 1, len, s_downloadMediaFile);
+        if (s_downloadMediaFile != NULL) {
+            fwrite(data, 1, len, s_downloadMediaFile);
+        }
+
+        USER_LOG_INFO("End download media file");
         fclose(s_downloadMediaFile);
-        printf("\r\n");
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

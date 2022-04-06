@@ -90,37 +90,6 @@ void DjiUser_RunCameraStreamViewSample()
         USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
     }
 
-    cout << "Please enter the type of camera stream you want to view\n\n"
-         << "--> [f] Fpv  Camera\n"
-         << "--> [m] Main Camera\n"
-         << "--> [v] Vice Camera\n"
-         << "--> [t] Top Camera\n"
-         << endl;
-    cin >> cameraIndexChar;
-
-    switch (cameraIndexChar) {
-        case 'f':
-        case 'F':
-            liveviewSample->StartFpvCameraStream(&DjiUser_ShowRgbImageCallback, &fpvName);
-            break;
-        case 'm':
-        case 'M':
-            liveviewSample->StartMainCameraStream(&DjiUser_ShowRgbImageCallback, &mainName);
-            break;
-        case 'v':
-        case 'V':
-            liveviewSample->StartViceCameraStream(&DjiUser_ShowRgbImageCallback, &viceName);
-            break;
-        case 't':
-        case 'T':
-            liveviewSample->StartTopCameraStream(&DjiUser_ShowRgbImageCallback, &topName);
-            break;
-        default:
-            cout << "No camera selected";
-            delete liveviewSample;
-            return;
-    }
-
     cout << "Please choose the stream demo you want to run\n\n"
          << "--> [0] Normal RGB image display\n"
          << "--> [1] Binary image display\n"
@@ -148,6 +117,33 @@ void DjiUser_RunCameraStreamViewSample()
             return;
     }
 
+    cout << "Please enter the type of camera stream you want to view\n\n"
+         << "--> [0] Fpv Camera\n"
+         << "--> [1] Main Camera\n"
+         << "--> [2] Vice Camera\n"
+         << "--> [3] Top Camera\n"
+         << endl;
+    cin >> cameraIndexChar;
+
+    switch (cameraIndexChar) {
+        case '0':
+            liveviewSample->StartFpvCameraStream(&DjiUser_ShowRgbImageCallback, &fpvName);
+            break;
+        case '1':
+            liveviewSample->StartMainCameraStream(&DjiUser_ShowRgbImageCallback, &mainName);
+            break;
+        case '2':
+            liveviewSample->StartViceCameraStream(&DjiUser_ShowRgbImageCallback, &viceName);
+            break;
+        case '3':
+            liveviewSample->StartTopCameraStream(&DjiUser_ShowRgbImageCallback, &topName);
+            break;
+        default:
+            cout << "No camera selected";
+            delete liveviewSample;
+            return;
+    }
+
     cout << "Please enter the 'q' or 'Q' to quit camera stream view\n"
          << endl;
 
@@ -159,20 +155,16 @@ void DjiUser_RunCameraStreamViewSample()
     }
 
     switch (cameraIndexChar) {
-        case 'f':
-        case 'F':
+        case '0':
             liveviewSample->StopFpvCameraStream();
             break;
-        case 'm':
-        case 'M':
+        case '1':
             liveviewSample->StopMainCameraStream();
             break;
-        case 'v':
-        case 'V':
+        case '2':
             liveviewSample->StopViceCameraStream();
             break;
-        case 't':
-        case 'T':
+        case '3':
             liveviewSample->StopTopCameraStream();
             break;
         default:
