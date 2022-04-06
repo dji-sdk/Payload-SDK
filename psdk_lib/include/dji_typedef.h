@@ -121,6 +121,17 @@ typedef enum {
 } E_DjiCameraType;
 
 /**
+ * @brief Camera supported media file type.
+ */
+typedef enum {
+    DJI_CAMERA_FILE_TYPE_JPEG = 0, /*!< Media file JPEG type. */
+    DJI_CAMERA_FILE_TYPE_DNG = 1, /*!< Media file DNG type. */
+    DJI_CAMERA_FILE_TYPE_MOV = 2, /*!< Media file MOV type. */
+    DJI_CAMERA_FILE_TYPE_MP4 = 3, /*!< Media file MP4 type. */
+    DJI_CAMERA_FILE_TYPE_UNKNOWN = 255, /*!< Media file unknown type. */
+} E_DjiCameraMediaFileType;
+
+/**
  * @brief Camera optical zoom specifies.
  */
 typedef struct {

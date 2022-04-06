@@ -471,13 +471,16 @@ typedef struct {
 typedef struct {
     union {
         struct {
-            uint8_t reserved[16];
+            uint32_t attributePhotoReserved: 22;
+            uint32_t attributePhotoRatio: 8;
+            uint32_t attributePhotoRotation: 2;
+            uint8_t reserved[12];
         } photoAttribute;
         struct {
-            uint8_t attributeVideoDuration;
-            uint8_t attributeVideoFramerate;
-            uint8_t attributeVideoRotation;
-            uint8_t attributeVideoResolution;
+            uint32_t attributeVideoDuration: 16;
+            uint32_t attributeVideoFramerate: 6;
+            uint32_t attributeVideoRotation: 2;
+            uint32_t attributeVideoResolution: 8;
             uint8_t reserved[12];
         } videoAttribute;
     };
@@ -488,7 +491,7 @@ typedef struct {
     uint32_t fileSize;
     uint32_t fileIndex;
     T_DjiCameraManagerFileCreateTime createTime;
-    uint8_t type;
+    E_DjiCameraMediaFileType type;
     T_DjiCameraManagerFileAttributeData attributeData;
 } T_DjiCameraManagerFileListInfo;
 

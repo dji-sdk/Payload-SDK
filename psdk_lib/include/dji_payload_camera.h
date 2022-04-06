@@ -83,16 +83,6 @@ typedef enum {
 } E_DjiCameraFocusMode;
 
 /**
- * @brief Camera supported media file type.
- */
-typedef enum {
-    DJI_CAMERA_FILE_TYPE_JPEG = 0, /*!< Media file JPEG type. */
-    DJI_CAMERA_FILE_TYPE_DNG = 1, /*!< Media file DNG type. */
-    DJI_CAMERA_FILE_TYPE_MOV = 2, /*!< Media file MOV type. */
-    DJI_CAMERA_FILE_TYPE_MP4 = 3, /*!< Media file MP4 type. */
-} E_DjiCameraMediaFileType;
-
-/**
  * @brief Camera playback mode in playback process.
  */
 typedef enum {
