@@ -412,7 +412,7 @@ static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
     if (!strcmp(USER_APP_NAME, "your_app_name") ||
         !strcmp(USER_APP_ID, "your_app_id") ||
         !strcmp(USER_APP_KEY, "your_app_key") ||
-        !strcmp(USER_BAUD_RATE, "your_app_license") ||
+        !strcmp(USER_APP_LICENSE, "your_app_license") ||
         !strcmp(USER_DEVELOPER_ACCOUNT, "your_developer_account") ||
         !strcmp(USER_BAUD_RATE, "your_baud_rate")) {
         USER_LOG_ERROR(
