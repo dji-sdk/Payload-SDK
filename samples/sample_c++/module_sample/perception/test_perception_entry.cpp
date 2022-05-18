@@ -269,7 +269,9 @@ void DjiUser_RunStereoVisionViewSample(void)
             default:
                 break;
         }
+#ifdef OPEN_CV_INSTALLED
         cv::destroyAllWindows();
+#endif
     }
 
 DestroyTask:
