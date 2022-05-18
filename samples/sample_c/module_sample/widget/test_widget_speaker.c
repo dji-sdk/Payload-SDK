@@ -52,12 +52,15 @@
 #define WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME     "tts_sample.wav"
 #define WIDGET_SPEAKER_TTS_FILE_MAX_SIZE        (3000)
 
-/*The frame size is hardcoded for this sample code but it doesn't have to be*/
+/* The frame size is hardcoded for this sample code but it doesn't have to be */
 #define WIDGET_SPEAKER_AUDIO_OPUS_MAX_PACKET_SIZE    (3 * 1276)
 #define WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE     (6 * 960)
 #define WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE        (16000)
 #define WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS           (1)
 #define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE  (160)
+
+/* The speaker initialization parameters */
+#define WIDGET_SPEAKER_DEFAULT_VOLUME                (50)
 
 /* Private types -------------------------------------------------------------*/
 
@@ -119,6 +122,28 @@ T_DjiReturnCode DjiTest_WidgetSpeakerStartService(void)
     returnCode = DjiWidget_RegSpeakerHandler(&s_speakerHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Register speaker handler error: 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    returnCode = osalHandler->MutexLock(s_speakerMutex);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("lock mutex error: 0x%08llX.", returnCode);
+        return returnCode;
+    }
+
+    s_speakerState.state = DJI_WIDGET_SPEAKER_STATE_IDEL;
+    s_speakerState.workMode = DJI_WIDGET_SPEAKER_WORK_MODE_VOICE;
+    s_speakerState.playMode = DJI_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY;
+
+    returnCode = osalHandler->MutexUnlock(s_speakerMutex);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("unlock mutex error: 0x%08llX.", returnCode);
+        return returnCode;
+    }
+
+    returnCode = SetVolume(WIDGET_SPEAKER_DEFAULT_VOLUME);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Set speaker volume error: 0x%08llX", returnCode);
         return returnCode;
     }
 
@@ -633,6 +658,7 @@ static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
         returnCode = DjiTest_CheckFileMd5Sum(WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME, buf, size);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("File md5 sum check failed");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
 
         DjiTest_DecodeAudioData();
