@@ -69,6 +69,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
 
 T_DjiReturnCode HalUart_DeInit(T_DjiUartHandle uartHandle)
 {
+    free(uartHandle);
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
