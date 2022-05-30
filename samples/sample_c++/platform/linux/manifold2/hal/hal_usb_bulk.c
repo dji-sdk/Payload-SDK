@@ -30,7 +30,10 @@
 #define LINUX_USB_BULK_TRANSFER_TIMEOUT_MS    (50)
 #define LINUX_USB_BULK_TRANSFER_WAIT_FOREVER  (-1)
 
-#define LINUX_USB_BULK_DEV1                   "/dev/usb-ffs/bulk"
+#define LINUX_USB_BULK_EP_OUT                 "/dev/usb-ffs/bulk/ep1"
+#define LINUX_USB_BULK_EP_IN                  "/dev/usb-ffs/bulk/ep2"
+#define LINUX_USB_PID                         (0x0955)
+#define LINUX_USB_VID                         (0x7020)
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -80,12 +83,12 @@ T_DjiReturnCode HalUsbBulk_Init(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHan
         ((T_HalUsbBulkObj *) *usbBulkHandle)->handle = handle;
         memcpy(&((T_HalUsbBulkObj *) *usbBulkHandle)->usbBulkInfo, &usbBulkInfo, sizeof(usbBulkInfo));
 
-        ((T_HalUsbBulkObj *) *usbBulkHandle)->ep1 = open("/dev/usb-ffs/bulk/ep1", O_RDWR);
+        ((T_HalUsbBulkObj *) *usbBulkHandle)->ep1 = open(LINUX_USB_BULK_EP_OUT, O_RDWR);
         if (((T_HalUsbBulkObj *) *usbBulkHandle)->ep1 < 0) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
 
-        ((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 = open("/dev/usb-ffs/bulk/ep2", O_RDWR);
+        ((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 = open(LINUX_USB_BULK_EP_IN, O_RDWR);
         if (((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 < 0) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
@@ -177,19 +180,9 @@ T_DjiReturnCode HalUsbBulk_ReadData(T_DjiUsbBulkHandle usbBulkHandle, uint8_t *b
 
 T_DjiReturnCode HalUsbBulk_GetDeviceInfo(T_DjiHalUsbBulkDeviceInfo *deviceInfo)
 {
-    //attention: need confirm your usb config in device mode.
-    deviceInfo->vid = 0x0955;
-    deviceInfo->pid = 0x7020;
-
-    deviceInfo->bulkChannelNum = 2;
-
-    deviceInfo->channelInfo[0].interfaceNum = 0;
-    deviceInfo->channelInfo[0].endPointIn = 0x01;
-    deviceInfo->channelInfo[0].endPointOut = 0x81;
-
-    deviceInfo->channelInfo[1].interfaceNum = 0;
-    deviceInfo->channelInfo[1].endPointIn = 0x02;
-    deviceInfo->channelInfo[1].endPointOut = 0x82;
+    //attention: this interface only be called in usb device mode.
+    deviceInfo->vid = LINUX_USB_VID;
+    deviceInfo->pid = LINUX_USB_PID;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
