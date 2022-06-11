@@ -205,6 +205,7 @@ void *Osal_Malloc(uint32_t size)
 
 void Osal_Free(void *ptr)
 {
+    if(!ptr) return;
     vPortFree(ptr);
 }
 
