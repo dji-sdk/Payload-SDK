@@ -126,7 +126,7 @@ T_DjiReturnCode Osal_MutexUnlock(T_DjiMutexHandle mutex)
 
 T_DjiReturnCode Osal_SemaphoreCreate(uint32_t initValue, T_DjiSemaHandle *semaphore)
 {
-    uint32_t maxCount = UINT_MAX;
+    uint32_t maxCount = UINT16_MAX;
 
     *semaphore = xSemaphoreCreateCounting(maxCount, initValue);
 
@@ -177,6 +177,10 @@ T_DjiReturnCode Osal_SemaphoreWait(T_DjiSemaHandle semaphore)
 
 T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore)
 {
+    if (osSemaphoreGetCount(uxSemaphoreGetCount) > INT16_MAX) {
+		Osal_SemaphoreDestroy(semaphore);
+		Osal_SemaphoreCreate(0, &semaphore);
+	}
     if (xSemaphoreGive(semaphore) != pdTRUE) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
