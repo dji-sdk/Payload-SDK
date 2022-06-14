@@ -178,9 +178,9 @@ T_DjiReturnCode Osal_SemaphoreWait(T_DjiSemaHandle semaphore)
 T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore)
 {
     if (osSemaphoreGetCount(uxSemaphoreGetCount) > INT16_MAX) {
-		Osal_SemaphoreDestroy(semaphore);
-		Osal_SemaphoreCreate(0, &semaphore);
-	}
+        Osal_SemaphoreDestroy(semaphore);
+        Osal_SemaphoreCreate(0, &semaphore);
+    }
     if (xSemaphoreGive(semaphore) != pdTRUE) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
