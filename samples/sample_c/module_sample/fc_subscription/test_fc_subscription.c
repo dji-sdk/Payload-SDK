@@ -156,8 +156,9 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get value of topic velocity error.");
         } else {
-            USER_LOG_INFO("velocity: x = %f y = %f z = %f healthFlag = %d.", velocity.data.x, velocity.data.y,
-                          velocity.data.z, velocity.health);
+            USER_LOG_INFO("velocity: x = %f y = %f z = %f healthFlag = %d, timestamp ms = %d us = %d.", velocity.data.x,
+                          velocity.data.y,
+                          velocity.data.z, velocity.health, timestamp.millisecond, timestamp.microsecond);
         }
 
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_POSITION,

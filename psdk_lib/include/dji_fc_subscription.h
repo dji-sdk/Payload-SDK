@@ -157,7 +157,6 @@ typedef enum {
      *
      * @note This value is updated each time the drone takes off.
      *
-     * @sensors Visual Odometry (M210 only), Barometer, IMU
      * @units m
      * @datastruct \ref T_DjiFcSubscriptionAltitudeOfHomePoint
      */
@@ -935,8 +934,7 @@ typedef struct BatterySingleInfo {
  */
 typedef struct SDKCtrlInfo {
     uint8_t controlMode;      /*!< See CtlrMode in dji_status.hpp*/
-    uint8_t deviceStatus: 3; /*!< For M300 and M210V2(firmware version V01.00.0690 and later):0->rc  1->app  4->serial;
-                                 Other: 0->rc  1->app  2->serial*/
+    uint8_t deviceStatus: 3; /*!< 0->rc  1->app  4->serial */
     uint8_t flightStatus: 1; /*!< 1->opensd  0->close */
     uint8_t vrcStatus: 1;
     uint8_t reserved: 3;
@@ -1062,7 +1060,6 @@ typedef struct PositionVO {
 /*!
  * @brief struct for data broadcast and subscription, return obstacle info around the vehicle
  *
- * @note available in M210 (front, up, down)
  */
 typedef struct RelativePosition {
     dji_f32_t down;            /*!< distance from obstacle (m) */
@@ -1170,7 +1167,8 @@ T_DjiReturnCode DjiFcSubscription_SubscribeTopic(E_DjiFcSubscriptionTopic topic,
  * @param timestamp: pointer to memory space used to store timestamps. The memory space used to store timestamps
  * have to have been allocated correctly, and should ensure its size is equal to data structure size of timestamp,
  * otherwise, this function will not be able to return data and timestamp (return error code) or even cause memory
- * overflow event. If the user does not need timestamp information, can fill in NULL.
+ * overflow event. If the user does not need timestamp information, can fill in NULL. Use flight controller power-on
+ * timestamp on M300 RTK. Use payload local timestamp on M30/M30T.
  * @return Execution result.
  */
 T_DjiReturnCode DjiFcSubscription_GetLatestValueOfTopic(E_DjiFcSubscriptionTopic topic,

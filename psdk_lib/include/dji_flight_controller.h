@@ -294,7 +294,7 @@ DjiFlightController_GetRtkPositionEnableStatus(E_DjiFlightControllerRtkPositionE
 
 /**
  * @brief Set rc lost action.
- * @note It will be valid when rc and osdk is both lost.It only support M320.
+ * @note It will be valid when rc and osdk is both lost.It only support M30.
  * @param rcLostAction: actions when rc is lost.(hover/landing/go home).It keeps in sync with pilot's param.
  * @return Execution result.
  */
@@ -302,7 +302,7 @@ T_DjiReturnCode DjiFlightController_SetRCLostAction(E_DjiFlightControllerRCLostA
 
 /**
  * @brief Get rc lost action(hover/landing/gohome).
- * @note It will be valid when rc and osdk is both lost.It only support M320.
+ * @note It will be valid when rc and osdk is both lost.It only support M30.
  * @param rcLostAction: see reference of E_DjiFlightControllerRCLostAction.It keeps in sync with pilot's param.
  * @return Execution result.
  */
@@ -583,7 +583,7 @@ T_DjiReturnCode DjiFlightController_ExecuteEmergencyBrakeAction(void);
 
 /**
  * @brief Request cancel emergency brake action.
- * @note It is only support on M320.If you use DjiFlightController_ExecuteEmergencyBrakeAction(), you need to use
+ * @note It is only support on M30.If you use DjiFlightController_ExecuteEmergencyBrakeAction(), you need to use
  * "DjiFlightController_CancelEmergencyBrakeAction()" to allow aircraft to execute drone action again.
  * @return Execution result.
  */

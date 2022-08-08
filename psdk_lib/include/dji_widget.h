@@ -191,13 +191,9 @@ typedef struct {
 
 typedef struct {
     T_DjiReturnCode (*GetSpeakerState)(T_DjiWidgetSpeakerState *speakerState);
-
     T_DjiReturnCode (*SetWorkMode)(E_DjiWidgetSpeakerWorkMode workMode);
-    T_DjiReturnCode (*GetWorkMode)(E_DjiWidgetSpeakerWorkMode *workMode);
     T_DjiReturnCode (*SetPlayMode)(E_DjiWidgetSpeakerPlayMode playMode);
-    T_DjiReturnCode (*GetPlayMode)(E_DjiWidgetSpeakerPlayMode *playMode);
     T_DjiReturnCode (*SetVolume)(uint8_t volume);
-    T_DjiReturnCode (*GetVolume)(uint8_t *volume);
 
     T_DjiReturnCode (*StartPlay)(void);
     T_DjiReturnCode (*StopPlay)(void);

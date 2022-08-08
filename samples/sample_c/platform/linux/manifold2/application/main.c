@@ -162,6 +162,11 @@ int main(int argc, char **argv)
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget interaction sample init error");
         }
+
+        returnCode = DjiTest_WidgetSpeakerStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget speaker test init error");
+        }
     } else {
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
         returnCode = DjiTest_CameraEmuBaseStartService();
@@ -216,11 +221,9 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
-            returnCode = DjiTest_WidgetSpeakerStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("widget speaker test init error");
-            }
+        returnCode = DjiTest_WidgetSpeakerStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget speaker test init error");
         }
 #endif
 

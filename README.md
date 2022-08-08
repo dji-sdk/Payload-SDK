@@ -1,6 +1,6 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.1.0-orange.svg)
+![](https://img.shields.io/badge/version-V3.2.0-orange.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Join the chat at https://gitter.im/dji-sdk/Payload-SDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dji-sdk/Payload-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -15,17 +15,31 @@ Payload Controller, Video Image Analysis Platform, Mapping Camera, Megaphone And
 
 ## Documentation
 
-For full documentation, please visit the [DJI Developer Documentation](https://developer.dji.com/payload-sdk/documentation/). 
-Documentation regarding the code can be found in the [PSDK API Reference](https://developer.dji.com/payload-api-reference/introduction/index.html) section of the developer's website.
-Please visit the [Latest Version Information](https://developer.dji.com/payload-sdk/documentation/appendix/firmware.html) to get the latest version information.
+For full documentation, please visit
+the [DJI Developer Documentation](https://developer.dji.com/payload-sdk/documentation/). Documentation regarding the
+code can be found in the [PSDK API Reference](https://developer.dji.com/payload-api-reference/introduction/index.html)
+section of the developer's website. Please visit
+the [Latest Version Information](https://developer.dji.com/payload-sdk/documentation/appendix/firmware.html) to get the
+latest version information.
 
 ## Latest Release
 
-PSDK 3.1.0 was released on 21 March 2022. This version of Payload SDK mainly add some features support, such as add the 
-Matrice 30/30T support, add the standard speaker widget support on M30/M30T, add the waypoint 3.0 support on M30/30T, add the 
-get camera laser ranging data support on M30/30T, add the power-off notification support on M300 RTK OSDK port, etc. At 
-the same time, we also fixed some bugs on the last version, add more sample support and add ESP32 toolchain support. 
-Please refer to the release notes for detailed changes list.
+PSDK 3.2.0 was released on 08 August 2022. This version of Payload SDK mainly add some features support and fixed some
+bugs. Please refer to the release notes for detailed changes list.
+
+* Add the support of standard speaker on M300 RTK, M30/M30T Pilot
+* Add the support of the mapping between the speaker with the remote controller button on M300 RTK, M30/M30T Pilot
+* Add function support for H20N on M300 RTK
+* Add infrared zoom function support of H20T on M300 RTK
+* Fix the occasional problem of the Camera Livestream can not be subscribed on M30/M30T
+* Fix the problem of some interfaces of camera management run error on M30/M30T
+* Fix the problem of the infrared code stream can not be obtained on M30/M30T
+* Fix the problem of RTOS platform data subscription crash on M30/M30T
+* Fix the occasional problem of abnormal media download function on M300 RTK
+* Fix the occasional problem of abnormal SDK interconnection function on M300 RTK
+* Fix the occasional problem of the PSDK payload name displays abnormally
+* Fix the coordinate system problem of the gimbal angle of the data subscription function
+* Optimize the compilation dependency problems of third-party dependent libraries
 
 ## License
 

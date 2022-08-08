@@ -53,7 +53,33 @@ add_executable(${PROJECT_NAME}
         ${MODULE_SAMPLE_SRC}
         ${MODULE_COMMON_SRC}
         ${MODULE_HAL_SRC})
-target_link_libraries(${PROJECT_NAME} m usb-1.0)
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../common/3rdparty)
+find_package(OPUS REQUIRED)
+if (OPUS_FOUND)
+    message(STATUS "Found OPUS installed in the system")
+    message(STATUS " - Includes: ${OPUS_INCLUDE_DIR}")
+    message(STATUS " - Libraries: ${OPUS_LIBRARY}")
+
+    add_definitions(-DOPUS_INSTALLED)
+    target_link_libraries(${PROJECT_NAME} /usr/local/lib/libopus.a)
+else ()
+    message(STATUS "Cannot Find OPUS")
+endif (OPUS_FOUND)
+
+find_package(LIBUSB REQUIRED)
+if (LIBUSB_FOUND)
+    message(STATUS "Found LIBUSB installed in the system")
+    message(STATUS " - Includes: ${LIBUSB_INCLUDE_DIR}")
+    message(STATUS " - Libraries: ${LIBUSB_LIBRARY}")
+
+    add_definitions(-DLIBUSB_INSTALLED)
+    target_link_libraries(${PROJECT_NAME} usb-1.0)
+else ()
+    message(STATUS "Cannot Find LIBUSB")
+endif (LIBUSB_FOUND)
+
+target_link_libraries(${PROJECT_NAME} m)
 
 add_custom_command(TARGET ${PROJECT_NAME}
         PRE_LINK COMMAND cmake ..

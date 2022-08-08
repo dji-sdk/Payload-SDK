@@ -7,6 +7,10 @@
     "floating_window": {
       "is_enable": true
     },
+    "speaker": {
+      "is_enable_tts": true,
+      "is_enable_voice": true
+    },
     "widget_list": [
       {
         "widget_index": 0,

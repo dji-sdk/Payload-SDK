@@ -30,6 +30,7 @@
 #include "dji_logger.h"
 #include <math.h>
 #include <widget_interaction_test/test_widget_interaction.h>
+#include <dji_aircraft_info.h>
 /* Private constants ---------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -665,6 +666,12 @@ void DjiTest_FlightControlSetGetParamSample()
     E_DjiFlightControllerGoHomeAltitude goHomeAltitude;
     E_DjiFlightControllerRtkPositionEnableStatus rtkEnableStatus;
     E_DjiFlightControllerRCLostAction rcLostAction;
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+    }
 
     USER_LOG_INFO("Flight control set-get-param sample start");
     DjiTest_WidgetLogAppend("Flight control set-get-param sample start");
@@ -823,25 +830,27 @@ void DjiTest_FlightControlSetGetParamSample()
     s_osalHandler->TaskSleepMs(1000);
 
     /*! Set rc lost action */
-    USER_LOG_INFO("--> Step 15: Set rc lost action");
-    DjiTest_WidgetLogAppend("--> Step 15: Set rc lost action");
-    returnCode = DjiFlightController_SetRCLostAction(DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GOHOME);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Set rc lost action failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
+    if (aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M300_RTK) {
+        USER_LOG_INFO("--> Step 15: Set rc lost action");
+        DjiTest_WidgetLogAppend("--> Step 15: Set rc lost action");
+        returnCode = DjiFlightController_SetRCLostAction(DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GOHOME);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Set rc lost action failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+        s_osalHandler->TaskSleepMs(1000);
 
-    USER_LOG_INFO("--> Step 16: Get rc lost action\r\n");
-    DjiTest_WidgetLogAppend("--> Step 16: Get rc lost action\r\n");
-    returnCode = DjiFlightController_GetRCLostAction(&rcLostAction);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get rc lost action failed, error code: 0x%08X", returnCode);
-        goto out;
+        USER_LOG_INFO("--> Step 16: Get rc lost action\r\n");
+        DjiTest_WidgetLogAppend("--> Step 16: Get rc lost action\r\n");
+        returnCode = DjiFlightController_GetRCLostAction(&rcLostAction);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get rc lost action failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+        USER_LOG_INFO("Current rc lost action is %d\r\n", rcLostAction);
+        DjiTest_WidgetLogAppend("Current rc lost action is %d\r\n", rcLostAction);
+        s_osalHandler->TaskSleepMs(1000);
     }
-    USER_LOG_INFO("Current rc lost action is %d\r\n", rcLostAction);
-    DjiTest_WidgetLogAppend("Current rc lost action is %d\r\n", rcLostAction);
-    s_osalHandler->TaskSleepMs(1000);
 
 out:
     USER_LOG_INFO("Flight control set-get-param sample end");

@@ -46,7 +46,7 @@ include_directories(../../../../../module_sample
         ../../drivers/USB_HOST/App
         ../../drivers/BSP
         ../../hal/
-        ../../osal/
+        ../../../common/osal/
         ../../middlewares/Third_Party/FreeRTOS/Source/include
         ../../middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
         ../../middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
@@ -79,7 +79,7 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         )
 
 file(GLOB_RECURSE SOURCES
-        "../../osal/*.*"
+        "../../../common/osal/*.*"
         "../../drivers/BSP/*.*"
         "../../hal/*.*"
         "../../drivers/USB_HOST/*.*"

@@ -6,11 +6,15 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   ├── dji_sdk_code_style
 │   │   ├── dji_sdk_template.c
 │   │   └── dji_sdk_template.h
+│   ├── reference_designs
+│   │   └── Type-C Schematic Reference.pdf
 │   └── simple_model
 │       ├── M300_OSDK_Adapter.stp
 │       ├── M300_RTK_1.stp
 │       ├── M300_RTK_2.stp
 │       ├── M300_RTK_3.stp
+│       ├── M30T.stp
+│       ├── PSDK Mounting Bracket(Payload).stp
 │       ├── Skyport_Adapter_2.stp
 │       └── X-Port 80mm.stp
 ├── EULA.txt
@@ -43,6 +47,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   ├── dji_version.h
 │   │   ├── dji_waypoint_v2.h
 │   │   ├── dji_waypoint_v2_type.h
+│   │   ├── dji_waypoint_v3.h
 │   │   ├── dji_widget.h
 │   │   ├── dji_xport.h
 │   │   └── legacy_psdk2.x
@@ -75,7 +80,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       ├── aarch64-linux-gnu-gcc
 │       │   └── libpayloadsdk.a
 │       ├── armcc_cortex-m4
-│       │   └── libpayloadsdk.lib
+│       │   └── libpayload.lib
 │       ├── arm-himix100-linux-gcc
 │       │   └── libpayloadsdk.a
 │       ├── arm-himix200-linux-gcc
@@ -96,7 +101,9 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       │   └── libpayloadsdk.a
 │       ├── arm-none-eabi-gcc
 │       │   └── libpayloadsdk.a
-│       └── x86_64-linux-gnu-gcc
+│       ├── x86_64-linux-gnu-gcc
+│       │   └── libpayloadsdk.a
+│       └── xtensa-esp32-elf-gcc
 │           └── libpayloadsdk.a
 ├── README.md
 ├── samples
@@ -186,11 +193,20 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   ├── waypoint_v2
 │   │   │   │   ├── test_waypoint_v2.c
 │   │   │   │   └── test_waypoint_v2.h
+│   │   │   ├── waypoint_v3
+│   │   │   │   ├── test_waypoint_v3.c
+│   │   │   │   ├── test_waypoint_v3.h
+│   │   │   │   ├── waypoint_file
+│   │   │   │   │   └── waypoint_v3_test_file.kmz
+│   │   │   │   └── waypoint_file_c
+│   │   │   │       └── waypoint_v3_test_file_kmz.h
 │   │   │   ├── widget
 │   │   │   │   ├── file_binary_array_list_en.c
 │   │   │   │   ├── file_binary_array_list_en.h
 │   │   │   │   ├── test_widget.c
 │   │   │   │   ├── test_widget.h
+│   │   │   │   ├── test_widget_speaker.c
+│   │   │   │   ├── test_widget_speaker.h
 │   │   │   │   ├── widget_file
 │   │   │   │   │   ├── cn_big_screen
 │   │   │   │   │   │   ├── icon_button1.png
@@ -261,8 +277,9 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       ├── linux
 │   │       │   ├── common
 │   │       │   │   ├── 3rdparty
-│   │       │   │   │   └── ffmpeg
-│   │       │   │   │       └── FindFFMPEG.cmake
+│   │       │   │   │   ├── FindFFMPEG.cmake
+│   │       │   │   │   ├── FindLIBUSB.cmake
+│   │       │   │   │   └── FindOPUS.cmake
 │   │       │   │   ├── monitor
 │   │       │   │   │   ├── sys_monitor.c
 │   │       │   │   │   └── sys_monitor.h
@@ -302,12 +319,24 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │   ├── dji_sdk_config.h
 │   │               │   ├── FreeRTOSConfig.h
 │   │               │   └── main.c
+│   │               ├── bootloader
+│   │               │   ├── common.c
+│   │               │   ├── common.h
+│   │               │   ├── main.c
+│   │               │   ├── main.h
+│   │               │   ├── menu.c
+│   │               │   ├── menu.h
+│   │               │   └── ymodem.c
 │   │               ├── drivers
 │   │               │   ├── BSP
 │   │               │   │   ├── apply_high_power.c
 │   │               │   │   ├── apply_high_power.h
+│   │               │   │   ├── button.c
+│   │               │   │   ├── button.h
 │   │               │   │   ├── dji_ringbuffer.c
 │   │               │   │   ├── dji_ringbuffer.h
+│   │               │   │   ├── flash_if.c
+│   │               │   │   ├── flash_if.h
 │   │               │   │   ├── freertos.c
 │   │               │   │   ├── led.c
 │   │               │   │   ├── led.h
@@ -321,15 +350,16 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │   │   ├── stm32f4xx_it.h
 │   │               │   │   ├── syscalls.c
 │   │               │   │   ├── sysmem.c
+│   │               │   │   ├── sysmem.h
 │   │               │   │   ├── system_stm32f4xx.c
 │   │               │   │   ├── uart.c
-│   │               │   │   └── uart.h
+│   │               │   │   ├── uart.h
+│   │               │   │   ├── upgrade_platform_opt_stm32.c
+│   │               │   │   └── upgrade_platform_opt_stm32.h
 │   │               │   ├── CMSIS
 │   │               │   │   ├── Device
 │   │               │   │   │   └── ST
 │   │               │   │   │       └── STM32F4xx
-│   │               │   │   │           ├── Include
-│   │               │   │   │           └── Source
 │   │               │   │   └── Include
 │   │               │   ├── STM32F4xx_HAL_Driver
 │   │               │   │   ├── Inc
@@ -378,21 +408,22 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │               ├── stream_buffer.c
 │   │               │               ├── tasks.c
 │   │               │               └── timers.c
-│   │               └── project
-│   │                   ├── clion_app
-│   │                   │   ├── CMakeLists.txt
-│   │                   │   ├── STM32F407VGTX_FLASH.ld
-│   │                   │   └── stm32f4discovery.cfg
-│   │                   └── mdk_app
-│   │                       └── mdk_app.uvprojx
+│   │               ├── project
+│   │               │   ├── armgcc
+│   │               │   │   ├── CMakeLists.txt
+│   │               │   │   ├── STM32F407VGTX_FLASH.ld
+│   │               │   │   └── stm32f4discovery.cfg
+│   │               │   ├── mdk
+│   │               │   │   └── mdk_app.uvprojx
+│   │               │   └── mdk_bootloader
+│   │               │       └── mdk_bootloader.uvprojx
+│   │               └── readme.txt
 │   └── sample_c++
 │       ├── module_sample
 │       │   ├── liveview
 │       │   │   ├── data
-│       │   │   │   ├── cars.xml
 │       │   │   │   ├── haarcascade_frontalface_alt.xml
 │       │   │   │   └── tensorflow
-│       │   │   │       ├── frozen_inference_graph.pb
 │       │   │   │       └── ssd_inception_v2_coco_2017_11_17.pbtxt
 │       │   │   ├── dji_camera_image_handler.cpp
 │       │   │   ├── dji_camera_image_handler.hpp
@@ -410,9 +441,17 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       └── platform
 │           └── linux
 │               ├── common
+│               │   ├── 3rdparty
+│               │   │   ├── FindFFMPEG.cmake
+│               │   │   ├── FindLIBUSB.cmake
+│               │   │   └── FindOPUS.cmake
 │               │   └── osal
 │               │       ├── osal.c
-│               │       └── osal.h
+│               │       ├── osal_fs.c
+│               │       ├── osal_fs.h
+│               │       ├── osal.h
+│               │       ├── osal_socket.c
+│               │       └── osal_socket.h
 │               └── manifold2
 │                   ├── application
 │                   │   ├── application.cpp
@@ -420,14 +459,13 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │                   │   ├── dji_sdk_app_info.h
 │                   │   └── main.cpp
 │                   ├── CMakeLists.txt
-│                   ├── FindFFMPEG.cmake
 │                   └── hal
 │                       ├── hal_network.c
 │                       ├── hal_network.h
 │                       ├── hal_uart.c
 │                       ├── hal_uart.h
 │                       ├── hal_usb_bulk.c
-│                     └── hal_usb_bulk.h
+│                       └── hal_usb_bulk.h
 └── tools
     └── file2c
         ├── file2c.exe

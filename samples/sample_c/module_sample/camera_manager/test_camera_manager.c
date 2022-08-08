@@ -31,8 +31,8 @@
 #include "dji_logger.h"
 #include "dji_liveview.h"
 /* Private constants ---------------------------------------------------------*/
-#define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             32
-#define TEST_CAMERA_MANAGER_MEDIA_EXTEND_INFO_MAX_SIZE           128
+#define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             256
+#define TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM              5
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -53,10 +53,14 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_L1,      "Zenmuse L1"},
     {DJI_CAMERA_TYPE_M30,     "Zenmuse M30"},
     {DJI_CAMERA_TYPE_M30T,    "Zenmuse M30T"},
+    {DJI_CAMERA_TYPE_H20N,    "Zenmuse H20N"},
 };
 
 static FILE *s_downloadMediaFile = NULL;
 static T_DjiCameraManagerFileList s_meidaFileList;
+static uint32_t downloadStartMs = 0;
+static uint32_t downloadEndMs = 0;
+static char downloadFileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE] = {0};
 
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraType);
@@ -817,7 +821,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                        mountPosition, returnCode);
         goto exitCameraModule;
     }
-    USER_LOG_INFO("Mounted position %d camera's firmware is V%d.%d.%d.%d\r\n", mountPosition,
+    USER_LOG_INFO("Mounted position %d camera's firmware is V%02d.%02d.%02d.%02d\r\n", mountPosition,
                   firmwareVersion.firmware_version[0], firmwareVersion.firmware_version[1],
                   firmwareVersion.firmware_version[2], firmwareVersion.firmware_version[3]);
 
@@ -850,7 +854,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_SHUTTER_SPEED: {
             USER_LOG_INFO("--> Function a: Set camera shutter speed to 1/100 s");
             DjiTest_WidgetLogAppend("--> Function a: Set camera shutter speed to 1/100 s");
-            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T) {
+            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
+                cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -886,7 +891,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_APERTURE: {
             USER_LOG_INFO("--> Function b: Set camera aperture to 400(F/4)");
             DjiTest_WidgetLogAppend("--> Function b: Set camera aperture to 400(F/4)");
-            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T) {
+            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T
+                || cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -1188,12 +1194,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-
-    returnCode = DjiCameraManager_DownloadFileList(position, &s_meidaFileList);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Download file list failed, error code: 0x%08X.", returnCode);
-        return returnCode;
-    }
+    uint16_t downloadCount = 0;
 
     returnCode = DjiCameraManager_RegDownloadFileDataCallback(position, DjiTest_CameraManagerDownloadFileDataCallback);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1201,11 +1202,21 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         return returnCode;
     }
 
+    returnCode = DjiCameraManager_DownloadFileList(position, &s_meidaFileList);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Download file list failed, error code: 0x%08X.", returnCode);
+        return returnCode;
+    }
+
     if (s_meidaFileList.totalCount > 0) {
-        for (int i = 0; i < s_meidaFileList.totalCount; ++i) {
+        downloadCount = s_meidaFileList.totalCount;
+        printf(
+            "\033[1;33;40m -> Download file list finished, total file count is %d, the following %d is list details: \033[0m\r\n",
+            s_meidaFileList.totalCount, downloadCount);
+        for (int i = 0; i < downloadCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileSize < 1 * 1024 * 1024) {
-                USER_LOG_INFO(
-                    "Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d",
+                printf(
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1217,8 +1228,8 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
                     (dji_f32_t) s_meidaFileList.fileListInfo[i].fileSize / 1024,
                     s_meidaFileList.fileListInfo[i].type);
             } else {
-                USER_LOG_INFO(
-                    "Media file_%03d name: %s, index: %d,  time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d",
+                printf(
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1231,16 +1242,23 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
                     s_meidaFileList.fileListInfo[i].type);
             }
         }
+        printf("\r\n");
 
         osalHandler->TaskSleepMs(1000);
 
-        returnCode = DjiCameraManager_DownloadFileByIndex(position, s_meidaFileList.fileListInfo[0].fileIndex);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Download media file by index failed, error code: 0x%08X.", returnCode);
-            return returnCode;
+        if (s_meidaFileList.totalCount < TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM) {
+            downloadCount = s_meidaFileList.totalCount;
+        } else {
+            downloadCount = TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM;
         }
 
-        osalHandler->TaskSleepMs(1000);
+        for (int i = 0; i < downloadCount; ++i) {
+            returnCode = DjiCameraManager_DownloadFileByIndex(position, s_meidaFileList.fileListInfo[i].fileIndex);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Download media file by index failed, error code: 0x%08X.", returnCode);
+                return returnCode;
+            }
+        }
 
         returnCode = DjiCameraManager_DeleteFileByIndex(position, s_meidaFileList.fileListInfo[0].fileIndex);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1250,7 +1268,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 
         osalHandler->TaskSleepMs(1000);
     } else {
-        USER_LOG_WARN("Media file is not existed in sdcard.");
+        USER_LOG_WARN("Media file is not existed in sdcard.\r\n");
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -1259,11 +1277,9 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownloadFilePacketInfo packetInfo,
                                                                      const uint8_t *data, uint16_t len)
 {
-    char fileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE];
-    char extendInfo[TEST_CAMERA_MANAGER_MEDIA_EXTEND_INFO_MAX_SIZE];
     int32_t i;
-
-    sprintf(extendInfo, " FileIndex: %d", packetInfo.fileIndex);
+    float downloadSpeed = 0.0f;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
     if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_START) {
         for (i = 0; i < s_meidaFileList.totalCount; ++i) {
@@ -1271,9 +1287,12 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
                 break;
             }
         }
-        sprintf(fileName, "%s", s_meidaFileList.fileListInfo[i].fileName);
-        USER_LOG_INFO("Start download media file %s", s_meidaFileList.fileListInfo[i].fileName);
-        s_downloadMediaFile = fopen(fileName, "wb+");
+        osalHandler->GetTimeMs(&downloadStartMs);
+
+        memset(downloadFileName, 0, sizeof(downloadFileName));
+        snprintf(downloadFileName, sizeof(downloadFileName), "%s", s_meidaFileList.fileListInfo[i].fileName);
+        USER_LOG_INFO("Start download media file");
+        s_downloadMediaFile = fopen(downloadFileName, "wb+");
         if (s_downloadMediaFile == NULL) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
@@ -1282,13 +1301,24 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
         if (s_downloadMediaFile != NULL) {
             fwrite(data, 1, len, s_downloadMediaFile);
         }
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+               packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
+        printf("\033[1A");
+        USER_LOG_DEBUG("Transfer download media file data, len: %d, percent: %.1f", len, packetInfo.progressInPercent);
     } else if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_END) {
         if (s_downloadMediaFile != NULL) {
             fwrite(data, 1, len, s_downloadMediaFile);
         }
+        osalHandler->GetTimeMs(&downloadEndMs);
 
-        USER_LOG_INFO("End download media file");
+        downloadSpeed = (float) packetInfo.fileSize / (float) (downloadEndMs - downloadStartMs);
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+               packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
+        printf("\033[1A");
+        printf("\r\n");
+        USER_LOG_INFO("End download media file, Download Speed %.2f KB/S\r\n\r\n", downloadSpeed);
         fclose(s_downloadMediaFile);
+        s_downloadMediaFile = NULL;
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
