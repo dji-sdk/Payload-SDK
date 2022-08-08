@@ -3,24 +3,23 @@
 ![](https://img.shields.io/badge/version-V3.2.0-orange.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
-[![Join the chat at https://gitter.im/dji-sdk/Payload-SDK](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dji-sdk/Payload-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## What is the DJI Payload SDK?
 
-The DJI Payload SDK(PSDK), is a development kit provided by DJI to support developers to develop payload that can be mounted 
-on DJI drones. Combined with the X-Port, SkyPort or extension port adapter, developers can obtain the information or other 
-resource from the drone. According to the software logic and algorithm framework designed by the developer, users could 
-develop payload that can be mounted on DJI Drone, to perform actions they need, such as Automated Flight Controller, 
-Payload Controller, Video Image Analysis Platform, Mapping Camera, Megaphone And Searchlight, etc.
+The DJI Payload SDK(PSDK), is a development kit provided by DJI to support developers to develop payload that can be
+mounted on DJI drones. Combined with the X-Port, SkyPort or extension port adapter, developers can obtain the
+information or other resource from the drone. According to the software logic and algorithm framework designed by the
+developer, users could develop payload that can be mounted on DJI Drone, to perform actions they need, such as Automated
+Flight Controller, Payload Controller, Video Image Analysis Platform, Mapping Camera, Megaphone And Searchlight, etc.
 
 ## Documentation
 
 For full documentation, please visit
-the [DJI Developer Documentation](https://developer.dji.com/payload-sdk/documentation/). Documentation regarding the
-code can be found in the [PSDK API Reference](https://developer.dji.com/payload-api-reference/introduction/index.html)
+the [DJI Developer Documentation](https://developer.dji.com/doc/payload-sdk-tutorial/en/whats-new/). Documentation
+regarding the code can be found in the [PSDK API Reference](https://developer.dji.com/doc/payload-sdk-api-reference/en/)
 section of the developer's website. Please visit
-the [Latest Version Information](https://developer.dji.com/payload-sdk/documentation/appendix/firmware.html) to get the
-latest version information.
+the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/whats-new/version-announcement.html)
+to get the latest version information.
 
 ## Latest Release
 
@@ -66,8 +65,8 @@ You can get official support from DJI and the community with the following metho
 - Submit a request describing your problem on Developer Support
   * [DJI SDK Developer Support(Cn)](https://djisdksupport.zendesk.com/hc/zh-cn/requests/new)
   * [DJI SDK Developer Support(En)](https://djisdksupport.zendesk.com/hc/en-us/requests/new)
-  
+
 You can also communicate with other developers by the following methods:
 
-- Github Issues or [gitter.im](https://gitter.im/dji-sdk/Payload-SDK)
-- Post questions on [**Stackoverflow**](http://stackoverflow.com) using [**dji-sdk**](http://stackoverflow.com/questions/tagged/dji-sdk) tag
+- Post questions on [**Stackoverflow**](http://stackoverflow.com) using [**
+  dji-sdk**](http://stackoverflow.com/questions/tagged/dji-sdk) tag
