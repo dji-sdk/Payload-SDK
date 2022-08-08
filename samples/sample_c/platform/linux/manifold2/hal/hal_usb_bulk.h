@@ -38,9 +38,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <libusb-1.0/libusb.h>
-
 #include "dji_platform.h"
+
+#ifdef LIBUSB_INSTALLED
+#include <libusb-1.0/libusb.h>
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {

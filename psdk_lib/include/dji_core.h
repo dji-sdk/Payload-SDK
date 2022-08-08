@@ -89,6 +89,12 @@ T_DjiReturnCode DjiCore_SetAlias(const char *productAlias);
  */
 T_DjiReturnCode DjiCore_ApplicationStart(void);
 
+/**
+ * @brief DeInitialize the Payload SDK core in blocking mode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCore_DeInit(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,8 +1,6 @@
 /**
  ********************************************************************
- * @file    psdk_osal.c
- * @version V2.0.0
- * @date    2019/07/01
+ * @file   osal.c
  * @brief
  *
  * @copyright (c) 2021 DJI. All rights reserved.
@@ -31,6 +29,10 @@
 /* Private constants ---------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
+
+/* Private values -------------------------------------------------------------*/
+static uint32_t s_localTimeMsOffset = 0;
+static uint64_t s_localTimeUsOffset = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 
@@ -281,6 +283,12 @@ T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
     gettimeofday(&time, NULL);
     *ms = (time.tv_sec * 1000 + time.tv_usec / 1000);
 
+    if (s_localTimeMsOffset == 0) {
+        s_localTimeMsOffset = *ms;
+    } else {
+        *ms = *ms - s_localTimeMsOffset;
+    }
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
@@ -291,15 +299,17 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
     gettimeofday(&time, NULL);
     *us = (time.tv_sec * 1000000 + time.tv_usec);
 
+    if (s_localTimeUsOffset == 0) {
+        s_localTimeUsOffset = *us;
+    } else {
+        *us = *us - s_localTimeMsOffset;
+    }
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 void *Osal_Malloc(uint32_t size)
 {
-    if (size == 0) {
-        return NULL;
-    }
-
     return malloc(size);
 }
 

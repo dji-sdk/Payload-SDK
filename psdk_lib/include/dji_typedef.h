@@ -114,6 +114,7 @@ typedef enum {
     DJI_CAMERA_TYPE_XTS = 41, /*!< Camera type is XT S. */
     DJI_CAMERA_TYPE_H20 = 42, /*!< Camera type is H20. */
     DJI_CAMERA_TYPE_H20T = 43, /*!< Camera type is H20T. */
+    DJI_CAMERA_TYPE_H20N = 61, /*!< Camera type is H20N. */
     DJI_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
     DJI_CAMERA_TYPE_L1, /*!< Camera type is L1. */
     DJI_CAMERA_TYPE_M30, /*!< Camera type is M30. */
@@ -256,7 +257,7 @@ typedef enum {
 typedef enum {
     /*! The number of pictures to continuously take each time in BURST mode is 2
      */
-    DJI_CAMERA_BURST_COUNT_2  = 2,
+    DJI_CAMERA_BURST_COUNT_2 = 2,
     /*! The number of pictures to continuously take each time in BURST mode is 3
      */
     DJI_CAMERA_BURST_COUNT_3 = 3,
@@ -359,7 +360,8 @@ typedef struct {
  * @param data: pointer to data of the topic, user need transfer type of this pointer to the corresponding data structure
  * pointer for getting every item of the topic conveniently.
  * @param dataSize: the size of memory space pointed by data argument, equal to data structure size corresponding to the topic.
- * @param timestamp: pointer to timestamp corresponding this data.
+ * @param timestamp: pointer to timestamp corresponding this data. Use flight controller power-on timestamp on M300 RTK.
+ * Use payload local timestamp on M30/M30T.
  * @return Execution result.
  */
 typedef T_DjiReturnCode (*DjiReceiveDataOfTopicCallback)(const uint8_t *data, uint16_t dataSize,

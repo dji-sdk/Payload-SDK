@@ -30,6 +30,10 @@
 
 /* Private types -------------------------------------------------------------*/
 
+/* Private values -------------------------------------------------------------*/
+static uint32_t s_localTimeMsOffset = 0;
+static uint64_t s_localTimeUsOffset = 0;
+
 /* Private functions declaration ---------------------------------------------*/
 
 /* Exported functions definition ---------------------------------------------*/
@@ -279,6 +283,12 @@ T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
     gettimeofday(&time, NULL);
     *ms = (time.tv_sec * 1000 + time.tv_usec / 1000);
 
+    if (s_localTimeMsOffset == 0) {
+        s_localTimeMsOffset = *ms;
+    } else {
+        *ms = *ms - s_localTimeMsOffset;
+    }
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
@@ -288,6 +298,12 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
 
     gettimeofday(&time, NULL);
     *us = (time.tv_sec * 1000000 + time.tv_usec);
+
+    if (s_localTimeUsOffset == 0) {
+        s_localTimeUsOffset = *us;
+    } else {
+        *us = *us - s_localTimeMsOffset;
+    }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

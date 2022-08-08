@@ -189,11 +189,16 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    returnCode = osalHandler->TaskCreate("user_camera_media_task", UserCameraMedia_SendVideoTask, 2048,
-                                         NULL, &s_userSendVideoThread);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("user send video task create error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    if (DjiPlatform_GetSocketHandler() != NULL) {
+        returnCode = osalHandler->TaskCreate("user_camera_media_task", UserCameraMedia_SendVideoTask, 2048,
+                                             NULL, &s_userSendVideoThread);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("user send video task create error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+        }
+    } else {
+        USER_LOG_WARN(
+            "Socket handler is null. Probably because socket handler is not be registered. Camera media sample may not be running.");
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

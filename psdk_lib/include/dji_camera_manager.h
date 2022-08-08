@@ -509,7 +509,8 @@ typedef enum {
 typedef struct {
     E_DjiDownloadFileEvent downloadFileEvent;
     uint32_t fileIndex;
-    uint8_t progressInPercent;
+    uint32_t fileSize;
+    float progressInPercent;
 } T_DjiDownloadFilePacketInfo;
 
 typedef struct {
@@ -768,6 +769,15 @@ T_DjiReturnCode DjiCameraManager_GetOpticalZoomParam(E_DjiMountPosition position
                                                      T_DjiCameraManagerOpticalZoomParam *opticalZoomParam);
 
 /**
+ * @brief Set parameters for camera infrared zooming of the selected camera mounted position.
+ * @param position: camera mounted position
+ * @param factor: target zoom factor.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetInfraredZoomParam(E_DjiMountPosition position,
+                                                      dji_f32_t factor);
+
+/**
  * @brief Stop camera optical zooming of the selected camera mounted position.
  * @note Called to stop focal length changing, when it currently is from
  * calling DjiCameraManager_StartContinuousOpticalZoom*.
@@ -957,6 +967,8 @@ T_DjiReturnCode DjiCameraManager_StopRecordVideo(E_DjiMountPosition position);
 
 /**
  * @brief Download selected camera media file list.
+ * @note The interface is a synchronous interface, which occupies more CPU resources when using it.
+ * If the download file fails, the timeout time is 3S.
  * @param position: the mount position of the camera
  * @param fileList: the pointer to the downloaded camera file list
  * @return Execution result.
@@ -975,7 +987,8 @@ T_DjiReturnCode DjiCameraManager_RegDownloadFileDataCallback(E_DjiMountPosition 
 /**
  * @brief Download selected camera media file by file index.
  * @note Only support download one file at the same time, the new file download need wait for the previous file
- * download finished.
+ * download finished.The interface is a synchronous interface, which occupies more CPU resources when using it.
+ * If the download file fails, the timeout time is 3S.
  * @param position: the mount position of the camera
  * @param fileIndex: the index of the camera media file
  * @return Execution result.

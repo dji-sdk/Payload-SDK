@@ -64,28 +64,29 @@ int main(int argc, char **argv)
 start:
     std::cout
         << "\n"
-        << "| Available commands:                                                                         |\n"
-        << "| [0] Fc subscribe sample - subscribe quaternion and gps data                                 |\n"
-        << "| [1] Flight controller sample - take off landing                                             |\n"
-        << "| [2] Flight controller sample - take off position ctrl landing                               |\n"
-        << "| [3] Flight controller sample - take off go home force landing                               |\n"
-        << "| [4] Flight controller sample - take off velocity ctrl landing                               |\n"
-        << "| [5] Flight controller sample - arrest flying                                                |\n"
-        << "| [6] Flight controller sample - set get parameters                                           |\n"
-        << "| [7] Hms info sample - get health manger system info                                         |\n"
-        << "| [8] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)        |\n"
-        << "| [9] Waypoint 3.0 sample - run airline mission by kmz file (only support on M30/30T)         |\n"
-        << "| [a] Gimbal manager sample - rotate gimbal on free mode                                      |\n"
-        << "| [b] Gimbal manager sample - rotate gimbal on yaw follow mode                                |\n"
-        << "| [c] Camera stream view sample - display the camera video stream                             |\n"
-        << "| [d] Stereo vision view sample - display the stereo image (only support on M300 RTK)         |\n"
-        << "| [e] Start camera all feautes sample - you can operate the camera on DJI Pilot               |\n"
-        << "| [f] Start gimbal all feautes sample - you can operate the gimbal on DJI Pilot               |\n"
-        << "| [g] Start widget all feautes sample - you can operate the widget on DJI Pilot               |\n"
-        << "| [h] Start widget speaker sample - you can operate the speaker on MSDK demo                  |\n"
-        << "| [i] Start power management sample - you will see notification when aircraft power off       |\n"
-        << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo          |\n"
-        << "| [l] Run camera manager sample - shoot photo by the selected camera mounted position         |\n"
+        << "| Available commands:                                                                              |\n"
+        << "| [0] Fc subscribe sample - subscribe quaternion and gps data                                      |\n"
+        << "| [1] Flight controller sample - take off landing                                                  |\n"
+        << "| [2] Flight controller sample - take off position ctrl landing                                    |\n"
+        << "| [3] Flight controller sample - take off go home force landing                                    |\n"
+        << "| [4] Flight controller sample - take off velocity ctrl landing                                    |\n"
+        << "| [5] Flight controller sample - arrest flying                                                     |\n"
+        << "| [6] Flight controller sample - set get parameters                                                |\n"
+        << "| [7] Hms info sample - get health manger system info                                              |\n"
+        << "| [8] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)             |\n"
+        << "| [9] Waypoint 3.0 sample - run airline mission by kmz file (only support on M30/30T)              |\n"
+        << "| [a] Gimbal manager sample - rotate gimbal on free mode                                           |\n"
+        << "| [b] Gimbal manager sample - rotate gimbal on yaw follow mode                                     |\n"
+        << "| [c] Camera stream view sample - display the camera video stream                                  |\n"
+        << "| [d] Stereo vision view sample - display the stereo image (only support on M300 RTK)              |\n"
+        << "| [e] Start camera all feautes sample - you can operate the camera on DJI Pilot                    |\n"
+        << "| [f] Start gimbal all feautes sample - you can operate the gimbal on DJI Pilot                    |\n"
+        << "| [g] Start widget all feautes sample - you can operate the widget on DJI Pilot                    |\n"
+        << "| [h] Start widget speaker sample - you can operate the speaker on MSDK demo                       |\n"
+        << "| [i] Start power management sample - you will see notification when aircraft power off            |\n"
+        << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo               |\n"
+        << "| [l] Run camera manager sample - shoot photo by the selected camera mounted position              |\n"
+        << "| [m] Run camera manager download sample - download camera media file (only support on M300 RTK)   |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -205,6 +206,11 @@ start:
         case 'l':
             DjiTest_CameraManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1,
                                            E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO);
+            break;
+        case 'm':
+            DjiTest_CameraManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1,
+                                           E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE);
+            exit(1);
             break;
         default:
             break;

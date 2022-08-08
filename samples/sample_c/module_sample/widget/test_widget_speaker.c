@@ -36,7 +36,7 @@
 
 #ifdef OPUS_INSTALLED
 
-#include <opus.h>
+#include <opus/opus.h>
 
 #endif
 
@@ -80,13 +80,10 @@ static bool s_isDecodeFinished = true;
 static void SetSpeakerState(E_DjiWidgetSpeakerState speakerState);
 static T_DjiReturnCode GetSpeakerState(T_DjiWidgetSpeakerState *speakerState);
 static T_DjiReturnCode SetWorkMode(E_DjiWidgetSpeakerWorkMode workMode);
-static T_DjiReturnCode GetWorkMode(E_DjiWidgetSpeakerWorkMode *workMode);
 static T_DjiReturnCode SetPlayMode(E_DjiWidgetSpeakerPlayMode playMode);
-static T_DjiReturnCode GetPlayMode(E_DjiWidgetSpeakerPlayMode *playMode);
 static T_DjiReturnCode StartPlay(void);
 static T_DjiReturnCode StopPlay(void);
 static T_DjiReturnCode SetVolume(uint8_t volume);
-static T_DjiReturnCode GetVolume(uint8_t *volume);
 static T_DjiReturnCode ReceiveTtsData(E_DjiWidgetTransmitDataEvent event,
                                       uint32_t offset, uint8_t *buf, uint16_t size);
 static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
@@ -107,13 +104,10 @@ T_DjiReturnCode DjiTest_WidgetSpeakerStartService(void)
 
     s_speakerHandler.GetSpeakerState = GetSpeakerState;
     s_speakerHandler.SetWorkMode = SetWorkMode;
-    s_speakerHandler.GetWorkMode = GetWorkMode;
     s_speakerHandler.StartPlay = StartPlay;
     s_speakerHandler.StopPlay = StopPlay;
     s_speakerHandler.SetPlayMode = SetPlayMode;
-    s_speakerHandler.GetPlayMode = GetPlayMode;
     s_speakerHandler.SetVolume = SetVolume;
-    s_speakerHandler.GetVolume = GetVolume;
     s_speakerHandler.ReceiveTtsData = ReceiveTtsData;
     s_speakerHandler.ReceiveVoiceData = ReceiveAudioData;
 
@@ -322,12 +316,13 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
 
     SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION);
 
-#ifdef EKHO_INSTALLED
+#if EKHO_INSTALLED
     /*! Attention: you can use other tts opensource function to convert txt to speech, example used ekho v7.5 */
-    snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100", data);
+    snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100 -o %s", data, WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 #else
-    snprintf(cmdStr, sizeof(cmdStr), "tts_offline_sample '%s' %s", data,
-             WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
+    USER_LOG_WARN(
+        "Ekho is not installed, please visit https://www.eguidedog.net/ekho.php to install it or use other TTS tools to convert audio");
+#endif
     DjiUserUtil_RunSystemCmd(cmdStr);
 
     SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_PLAYING);
@@ -335,7 +330,6 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
     memset(cmdStr, 0, sizeof(cmdStr));
     snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
              WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
-#endif
 
     return DjiUserUtil_RunSystemCmd(cmdStr);
 }
@@ -453,28 +447,6 @@ static T_DjiReturnCode SetWorkMode(E_DjiWidgetSpeakerWorkMode workMode)
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
-static T_DjiReturnCode GetWorkMode(E_DjiWidgetSpeakerWorkMode *workMode)
-{
-    T_DjiReturnCode returnCode;
-    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-
-    returnCode = osalHandler->MutexLock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("lock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    *workMode = s_speakerState.workMode;
-
-    returnCode = osalHandler->MutexUnlock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("unlock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
-
 static T_DjiReturnCode SetPlayMode(E_DjiWidgetSpeakerPlayMode playMode)
 {
     T_DjiReturnCode returnCode;
@@ -488,28 +460,6 @@ static T_DjiReturnCode SetPlayMode(E_DjiWidgetSpeakerPlayMode playMode)
 
     USER_LOG_INFO("Set widget speaker play mode: %d", playMode);
     s_speakerState.playMode = playMode;
-
-    returnCode = osalHandler->MutexUnlock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("unlock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
-
-static T_DjiReturnCode GetPlayMode(E_DjiWidgetSpeakerPlayMode *playMode)
-{
-    T_DjiReturnCode returnCode;
-    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-
-    returnCode = osalHandler->MutexLock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("lock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    *playMode = s_speakerState.playMode;
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -581,9 +531,10 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
     }
 
     realVolume = 1.5f * (float) volume;
-    USER_LOG_INFO("Set widget speaker volume: %d", volume);
     s_speakerState.volume = volume;
 
+#ifdef PLATFORM_ARCH_x86_64
+    USER_LOG_INFO("Set widget speaker volume: %d", volume);
     memset(cmdStr, 0, sizeof(cmdStr));
     snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
              (int32_t) realVolume);
@@ -592,28 +543,9 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
     if (returnCode < 0) {
         USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
     }
-
-    returnCode = osalHandler->MutexUnlock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("unlock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
-
-static T_DjiReturnCode GetVolume(uint8_t *volume)
-{
-    T_DjiReturnCode returnCode;
-    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-
-    returnCode = osalHandler->MutexLock(s_speakerMutex);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("lock mutex error: 0x%08llX.", returnCode);
-        return returnCode;
-    }
-
-    *volume = s_speakerState.volume;
+#else
+    USER_LOG_WARN("Add set speaker volume function here!");
+#endif
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -737,7 +669,7 @@ static void *DjiTest_WidgetSpeakerTask(void *arg)
         if (s_speakerState.state == DJI_WIDGET_SPEAKER_STATE_PLAYING) {
             if (s_speakerState.playMode == DJI_WIDGET_SPEAKER_PLAY_MODE_LOOP_PLAYBACK) {
                 if (s_speakerState.workMode == DJI_WIDGET_SPEAKER_WORK_MODE_VOICE) {
-                    USER_LOG_WARN("Waiting opus decoder finished...");
+                    USER_LOG_DEBUG("Waiting opus decoder finished...");
                     while (s_isDecodeFinished == false) {
                         osalHandler->TaskSleepMs(1);
                     }
@@ -754,7 +686,7 @@ static void *DjiTest_WidgetSpeakerTask(void *arg)
                 osalHandler->TaskSleepMs(1000);
             } else {
                 if (s_speakerState.workMode == DJI_WIDGET_SPEAKER_WORK_MODE_VOICE) {
-                    USER_LOG_WARN("Waiting opus decoder finished...");
+                    USER_LOG_DEBUG("Waiting opus decoder finished...");
                     while (s_isDecodeFinished == false) {
                         osalHandler->TaskSleepMs(1);
                     }
