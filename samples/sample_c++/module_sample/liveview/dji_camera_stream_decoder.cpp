@@ -75,18 +75,17 @@ bool DJICameraStreamDecoder::init()
         return true;
     }
 
-    avcodec_register_all();
+    //avcodec_register_all();
     pCodecCtx = avcodec_alloc_context3(nullptr);
     if (!pCodecCtx) {
         return false;
     }
 
     pCodecCtx->thread_count = 4;
-    pCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
+    pCodec =const_cast<AVCodec*>(avcodec_find_decoder(AV_CODEC_ID_H264));
     if (!pCodec || avcodec_open2(pCodecCtx, pCodec, nullptr) < 0) {
         return false;
     }
-
     pCodecParserCtx = av_parser_init(AV_CODEC_ID_H264);
     if (!pCodecParserCtx) {
         return false;
@@ -200,13 +199,13 @@ void DJICameraStreamDecoder::decodeBuffer(const uint8_t *buf, int bufLen)
         pData += processedLen;
 
         if (pkt.size > 0) {
-            int gotPicture = 0;
-            avcodec_decode_video2(pCodecCtx, pFrameYUV, &gotPicture, &pkt);
-
-            if (!gotPicture) {
-                ////DSTATUS_PRIVATE("Got Frame, but no picture\n");
+            //int gotPicture = 0;
+            //avcodec_decode_video2(pCodecCtx, pFrameYUV, &gotPicture, &pkt);
+            int ret = avcodec_send_packet(pCodecCtx, &pkt);
+            if (ret != 0){
                 continue;
-            } else {
+            }
+            while( avcodec_receive_frame(pCodecCtx, pFrameYUV) == 0){
                 int w = pFrameYUV->width;
                 int h = pFrameYUV->height;
                 ////DSTATUS_PRIVATE("Got picture! size=%dx%d\n", w, h);
@@ -218,9 +217,10 @@ void DJICameraStreamDecoder::decodeBuffer(const uint8_t *buf, int bufLen)
                 }
 
                 if (nullptr == rgbBuf) {
-                    bufSize = avpicture_get_size(AV_PIX_FMT_RGB24, w, h);
+                    bufSize = av_image_get_buffer_size(AV_PIX_FMT_RGB24, w, h,1);
                     rgbBuf = (uint8_t *) av_malloc(bufSize);
-                    avpicture_fill((AVPicture *) pFrameRGB, rgbBuf, AV_PIX_FMT_RGB24, w, h);
+                    //avpicture_fill((AVPicture *) pFrameRGB, rgbBuf, AV_PIX_FMT_RGB24, w, h);
+                    av_image_fill_arrays(pFrameRGB->data,pFrameRGB->linesize, rgbBuf, AV_PIX_FMT_YUV420P,pCodecCtx->width, pCodecCtx->height, 1);
                 }
 
                 if (nullptr != pSwsCtx && nullptr != rgbBuf) {
@@ -237,7 +237,7 @@ void DJICameraStreamDecoder::decodeBuffer(const uint8_t *buf, int bufLen)
         }
     }
     pthread_mutex_unlock(&decodemutex);
-    av_free_packet(&pkt);
+    av_packet_unref(&pkt);
 }
 
 bool DJICameraStreamDecoder::registerCallback(CameraImageCallback f, void *param)
