@@ -452,12 +452,13 @@ static T_DjiReturnCode DjiTest_WaypointV2UploadMission(uint16_t missionNum)
     missionInitSettings.actionList = actionList;
 
     returnCode = DjiWaypointV2_UploadMission(&missionInitSettings);
-
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Init waypoint V2 mission setting failed, ErrorCode:0x%lX", returnCode);
-        return returnCode;
+        goto out;
     }
 
+out:
+    osalHandler->Free(actionList.actions);
     return returnCode;
 }
 

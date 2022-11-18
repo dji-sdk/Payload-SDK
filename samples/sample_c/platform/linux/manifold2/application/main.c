@@ -189,7 +189,7 @@ int main(int argc, char **argv)
         }
 #endif
 
-#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
+#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
         if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
             aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
             if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -337,6 +337,7 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
     T_DjiHalNetworkHandler networkHandler = {
         .NetworkInit = HalNetWork_Init,
         .NetworkDeInit = HalNetWork_DeInit,
+        .NetworkGetDeviceInfo = HalNetWork_GetDeviceInfo,
     };
 
     T_DjiHalUsbBulkHandler usbBulkHandler = {
@@ -388,30 +389,6 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        printf("register hal usb bulk handler error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        printf("register hal network handler error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiPlatform_RegSocketHandler(&socketHandler);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        printf("register osal socket handler error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
-    returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        printf("register osal filesystem handler error");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
-
     if (DjiUser_LocalWriteFsInit(DJI_LOG_PATH) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("file system init error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
@@ -426,6 +403,36 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
     returnCode = DjiLogger_AddConsole(&localRecordConsole);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("add printf console error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+#if (CONFIG_HARDWARE_CONNECTION == DJI_USE_UART_AND_USB_BULK_DEVICE)
+    returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal usb bulk handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_UART_AND_NETWORK_DEVICE)
+    returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal network handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    //Attention: if you want to use camera stream view function, please uncomment it.
+    returnCode = DjiPlatform_RegSocketHandler(&socketHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register osal socket handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_UART)
+    /*!< Attention: Only use uart hardware connection.
+     */
+#endif
+
+    returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register osal filesystem handler error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 

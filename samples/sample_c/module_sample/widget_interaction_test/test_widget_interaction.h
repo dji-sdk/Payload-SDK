@@ -40,6 +40,7 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_WidgetInteractionStartService(void);
+T_DjiReturnCode DjiTest_WidgetInteractionSetConfigFilePath(const char *path);
 void DjiTest_WidgetLogAppend(const char *fmt, ...);
 
 #ifdef __cplusplus

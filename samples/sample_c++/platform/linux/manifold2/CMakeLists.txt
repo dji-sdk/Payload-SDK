@@ -15,6 +15,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-cove
 include_directories(../../../module_sample)
 include_directories(../../../../sample_c/module_sample)
 include_directories(../common)
+include_directories(../manifold2/application)
 
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/liveview/*.c*
@@ -66,6 +67,20 @@ if (FFMPEG_FOUND)
     message(STATUS "Found FFMPEG installed in the system")
     message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
     message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
+
+    EXECUTE_PROCESS(COMMAND ffmpeg -version
+            OUTPUT_VARIABLE ffmpeg_version_psdk_libput
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_psdk_libput})
+    string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
+    string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
+
+    if (HEAD${ffmpeg_major_version} STREQUAL "HEAD")
+        message(STATUS " - Version: ${ffmpeg_version}")
+    else ()
+        message(FATAL_ERROR " - Not support FFMPEG version: ${ffmpeg_major_version}, please install 4.x.x instead.")
+    endif ()
 
     target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
 else ()

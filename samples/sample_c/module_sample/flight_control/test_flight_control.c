@@ -702,24 +702,32 @@ void DjiTest_FlightControlSetGetParamSample()
     /*! Turn on horizontal radar avoid enable */
     USER_LOG_INFO("--> Step 3: Turn on horizontal radar obstacle avoidance");
     DjiTest_WidgetLogAppend("--> Step 3: Turn on horizontal radar obstacle avoidance");
-    returnCode = DjiFlightController_SetHorizontalRadarObstacleAvoidanceEnableStatus(
-        DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Turn on horizontal radar obstacle avoidance failed, error code: 0x%08X", returnCode);
-        goto out;
-    };
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        returnCode = DjiFlightController_SetHorizontalRadarObstacleAvoidanceEnableStatus(
+            DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Turn on horizontal radar obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        };
+    }
     s_osalHandler->TaskSleepMs(1000);
 
     USER_LOG_INFO("--> Step 4: Get horizontal radar obstacle avoidance status\r\n");
     DjiTest_WidgetLogAppend("--> Step 4: Get horizontal radar obstacle avoidance status\r\n");
-    returnCode = DjiFlightController_GetHorizontalRadarObstacleAvoidanceEnableStatus(
-        &horizontalRadarObstacleAvoidanceStatus);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get horizontal radar obstacle avoidance failed, error code: 0x%08X", returnCode);
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        returnCode = DjiFlightController_GetHorizontalRadarObstacleAvoidanceEnableStatus(
+            &horizontalRadarObstacleAvoidanceStatus);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get horizontal radar obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+        USER_LOG_INFO("Current horizontal radar obstacle avoidance status is %d\r\n",
+                      horizontalRadarObstacleAvoidanceStatus);
     }
-    USER_LOG_INFO("Current horizontal radar obstacle avoidance status is %d\r\n",
-                  horizontalRadarObstacleAvoidanceStatus);
     s_osalHandler->TaskSleepMs(1000);
 
     /*! Turn on upwards vision avoid enable */
@@ -747,23 +755,32 @@ void DjiTest_FlightControlSetGetParamSample()
     /*! Turn on upwards radar avoid enable */
     USER_LOG_INFO("--> Step 7: Turn on upwards radar obstacle avoidance.");
     DjiTest_WidgetLogAppend("--> Step 7: Turn on upwards radar obstacle avoidance.");
-    returnCode = DjiFlightController_SetUpwardsRadarObstacleAvoidanceEnableStatus(
-        DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Turn on upwards radar obstacle avoidance failed, error code: 0x%08X", returnCode);
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        returnCode = DjiFlightController_SetUpwardsRadarObstacleAvoidanceEnableStatus(
+            DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Turn on upwards radar obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
     }
     s_osalHandler->TaskSleepMs(1000);
 
     USER_LOG_INFO("--> Step 8: Get upwards radar obstacle avoidance status\r\n");
     DjiTest_WidgetLogAppend("--> Step 8: Get upwards radar obstacle avoidance status\r\n");
-    returnCode = DjiFlightController_GetUpwardsRadarObstacleAvoidanceEnableStatus(&upwardsRadarObstacleAvoidanceStatus);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get upwards radar obstacle avoidance failed, error code: 0x%08X", returnCode);
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        returnCode = DjiFlightController_GetUpwardsRadarObstacleAvoidanceEnableStatus(
+            &upwardsRadarObstacleAvoidanceStatus);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get upwards radar obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+        USER_LOG_INFO("Current upwards radar obstacle avoidance status is %d\r\n", upwardsRadarObstacleAvoidanceStatus);
+        s_osalHandler->TaskSleepMs(1000);
     }
-    USER_LOG_INFO("Current upwards radar obstacle avoidance status is %d\r\n", upwardsRadarObstacleAvoidanceStatus);
-    s_osalHandler->TaskSleepMs(1000);
 
     /*! Turn on downwards vision avoid enable */
     USER_LOG_INFO("--> Step 9: Turn on downwards visual obstacle avoidance.");
@@ -1237,11 +1254,11 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
         return false;
     }
 
-    if (!DjiTest_FlightControlCheckActionStarted(DJI_FC_SUBSCRIPTION_DISPLAY_MODE_AUTO_LANDING)) {
+    if (!DjiTest_FlightControlCheckActionStarted(DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING)) {
         return false;
     } else {
         while (DjiTest_FlightControlGetValueOfFlightStatus() == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR &&
-               DjiTest_FlightControlGetValueOfDisplayMode() == DJI_FC_SUBSCRIPTION_DISPLAY_MODE_AUTO_LANDING) {
+               DjiTest_FlightControlGetValueOfDisplayMode() == DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING) {
             s_osalHandler->TaskSleepMs(1000);
         }
     }
@@ -1468,9 +1485,9 @@ DjiTest_FlightControlJoystickCtrlAuthSwitchEventCallback(T_DjiFlightControllerJo
         }
         case DJI_FLIGHT_CONTROLLER_OSDK_GET_JOYSTICK_CTRL_AUTH_EVENT: {
             if (eventData.curJoystickCtrlAuthority == DJI_FLIGHT_CONTROLLER_JOYSTICK_CTRL_AUTHORITY_OSDK) {
-                USER_LOG_INFO("[Event]Osdk request to obtain joystick ctrl authority\r\n");
+                USER_LOG_INFO("[Event] Request to obtain joystick ctrl authority\r\n");
             } else {
-                USER_LOG_INFO("[Event]Osdk request to release joystick ctrl authority\r\n");
+                USER_LOG_INFO("[Event] Request to release joystick ctrl authority\r\n");
             }
             break;
         }
@@ -1496,7 +1513,7 @@ DjiTest_FlightControlJoystickCtrlAuthSwitchEventCallback(T_DjiFlightControllerJo
             USER_LOG_INFO("[Event]Current joystick ctrl authority is reset to rc for low battery land\r\n");
             break;
         case DJI_FLIGHT_CONTROLLER_OSDK_LOST_GET_JOYSTICK_CTRL_AUTH_EVENT:
-            USER_LOG_INFO("[Event]Current joystick ctrl authority is reset to rc due to osdk lost\r\n");
+            USER_LOG_INFO("[Event]Current joystick ctrl authority is reset to rc due to sdk lost\r\n");
             break;
         case DJI_FLIGHT_CONTROLLER_NERA_FLIGHT_BOUNDARY_RESET_JOYSTICK_CTRL_AUTH_EVENT :
             USER_LOG_INFO("[Event]Current joystick ctrl authority is reset to rc due to near boundary\r\n");

@@ -170,23 +170,26 @@ typedef struct {
 } T_DjiWidgetHandlerListItem;
 
 typedef struct {
-    uint16_t size;
-    uint32_t uuid;
-    uint8_t md5Sum[16];
-} T_DjiWidgetTtsDataInfo;
+    union {
+        /*! When event is 'DJI_WIDGET_TRANSMIT_DATA_EVENT_START', the buf contains file name, uuid and decoder bitrate. */
+        struct {
+            uint8_t fileName[32];
+            uint8_t fileUuid[32];
+            uint32_t fileDecodeBitrate;
+        } transDataStartContent;
 
-typedef struct {
-    uint16_t size;
-    uint32_t uuid;
-    uint8_t md5Sum[16];
-} T_DjiWidgetVoiceDataInfo;
+        /*! When event is 'DJI_WIDGET_TRANSMIT_DATA_EVENT_START', the buf contains file md5 sum. */
+        struct {
+            uint8_t md5Sum[16];
+        } transDataEndContent;
+    };
+} T_DjiWidgetTransDataContent;
 
 typedef struct {
     E_DjiWidgetSpeakerState state;
     E_DjiWidgetSpeakerWorkMode workMode;
     E_DjiWidgetSpeakerPlayMode playMode;
     uint8_t volume;
-    uint32_t uuid;
 } T_DjiWidgetSpeakerState;
 
 typedef struct {

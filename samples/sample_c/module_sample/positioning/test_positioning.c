@@ -34,7 +34,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define POSITIONING_TASK_FREQ                     (1)
-#define POSITIONING_TASK_STACK_SIZE               (2048)
+#define POSITIONING_TASK_STACK_SIZE               (1024)
 
 #define DJI_TEST_POSITIONING_EVENT_COUNT          (2)
 #define DJI_TEST_TIME_INTERVAL_AMONG_EVENTS_US    (200000)

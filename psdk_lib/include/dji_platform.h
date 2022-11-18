@@ -88,6 +88,12 @@ typedef enum {
 } E_DjiHalUartNum;
 
 typedef enum {
+    DJI_HAL_USB_BULK_NUM_0 = 0,
+    DJI_HAL_USB_BULK_NUM_1,
+    DJI_HAL_USB_BULK_NUM_MAX,
+} E_DjiHalUsbBulkNum;
+
+typedef enum {
     DJI_SOCKET_MODE_UDP,
     DJI_SOCKET_MODE_TCP,
 } E_DjiSocketMode;
@@ -142,9 +148,15 @@ typedef struct {
 typedef struct {
     uint16_t pid;
     uint16_t vid;
-    uint8_t bulkChannelNum;
-    T_DjiHalUsbBulkChannelInfo *channelInfo;
+    T_DjiHalUsbBulkChannelInfo channelInfo[DJI_HAL_USB_BULK_NUM_MAX];
 } T_DjiHalUsbBulkDeviceInfo;
+
+typedef struct {
+    struct {
+        uint16_t vid;
+        uint16_t pid;
+    } usbNetAdapter;
+} T_DjiHalNetworkDeviceInfo;
 
 typedef struct {
     T_DjiReturnCode (*UsbBulkInit)(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHandle *usbBulkHandle);
@@ -164,6 +176,8 @@ typedef struct {
     T_DjiReturnCode (*NetworkInit)(const char *ipAddr, const char *netMask, T_DjiNetworkHandle *networkHandle);
 
     T_DjiReturnCode (*NetworkDeInit)(T_DjiNetworkHandle networkHandle);
+
+    T_DjiReturnCode (*NetworkGetDeviceInfo)(T_DjiHalNetworkDeviceInfo *deviceInfo);
 } T_DjiHalNetworkHandler;
 
 typedef struct {
@@ -317,19 +331,31 @@ T_DjiReturnCode DjiPlatform_RegSocketHandler(const T_DjiSocketHandler *socketHan
 
 /**
  * @brief Get the handler of osal interfaces.
- * @return Execution result.
+ * @return Pointer to osal handler.
  */
 T_DjiOsalHandler *DjiPlatform_GetOsalHandler(void);
 
 /**
+ * @brief Get the handler of usb bulk interfaces.
+ * @return Pointer to usb bulk handler.
+ */
+T_DjiHalUsbBulkHandler *DjiPlatform_GetHalUsbBulkHandler(void);
+
+/**
+ * @brief Get the handler of network interfaces.
+ * @return Pointer to network handler.
+ */
+T_DjiHalNetworkHandler *DjiPlatform_GetHalNetworkHandler(void);
+
+/**
  * @brief Get the handler of file-system interfaces.
- * @return Execution result.
+ * @return Pointer to file-system handler.
  */
 T_DjiFileSystemHandler *DjiPlatform_GetFileSystemHandler(void);
 
 /**
  * @brief Get the handler of socket interfaces.
- * @return Execution result.
+ * @return Pointer to socket handler.
  */
 T_DjiSocketHandler *DjiPlatform_GetSocketHandler(void);
 

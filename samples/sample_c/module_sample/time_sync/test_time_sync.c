@@ -33,7 +33,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define DJI_TEST_TIME_SYNC_TASK_FREQ            (1)
-#define DJI_TEST_TIME_SYNC_TASK_STACK_SIZE      (2048)
+#define DJI_TEST_TIME_SYNC_TASK_STACK_SIZE      (1024)
 
 /* Private types -------------------------------------------------------------*/
 
@@ -160,9 +160,9 @@ static void *DjiTest_TimeSyncTask(void *arg)
             continue;
         }
 
-        USER_LOG_DEBUG("current aircraft time is %d.%d.%d %d:%d %d %d.", aircraftTime.year, aircraftTime.month,
-                       aircraftTime.day, aircraftTime.hour, aircraftTime.minute, aircraftTime.second,
-                       aircraftTime.microsecond);
+        USER_LOG_DEBUG("current aircraft time is %04d-%02d-%02d %02d:%02d:%02d %d.",
+                       aircraftTime.year, aircraftTime.month, aircraftTime.day,
+                       aircraftTime.hour, aircraftTime.minute, aircraftTime.second, aircraftTime.microsecond);
     }
 }
 

@@ -358,7 +358,7 @@
 <uC99>1</uC99>
 <useXO>0</useXO>
 <VariousControls>
-<MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
+<MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu --split_sections -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
 <Define>USE_HAL_DRIVER, STM32F407xx, SYSTEM_ARCH_RTOS=1</Define>
 <Undefine></Undefine>
 <IncludePath>..\..\..\..\..\..\..\psdk_lib\include; ..\..\..\..\..\module_sample; ..\..\..\common\osal; ..\..\application; ..\..; ..\..\hal; ..\..\drivers\BSP; ..\..\drivers\CMSIS\Include; ..\..\drivers\Device\ST\STM32F4xx; ..\..\drivers\STM32F4xx_HAL_Driver\Inc; ..\..\drivers\USB_HOST\App; ..\..\drivers\USB_HOST\Target; ..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc; ..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc; ..\..\middlewares\Third_Party\FreeRTOS\Source\include; ..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F; ..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS</IncludePath>

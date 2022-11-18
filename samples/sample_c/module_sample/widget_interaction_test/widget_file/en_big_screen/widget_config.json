@@ -15,7 +15,7 @@
       {
         "widget_index": 0,
         "widget_type": "button",
-        "widget_name": "Button_1",
+        "widget_name": "Button",
         "icon_file_set": {
           "icon_file_name_selected": "icon_button1.png",
           "icon_file_name_unselected": "icon_button1.png"
@@ -27,19 +27,6 @@
       },
       {
         "widget_index": 1,
-        "widget_type": "button",
-        "widget_name": "Button_2",
-        "icon_file_set": {
-          "icon_file_name_selected": "icon_button2.png",
-          "icon_file_name_unselected": "icon_button2.png"
-        },
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 1
-        }
-      },
-      {
-        "widget_index": 2,
         "widget_type": "list",
         "widget_name": "List",
         "list_item": [
@@ -60,11 +47,11 @@
         ],
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 2
+          "mapping_config_display_order": 1
         }
       },
       {
-        "widget_index": 3,
+        "widget_index": 2,
         "widget_type": "switch",
         "widget_name": "Switch",
         "icon_file_set": {
@@ -73,11 +60,11 @@
         },
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 3
+          "mapping_config_display_order": 2
         }
       },
       {
-        "widget_index": 4,
+        "widget_index": 3,
         "widget_type": "scale",
         "widget_name": "Scale",
         "icon_file_set": {
@@ -86,8 +73,7 @@
         },
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 4,
-          "button_value_step_length": 5
+          "mapping_config_display_order": 3
         }
       }
     ]
@@ -100,9 +86,18 @@
     },
     "widget_list": [
       {
-        "widget_index": 5,
+        "widget_index": 4,
         "widget_type": "button",
-        "widget_name": "Button 5",
+        "widget_name": "Button 4",
+        "customize_rc_buttons_config": {
+          "is_enable": true,
+          "mapping_config_display_order": 4
+        }
+      },
+      {
+        "widget_index": 5,
+        "widget_type": "scale",
+        "widget_name": "Scale 5",
         "customize_rc_buttons_config": {
           "is_enable": true,
           "mapping_config_display_order": 5
@@ -110,40 +105,17 @@
       },
       {
         "widget_index": 6,
-        "widget_type": "scale",
-        "widget_name": "Scale 6",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 6,
-          "button_value_step_length": 5
-        }
-      },
-      {
-        "widget_index": 7,
         "widget_type": "int_input_box",
-        "widget_name": "Integer Input Box 7",
+        "widget_name": "Integer Input Box 6",
         "int_input_box_hint": "unit:s"
       },
       {
-        "widget_index": 8,
-        "widget_type": "button",
-        "widget_name": "=========>> [Extension Port Test] <<=========",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 7
-        }
-      },
-      {
-        "widget_index": 9,
+        "widget_index": 7,
         "widget_type": "switch",
-        "widget_name": "Unlock flight control restrictions (Special attention)",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 8
-        }
+        "widget_name": "Unlock flight control restrictions (Special attention)"
       },
       {
-        "widget_index": 10,
+        "widget_index": 8,
         "widget_type": "list",
         "widget_name": "Please Select Payload Index",
         "list_item": [
@@ -156,190 +128,103 @@
           {
             "item_name": "payload_index3"
           }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 9
-        }
+        ]
       },
       {
-        "widget_index": 11,
-        "widget_type": "list",
-        "widget_name": "Please Select Perception Camera Index",
-        "list_item": [
-          {
-            "item_name": "Down"
-          },
-          {
-            "item_name": "Front"
-          },
-          {
-            "item_name": "Rear"
-          },
-          {
-            "item_name": "Up"
-          },
-          {
-            "item_name": "Left"
-          },
-          {
-            "item_name": "Right"
-          }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 10
-        }
-      },
-      {
-        "widget_index": 12,
-        "widget_type": "list",
-        "widget_name": "Please Select Camera Function",
-        "list_item": [
-          {
-            "item_name": "set camera shutter speed"
-          },
-          {
-            "item_name": "set camera aperture"
-          },
-          {
-            "item_name": "set camera exposure compensation"
-          },
-          {
-            "item_name": "set camera ISO"
-          },
-          {
-            "item_name": "set camera focus point"
-          },
-          {
-            "item_name": "camera tap zoom"
-          },
-          {
-            "item_name": "camera optical zoom"
-          },
-          {
-            "item_name": "shoot single photo"
-          },
-          {
-            "item_name": "shoot AEB photo"
-          },
-          {
-            "item_name": "shoot burst photo"
-          },
-          {
-            "item_name": "shoot interval photo"
-          },
-          {
-            "item_name": "record video"
-          }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 11
-        }
-      },
-      {
-        "widget_index": 13,
+        "widget_index": 9,
         "widget_type": "list",
         "widget_name": "Please Select Sample",
         "list_item": [
           {
-            "item_name": "fc_subscription"
+            "item_name": "01_test_fc_subscription"
           },
           {
-            "item_name": "waypoint_v2"
+            "item_name": "02_test_waypoint_v2"
           },
           {
-            "item_name": "waypoint_v3"
+            "item_name": "03_test_waypoint_v3"
           },
           {
-            "item_name": "flight_ctrl_takeoff_landing"
+            "item_name": "04_test_flight_ctrl_takeoff_landing"
           },
           {
-            "item_name": "flight_ctrl_position_ctrl"
+            "item_name": "05_test_flight_ctrl_position_ctrl"
           },
           {
-            "item_name": "flight_ctrl_force_landing"
+            "item_name": "06_test_flight_ctrl_force_landing"
           },
           {
-            "item_name": "flight_ctrl_velocity_ctrl"
+            "item_name": "07_test_flight_ctrl_velocity_ctrl"
           },
           {
-            "item_name": "flight_ctrl_arrest_flying"
+            "item_name": "08_test_flight_ctrl_arrest_flying"
           },
           {
-            "item_name": "flight_ctrl_set_get_param"
+            "item_name": "09_test_flight_ctrl_set_get_param"
           },
           {
-            "item_name": "hms_info"
+            "item_name": "10_test_hms_info"
           },
           {
-            "item_name": "camera_manager"
+            "item_name": "11_gimbal_manager_free_mode"
           },
           {
-            "item_name": "gimbal_manager_free_mode"
+            "item_name": "12_gimbal_manager_yaw_follow_mode"
           },
           {
-            "item_name": "gimbal_manager_yaw_follow_mode"
+            "item_name": "13_test_liveview"
           },
           {
-            "item_name": "liveview"
+            "item_name": "14_test_perception"
           },
           {
-            "item_name": "perception"
+            "item_name": "15_test_set_payload_alias"
+          },
+          {
+            "item_name": "16_test_cammgr-set/get_shutter_speed"
+          },
+          {
+            "item_name": "17_test_cammgr-set/get_aperture"
+          },
+          {
+            "item_name": "18_test_cammgr-set/get_ev"
+          },
+          {
+            "item_name": "19_test_cammgr-set/get_iso"
+          },
+          {
+            "item_name": "20_test_cammgr-focus_point"
+          },
+          {
+            "item_name": "21_test_cammgr-tap_zoom"
+          },
+          {
+            "item_name": "22_test_cammgr-optical_zoom"
+          },
+          {
+            "item_name": "23_test_cammgr-single_photo"
+          },
+          {
+            "item_name": "24_test_cammgr-AEB_photo"
+          },
+          {
+            "item_name": "25_test_cammgr-burst_photo"
+          },
+          {
+            "item_name": "26_test_cammgr-interval_photo"
+          },
+          {
+            "item_name": "27_test_cammgr-recorder_video"
+          },
+          {
+            "item_name": "28_test_cammgr-media_download"
           }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 12
-        }
+        ]
       },
       {
-        "widget_index": 14,
+        "widget_index": 10,
         "widget_type": "button",
-        "widget_name": "Run",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 13
-        }
-      },
-      {
-        "widget_index": 15,
-        "widget_type": "button",
-        "widget_name": "=========>> [Payload Port Test] <<=========",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 14
-        }
-      },
-      {
-        "widget_index": 16,
-        "widget_type": "list",
-        "widget_name": "Please Select Sample",
-        "list_item": [
-          {
-            "item_name": "change_alias"
-          },
-          {
-            "item_name": "fc_subscription_log_on/off"
-          },
-          {
-            "item_name": "collaboration_log_on/off"
-          }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 15
-        }
-      },
-      {
-        "widget_index": 17,
-        "widget_type": "button",
-        "widget_name": "Run",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 16
-        }
+        "widget_name": "Run"
       }
     ]
   }

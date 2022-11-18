@@ -44,12 +44,13 @@
 #include "dji_core.h"
 #include <payload_collaboration/test_payload_collaboration.h>
 #include <waypoint_v3/test_waypoint_v3.h>
+#include "dji_sdk_config.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define WIDGET_DIR_PATH_LEN_MAX         (256)
 #define WIDGET_TASK_STACK_SIZE          (2048)
 
-#define WIDGET_LOG_STRING_MAX_SIZE      (50)
+#define WIDGET_LOG_STRING_MAX_SIZE      (40)
 #define WIDGET_LOG_LINE_MAX_NUM         (5)
 
 /* Private types -------------------------------------------------------------*/
@@ -64,19 +65,27 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_ARREST_FLYING = 7,
     E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_SET_GET_PARAM = 8,
     E_DJI_SAMPLE_INDEX_HMS = 9,
-    E_DJI_SAMPLE_INDEX_CAMERA_MANAGER = 10,
-    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE = 11,
-    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE = 12,
-    E_DJI_SAMPLE_INDEX_LIVEVIEW = 13,
-    E_DJI_SAMPLE_INDEX_PERCEPTION = 14,
+    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE = 10,
+    E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE = 11,
+    E_DJI_SAMPLE_INDEX_LIVEVIEW = 12,
+    E_DJI_SAMPLE_INDEX_PERCEPTION = 13,
+    E_DJI_SAMPLE_INDEX_SWITCH_ALIAS = 14,
+    E_DJI_SAMPLE_INDEX_CAMMGR_SHUTTER_SPEED = 15,
+    E_DJI_SAMPLE_INDEX_CAMMGR_APERTURE = 16,
+    E_DJI_SAMPLE_INDEX_CAMMGR_EV = 17,
+    E_DJI_SAMPLE_INDEX_CAMMGR_ISO = 18,
+    E_DJI_SAMPLE_INDEX_CAMMGR_FOCUS_POINT = 19,
+    E_DJI_SAMPLE_INDEX_CAMMGR_TAP_ZOOM = 20,
+    E_DJI_SAMPLE_INDEX_CAMMGR_OPTICAL_ZOOM = 21,
+    E_DJI_SAMPLE_INDEX_CAMMGR_SINGLE_PHOTO = 22,
+    E_DJI_SAMPLE_INDEX_CAMMGR_AEB_PHOTO = 23,
+    E_DJI_SAMPLE_INDEX_CAMMGR_BURST_PHOTO = 24,
+    E_DJI_SAMPLE_INDEX_CAMMGR_INTERVAL_PHOTO = 25,
+    E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO = 26,
+    E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD = 27,
+
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
-
-typedef enum {
-    E_DJI_SAMPLE_INDEX_SWITCH_ALIAS = 0,
-    E_DJI_SAMPLE_INDEX_FC_SUB_LOG_ON_OFF = 1,
-    E_DJI_SAMPLE_INDEX_COLLABORATION_LOG_ON_OFF = 2,
-} E_DjiPayloadPortSampleIndex;
 
 typedef struct {
     bool valid;
@@ -96,39 +105,28 @@ static T_DjiReturnCode DjiTestWidget_TriggerChangeAlias(void);
 static T_DjiTaskHandle s_widgetTestThread;
 static T_DjiTaskHandle s_widgetInteractionTestThread;
 static E_DjiExtensionPortSampleIndex s_extensionPortSampleIndex = E_DJI_SAMPLE_INDEX_FC_SUBSCRIPTION;
-static E_DjiPayloadPortSampleIndex s_payloadPortSampleIndex = E_DJI_SAMPLE_INDEX_SWITCH_ALIAS;
 static bool s_isallowRunFlightControlSample = false;
 static bool s_isSampleStart = false;
 static E_DjiMountPosition s_mountPosition = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1;
-static E_DjiPerceptionDirection s_perceptionDirection = DJI_PERCEPTION_RECTIFY_DOWN;
-static E_DjiTestCameraManagerSampleSelect s_cameraManagerSampleSelect =
-    E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_SHUTTER_SPEED;
 static T_DjiTestWidgetLog s_djiTestWidgetLog[WIDGET_LOG_LINE_MAX_NUM] = {0};
 static T_DjiAircraftInfoBaseInfo s_aircraftInfoBaseInfo = {0};
 static bool s_isAliasChanged = false;
 
 static const T_DjiWidgetHandlerListItem s_widgetHandlerList[] = {
     {0,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {1,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {2,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {3,  DJI_WIDGET_TYPE_SWITCH,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {4,  DJI_WIDGET_TYPE_SCALE,         DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {5,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {6,  DJI_WIDGET_TYPE_SCALE,         DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {7,  DJI_WIDGET_TYPE_INT_INPUT_BOX, DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {8,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {9,  DJI_WIDGET_TYPE_SWITCH,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {10, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {11, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {12, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {13, DJI_WIDGET_TYPE_LIST,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {14, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {15, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {16, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
-    {17, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {1,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {2,  DJI_WIDGET_TYPE_SWITCH,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {3,  DJI_WIDGET_TYPE_SCALE,         DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {4,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {5,  DJI_WIDGET_TYPE_SCALE,         DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {6,  DJI_WIDGET_TYPE_INT_INPUT_BOX, DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {7,  DJI_WIDGET_TYPE_SWITCH,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {8,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {9,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {10, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
 };
 
-static char *s_widgetTypeNameArray[] = {
+static const char *s_widgetTypeNameArray[] = {
     "Unknown",
     "Button",
     "Switch",
@@ -139,6 +137,8 @@ static char *s_widgetTypeNameArray[] = {
 
 static const uint32_t s_widgetHandlerListCount = sizeof(s_widgetHandlerList) / sizeof(T_DjiWidgetHandlerListItem);
 static int32_t s_widgetValueList[sizeof(s_widgetHandlerList) / sizeof(T_DjiWidgetHandlerListItem)] = {0};
+static bool s_isWidgetFileDirPathConfigured = false;
+static char s_widgetFileDirPath[DJI_FILE_PATH_SIZE_MAX] = {0};
 
 /* Exported functions definition ---------------------------------------------*/
 void DjiTest_WidgetLogAppend(const char *fmt, ...)
@@ -179,7 +179,7 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
         return djiStat;
     }
 
-#ifdef SYSTEM_ARCH_LINUX
+#ifdef SYSTEM_ARCH_LINUX_DISABLEED
     //Step 2 : Set UI Config (Linux environment)
     char curFileDirPath[WIDGET_DIR_PATH_LEN_MAX];
     char tempPath[WIDGET_DIR_PATH_LEN_MAX];
@@ -189,7 +189,11 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
         return djiStat;
     }
 
-    snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/en_big_screen", curFileDirPath);
+    if (s_isWidgetFileDirPathConfigured == true) {
+        snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/en_big_screen", s_widgetFileDirPath);
+    } else {
+        snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/en_big_screen", curFileDirPath);
+    }
 
     //set default ui config path
     djiStat = DjiWidget_RegDefaultUiConfigByDirPath(tempPath);
@@ -208,7 +212,11 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
     }
 
     //set ui config for Chinese language
-    snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/cn_big_screen", curFileDirPath);
+    if (s_isWidgetFileDirPathConfigured == true) {
+        snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/cn_big_screen", s_widgetFileDirPath);
+    } else {
+        snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/cn_big_screen", curFileDirPath);
+    }
 
     djiStat = DjiWidget_RegUiConfigByDirPath(DJI_MOBILE_APP_LANGUAGE_CHINESE,
                                              DJI_MOBILE_APP_SCREEN_TYPE_BIG_SCREEN,
@@ -254,6 +262,15 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+T_DjiReturnCode DjiTest_WidgetInteractionSetConfigFilePath(const char *path)
+{
+    memset(s_widgetFileDirPath, 0, sizeof(s_widgetFileDirPath));
+    memcpy(s_widgetFileDirPath, path, USER_UTIL_MIN(strlen(path), sizeof(s_widgetFileDirPath) - 1));
+    s_isWidgetFileDirPathConfigured = true;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 #ifndef __CC_ARM
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
@@ -276,6 +293,7 @@ static void *DjiTest_WidgetTask(void *arg)
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Get system time ms error, stat = 0x%08llX", djiStat);
         }
+#ifndef USER_FIRMWARE_MAJOR_VERSION
         snprintf(message, DJI_WIDGET_FLOATING_WINDOW_MSG_MAX_LEN,
                  "System time : %u ms \r\n%s \r\n%s \r\n%s \r\n%s \r\n%s \r\n",
                  sysTimeMs,
@@ -284,6 +302,13 @@ static void *DjiTest_WidgetTask(void *arg)
                  s_djiTestWidgetLog[2].content,
                  s_djiTestWidgetLog[3].content,
                  s_djiTestWidgetLog[4].content);
+#else
+        snprintf(message, DJI_WIDGET_FLOATING_WINDOW_MSG_MAX_LEN,
+                 "System time : %u ms\r\nVersion: v%02d.%02d.%02d.%02d\r\nBuild time: %s %s", sysTimeMs,
+                 USER_FIRMWARE_MAJOR_VERSION, USER_FIRMWARE_MINOR_VERSION,
+                 USER_FIRMWARE_MODIFY_VERSION, USER_FIRMWARE_DEBUG_VERSION,
+                 __DATE__, __TIME__);
+#endif
 
         djiStat = DjiWidgetFloatingWindow_ShowMessage(message);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -392,9 +417,6 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 case E_DJI_SAMPLE_INDEX_FC_SUBSCRIPTION:
                     DjiTest_FcSubscriptionRunSample();
                     break;
-                case E_DJI_SAMPLE_INDEX_CAMERA_MANAGER:
-                    DjiTest_CameraManagerRunSample(s_mountPosition, s_cameraManagerSampleSelect);
-                    break;
                 case E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE:
                     DjiTest_GimbalManagerRunSample(s_mountPosition, DJI_GIMBAL_MODE_FREE);
                     break;
@@ -413,28 +435,72 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                     break;
                 case E_DJI_SAMPLE_INDEX_PERCEPTION:
 #ifdef SYSTEM_ARCH_LINUX
-                    DjiTest_PerceptionRunSample(s_perceptionDirection);
+                    DjiTest_PerceptionRunSample(DJI_PERCEPTION_RECTIFY_FRONT);
 #else
                     USER_LOG_WARN("This feature does not support RTOS platform.");
 #endif
+                    break;
+                case E_DJI_SAMPLE_INDEX_SWITCH_ALIAS:
+                    DjiTestWidget_TriggerChangeAlias();
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_SHUTTER_SPEED:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_SHUTTER_SPEED);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_APERTURE:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_APERTURE);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_EV:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_EV);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_ISO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_ISO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_FOCUS_POINT:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_FOCUS_POINT);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_TAP_ZOOM:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_TAP_ZOOM_POINT);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_OPTICAL_ZOOM:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_ZOOM_PARAM);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_SINGLE_PHOTO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_AEB_PHOTO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_AEB_PHOTO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_BURST_PHOTO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_BURST_PHOTO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_INTERVAL_PHOTO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_INTERVAL_PHOTO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO);
+                    break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE);
                     break;
                 default:
                     break;
             }
         } else {
-            switch (s_payloadPortSampleIndex) {
-                case E_DJI_SAMPLE_INDEX_SWITCH_ALIAS:
-                    DjiTestWidget_TriggerChangeAlias();
-                    break;
-                case E_DJI_SAMPLE_INDEX_FC_SUB_LOG_ON_OFF:
-                    DjiTest_FcSubscriptionDataShowTrigger();
-                    break;
-                case E_DJI_SAMPLE_INDEX_COLLABORATION_LOG_ON_OFF:
-                    DjiTest_PayloadCollaborationDataShowTrigger();
-                    break;
-                default:
-                    break;
-            }
+            USER_LOG_WARN("Can't support on payload port.");
+            break;
         }
 
         USER_LOG_INFO("--------------------------------------------------------------------------------------------->");
@@ -457,37 +523,19 @@ static T_DjiReturnCode DjiTestWidget_SetWidgetValue(E_DjiWidgetType widgetType, 
                   s_widgetTypeNameArray[widgetType], index, value);
     s_widgetValueList[index] = value;
 
-    if (widgetType == DJI_WIDGET_TYPE_SWITCH && index == 9) {
+    if (widgetType == DJI_WIDGET_TYPE_SWITCH && index == 7) {
         s_isallowRunFlightControlSample = value;
     }
 
-    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 10) {
+    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 8) {
         s_mountPosition = value + 1;
     }
 
-    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 11) {
-        s_perceptionDirection = value;
-    }
-
-    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 12) {
-        s_cameraManagerSampleSelect = value;
-    }
-
-    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 13) {
+    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 9) {
         s_extensionPortSampleIndex = value;
     }
 
-    if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 14) {
-        if (value == 1) {
-            s_isSampleStart = true;
-        }
-    }
-
-    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 16) {
-        s_payloadPortSampleIndex = value;
-    }
-
-    if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 17) {
+    if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 10) {
         if (value == 1) {
             s_isSampleStart = true;
         }
@@ -509,13 +557,19 @@ static T_DjiReturnCode DjiTestWidget_GetWidgetValue(E_DjiWidgetType widgetType, 
 
 static T_DjiReturnCode DjiTestWidget_TriggerChangeAlias(void)
 {
+    USER_LOG_INFO("Payload alias sample start");
+
     if (s_isAliasChanged == false) {
         DjiCore_SetAlias("測試test!@#$%^&*()");
+        USER_LOG_INFO("Set payload alias to '測試test!@#$%^&*()' ");
         s_isAliasChanged = true;
     } else {
         DjiCore_SetAlias("PSDK_APPALIAS");
+        USER_LOG_INFO("Set payload alias to 'PSDK_APPALIAS' ");
         s_isAliasChanged = false;
     }
+
+    USER_LOG_INFO("Payload alias sample end");
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

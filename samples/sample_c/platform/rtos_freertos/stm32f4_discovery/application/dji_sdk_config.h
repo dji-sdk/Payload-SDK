@@ -34,29 +34,24 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
-//#define CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
+#define CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
 
-//#define CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
+#define CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
 
 #define CONFIG_MODULE_SAMPLE_WIDGET_ON
 
-//#ifdef USE_BOOTLOADER
-//Attention: If you don’t need to upgrade, you can uncomment it and change flash size from 0x70000 to 0xD0000 to build all functions.
+#define CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
+
+#define CONFIG_MODULE_SAMPLE_CAMERA_ON
+
+#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
+
+#define CONFIG_MODULE_SAMPLE_XPORT_ON
+
 //#define CONFIG_MODULE_SAMPLE_UPGRADE_ON
-//#endif
 
-//#ifndef CONFIG_MODULE_SAMPLE_UPGRADE_ON
-
-//#define CONFIG_MODULE_SAMPLE_GIMBAL_ON
-
-//#define CONFIG_MODULE_SAMPLE_CAMERA_ON
-
-//#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
-
-//#define CONFIG_MODULE_SAMPLE_XPORT_ON
-
-//#define CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON
-
+/*!< Attention: Please uncomment it in gps environment.
+* */
 //#define CONFIG_MODULE_SAMPLE_TIME_SYNC_ON
 
 //#define CONFIG_MODULE_SAMPLE_POSITIONING_ON
