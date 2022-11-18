@@ -133,7 +133,7 @@ T_DjiReturnCode LiveviewSample::StopFpvCameraStream()
 {
     T_DjiReturnCode returnCode;
 
-    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV);
+    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         return returnCode;
     }
@@ -150,7 +150,7 @@ T_DjiReturnCode LiveviewSample::StopMainCameraStream()
 {
     T_DjiReturnCode returnCode;
 
-    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_1);
+    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_1, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         return returnCode;
     }
@@ -167,7 +167,7 @@ T_DjiReturnCode LiveviewSample::StopViceCameraStream()
 {
     T_DjiReturnCode returnCode;
 
-    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_2);
+    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_2, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         return returnCode;
     }
@@ -184,7 +184,7 @@ T_DjiReturnCode LiveviewSample::StopTopCameraStream()
 {
     T_DjiReturnCode returnCode;
 
-    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_3);
+    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_NO_3, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         return returnCode;
     }

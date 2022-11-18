@@ -29,7 +29,7 @@
 #include "dji_camera_manager.h"
 #include "dji_platform.h"
 #include "dji_logger.h"
-#include "dji_liveview.h"
+
 /* Private constants ---------------------------------------------------------*/
 #define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             256
 #define TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM              5
@@ -45,15 +45,17 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_UNKNOWN, "Unknown"},
     {DJI_CAMERA_TYPE_Z30,     "Zenmuse Z30"},
     {DJI_CAMERA_TYPE_XT2,     "Zenmuse XT2"},
-    {DJI_CAMERA_TYPE_PSDK,    "Zenmuse Payload"},
+    {DJI_CAMERA_TYPE_PSDK,    "Payload Camera"},
     {DJI_CAMERA_TYPE_XTS,     "Zenmuse XTS"},
     {DJI_CAMERA_TYPE_H20,     "Zenmuse H20"},
     {DJI_CAMERA_TYPE_H20T,    "Zenmuse H20T"},
     {DJI_CAMERA_TYPE_P1,      "Zenmuse P1"},
     {DJI_CAMERA_TYPE_L1,      "Zenmuse L1"},
-    {DJI_CAMERA_TYPE_M30,     "Zenmuse M30"},
-    {DJI_CAMERA_TYPE_M30T,    "Zenmuse M30T"},
     {DJI_CAMERA_TYPE_H20N,    "Zenmuse H20N"},
+    {DJI_CAMERA_TYPE_M30,     "M30 Camera"},
+    {DJI_CAMERA_TYPE_M30T,    "M30T Camera"},
+    {DJI_CAMERA_TYPE_M3E,     "M3E Camera"},
+    {DJI_CAMERA_TYPE_M3T,     "M3T Camera"},
 };
 
 static FILE *s_downloadMediaFile = NULL;
@@ -661,6 +663,8 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootIntervalPhoto(E_DjiMountPosition 
         return returnCode;
     }
 
+    osalHandler->TaskSleepMs(1000);
+
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as interval-photo mode", position);
     returnCode = DjiCameraManager_SetShootPhotoMode(position, DJI_CAMERA_MANAGER_SHOOT_PHOTO_MODE_INTERVAL);
@@ -825,37 +829,13 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                   firmwareVersion.firmware_version[0], firmwareVersion.firmware_version[1],
                   firmwareVersion.firmware_version[2], firmwareVersion.firmware_version[3]);
 
-    E_DjiLiveViewCameraSource liveViewCameraSource;
-
-    if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T) {
-        USER_LOG_INFO("--> Step 3: Change camera's live view source");
-        DjiTest_WidgetLogAppend("--> Step 3: Change camera's live view source");
-
-        USER_LOG_INFO("Init live view.");
-        returnCode = DjiLiveview_Init();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Init live view failed, error code: 0x%08X\r\n", returnCode);
-            goto exitLiveViewModule;
-        }
-
-        USER_LOG_INFO("Set mounted position %d camera's live view source to zoom.\r\n",
-                      mountPosition);
-        liveViewCameraSource = (cameraType == DJI_CAMERA_TYPE_H20) ? DJI_LIVEVIEW_CAMERA_SOURCE_H20_ZOOM :
-                               DJI_LIVEVIEW_CAMERA_SOURCE_H20T_ZOOM;
-        returnCode = DjiLiveview_StartH264Stream((uint8_t) mountPosition, liveViewCameraSource, NULL);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Set mounted position %d camera's live view source failed,"
-                           "error code: 0x%08X\r\n", mountPosition, returnCode);
-            goto exitLiveViewSource;
-        }
-    }
-
     switch (cameraManagerSampleSelect) {
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_SHUTTER_SPEED: {
             USER_LOG_INFO("--> Function a: Set camera shutter speed to 1/100 s");
             DjiTest_WidgetLogAppend("--> Function a: Set camera shutter speed to 1/100 s");
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
-                cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T) {
+                cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T ||
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -863,7 +843,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                    "error code: 0x%08X\r\n", mountPosition, returnCode);
-                    goto exitLiveViewSource;
+                    goto exitCameraModule;
                 }
             } else {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to shutter priority mode.",
@@ -873,7 +853,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                    "error code: 0x%08X\r\n", mountPosition, returnCode);
-                    goto exitLiveViewSource;
+                    goto exitCameraModule;
                 }
             }
 
@@ -884,7 +864,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's shutter speed failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -892,7 +872,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             USER_LOG_INFO("--> Function b: Set camera aperture to 400(F/4)");
             DjiTest_WidgetLogAppend("--> Function b: Set camera aperture to 400(F/4)");
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T
-                || cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T) {
+                || cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T
+                || cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -900,7 +881,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                    "error code: 0x%08X\r\n", mountPosition, returnCode);
-                    goto exitLiveViewSource;
+                    goto exitCameraModule;
                 }
             } else {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to aperture priority mode.",
@@ -910,7 +891,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                    "error code: 0x%08X\r\n", mountPosition, returnCode);
-                    goto exitLiveViewSource;
+                    goto exitCameraModule;
                 }
             }
 
@@ -920,7 +901,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's aperture failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -934,7 +915,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Set mounted position %d camera's ev value to +0.3ev.",
@@ -943,7 +924,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's EV failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -957,7 +938,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's exposure mode failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Set mounted position %d camera's ISO value to 1600.",
@@ -966,7 +947,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's iso failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -979,7 +960,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's focus point(0.8,0.8) failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -993,7 +974,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's tap zoom point(5, 0.3m,0.3m) failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Sleep 5s...");
@@ -1005,7 +986,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's tap zoom point(4, 0.8m,0.7m) failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1017,7 +998,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's optical zoom factor 10x failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             USER_LOG_INFO("Sleep 4s...");
             osalHandler->TaskSleepMs(4000);
@@ -1026,7 +1007,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's optical zoom factor -5x failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             USER_LOG_INFO("Sleep 4s...");
             osalHandler->TaskSleepMs(4000);
@@ -1040,7 +1021,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera start continuous zoom failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Sleep 8s...");
@@ -1051,7 +1032,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera stop continuous zoom failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1062,7 +1043,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera shoot single photo failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1073,7 +1054,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera shoot AEB photo failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1085,7 +1066,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera shoot burst photo failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1100,7 +1081,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera shoot internal photo failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Sleep 15s...");
@@ -1110,7 +1091,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera stop shoot photo failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1121,7 +1102,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera start record video failed, error code: 0x%08X\r\n",
                                mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
 
             USER_LOG_INFO("Sleep 10s...");
@@ -1131,7 +1112,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera stop record video failed, error code: 0x%08X\r\n",
                                mountPosition, returnCode);
-                goto exitLiveViewSource;
+                goto exitCameraModule;
             }
             break;
         }
@@ -1145,23 +1126,6 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
-        }
-    }
-
-exitLiveViewSource:
-    if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T) {
-        returnCode = DjiLiveview_StopH264Stream((uint8_t) mountPosition);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Stop mounted position %d camera's live view failed,"
-                           "error code: 0x%08X\r\n", mountPosition, returnCode);
-        }
-    }
-
-exitLiveViewModule:
-    if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T) {
-        returnCode = DjiLiveview_Deinit();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Deinit live view failed, error code: 0x%08X\r\n", returnCode);
         }
     }
 

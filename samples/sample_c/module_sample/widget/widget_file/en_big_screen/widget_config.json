@@ -15,7 +15,7 @@
       {
         "widget_index": 0,
         "widget_type": "button",
-        "widget_name": "Button_1",
+        "widget_name": "Button",
         "icon_file_set": {
           "icon_file_name_selected": "icon_button1.png",
           "icon_file_name_unselected": "icon_button1.png"
@@ -27,19 +27,6 @@
       },
       {
         "widget_index": 1,
-        "widget_type": "button",
-        "widget_name": "Button_2",
-        "icon_file_set": {
-          "icon_file_name_selected": "icon_button2.png",
-          "icon_file_name_unselected": "icon_button2.png"
-        },
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 1
-        }
-      },
-      {
-        "widget_index": 2,
         "widget_type": "list",
         "widget_name": "List",
         "list_item": [
@@ -60,11 +47,11 @@
         ],
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 2
+          "mapping_config_display_order": 1
         }
       },
       {
-        "widget_index": 3,
+        "widget_index": 2,
         "widget_type": "switch",
         "widget_name": "Switch",
         "icon_file_set": {
@@ -73,11 +60,11 @@
         },
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 3
+          "mapping_config_display_order": 2
         }
       },
       {
-        "widget_index": 4,
+        "widget_index": 3,
         "widget_type": "scale",
         "widget_name": "Scale",
         "icon_file_set": {
@@ -86,7 +73,7 @@
         },
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 4,
+          "mapping_config_display_order": 3,
           "button_value_step_length": 5
         }
       }
@@ -100,43 +87,43 @@
     },
     "widget_list": [
       {
-        "widget_index": 5,
+        "widget_index": 4,
         "widget_type": "button",
-        "widget_name": "Button 5",
+        "widget_name": "Button 4",
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 5
+          "mapping_config_display_order": 4
         }
       },
       {
-        "widget_index": 6,
+        "widget_index": 5,
         "widget_type": "scale",
-        "widget_name": "Scale 6",
+        "widget_name": "Scale 5",
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 6,
+          "mapping_config_display_order": 5,
           "button_value_step_length": 5
         }
       },
       {
-        "widget_index": 7,
+        "widget_index": 6,
         "widget_type": "int_input_box",
-        "widget_name": "Integer Input Box 7",
+        "widget_name": "Integer Input Box 6",
         "int_input_box_hint": "unit:s"
       },
       {
-        "widget_index": 8,
+        "widget_index": 7,
         "widget_type": "switch",
-        "widget_name": "Switch 8",
+        "widget_name": "Switch 7",
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 8
+          "mapping_config_display_order": 7
         }
       },
       {
-        "widget_index": 9,
+        "widget_index": 8,
         "widget_type": "list",
-        "widget_name": "List 9",
+        "widget_name": "List 8",
         "list_item": [
           {
             "item_name": "Item 1"
@@ -153,7 +140,7 @@
         ],
         "customize_rc_buttons_config": {
           "is_enable": true,
-          "mapping_config_display_order": 9
+          "mapping_config_display_order": 8
         }
       }
     ]

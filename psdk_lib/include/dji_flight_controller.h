@@ -228,6 +228,11 @@ typedef enum {
     DJI_FLIGHT_CONTROLLER_STABLE_CONTROL_MODE_ENABLE = 1   /*!< Enable the stable mode */
 } E_DjiFlightControllerStableControlMode;
 
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_ENABLE_RC_LOST_ACTION = 0,
+    DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION = 1,
+} E_DjiFlightControllerRCLostActionEnableStatus;
+
 /**
  * @brief Joystick mode.
  * @note You need to set joystick mode first before start to send joystick command to aircraft.
@@ -596,6 +601,25 @@ T_DjiReturnCode DjiFlightController_CancelEmergencyBrakeAction(void);
  * @return Execution result.
  */
 T_DjiReturnCode DjiFlightController_GetGeneralInfo(T_DjiFlightControllerGeneralInfo *generalInfo);
+
+/*! @brief The command decides whether execute RC lost action or not when osdk is running
+  * @note  This setting only affects the behavior of the drone when the RC lost and the OSDK is connected.
+  *         if the command is enable, the drone will not execute rc lost action when rc is lost but OSDK is running;
+  *         if the command is disable, the drone will execute rc lost action when rc is lost but OSDK is running
+  *         the drone will execute rc lost action when rc is lost and OSDK is lost whatever the command is.
+  *         default command is disable.
+  * @param executeRCLostActionOrNotWhenOnboardOn  enable:1;disable:0
+  * @return T_DjiReturnCode error code
+   */
+T_DjiReturnCode
+DjiFlightController_SetRCLostActionEnableStatus(E_DjiFlightControllerRCLostActionEnableStatus command);
+
+/*! @brief get rc lost action enable status(enable or disable)
+ *  @param command executeRCLostActionOrNotWhenOnboardOn, enable:1;disable:0
+ *  @return  T_DjiReturnCode error code
+ */
+T_DjiReturnCode
+DjiFlightController_GetEnableRCLostActionStatus(E_DjiFlightControllerRCLostActionEnableStatus *command);
 
 #ifdef __cplusplus
 }

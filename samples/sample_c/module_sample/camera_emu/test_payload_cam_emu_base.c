@@ -906,7 +906,8 @@ static T_DjiReturnCode DjiTest_CameraRotationGimbal(T_TestCameraGimbalRotationAr
         return returnCode;
     }
 
-    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2) {
+    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+        aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
         returnCode = DjiTest_GimbalRotate(gimbalRotationArgument.rotationMode, gimbalRotationArgument.rotationProperty,
                                           gimbalRotationArgument.rotationValue);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

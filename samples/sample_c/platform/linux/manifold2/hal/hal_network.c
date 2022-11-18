@@ -77,6 +77,14 @@ T_DjiReturnCode HalNetWork_DeInit(T_DjiNetworkHandle halObj)
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+T_DjiReturnCode HalNetWork_GetDeviceInfo(T_DjiHalNetworkDeviceInfo *deviceInfo)
+{
+    deviceInfo->usbNetAdapter.vid = USB_NET_ADAPTER_VID;
+    deviceInfo->usbNetAdapter.pid = USB_NET_ADAPTER_PID;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 /* Private functions definition-----------------------------------------------*/
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

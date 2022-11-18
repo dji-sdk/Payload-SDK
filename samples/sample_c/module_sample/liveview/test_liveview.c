@@ -29,6 +29,7 @@
 #include "dji_liveview.h"
 #include "dji_logger.h"
 #include "dji_platform.h"
+#include "dji_aircraft_info.h"
 #include "time.h"
 
 /* Private constants ---------------------------------------------------------*/
@@ -54,9 +55,16 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     time_t currentTime = time(NULL);
     struct tm *localTime = NULL;
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo = {0};
 
     USER_LOG_INFO("Liveview sample start");
     DjiTest_WidgetLogAppend("Liveview sample start");
+
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
 
     USER_LOG_INFO("--> Step 1: Init liveview module");
     DjiTest_WidgetLogAppend("--> Step 1: Init liveview module");
@@ -66,23 +74,29 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
         goto out;
     }
 
-    localTime = localtime(&currentTime);
-    sprintf(s_fpvCameraStreamFilePath, "fpv_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
-            localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
-            localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
-
     USER_LOG_INFO("--> Step 2: Start h264 stream of the fpv and selected payload\r\n");
     DjiTest_WidgetLogAppend("--> Step 2: Start h264 stream of the fpv and selected payload\r\n");
 
-    returnCode = DjiLiveview_StartH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT,
-                                             DjiTest_FpvCameraStreamCallback);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Request h264 of fpv failed, error code: 0x%08X", returnCode);
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
+        //TODO: how to use on M3E
+    } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+        //TODO: how to use on M3T
+    } else {
+        localTime = localtime(&currentTime);
+        sprintf(s_fpvCameraStreamFilePath, "fpv_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
+                localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
+                localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+
+        returnCode = DjiLiveview_StartH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT,
+                                                 DjiTest_FpvCameraStreamCallback);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Request h264 of fpv failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
     }
 
     localTime = localtime(&currentTime);
-    sprintf(s_payloadCameraStreamFilePath, "payload%d_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
+    sprintf(s_payloadCameraStreamFilePath, "payload%d_vis_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
             mountPosition, localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
             localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
 
@@ -100,16 +114,54 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
 
     USER_LOG_INFO("--> Step 3: Stop h264 stream of the fpv and selected payload\r\n");
     DjiTest_WidgetLogAppend("--> Step 3: Stop h264 stream of the fpv and selected payload");
-    returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Request to stop h264 of fpv failed, error code: 0x%08X", returnCode);
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
+        //TODO: how to use on M3E
+    } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+        //TODO: how to use on M3T
+    } else {
+        returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Request to stop h264 of fpv failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
     }
 
-    returnCode = DjiLiveview_StopH264Stream((E_DjiLiveViewCameraPosition) mountPosition);
+    returnCode = DjiLiveview_StopH264Stream((E_DjiLiveViewCameraPosition) mountPosition,
+                                            DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Request to stop h264 of payload %d failed, error code: 0x%08X", mountPosition, returnCode);
         goto out;
+    }
+
+    USER_LOG_INFO("Fpv stream is saved to file: %s", s_fpvCameraStreamFilePath);
+    USER_LOG_INFO("Payload%d stream is saved to file: %s\r\n", mountPosition, s_payloadCameraStreamFilePath);
+
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+        USER_LOG_INFO("--> Start h264 stream of the fpv and selected payload\r\n");
+
+        localTime = localtime(&currentTime);
+        sprintf(s_payloadCameraStreamFilePath, "payload%d_ir_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
+                mountPosition, localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
+                localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+
+        returnCode = DjiLiveview_StartH264Stream((E_DjiLiveViewCameraPosition) mountPosition,
+                                                 DJI_LIVEVIEW_CAMERA_SOURCE_M3T_IR,
+                                                 DjiTest_PayloadCameraStreamCallback);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Request h264 of payload %d failed, error code: 0x%08X", mountPosition, returnCode);
+        }
+
+        for (int i = 0; i < TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS; ++i) {
+            USER_LOG_INFO("Storing camera h264 stream, second: %d.", i + 1);
+            osalHandler->TaskSleepMs(1000);
+        }
+
+        returnCode = DjiLiveview_StopH264Stream((E_DjiLiveViewCameraPosition) mountPosition,
+                                                DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Request to stop h264 of payload %d failed, error code: 0x%08X", mountPosition, returnCode);
+            goto out;
+        }
     }
 
     USER_LOG_INFO("Fpv stream is saved to file: %s", s_fpvCameraStreamFilePath);

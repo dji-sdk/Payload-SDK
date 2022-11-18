@@ -36,6 +36,7 @@
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
+static T_DjiWaypointV3MissionState s_lastWaypointV3MissionState = {0};
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiTest_WaypointV3StateCallback(T_DjiWaypointV3MissionState missionState);
@@ -73,7 +74,7 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     }
 
     /*! Attention: suggest use the exported kmz file by DJI pilot. If use this test file, you need set the longitude as
-     * 113.94755, latitude as 22.51853 on DJI Assistant 2 simulator */
+     * 113.94255, latitude as 22.57765 on DJI Assistant 2 simulator */
     snprintf(tempPath, DJI_TEST_WAYPOINT_V3_KMZ_FILE_PATH_LEN_MAX, "%s/waypoint_file/waypoint_v3_test_file.kmz",
              curFileDirPath);
 
@@ -124,37 +125,25 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
         goto out;
     }
 
-    for (int i = 0; i < 30; ++i) {
-        osalHandler->TaskSleepMs(1000);
-    }
-
-    USER_LOG_INFO("Execute pause action");
-    returnCode = DjiWaypointV3_Action(DJI_WAYPOINT_V3_ACTION_PAUSE);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Execute start action failed.");
-        goto out;
-    }
-
-    for (int i = 0; i < 5; ++i) {
-        osalHandler->TaskSleepMs(1000);
-    }
-
-    USER_LOG_INFO("Execute resume action");
-    returnCode = DjiWaypointV3_Action(DJI_WAYPOINT_V3_ACTION_RESUME);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Execute start action failed.");
-        goto out;
-    }
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 
 out:
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
 }
 
 /* Private functions definition-----------------------------------------------*/
 static T_DjiReturnCode DjiTest_WaypointV3StateCallback(T_DjiWaypointV3MissionState missionState)
 {
+    if (s_lastWaypointV3MissionState.state == missionState.state
+        && s_lastWaypointV3MissionState.currentWaypointIndex == missionState.currentWaypointIndex
+        && s_lastWaypointV3MissionState.wayLineId == missionState.wayLineId) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    }
+
     USER_LOG_INFO("Waypoint v3 mission state: %d, current waypoint index: %d, wayLine id: %d", missionState.state,
                   missionState.currentWaypointIndex, missionState.wayLineId);
+
+    memcpy(&s_lastWaypointV3MissionState, &missionState, sizeof(T_DjiWaypointV3MissionState));
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

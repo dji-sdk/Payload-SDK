@@ -348,6 +348,12 @@ static void *DjiTest_StereoImagesDisplayTask(void *arg)
         osalHandler->MutexUnlock(pack->mutex);
 
         /*! Using Opencv display here */
+        if (strstr(nameStr, "_l")) {
+            cv::moveWindow(nameStr, 200, 0);
+        } else {
+            cv::moveWindow(nameStr, (200 + (int) pack->info.rawInfo.width), 0);
+        }
+
         cv::imshow(nameStr, cv_img_stereo);
         cv::waitKey(1);
 #else

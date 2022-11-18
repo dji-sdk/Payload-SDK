@@ -36,7 +36,6 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 
-
 /* Exported types ------------------------------------------------------------*/
 /**
  * @brief Information related to mobile APP.
@@ -71,6 +70,14 @@ T_DjiReturnCode DjiAircraftInfo_GetBaseInfo(T_DjiAircraftInfoBaseInfo *baseInfo)
  * @return Execution result.
  */
 T_DjiReturnCode DjiAircraftInfo_GetMobileAppInfo(T_DjiMobileAppInfo *mobileAppInfo);
+
+/**
+ * @brief Get connection status of payload and aircraft.
+ * @note Update period: 1Hz
+ * @param isConnected: pointer to connection status.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiAircraftInfo_GetConnectionStatus(bool *isConnected);
 
 #ifdef __cplusplus
 }
