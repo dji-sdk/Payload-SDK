@@ -15,10 +15,10 @@ Flight Controller, Payload Controller, Video Image Analysis Platform, Mapping Ca
 ## Documentation
 
 For full documentation, please visit
-the [DJI Developer Documentation](https://developer.dji.com/doc/payload-sdk-tutorial/en/whats-new/). Documentation
+the [DJI Developer Documentation](https://developer.dji.com/doc/payload-sdk-tutorial/en/). Documentation
 regarding the code can be found in the [PSDK API Reference](https://developer.dji.com/doc/payload-sdk-api-reference/en/)
 section of the developer's website. Please visit
-the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/whats-new/version-announcement.html)
+the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/)
 to get the latest version information.
 
 ## Latest Release

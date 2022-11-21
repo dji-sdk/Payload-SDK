@@ -28,6 +28,7 @@
 #include "dji_logger.h"
 #include "dji_perception.h"
 #include "test_perception.hpp"
+#include <iostream>
 
 #ifdef OPEN_CV_INSTALLED
 
