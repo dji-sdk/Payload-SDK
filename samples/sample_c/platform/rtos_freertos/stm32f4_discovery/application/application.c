@@ -203,7 +203,7 @@ void DjiUser_StartTask(void const *argument)
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
     returnCode = DjiTest_DataTransmissionStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("widget sample init error");
+        USER_LOG_ERROR("data transmission sample init error");
     }
 #endif
 
