@@ -57,11 +57,17 @@ typedef enum {
     DJI_LIVEVIEW_CAMERA_SOURCE_H20T_WIDE = 1,
     DJI_LIVEVIEW_CAMERA_SOURCE_H20T_ZOOM = 2,
     DJI_LIVEVIEW_CAMERA_SOURCE_H20T_IR = 3,
+    DJI_LIVEVIEW_CAMERA_SOURCE_H20N_WIDE = 1,
+    DJI_LIVEVIEW_CAMERA_SOURCE_H20N_ZOOM = 2,
+    DJI_LIVEVIEW_CAMERA_SOURCE_H20N_IR = 3,
     DJI_LIVEVIEW_CAMERA_SOURCE_M30_ZOOM = 1,
     DJI_LIVEVIEW_CAMERA_SOURCE_M30_WIDE = 2,
     DJI_LIVEVIEW_CAMERA_SOURCE_M30T_ZOOM = 1,
     DJI_LIVEVIEW_CAMERA_SOURCE_M30T_WIDE = 2,
-    DJI_LIVEVIEW_CAMERA_SOURCE_M30T_IR = 3
+    DJI_LIVEVIEW_CAMERA_SOURCE_M30T_IR = 3,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M3E_VIS = 1,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M3T_VIS = 1,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M3T_IR = 2,
 } E_DjiLiveViewCameraSource;
 
 /**
@@ -96,9 +102,10 @@ T_DjiReturnCode DjiLiveview_StartH264Stream(E_DjiLiveViewCameraPosition position
 /**
  * @brief Stop the FPV or Camera H264 Stream by selected position.
  * @param position: point out which camera to output the H264 stream
+ * @param source: point out which sub camera to output the H264 stream
  * @return Execution result.
  */
-T_DjiReturnCode DjiLiveview_StopH264Stream(E_DjiLiveViewCameraPosition position);
+T_DjiReturnCode DjiLiveview_StopH264Stream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
 
 #ifdef __cplusplus
 }

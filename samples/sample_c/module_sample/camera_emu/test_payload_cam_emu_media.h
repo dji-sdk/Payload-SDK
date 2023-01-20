@@ -41,6 +41,7 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void);
+T_DjiReturnCode DjiTest_CameraEmuSetMediaFilePath(const char *path);
 T_DjiReturnCode DjiTest_CameraMediaGetFileInfo(const char *filePath, T_DjiCameraMediaFileInfo *fileInfo);
 
 #ifdef __cplusplus

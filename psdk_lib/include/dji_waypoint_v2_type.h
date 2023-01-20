@@ -237,7 +237,7 @@ typedef enum {
     /**
      *  Raed to execute the mission.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_READY_TO_EXECUTE = -1,
+    DJI_WAYPOINT_V2_MISSION_STATE_READY_TO_EXECUTE = 1,
 
     /**
      *  The execution is started successfully.

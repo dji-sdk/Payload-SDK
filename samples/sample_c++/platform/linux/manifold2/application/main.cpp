@@ -74,19 +74,19 @@ start:
         << "| [6] Flight controller sample - set get parameters                                                |\n"
         << "| [7] Hms info sample - get health manger system info                                              |\n"
         << "| [8] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)             |\n"
-        << "| [9] Waypoint 3.0 sample - run airline mission by kmz file (only support on M30/30T)              |\n"
+        << "| [9] Waypoint 3.0 sample - run airline mission by kmz file (not support on M300 RTK)              |\n"
         << "| [a] Gimbal manager sample - rotate gimbal on free mode                                           |\n"
         << "| [b] Gimbal manager sample - rotate gimbal on yaw follow mode                                     |\n"
         << "| [c] Camera stream view sample - display the camera video stream                                  |\n"
-        << "| [d] Stereo vision view sample - display the stereo image (only support on M300 RTK)              |\n"
-        << "| [e] Start camera all feautes sample - you can operate the camera on DJI Pilot                    |\n"
-        << "| [f] Start gimbal all feautes sample - you can operate the gimbal on DJI Pilot                    |\n"
-        << "| [g] Start widget all feautes sample - you can operate the widget on DJI Pilot                    |\n"
-        << "| [h] Start widget speaker sample - you can operate the speaker on MSDK demo                       |\n"
+        << "| [d] Stereo vision view sample - display the stereo image                                         |\n"
+        << "| [e] Start camera all features sample - you can operate the camera on DJI Pilot                   |\n"
+        << "| [f] Start gimbal all features sample - you can operate the gimbal on DJI Pilot                   |\n"
+        << "| [g] Start widget all features sample - you can operate the widget on DJI Pilot                   |\n"
+        << "| [h] Start widget speaker sample - you can operate the speaker on DJI Pilot2                      |\n"
         << "| [i] Start power management sample - you will see notification when aircraft power off            |\n"
         << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo               |\n"
         << "| [l] Run camera manager sample - shoot photo by the selected camera mounted position              |\n"
-        << "| [m] Run camera manager download sample - download camera media file (only support on M300 RTK)   |\n"
+        << "| [m] Run camera manager download sample - download camera media file (only support on M3E/M3T)    |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -140,7 +140,7 @@ start:
                 break;
             }
 
-            if (DjiPlatform_GetSocketHandler() != NULL) {
+            if (DjiPlatform_GetSocketHandler() != nullptr) {
                 returnCode = DjiTest_CameraEmuMediaStartService();
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("camera emu media init error");

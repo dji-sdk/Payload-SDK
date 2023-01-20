@@ -40,14 +40,21 @@ extern "C" {
  * NIC name micro define as #define 'LINUX_NETWORK_DEV   "your NIC name"'.
  */
 #ifdef PLATFORM_ARCH_x86_64
-#define LINUX_NETWORK_DEV           "enp0s31f6"
+#define LINUX_NETWORK_DEV           "enx000ec6688213"
 #else
-#define LINUX_NETWORK_DEV           "eth0"
+#define LINUX_NETWORK_DEV           "l4tbr0"
 #endif
 /**
  * @attention
  */
 
+#ifdef PLATFORM_ARCH_x86_64
+#define USB_NET_ADAPTER_VID                   (0x0B95)
+#define USB_NET_ADAPTER_PID                   (0x1790)
+#else
+#define USB_NET_ADAPTER_VID                   (0x0955)
+#define USB_NET_ADAPTER_PID                   (0x7020)
+#endif
 
 #define LINUX_CMD_STR_MAX_SIZE      (128)
 
@@ -56,6 +63,7 @@ extern "C" {
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode HalNetWork_Init(const char *ipAddr, const char *netMask, T_DjiNetworkHandle *halObj);
 T_DjiReturnCode HalNetWork_DeInit(T_DjiNetworkHandle halObj);
+T_DjiReturnCode HalNetWork_GetDeviceInfo(T_DjiHalNetworkDeviceInfo *deviceInfo);
 
 #ifdef __cplusplus
 }

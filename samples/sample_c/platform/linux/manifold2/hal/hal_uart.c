@@ -33,7 +33,7 @@
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
-    int uartFd;
+    int32_t uartFd;
 } T_UartHandleStruct;
 
 /* Private values -------------------------------------------------------------*/
@@ -43,7 +43,7 @@ typedef struct {
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUartHandle *uartHandle)
 {
-    T_UartHandleStruct *uartHandleStruct;
+    T_UartHandleStruct *uartHandleStruct = NULL;
     struct termios options;
     struct flock lock;
     T_DjiReturnCode returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

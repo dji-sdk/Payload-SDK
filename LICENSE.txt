@@ -14,6 +14,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       ├── M300_RTK_2.stp
 │       ├── M300_RTK_3.stp
 │       ├── M30T.stp
+│       ├── M3E.stp
 │       ├── PSDK Mounting Bracket(Payload).stp
 │       ├── Skyport_Adapter_2.stp
 │       └── X-Port 80mm.stp
@@ -118,7 +119,6 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   │   ├── dji_media_file_mp4.c
 │   │   │   │   │   └── dji_media_file_mp4.h
 │   │   │   │   ├── media_file
-│   │   │   │   │   ├── out.h264
 │   │   │   │   │   ├── PSDK_0001_ORG.jpg
 │   │   │   │   │   ├── PSDK_0002_ORG.jpg
 │   │   │   │   │   ├── PSDK_0003_ORG.jpg
@@ -457,6 +457,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │                   │   ├── application.cpp
 │                   │   ├── application.hpp
 │                   │   ├── dji_sdk_app_info.h
+│                   │   ├── dji_sdk_config.h
 │                   │   └── main.cpp
 │                   ├── CMakeLists.txt
 │                   └── hal

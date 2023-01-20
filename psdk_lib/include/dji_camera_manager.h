@@ -521,7 +521,7 @@ typedef struct {
     int16_t screenX; /*! Unit: 0.1% */
     int16_t screenY; /*! Unit: 0.1% */
     bool enable_lidar;
-    bool exception;
+    uint8_t exception;
 } T_DjiCameraManagerLaserRangingInfo;
 
 typedef T_DjiReturnCode (*DjiCameraManagerDownloadFileDataCallback)(T_DjiDownloadFilePacketInfo packetInfo,
@@ -1005,6 +1005,7 @@ T_DjiReturnCode DjiCameraManager_DeleteFileByIndex(E_DjiMountPosition position, 
 
 /**
  * @brief Get the camera laser ranging info of the selected camera mounted position.
+ * @note Maximum data update frequency: 5Hz.
  * @param position: the mount position of the camera
  * @param laserRangingInfo: the pointer to the camera laser ranging info
  * @return Execution result.

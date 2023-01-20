@@ -32,7 +32,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define FC_SUBSCRIPTION_TASK_FREQ         (1)
-#define FC_SUBSCRIPTION_TASK_STACK_SIZE   (2048)
+#define FC_SUBSCRIPTION_TASK_STACK_SIZE   (1024)
 
 /* Private types -------------------------------------------------------------*/
 
@@ -45,6 +45,7 @@ static T_DjiReturnCode DjiTest_FcSubscriptionReceiveQuaternionCallback(const uin
 static T_DjiTaskHandle s_userFcSubscriptionThread;
 static bool s_userFcSubscriptionDataShow = false;
 static uint8_t s_totalSatelliteNumberUsed = 0;
+static uint32_t s_userFcSubscriptionDataCnt = 0;
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_FcSubscriptionStartService(void)
@@ -59,7 +60,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
+    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ,
                                                DjiTest_FcSubscriptionReceiveQuaternionCallback);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Subscribe topic quaternion error.");
@@ -115,6 +116,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
     T_DjiFcSubscriptionSingleBatteryInfo singleBatteryInfo = {0};
 
     USER_LOG_INFO("Fc subscription sample start");
+    s_userFcSubscriptionDataShow = true;
 
     USER_LOG_INFO("--> Step 1: Init fc subscription module");
     djiStat = DjiFcSubscription_Init();
@@ -124,7 +126,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
     }
 
     USER_LOG_INFO("--> Step 2: Subscribe the topics of quaternion, velocity and gps position");
-    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
+    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ,
                                                DjiTest_FcSubscriptionReceiveQuaternionCallback);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Subscribe topic quaternion error.");
@@ -145,9 +147,9 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    USER_LOG_INFO("--> Step 3: Get latest value of the subscribed topics in the next 20s\r\n");
+    USER_LOG_INFO("--> Step 3: Get latest value of the subscribed topics in the next 20 seconds\r\n");
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 20; ++i) {
         osalHandler->TaskSleepMs(1000 / FC_SUBSCRIPTION_TASK_FREQ);
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY,
                                                           (uint8_t *) &velocity,
@@ -210,6 +212,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
+    s_userFcSubscriptionDataShow = false;
     USER_LOG_INFO("Fc subscription sample end");
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -308,20 +311,23 @@ static T_DjiReturnCode DjiTest_FcSubscriptionReceiveQuaternionCallback(const uin
     USER_UTIL_UNUSED(dataSize);
 
     pitch = (dji_f64_t) asinf(-2 * quaternion->q1 * quaternion->q3 + 2 * quaternion->q0 * quaternion->q2) * 57.3;
-    roll = (dji_f64_t) atan2f(2 * quaternion->q1 * quaternion->q2 + 2 * quaternion->q0 * quaternion->q3,
-                              -2 * quaternion->q2 * quaternion->q2 - 2 * quaternion->q3 * quaternion->q3 + 1) *
-           57.3;
-    yaw = (dji_f64_t) atan2f(2 * quaternion->q2 * quaternion->q3 + 2 * quaternion->q0 * quaternion->q1,
+    roll = (dji_f64_t) atan2f(2 * quaternion->q2 * quaternion->q3 + 2 * quaternion->q0 * quaternion->q1,
                              -2 * quaternion->q1 * quaternion->q1 - 2 * quaternion->q2 * quaternion->q2 + 1) * 57.3;
+    yaw = (dji_f64_t) atan2f(2 * quaternion->q1 * quaternion->q2 + 2 * quaternion->q0 * quaternion->q3,
+                             -2 * quaternion->q2 * quaternion->q2 - 2 * quaternion->q3 * quaternion->q3 + 1) *
+          57.3;
 
     if (s_userFcSubscriptionDataShow == true) {
-        USER_LOG_INFO("receive quaternion data.");
+        if (s_userFcSubscriptionDataCnt++ % DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ == 0) {
+            USER_LOG_INFO("receive quaternion data.");
+            USER_LOG_INFO("timestamp: millisecond %u microsecond %u.", timestamp->millisecond,
+                          timestamp->microsecond);
+            USER_LOG_INFO("quaternion: %f %f %f %f.", quaternion->q0, quaternion->q1, quaternion->q2,
+                          quaternion->q3);
 
-        USER_LOG_INFO("timestamp: millisecond %u microsecond %u.", timestamp->millisecond,
-                      timestamp->microsecond);
-        USER_LOG_INFO("quaternion: %f %f %f %f.\r\n", quaternion->q0, quaternion->q1, quaternion->q2, quaternion->q3);
-        USER_LOG_INFO("euler angles: pitch = %.2f roll = %.2f yaw = %.2f.", pitch, yaw, roll);
-        DjiTest_WidgetLogAppend("pitch = %.2f roll = %.2f yaw = %.2f.", pitch, yaw, roll);
+            USER_LOG_INFO("euler angles: pitch = %.2f roll = %.2f yaw = %.2f.\r\n", pitch, roll, yaw);
+            DjiTest_WidgetLogAppend("pitch = %.2f roll = %.2f yaw = %.2f.", pitch, roll, yaw);
+        }
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

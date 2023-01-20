@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include "utils/util_misc.h"
 #include "utils/util_md5.h"
+#include <dji_aircraft_info.h>
 
 #ifdef OPUS_INSTALLED
 
@@ -54,11 +55,13 @@
 #define WIDGET_SPEAKER_TTS_FILE_MAX_SIZE        (3000)
 
 /* The frame size is hardcoded for this sample code but it doesn't have to be */
-#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_PACKET_SIZE    (3 * 1276)
-#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE     (6 * 960)
-#define WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE        (16000)
-#define WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS           (1)
-#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE  (160)
+#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_PACKET_SIZE          (3 * 1276)
+#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE           (6 * 960)
+#define WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE              (16000)
+#define WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS                 (1)
+
+#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE_8KBPS  (40)
+#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_BITRATE_8KBPS     (8000)
 
 /* The speaker initialization parameters */
 #define WIDGET_SPEAKER_DEFAULT_VOLUME                (30)
@@ -75,6 +78,7 @@ static T_DjiTaskHandle s_widgetSpeakerTestThread;
 static FILE *s_audioFile = NULL;
 static FILE *s_ttsFile = NULL;
 static bool s_isDecodeFinished = true;
+static uint16_t s_decodeBitrate = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static void SetSpeakerState(E_DjiWidgetSpeakerState speakerState);
@@ -230,15 +234,14 @@ static T_DjiReturnCode DjiTest_DecodeAudioData(void)
         return EXIT_FAILURE;
     }
 
-    USER_LOG_INFO("Decode Start...");
-
     while (1) {
         int i;
         unsigned char pcm_bytes[WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE * WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS * 2];
         int frame_size;
 
         /* Read a 16 bits/sample audio frame. */
-        nbBytes = fread(cbits, 1, WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE, fin);
+        nbBytes = fread(cbits, 1, s_decodeBitrate / WIDGET_SPEAKER_AUDIO_OPUS_DECODE_BITRATE_8KBPS *
+                                  WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE_8KBPS, fin);
         if (feof(fin))
             break;
 
@@ -293,45 +296,59 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
     uint8_t data[WIDGET_SPEAKER_TTS_FILE_MAX_SIZE] = {0};
     int32_t readLen;
     char cmdStr[WIDGET_SPEAKER_TTS_FILE_MAX_SIZE + 128];
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    T_DjiReturnCode returnCode;
 
-    txtFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "r");
-    if (txtFile == NULL) {
-        fprintf(stderr, "failed to open input file: %s\n", strerror(errno));
-        return EXIT_FAILURE;
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    readLen = fread(data, 1, WIDGET_SPEAKER_TTS_FILE_MAX_SIZE, txtFile);
-    if (readLen <= 0) {
-        USER_LOG_ERROR("Read tts file failed, error code: %d", readLen);
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+        return DjiTest_PlayAudioData();
+    } else {
+        txtFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "r");
+        if (txtFile == NULL) {
+            fprintf(stderr, "failed to open input file: %s\n", strerror(errno));
+            return EXIT_FAILURE;
+        }
+
+        readLen = fread(data, 1, WIDGET_SPEAKER_TTS_FILE_MAX_SIZE, txtFile);
+        if (readLen <= 0) {
+            USER_LOG_ERROR("Read tts file failed, error code: %d", readLen);
+            fclose(txtFile);
+            return DJI_ERROR_SYSTEM_MODULE_CODE_NOT_FOUND;
+        }
+
         fclose(txtFile);
-        return DJI_ERROR_SYSTEM_MODULE_CODE_NOT_FOUND;
-    }
 
-    fclose(txtFile);
+        USER_LOG_INFO("Read tts file success, len: %d", readLen);
+        USER_LOG_INFO("Content: %s", data);
 
-    USER_LOG_INFO("Read tts file success, len: %d", readLen);
-    USER_LOG_INFO("Content: %s", data);
+        memset(cmdStr, 0, sizeof(cmdStr));
 
-    memset(cmdStr, 0, sizeof(cmdStr));
-
-    SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION);
+        SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION);
 
 #if EKHO_INSTALLED
-    /*! Attention: you can use other tts opensource function to convert txt to speech, example used ekho v7.5 */
-    snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100 -o %s", data, WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
+        /*! Attention: you can use other tts opensource function to convert txt to speech, example used ekho v7.5 */
+        snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100 -o %s", data,
+                 WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 #else
-    USER_LOG_WARN(
+        USER_LOG_WARN(
         "Ekho is not installed, please visit https://www.eguidedog.net/ekho.php to install it or use other TTS tools to convert audio");
 #endif
-    DjiUserUtil_RunSystemCmd(cmdStr);
+        DjiUserUtil_RunSystemCmd(cmdStr);
 
-    SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_PLAYING);
-    USER_LOG_INFO("Start TTS Playing...");
-    memset(cmdStr, 0, sizeof(cmdStr));
-    snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
-             WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
+        SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_PLAYING);
+        USER_LOG_INFO("Start TTS Playing...");
+        memset(cmdStr, 0, sizeof(cmdStr));
+        snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
+                 WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 
-    return DjiUserUtil_RunSystemCmd(cmdStr);
+        return DjiUserUtil_RunSystemCmd(cmdStr);
+    }
 }
 
 static T_DjiReturnCode DjiTest_CheckFileMd5Sum(const char *path, uint8_t *buf, uint16_t size)
@@ -533,18 +550,25 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
     realVolume = 1.5f * (float) volume;
     s_speakerState.volume = volume;
 
-#ifdef PLATFORM_ARCH_x86_64
     USER_LOG_INFO("Set widget speaker volume: %d", volume);
-    memset(cmdStr, 0, sizeof(cmdStr));
-    snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
-             (int32_t) realVolume);
 
-    returnCode = DjiUserUtil_RunSystemCmd(cmdStr);
-    if (returnCode < 0) {
-        USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
+#ifdef PLATFORM_ARCH_x86_64
+    snprintf(cmdStr, sizeof(cmdStr), "pactl list | grep %s -q", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME);
+    ret = system(cmdStr);
+    if (ret == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        memset(cmdStr, 0, sizeof(cmdStr));
+        snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
+                 (int32_t) realVolume);
+
+        returnCode = DjiUserUtil_RunSystemCmd(cmdStr);
+        if (returnCode < 0) {
+            USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
+        }
+    } else {
+        USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here!!!");
     }
 #else
-    USER_LOG_WARN("Add set speaker volume function here!");
+    USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here!!!");
 #endif
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
@@ -606,6 +630,7 @@ static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
 {
     uint16_t writeLen;
     T_DjiReturnCode returnCode;
+    T_DjiWidgetTransDataContent transDataContent = {0};
 
     if (event == DJI_WIDGET_TRANSMIT_DATA_EVENT_START) {
         s_isDecodeFinished = false;
@@ -617,6 +642,11 @@ static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
         if (s_speakerState.state != DJI_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(DJI_WIDGET_SPEAKER_STATE_TRANSMITTING);
         }
+
+        memcpy(&transDataContent, buf, size);
+        s_decodeBitrate = transDataContent.transDataStartContent.fileDecodeBitrate;
+        USER_LOG_INFO("Create voice file: %s, decoder bitrate: %d.", transDataContent.transDataStartContent.fileName,
+                      transDataContent.transDataStartContent.fileDecodeBitrate);
     } else if (event == DJI_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT) {
         USER_LOG_INFO("Transmit voice file, offset: %d, size: %d", offset, size);
         if (s_audioFile != NULL) {

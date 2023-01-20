@@ -111,7 +111,7 @@ void DjiUser_StartTask(void const *argument)
     };
 
     UART_Init(DJI_CONSOLE_UART_NUM, DJI_CONSOLE_UART_BAUD);
-    Led_Init(LED1);
+    Led_Init(LED3);
 
 //Attention: if you want to run payload sdk on extension port, please define the macro DJI_EXTENSION_PORT_SUPPORT.
 #if DJI_EXTENSION_PORT_SUPPORT
@@ -214,8 +214,9 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
-#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
-    if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2) {
+#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
+    if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+        aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
         if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk gimbal init error");
         }
@@ -256,33 +257,36 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_POSITIONING_ON
-    if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("psdk positioning init error");
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
+        && aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT) {
+        if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("psdk positioning init error");
+        }
     }
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
     T_DjiTestUpgradePlatformOpt stm32UpgradePlatformOpt = {
-    .rebootSystem = DjiUpgradePlatformStm32_RebootSystem,
-    .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformStm32_CleanUpgradeProgramFileStoreArea,
-    .createUpgradeProgramFile = DjiUpgradePlatformStm32_CreateUpgradeProgramFile,
-    .writeUpgradeProgramFile = DjiUpgradePlatformStm32_WriteUpgradeProgramFile,
-    .readUpgradeProgramFile = DjiUpgradePlatformStm32_ReadUpgradeProgramFile,
-    .closeUpgradeProgramFile = DjiUpgradePlatformStm32_CloseUpgradeProgramFile,
-    .replaceOldProgram = DjiUpgradePlatformStm32_ReplaceOldProgram,
-    .setUpgradeRebootState = DjiUpgradePlatformStm32_SetUpgradeRebootState,
-    .getUpgradeRebootState = DjiUpgradePlatformStm32_GetUpgradeRebootState,
-    .cleanUpgradeRebootState = DjiUpgradePlatformStm32_CleanUpgradeRebootState,
-};
-T_DjiTestUpgradeConfig testUpgradeConfig = {
-    .firmwareVersion = {1, 0, 0, 0},
-    .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
-    .needReplaceProgramBeforeReboot = false
-};
-if (DjiTest_UpgradeStartService(&stm32UpgradePlatformOpt, testUpgradeConfig) !=
-    DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    printf("psdk upgrade init error");
-}
+        .rebootSystem = DjiUpgradePlatformStm32_RebootSystem,
+        .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformStm32_CleanUpgradeProgramFileStoreArea,
+        .createUpgradeProgramFile = DjiUpgradePlatformStm32_CreateUpgradeProgramFile,
+        .writeUpgradeProgramFile = DjiUpgradePlatformStm32_WriteUpgradeProgramFile,
+        .readUpgradeProgramFile = DjiUpgradePlatformStm32_ReadUpgradeProgramFile,
+        .closeUpgradeProgramFile = DjiUpgradePlatformStm32_CloseUpgradeProgramFile,
+        .replaceOldProgram = DjiUpgradePlatformStm32_ReplaceOldProgram,
+        .setUpgradeRebootState = DjiUpgradePlatformStm32_SetUpgradeRebootState,
+        .getUpgradeRebootState = DjiUpgradePlatformStm32_GetUpgradeRebootState,
+        .cleanUpgradeRebootState = DjiUpgradePlatformStm32_CleanUpgradeRebootState,
+    };
+    T_DjiTestUpgradeConfig testUpgradeConfig = {
+        .firmwareVersion = {1, 0, 0, 0},
+        .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
+        .needReplaceProgramBeforeReboot = false
+    };
+    if (DjiTest_UpgradeStartService(&stm32UpgradePlatformOpt, testUpgradeConfig) !=
+        DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("psdk upgrade init error");
+    }
 #endif
 
     returnCode = DjiCore_ApplicationStart();
@@ -291,8 +295,8 @@ if (DjiTest_UpgradeStartService(&stm32UpgradePlatformOpt, testUpgradeConfig) !=
     }
 
     while (1) {
-        Osal_TaskSleepMs(1000);
-        Led_Trigger(LED1);
+        Osal_TaskSleepMs(500);
+        Led_Trigger(LED3);
     }
 
 out:
@@ -350,7 +354,8 @@ void DjiUser_MonitorTask(void const *argument)
 
         // report system performance information.
         // Attention: report system performance part is not intended for normal application runtime use but as a debug aid.
-        if (USER_UTIL_IS_WORK_TURN(runIndicateTaskStep++, RUN_INDICATE_TASK_FREQ_0D1HZ, RUN_INDICATE_TASK_FREQ_1HZ)) {
+        if (USER_UTIL_IS_WORK_TURN(runIndicateTaskStep++, RUN_INDICATE_TASK_FREQ_0D1HZ,
+                                   RUN_INDICATE_TASK_FREQ_1HZ)) {
 #if (configUSE_TRACE_FACILITY == 1)
             currentTaskStatusArraySize = uxTaskGetNumberOfTasks();
             currentTaskStatusArray = osalHandler->Malloc(currentTaskStatusArraySize * sizeof(TaskStatus_t));
@@ -379,9 +384,9 @@ void DjiUser_MonitorTask(void const *argument)
             lastTaskStatusArray = currentTaskStatusArray;
             lastTaskStatusArraySize = currentTaskStatusArraySize;
 #endif
-
-            USER_LOG_DEBUG("used heap size: %d.\r\n", configTOTAL_HEAP_SIZE - xPortGetFreeHeapSize());
         }
+        USER_LOG_DEBUG("used heap size: %d/%d.\r\n", configTOTAL_HEAP_SIZE - xPortGetFreeHeapSize(),
+                       configTOTAL_HEAP_SIZE);
     }
 }
 

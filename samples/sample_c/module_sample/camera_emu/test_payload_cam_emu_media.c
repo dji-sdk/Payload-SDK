@@ -34,6 +34,7 @@
 #include "test_payload_cam_emu_base.h"
 #include "camera_emu/dji_media_file_manage/dji_media_file_core.h"
 #include "dji_high_speed_data_channel.h"
+#include "dji_aircraft_info.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define FFMPEG_CMD_BUF_SIZE                 (256 + 256)
@@ -134,6 +135,8 @@ static const char *s_frameSizeKeyChar = "size";
 static T_DjiMediaFileHandle s_mediaFileThumbNailHandle;
 static T_DjiMediaFileHandle s_mediaFileScreenNailHandle;
 static const uint8_t s_frameAudInfo[VIDEO_FRAME_AUD_LEN] = {0x00, 0x00, 0x00, 0x01, 0x09, 0x10};
+static char s_mediaFileDirPath[DJI_FILE_PATH_SIZE_MAX] = {0};
+static bool s_isMediaFileDirPathConfigured = false;
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
@@ -142,6 +145,12 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
     T_DjiReturnCode returnCode;
     const T_DjiDataChannelBandwidthProportionOfHighspeedChannel bandwidthProportionOfHighspeedChannel =
         {10, 60, 30};
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo = {0};
+
+    if (DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft information error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
 
     s_psdkCameraMedia.GetMediaFileDir = GetMediaFileDir;
     s_psdkCameraMedia.GetMediaFileOriginInfo = DjiTest_CameraMediaGetFileInfo;
@@ -177,10 +186,12 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
 
     UtilBuffer_Init(&s_mediaPlayCommandBufferHandler, s_mediaPlayCommandBuffer, sizeof(s_mediaPlayCommandBuffer));
 
-    returnCode = DjiPayloadCamera_RegMediaDownloadPlaybackHandler(&s_psdkCameraMedia);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("psdk camera media function init error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK) {
+        returnCode = DjiPayloadCamera_RegMediaDownloadPlaybackHandler(&s_psdkCameraMedia);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("psdk camera media function init error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
     }
 
     returnCode = DjiHighSpeedDataChannel_SetBandwidthProportion(bandwidthProportionOfHighspeedChannel);
@@ -189,17 +200,23 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    if (DjiPlatform_GetSocketHandler() != NULL) {
+    if (DjiPlatform_GetHalNetworkHandler() != NULL || DjiPlatform_GetHalUsbBulkHandler() != NULL) {
         returnCode = osalHandler->TaskCreate("user_camera_media_task", UserCameraMedia_SendVideoTask, 2048,
                                              NULL, &s_userSendVideoThread);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("user send video task create error.");
             return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
         }
-    } else {
-        USER_LOG_WARN(
-            "Socket handler is null. Probably because socket handler is not be registered. Camera media sample may not be running.");
     }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode DjiTest_CameraEmuSetMediaFilePath(const char *path)
+{
+    memset(s_mediaFileDirPath, 0, sizeof(s_mediaFileDirPath));
+    memcpy(s_mediaFileDirPath, path, USER_UTIL_MIN(strlen(path), sizeof(s_mediaFileDirPath) - 1));
+    s_isMediaFileDirPathConfigured = true;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
@@ -1167,7 +1184,11 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
         USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
         exit(1);
     }
-    snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/PSDK_0005.h264", curFileDirPath);
+    if (s_isMediaFileDirPathConfigured == true) {
+        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%sPSDK_0005.h264", s_mediaFileDirPath);
+    } else {
+        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/PSDK_0005.h264", curFileDirPath);
+    }
 
     videoFilePath = osalHandler->Malloc(DJI_FILE_PATH_SIZE_MAX);
     if (videoFilePath == NULL) {

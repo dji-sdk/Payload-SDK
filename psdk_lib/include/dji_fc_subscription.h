@@ -771,8 +771,8 @@ typedef T_DjiVector3f T_DjiFcSubscriptionGpsVelocity;
  * @brief GPS details topic data structure.
  */
 typedef struct GpsDetail {
-    dji_f32_t hdop; /*!< Horizontal dilution of precision, <1: ideal, 1-2: excellent, 2-5: good, 5-10: moderate, 10-20: fair, >20: poor. */
-    dji_f32_t pdop; /*!< Position dilution of precision, <1: ideal, 1-2: excellent, 2-5: good, 5-10: moderate, 10-20: fair, >20: poor. */
+    dji_f32_t hdop; /*!< Horizontal dilution of precision, unit: 0.01, eg: 100 = 1.00, <1: ideal, 1-2: excellent, 2-5: good, 5-10: moderate, 10-20: fair, >20: poor. */
+    dji_f32_t pdop; /*!< Position dilution of precision, unit: 0.01, eg: 100 = 1.00, <1: ideal, 1-2: excellent, 2-5: good, 5-10: moderate, 10-20: fair, >20: poor. */
     dji_f32_t fixState; /*!< GPS fix state, and can be any value of ::E_DjiFcSubscriptionGpsFixState. Value other than ::E_DjiFcSubscriptionGpsFixState is invalid. */
     dji_f32_t vacc; /*!< Vertical position accuracy (mm), the smaller, the better. */
     dji_f32_t hacc; /*!< Horizontal position accuracy (mm), the smaller, the better. */
@@ -1151,6 +1151,18 @@ T_DjiReturnCode DjiFcSubscription_DeInit(void);
 T_DjiReturnCode DjiFcSubscription_SubscribeTopic(E_DjiFcSubscriptionTopic topic,
                                                  E_DjiDataSubscriptionTopicFreq frequency,
                                                  DjiReceiveDataOfTopicCallback callback);
+
+/**
+ * @brief Unsubscribe a topic in blocking mode. Before unsubscribing any data from aircraft, DjiFcSubscription_Init()
+ * and DjiFcSubscription_SubscribeTopic() function has to be called,
+ * @details User can unsubscribe a topic by specifying topic name, but the topic must be unsubscribed in the order of subscription.
+ * @note Topic to be unsubscribed must have been subscribed.
+ * @note Topic to be unsubscribed must be in the order of subscription, similar to a queue, subscription is similar to enqueue,
+ * unsubscription is similar to dequeue.
+ * @param topic: topic name to be unsubscribed.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFcSubscription_UnSubscribeTopic(E_DjiFcSubscriptionTopic topic);
 
 /**
  * @brief Get the latest data value and timestamp in aircraft time system when sending the data from aircraft of specified

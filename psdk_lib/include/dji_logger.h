@@ -75,7 +75,7 @@ typedef struct {
 
 /* Exported functions --------------------------------------------------------*/
 /**
- * @brief Add the console function and level for Onboard SDK.
+ * @brief Add the console function and level for Payload SDK.
  * @note When registering the console, you need to provide the method of the console and the level corresponding to
  * the method. Log levels from high to low are Debug, Info, Warn, and Error, the log function module can print all
  * logs not higher than the specified level. Maximum support for registering eight different console methods at the
@@ -86,6 +86,12 @@ typedef struct {
  */
 T_DjiReturnCode DjiLogger_AddConsole(T_DjiLoggerConsole *console);
 
+/**
+ * @brief Remove the console function and level for Payload SDK.
+ * @param console: pointer to the console function.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLogger_RemoveConsole(T_DjiLoggerConsole *console);
 /**
  * @brief Print out the selected level log of the specified format by the registration method.
  * @note The registered method is printed according to the corresponding level. If the level of the console is lower
