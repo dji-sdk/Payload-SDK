@@ -63,6 +63,7 @@ static T_DjiCameraManagerFileList s_meidaFileList;
 static uint32_t downloadStartMs = 0;
 static uint32_t downloadEndMs = 0;
 static char downloadFileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE] = {0};
+static uint32_t nextDownloadFileIndex = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraType);
@@ -1159,6 +1160,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     uint16_t downloadCount = 0;
+    nextDownloadFileIndex = 0;
 
     returnCode = DjiCameraManager_RegDownloadFileDataCallback(position, DjiTest_CameraManagerDownloadFileDataCallback);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1210,17 +1212,19 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 
         osalHandler->TaskSleepMs(1000);
 
-        if (s_meidaFileList.totalCount < TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM) {
-            downloadCount = s_meidaFileList.totalCount;
-        } else {
-            downloadCount = TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM;
-        }
+        downloadCount =  s_meidaFileList.totalCount;
 
         for (int i = 0; i < downloadCount; ++i) {
+        redownload:
+            if (i != nextDownloadFileIndex) {
+                i = nextDownloadFileIndex;
+            }
+
             returnCode = DjiCameraManager_DownloadFileByIndex(position, s_meidaFileList.fileListInfo[i].fileIndex);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Download media file by index failed, error code: 0x%08X.", returnCode);
-                return returnCode;
+                nextDownloadFileIndex--;
+                goto redownload;
             }
         }
 
@@ -1248,6 +1252,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
     if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_START) {
         for (i = 0; i < s_meidaFileList.totalCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileIndex == packetInfo.fileIndex) {
+                nextDownloadFileIndex = i + 1;
                 break;
             }
         }
@@ -1255,7 +1260,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
 
         memset(downloadFileName, 0, sizeof(downloadFileName));
         snprintf(downloadFileName, sizeof(downloadFileName), "%s", s_meidaFileList.fileListInfo[i].fileName);
-        USER_LOG_INFO("Start download media file");
+        USER_LOG_INFO("Start download media file, index : %d, next download media file, index: %d", i, nextDownloadFileIndex);
         s_downloadMediaFile = fopen(downloadFileName, "wb+");
         if (s_downloadMediaFile == NULL) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
