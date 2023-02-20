@@ -86,7 +86,7 @@ start:
         << "| [i] Start power management sample - you will see notification when aircraft power off            |\n"
         << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo               |\n"
         << "| [l] Run camera manager sample - shoot photo by the selected camera mounted position              |\n"
-        << "| [m] Run camera manager download sample - download camera media file (only support on M3E/M3T)    |\n"
+        << "| [m] Run camera manager download sample - download camera media file (not support on M3E/M3T)    |\n"
         << std::endl;
 
     std::cin >> inputChar;
