@@ -37,6 +37,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 typedef dji_f32_t T_DjiWaypointV2GlobalCruiseSpeed;
+
 /**
 *  Actions will be taken when the waypoint mission is finished.
 */
@@ -217,52 +218,44 @@ typedef enum {
     DJI_WAYPOINT_V2_TURN_MODE_UNKNOWN = 0xFF,
 } E_DJIWaypointV2TurnMode;
 
-
 /**
  *  All the possible state of ``WaypointV2MissionOperator``.
  */
 typedef enum {
     /**
-     *  The state of the operator is unknown. It is the initial state when the operator
-     *  is just created.
-     */
-    DJI_WAYPOINT_V2_MISSION_STATE_UNKNOWN = -1,
+      *  Waypoint mission state is ground station not start.
+      */
+    DJI_WAYPOINT_V2_MISSION_STATE_GROUND_STATION_NOT_START = 0,
 
     /**
-     *  The connection OSDK device, remote controller and aircraft is
-     *  broken.
+     *  Waypoint mission state is mission prepared.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_DISCONNECTED = 0,
+    DJI_WAYPOINT_V2_MISSION_STATE_MISSION_PREPARED = 1,
 
     /**
-     *  Raed to execute the mission.
+     *  Waypoint mission state is enter mission.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_READY_TO_EXECUTE = 1,
+    DJI_WAYPOINT_V2_MISSION_STATE_ENTER_MISSION = 2,
 
     /**
-     *  The execution is started successfully.
+     *  Waypoint mission state is execute flying route mission.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_EXECUTING = 2,
+    DJI_WAYPOINT_V2_MISSION_STATE_EXECUTING = 3,
 
     /**
-     *  Waypoint mission is paused successfully.
+     *  Waypoint mission state is pause state.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_INTERRUPTED = 3,
+    DJI_WAYPOINT_V2_MISSION_STATE_PAUSED = 4,
 
     /**
-     *  Waypoint mission is restarted after interrupted.
+     *  Waypoint mission state is enter mission after ending pause.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_RESUME_AFTER_INTERRUPTED = 4,
+    DJI_WAYPOINT_V2_MISSION_STATE_ENTER_MISSION_AFTER_ENDING_PAUSE = 5,
 
     /**
-     *  Waypoint mission is exited.
+     *  Waypoint mission state is exit mission.
      */
-    DJI_WAYPOINT_V2_MISSION_STATE_EXIT_MISSION = 5,
-
-    /**
-     *  Waypoint mission is finished.
-     */
-    DJI_WAYPOINT_V2_MISSION_STATE_FINISHED_MISSION = 6,
+    DJI_WAYPOINT_V2_MISSION_STATE_EXIT_MISSION = 6,
 } E_DJIWaypointV2MissionState;
 
 /*! waypoint position relative to WayPointV2InitSettings's reference point
@@ -371,8 +364,6 @@ typedef struct {
     uint16_t waypointV2Num;
 } T_DjiWaypointV2List;
 
-//Action Notes
-
 /**
 *  Possible types of action trigger.
 */
@@ -449,7 +440,6 @@ typedef enum {
      */
     DJI_WAYPOINT_V2_ACTION_INTERVAL_TYPE_UNKNOWN = 0xFF,
 } E_DJIWaypointV2ActionIntervalType;
-
 
 /**
 *  Possible types of action actuator.
@@ -638,7 +628,6 @@ typedef struct {
 
 } T_DJIWaypointV2IntervalTriggerParam;
 
-
 typedef struct {
     //see "E_DJIWaypointV2ActionTriggerType"
     uint8_t actionTriggerType;
@@ -649,7 +638,6 @@ typedef struct {
         T_DJIWaypointV2IntervalTriggerParam intervalTriggerParam;
     };
 } T_DJIWaypointV2Trigger;
-
 
 /*! Focus point parameter
  */
@@ -968,7 +956,7 @@ typedef struct {
     dji_f64_t refLati;
     dji_f64_t refLong;
     dji_f32_t refAlti;
-} T_WayPointV2InitSettingsInternal;// pack(1)
+} T_WayPointV2InitSettingsInternal;
 
 /*! Mission's event data
  */
@@ -1049,24 +1037,15 @@ typedef struct {
     uint8_t event;
     uint32_t FCTimestamp;
     U_DjiWaypointV2EventData data;
-} T_DjiWaypointV2MissionEventPush;// pack(1)
+} T_DjiWaypointV2MissionEventPush;
 #pragma pack()
 
 /*! Mission's state push data
  */
 typedef struct {
     uint16_t curWaypointIndex;
-    /*!
-     * 0x0:ground station not start.
-     * 0x1:mission prepared.
-     * 0x2:enter mission.
-     * 0x3:execute flying route mission.
-     * 0x4:pause state.
-     * 0x5:enter mission after ending pause.
-     * 0x6:exit mission.
-     */
-    uint8_t state;
-    uint16_t velocity; //uint:0.01m/s
+    uint8_t state; /*!< enum-type: E_DJIWaypointV2MissionState. */
+    uint16_t velocity; /*!< Uint:0.01m/s. */
 } T_DjiWaypointV2MissionStatePush;
 
 typedef struct {
