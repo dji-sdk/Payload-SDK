@@ -83,7 +83,18 @@ typedef void *T_DjiDirHandle;
 typedef void *T_DjiSocketHandle;
 
 typedef enum {
+    /**
+    * All aircraft type support，users can connect via chip serial port or USB to TTL serial port.
+    * Baud rate support list on M300 RTK Payload Port: 115200, 230400, 460800, 921600.
+    * Baud rate support list on M300 RTK Extension Port: 115200, 230400, 460800, 921600, 1000000.
+    * Baud rate support list on M30/M30T: 115200, 230400, 460800, 921600, 1000000.
+    * Baud rate support list on M3E/M3T: 921600.
+    * */
     DJI_HAL_UART_NUM_0,
+    /**
+    * Only support on M300 RTK Extension Port by USB virtual serial port, such as /dev/ttyACM0.
+    * Baud rate support list on M300 RTK Extension Port: 921600.
+    * */
     DJI_HAL_UART_NUM_1,
 } E_DjiHalUartNum;
 

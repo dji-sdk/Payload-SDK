@@ -662,6 +662,67 @@ typedef enum {
     DJI_FC_SUBSCRIPTION_HOME_POINT_SET_STATUS_SUCCESS = 1, /*!< The home point was set successfully. */
 } E_DjiFcSubscriptionHomePointSetStatus;
 
+/**
+ * @brief Smart battery self-check result.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_NORMAL = 0, /*!< Battery self-check is normal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_NTC_ABNORMAL = 1, /*!< Battery self-check NTC is abnormal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_MOS_ABNORMAL = 2, /*!< Battery self-check MOS is abnormal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_R_ABNORMAL = 3, /*!< Battery self-check sampling resistance is abnormal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_CELL_DAMAGE = 4, /*!< Battery cell self-check is damaged. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_CAL_EXP = 5, /*!< Battery self-check is not calibrated. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SELF_CHECK_GAUGE_PARM_EXP = 6, /*!< Battery self-check fuel gauge parameters is abnormal. */
+} E_DJIFcSubscriptionBatterySelfCheck;
+
+/**
+ * @brief Smart battery closed reason.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_NORMAL = 0, /*!< Battery closed reason is normal shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_FORCED = 1, /*!< Battery closed reason is forced by flight controller shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_SCD = 2, /*!< Battery closed reason is discharge short circuit shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_OLD = 3, /*!< Battery closed reason is discharge overload shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_OCD = 4, /*!< Battery closed reason is discharge over current shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_UVD = 5, /*!< Battery closed reason is discharge under voltage shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_OTD = 6, /*!< Battery closed reason is discharge over temperature shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_SCC = 16, /*!< Battery closed reason is charging short circuit shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_OCC = 17, /*!< Battery closed reason is charging over current shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_OVC = 18, /*!< Battery closed reason is charging over voltage shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_CHARGER_OVC = 19, /*!< Battery closed reason is charger over voltage shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_LTC = 20, /*!< Battery closed reason is charging low temperature shutdown. */
+    DJI_FC_SUBSCRIPTION_BATTERY_CLOSED_HTC = 21, /*!< Battery closed reason is charging high temperature shutdown. */
+} E_DJIFcSubscriptionBatteryClosedReason;
+
+/**
+ * @brief Smart battery SOH state.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_BATTERY_SOH_NORMAL = 0, /*!< Battery SOH state is normal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOH_ALERT = 1, /*!< Battery SOH state is alert. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOH_SAFE = 2, /*!< Battery SOH state is safe. */
+} E_DJIFcSubscriptionBatterySohState;
+
+/**
+ * @brief Smart battery heart state.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_BATTERY_NO_HEAT = 0, /*!< Battery is in no heat state. */
+    DJI_FC_SUBSCRIPTION_BATTERY_IN_HEAT = 1, /*!< Battery is in heat state. */
+    DJI_FC_SUBSCRIPTION_BATTERY_KEEP_WARM = 2, /*!< Battery is in keep warm state. */
+} E_DJIFcSubscriptionBatteryHeatState;
+
+/**
+ * @brief Smart battery SOC state.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_BATTERY_SOC_NORMAL = 0, /*!< Battery SOC state is normal. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOC_ABNORMAL_HIGH = 1, /*!< Battery SOC state is abnormal high. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOC_JUMP_DOWN = 2, /*!< Battery SOC state is jump down. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOC_JUMP_UP = 3, /*!< Battery SOC state is jump up. */
+    DJI_FC_SUBSCRIPTION_BATTERY_SOC_INVALID = 4, /*!< Battery SOC state is invalid. */
+} E_DJIFcSubscriptionBatterySocState;
+
 #pragma pack(1)
 
 /**
@@ -885,22 +946,22 @@ typedef uint16_t T_DjiFcSubscriptionMotorStartError;
 
 typedef struct {
     uint32_t reserved: 12;
-    uint32_t cellBreak: 5;            /*! 0:normal;other:Undervoltage core index(0x01-0x1F)*/
-    uint32_t selfCheckError: 3;       /*! enum-type: DJISmartBatterySelfCheck*/
+    uint32_t cellBreak: 5;            /*!< 0: normal; other: under voltage core index(0x01-0x1F). */
+    uint32_t selfCheckError: 3;       /*!< enum-type: E_DJIFcSubscriptionBatterySelfCheck. */
     uint32_t reserved1: 7;
-    uint32_t batteryClosedReason: 5;   /*! enum-type: DJI_BETTERY_CLOSED_REASON*/
-    uint8_t reserved2: 6;             /*! [0]CHG state；[1]DSG state；[2]ORING state*/
-    uint8_t batSOHState: 2;                /*! enum-type: DJISmartBatterySohState*/
-    uint8_t maxCycleLimit: 6;          /*! APP:cycle_limit*10*/
+    uint32_t batteryClosedReason: 5;  /*!< enum-type: E_DJIFcSubscriptionBatteryClosedReason. */
+    uint8_t reserved2: 6;             /*!< 0: CHG state; 1: DSG state; 2: ORING state. */
+    uint8_t batSOHState: 2;           /*!< enum-type: E_DJIFcSubscriptionBatterySohState. */
+    uint8_t maxCycleLimit: 6;         /*!< APP: cycle_limit*10. */
     uint8_t reserved3: 2;
     uint16_t lessBattery: 1;
     uint16_t batteryCommunicationAbnormal: 1;
     uint16_t reserved4: 3;
     uint16_t hasCellBreak: 1;
     uint16_t reserved5: 4;
-    uint16_t isBatteryEmbed: 1;        /*! 0:embed;1:unmebed*/
-    uint16_t heatState: 2;             /*!enum-type: DJISmartBatteryHeatState*/
-    uint16_t socState: 3;             /*!enum-type: DJISmartBatterySocWarning*/
+    uint16_t isBatteryEmbed: 1;       /*!< 0:embed; 1:not embed. */
+    uint16_t heatState: 2;            /*!< enum-type: E_DJIFcSubscriptionBatteryHeatState. */
+    uint16_t socState: 3;             /*!< enum-type: E_DJIFcSubscriptionBatterySocState. */
 } T_DjiFcSubscriptionSingleBatteryState;
 
 /**
@@ -916,17 +977,17 @@ typedef struct BatteryWholeInfo {
 typedef struct BatterySingleInfo {
     uint8_t reserve;
     uint8_t batteryIndex;
-    int32_t currentVoltage;          /*! uint:mV*/
-    int32_t currentElectric;         /*!uint:mA*/
-    uint32_t fullCapacity;            /*!uint:mAh*/
-    uint32_t remainedCapacity;        /*!uint:mAh*/
-    int16_t batteryTemperature;      /*!uint:℃*/
+    int32_t currentVoltage;          /*!< uint:mV. */
+    int32_t currentElectric;         /*!< uint:mA. */
+    uint32_t fullCapacity;           /*!< uint:mAh. */
+    uint32_t remainedCapacity;       /*!< uint:mAh. */
+    int16_t batteryTemperature;      /*!< uint:℃. */
     uint8_t cellCount;
-    uint8_t batteryCapacityPercent;  /*!uint:%*/
+    uint8_t batteryCapacityPercent;  /*!< uint:%. */
     T_DjiFcSubscriptionSingleBatteryState batteryState;
     uint8_t reserve1;
     uint8_t reserve2;
-    uint8_t SOP;                     /*!Relative power percentage*/
+    uint8_t SOP;                     /*!< Relative power percentage. */
 } T_DjiFcSubscriptionSingleBatteryInfo;
 
 /*!
