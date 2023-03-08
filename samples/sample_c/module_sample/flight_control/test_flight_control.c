@@ -68,7 +68,7 @@ static const T_DjiTestFlightControlDisplayModeStr s_flightControlDisplayModeStr[
 static uint8_t DjiTest_FlightControlGetDisplayModeIndex(E_DjiFcSubscriptionDisplayMode displayMode);
 static T_DjiFcSubscriptionFlightStatus DjiTest_FlightControlGetValueOfFlightStatus(void);
 static T_DjiFcSubscriptionDisplaymode DjiTest_FlightControlGetValueOfDisplayMode(void);
-static T_DjiFcSubscriptionAvoidData DjiTest_FlightControlGetValueOfAvoidData(void);
+static T_DjiFcSubscriptionHeightFusion DjiTest_FlightControlGetValueOfHeightFusion(void);
 static T_DjiFcSubscriptionQuaternion DjiTest_FlightControlGetValueOfQuaternion(void);
 static T_DjiFcSubscriptionPositionFused DjiTest_FlightControlGetValueOfPositionFused(void);
 static dji_f32_t DjiTest_FlightControlGetValueOfRelativeHeight(void);
@@ -92,13 +92,12 @@ static void DjiTest_FlightControlHorizCommandLimit(dji_f32_t speedFactor, dji_f3
 static dji_f32_t DjiTest_FlightControlVectorNorm(T_DjiTestFlightControlVector3f v);
 static T_DjiReturnCode
 DjiTest_FlightControlJoystickCtrlAuthSwitchEventCallback(T_DjiFlightControllerJoystickCtrlAuthorityEventInfo eventData);
-static bool
-DjiTest_FlightControlMoveByPositionOffset(T_DjiTestFlightControlVector3f offsetDesired, float yawDesiredInDeg,
-                                          float posThresholdInM,
-                                          float yawThresholdInDeg);
-static void
-DjiTest_FlightControlVelocityAndYawRateCtrl(T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
-                                            uint32_t timeMs);
+static bool DjiTest_FlightControlMoveByPositionOffset(T_DjiTestFlightControlVector3f offsetDesired,
+                                                      float yawDesiredInDeg,
+                                                      float posThresholdInM,
+                                                      float yawThresholdInDeg);
+static void DjiTest_FlightControlVelocityAndYawRateCtrl(T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
+                                                        uint32_t timeMs);
 static T_DjiReturnCode DjiTest_FlightControlInit(void);
 static T_DjiReturnCode DjiTest_FlightControlDeInit(void);
 static void DjiTest_FlightControlTakeOffLandingSample(void);
@@ -174,7 +173,7 @@ T_DjiReturnCode DjiTest_FlightControlInit(void)
         return returnCode;
     }
 
-    returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_AVOID_DATA,
+    returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_HEIGHT_FUSION,
                                                   DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
                                                   NULL);
 
@@ -965,26 +964,25 @@ T_DjiFcSubscriptionDisplaymode DjiTest_FlightControlGetValueOfDisplayMode(void)
     return displayMode;
 }
 
-T_DjiFcSubscriptionAvoidData DjiTest_FlightControlGetValueOfAvoidData(void)
+T_DjiFcSubscriptionHeightFusion DjiTest_FlightControlGetValueOfHeightFusion(void)
 {
     T_DjiReturnCode djiStat;
-    T_DjiFcSubscriptionAvoidData avoidData = {0};
-    T_DjiDataTimestamp avoidDataTimestamp = {0};
+    T_DjiFcSubscriptionHeightFusion heightFusion = {0};
+    T_DjiDataTimestamp timestamp = {0};
 
-    djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_AVOID_DATA,
-                                                      (uint8_t *) &avoidData,
-                                                      sizeof(T_DjiFcSubscriptionAvoidData),
-                                                      &avoidDataTimestamp);
+    djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_HEIGHT_FUSION,
+                                                      (uint8_t *) &heightFusion,
+                                                      sizeof(T_DjiFcSubscriptionHeightFusion),
+                                                      &timestamp);
 
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get value of topic avoid data error, error code: 0x%08X", djiStat);
+        USER_LOG_ERROR("Get value of topic height fusion error, error code: 0x%08X", djiStat);
     } else {
-        USER_LOG_DEBUG("Timestamp: millisecond %u microsecond %u.", avoidDataTimestamp.millisecond,
-                       avoidDataTimestamp.microsecond);
-        USER_LOG_DEBUG("Avoid downwards distance is %f m", avoidData.down);
+        USER_LOG_DEBUG("Timestamp: millisecond %u microsecond %u.", timestamp.millisecond, timestamp.microsecond);
+        USER_LOG_DEBUG("Relative height fusion is %f m", heightFusion);
     }
 
-    return avoidData;
+    return heightFusion;
 }
 
 T_DjiFcSubscriptionQuaternion DjiTest_FlightControlGetValueOfQuaternion(void)
@@ -1211,6 +1209,12 @@ bool DjiTest_FlightControlMonitoredLanding(void)
 bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
 {
     T_DjiReturnCode djiStat;
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+
+    djiStat = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+    }
 
     /*! Step 1: Start go home */
     USER_LOG_INFO("Start go home action");
@@ -1237,11 +1241,17 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
     } else {
         while (DjiTest_FlightControlGetValueOfDisplayMode() == DJI_FC_SUBSCRIPTION_DISPLAY_MODE_AUTO_LANDING &&
                DjiTest_FlightControlGetValueOfFlightStatus() == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR) {
-            T_DjiFcSubscriptionAvoidData avoidData = DjiTest_FlightControlGetValueOfAvoidData();
+            T_DjiFcSubscriptionHeightFusion heightFusion = DjiTest_FlightControlGetValueOfHeightFusion();
             s_osalHandler->TaskSleepMs(1000);
-            if (((dji_f64_t) 0.65 < avoidData.down && avoidData.down < (dji_f64_t) 0.75) &&
-                avoidData.downHealth == 1) {
-                break;
+            if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E ||
+                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+                if ((dji_f64_t) 0.45 < heightFusion && heightFusion < (dji_f64_t) 0.55) {
+                    break;
+                }
+            } else {
+                if ((dji_f64_t) 0.65 < heightFusion && heightFusion < (dji_f64_t) 0.75) {
+                    break;
+                }
             }
         }
     }
@@ -1309,9 +1319,8 @@ DjiTest_FlightControlLocalOffsetFromGpsAndFusedHeightOffset(const T_DjiFcSubscri
     return deltaNed;
 }
 
-T_DjiTestFlightControlVector3f
-DjiTest_FlightControlVector3FSub(const T_DjiTestFlightControlVector3f vectorA,
-                                 const T_DjiTestFlightControlVector3f vectorB)
+T_DjiTestFlightControlVector3f DjiTest_FlightControlVector3FSub(const T_DjiTestFlightControlVector3f vectorA,
+                                                                const T_DjiTestFlightControlVector3f vectorB)
 {
     T_DjiTestFlightControlVector3f result;
     result.x = vectorA.x - vectorB.x;

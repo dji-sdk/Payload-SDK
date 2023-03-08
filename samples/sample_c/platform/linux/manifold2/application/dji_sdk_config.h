@@ -62,6 +62,8 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_UPGRADE_ON
 
+#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
+
 /*!< Attention: This function needs to be used together with mobile sdk mop sample.
 * */
 //#define CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON

@@ -389,10 +389,10 @@ static void *UserGimbal_Task(void *arg)
 
     djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
                                                NULL);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Subscribe topic quaternion error.");
+    if (djiStat == DJI_ERROR_SUBSCRIPTION_MODULE_CODE_TOPIC_DUPLICATE) {
+        USER_LOG_DEBUG("Subscribe topic quaternion duplicate.");
     } else {
-        USER_LOG_DEBUG("Subscribe topic quaternion success.");
+        USER_LOG_ERROR("Subscribe topic quaternion error.");
     }
 
     while (1) {

@@ -1153,18 +1153,16 @@ typedef struct HomeLocationData {
 } T_DjiFcSubscriptionHomePointInfo; // pack(1)
 
 typedef struct GimbalSingleData {
-    dji_f32_t pitch;
     dji_f32_t roll;
+    dji_f32_t pitch;
     dji_f32_t yaw;
-    uint32_t status;
-    uint8_t mode;
-} GimbalSingleData;
+} GimbalAnglesData;
 
 /**
  * @brief Struct for the topic DJI_FC_SUBSCRIPTION_TOPIC_THREE_GIMBAL_DATA. Used in M300
  */
 typedef struct GimbalThreeData {
-    GimbalSingleData gbData[3];
+    GimbalAnglesData anglesData[3];
 } T_DjiFcSubscriptionThreeGimbalData;
 
 #pragma pack()

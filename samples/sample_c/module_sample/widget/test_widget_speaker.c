@@ -565,7 +565,7 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
             USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
         }
     } else {
-        USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here!!!");
+        USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here.");
     }
 #else
     USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here!!!");
