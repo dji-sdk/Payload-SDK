@@ -29,7 +29,7 @@
 #include "task.h"
 
 /* Private constants ---------------------------------------------------------*/
-#define USER_START_TASK_STACK_SIZE          1024
+#define USER_START_TASK_STACK_SIZE          2048
 #define USER_START_TASK_PRIORITY            0
 #define USER_RUN_INDICATE_TASK_STACK_SIZE   256
 #define USER_RUN_INDICATE_TASK_PRIORITY     0

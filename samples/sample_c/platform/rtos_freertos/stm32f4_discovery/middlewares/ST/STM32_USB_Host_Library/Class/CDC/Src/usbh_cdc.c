@@ -146,8 +146,8 @@ USBH_ClassTypeDef CDC_Class =
 
 QueueHandle_t ACMDataRecvQueue;
 QueueHandle_t ACMDataSendQueue;
-#if DJI_EXTENSION_PORT_SUPPORT
-static uint8_t cdcBuff[1024];
+#if USE_USB_HOST_UART
+CCMRAM static uint8_t cdcBuff[1024];
 #endif
 
 void USBH_CDC_DataQueueInit(void)
@@ -372,7 +372,7 @@ static USBH_StatusTypeDef USBH_CDC_Process(USBH_HandleTypeDef *phost)
     CDC_HandleTypeDef *CDC_Handle = (CDC_HandleTypeDef *) phost->pActiveClass->pData;
 
     if (CDC_Handle->data_rx_state == CDC_IDLE) {
-#if DJI_EXTENSION_PORT_SUPPORT
+#if USE_USB_HOST_UART
         USBH_CDC_Receive(phost, cdcBuff, sizeof(cdcBuff));
 #endif
     }

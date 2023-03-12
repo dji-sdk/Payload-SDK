@@ -280,6 +280,8 @@ void HAL_DisableMemorySwappingBank(void);
   * @}
   */
 /* Private macros ------------------------------------------------------------*/
+#define CCMRAM __attribute__((section(".ccmram")))
+
 /* Private functions ---------------------------------------------------------*/
 /**
   * @}
@@ -287,8 +289,8 @@ void HAL_DisableMemorySwappingBank(void);
 
 /**
   * @}
-  */ 
-  
+  */
+
 #ifdef __cplusplus
 }
 #endif

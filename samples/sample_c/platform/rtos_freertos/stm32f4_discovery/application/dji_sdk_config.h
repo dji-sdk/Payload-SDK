@@ -36,19 +36,19 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 #define CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
 
+#define CONFIG_MODULE_SAMPLE_WIDGET_ON
+
 #define CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
 
-#define CONFIG_MODULE_SAMPLE_WIDGET_ON
+#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
 
 #define CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
 
 #define CONFIG_MODULE_SAMPLE_CAMERA_ON
 
-#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
-
 #define CONFIG_MODULE_SAMPLE_XPORT_ON
 
-//#define CONFIG_MODULE_SAMPLE_UPGRADE_ON
+#define CONFIG_MODULE_SAMPLE_UPGRADE_ON
 
 /*!< Attention: Please uncomment it in gps environment.
 * */
