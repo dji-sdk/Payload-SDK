@@ -176,6 +176,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
+#if USE_USB_HOST_UART
 /**
   * @brief This function handles USB On The Go FS global interrupt.
   */
@@ -192,6 +193,7 @@ void OTG_FS_IRQHandler(void)
 
   /* USER CODE END OTG_FS_IRQn 1 */
 }
+#endif
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

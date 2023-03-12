@@ -27,8 +27,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "hal_uart.h"
 #include "uart.h"
-#include "usbh_cdc.h"
 #include "dji_platform.h"
+
+#if USE_USB_HOST_UART
+#include "usbh_cdc.h"
+#endif
 
 /* Private constants ---------------------------------------------------------*/
 #define COMMUNICATION_UART_NUM          UART_NUM_3

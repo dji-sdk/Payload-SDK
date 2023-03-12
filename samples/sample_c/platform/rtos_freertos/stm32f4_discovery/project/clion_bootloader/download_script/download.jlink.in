@@ -1,0 +1,7 @@
+device ${DEVICE}
+r
+loadbin ${PROJECT_NAME}.bin, ${FLASH_START}
+verifybin ${PROJECT_NAME}.bin, ${FLASH_START}
+r
+g
+qc

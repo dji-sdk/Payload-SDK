@@ -1,0 +1,2 @@
+#!/bin/bash
+JLinkGDBServerCLExe -device ${DEVICE} -speed 8100 -if SWD -s -halt -noir -x ${CMAKE_CURRENT_LIST_DIR}/debug_script/init.gdb -rtos GDBServer/RTOSPlugin_FreeRTOS

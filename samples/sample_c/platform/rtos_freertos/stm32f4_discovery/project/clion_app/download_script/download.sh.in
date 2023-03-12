@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ ! -n "$1" ] ;then
+    JLinkExe -device ${DEVICE} -speed 1000 -if SWD -CommanderScript ${CMAKE_CURRENT_BINARY_DIR}/download.jlink
+    echo "use default jlink device"
+else
+    JLinkExe -usb $1 -device ${DEVICE} -speed 1000 -if SWD -CommanderScript ${CMAKE_CURRENT_BINARY_DIR}/download.jlink
+    echo "use selected jlink device, sn:"$1
+fi
+exit 0
