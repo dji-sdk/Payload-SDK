@@ -62,11 +62,11 @@
 #define RUN_INDICATE_TASK_FREQ_0D1HZ      0.1f
 
 #define DJI_USE_WIDGET_INTERACTION        0
-#define DJI_EXTENSION_PORT_SUPPORT        0
 
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
+static bool s_isApplicationStart = false;
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen);
@@ -113,8 +113,8 @@ void DjiUser_StartTask(void const *argument)
     UART_Init(DJI_CONSOLE_UART_NUM, DJI_CONSOLE_UART_BAUD);
     Led_Init(LED3);
 
-//Attention: if you want to run payload sdk on extension port, please define the macro DJI_EXTENSION_PORT_SUPPORT.
-#if DJI_EXTENSION_PORT_SUPPORT
+//Attention: if you want to run payload sdk on extension port, please define the macro USE_USB_HOST_UART.
+#if USE_USB_HOST_UART
     MX_USB_HOST_Init();
     Osal_TaskSleepMs(2000);
 #endif
@@ -169,7 +169,7 @@ void DjiUser_StartTask(void const *argument)
 
     returnCode = DjiTest_RegApplyHighPowerHandler(&applyHighPowerHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("regsiter apply high power handler error");
+        USER_LOG_ERROR("register apply high power handler error");
     }
 
     returnCode = DjiTest_PowerManagementStartService();
@@ -178,26 +178,11 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
-#ifdef CONFIG_MODULE_SAMPLE_CAMERA_ON
-    returnCode = DjiTest_CameraEmuBaseStartService();
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("camera emu common init error");
-        goto out;
-    }
-#endif
-
 #ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
-#if DJI_USE_WIDGET_INTERACTION
-    returnCode = DjiTest_WidgetInteractionStartService();
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("widget sample init error");
-    }
-#else
     returnCode = DjiTest_WidgetStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("widget sample init error");
     }
-#endif
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
@@ -211,6 +196,15 @@ void DjiUser_StartTask(void const *argument)
     returnCode = DjiTest_FcSubscriptionStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("data subscription sample init error\n");
+    }
+#endif
+
+#if !USE_USB_HOST_UART
+#ifdef CONFIG_MODULE_SAMPLE_CAMERA_ON
+    returnCode = DjiTest_CameraEmuBaseStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("camera emu common init error");
+        goto out;
     }
 #endif
 
@@ -288,11 +282,14 @@ void DjiUser_StartTask(void const *argument)
         printf("psdk upgrade init error");
     }
 #endif
+#endif
 
     returnCode = DjiCore_ApplicationStart();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("start sdk application error");
     }
+
+    s_isApplicationStart = true;
 
     while (1) {
         Osal_TaskSleepMs(500);
@@ -325,8 +322,11 @@ void DjiUser_MonitorTask(void const *argument)
 #endif
 
     while (1) {
-        Osal_TaskSleepMs(1000 / RUN_INDICATE_TASK_FREQ_1HZ);
+        Osal_TaskSleepMs(1000 / RUN_INDICATE_TASK_FREQ_0D1HZ);
 
+        if (s_isApplicationStart == false) {
+            continue;
+        }
         // report UART buffer state
 #ifdef USING_UART_PORT_1
         UART_GetBufferState(UART_NUM_1, &readBufferState, &writeBufferState);
@@ -385,8 +385,8 @@ void DjiUser_MonitorTask(void const *argument)
             lastTaskStatusArraySize = currentTaskStatusArraySize;
 #endif
         }
-        USER_LOG_DEBUG("used heap size: %d/%d.\r\n", configTOTAL_HEAP_SIZE - xPortGetFreeHeapSize(),
-                       configTOTAL_HEAP_SIZE);
+        USER_LOG_INFO("Used heap size: %d/%d.\r\n", configTOTAL_HEAP_SIZE - xPortGetFreeHeapSize(),
+                      configTOTAL_HEAP_SIZE);
     }
 }
 

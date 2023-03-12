@@ -34,18 +34,16 @@
 
 /* Private typedef -----------------------------------------------------------*/
 
-
 /* Private define ------------------------------------------------------------*/
 //uart uart buffer size define
-#define UART1_READ_BUF_SIZE      1024
-#define UART1_WRITE_BUF_SIZE     4096
-#define UART2_READ_BUF_SIZE      2048
+#define UART1_READ_BUF_SIZE      64
+#define UART1_WRITE_BUF_SIZE     64
+#define UART2_READ_BUF_SIZE      64
 #define UART2_WRITE_BUF_SIZE     2048
-#define UART3_READ_BUF_SIZE      1024
-#define UART3_WRITE_BUF_SIZE     1024
+#define UART3_READ_BUF_SIZE      4096
+#define UART3_WRITE_BUF_SIZE     2048
 
 /* Private macro -------------------------------------------------------------*/
-
 
 /* Private variables ---------------------------------------------------------*/
 #ifdef USING_UART_PORT_1
@@ -58,9 +56,9 @@ static T_RingBuffer s_uart1WriteRingBuffer;
 //USART1 write buffer state
 static T_UartBufferState s_uart1WriteBufferState;
 //UART1 read buffer
-static uint8_t s_uart1ReadBuf[UART1_READ_BUF_SIZE];
+CCMRAM static uint8_t s_uart1ReadBuf[UART1_READ_BUF_SIZE];
 //UART1 write buffer
-static uint8_t s_uart1WriteBuf[UART1_WRITE_BUF_SIZE];
+CCMRAM static uint8_t s_uart1WriteBuf[UART1_WRITE_BUF_SIZE];
 
 //UART1 mutex
 static T_DjiMutexHandle s_uart1Mutex;
@@ -73,8 +71,8 @@ static T_RingBuffer s_uart2ReadRingBuffer;
 static T_UartBufferState s_uart2ReadBufferState;
 static T_RingBuffer s_uart2WriteRingBuffer;
 static T_UartBufferState s_uart2WriteBufferState;
-static uint8_t s_uart2ReadBuf[UART2_READ_BUF_SIZE];
-static uint8_t s_uart2WriteBuf[UART2_WRITE_BUF_SIZE];
+CCMRAM static uint8_t s_uart2ReadBuf[UART2_READ_BUF_SIZE];
+CCMRAM static uint8_t s_uart2WriteBuf[UART2_WRITE_BUF_SIZE];
 
 static T_DjiMutexHandle s_uart2Mutex;
 static UART_HandleTypeDef s_uart2Handle;
@@ -85,8 +83,8 @@ static T_RingBuffer s_uart3ReadRingBuffer;
 static T_UartBufferState s_uart3ReadBufferState;
 static T_RingBuffer s_uart3WriteRingBuffer;
 static T_UartBufferState s_uart3WriteBufferState;
-static uint8_t s_uart3ReadBuf[UART3_READ_BUF_SIZE];
-static uint8_t s_uart3WriteBuf[UART3_WRITE_BUF_SIZE];
+CCMRAM static uint8_t s_uart3ReadBuf[UART3_READ_BUF_SIZE];
+CCMRAM static uint8_t s_uart3WriteBuf[UART3_WRITE_BUF_SIZE];
 
 static T_DjiMutexHandle s_uart3Mutex;
 static UART_HandleTypeDef s_uart3Handle;
