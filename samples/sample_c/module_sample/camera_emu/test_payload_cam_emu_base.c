@@ -511,6 +511,7 @@ static T_DjiReturnCode FormatSDCard(void)
 
     memset(&s_cameraSDCardState, 0, sizeof(T_DjiCameraSDCardState));
     s_cameraSDCardState.isInserted = true;
+    s_cameraSDCardState.isVerified = true;
     s_cameraSDCardState.totalSpaceInMB = SDCARD_TOTAL_SPACE_IN_MB;
     s_cameraSDCardState.remainSpaceInMB = SDCARD_TOTAL_SPACE_IN_MB;
     s_cameraSDCardState.availableCaptureCount = SDCARD_TOTAL_SPACE_IN_MB / SDCARD_PER_PHOTO_SPACE_IN_MB;
@@ -1241,6 +1242,7 @@ T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void)
 
     /* Init the SDcard parameters */
     s_cameraSDCardState.isInserted = true;
+    s_cameraSDCardState.isVerified = true;
     s_cameraSDCardState.totalSpaceInMB = SDCARD_TOTAL_SPACE_IN_MB;
     s_cameraSDCardState.remainSpaceInMB = SDCARD_TOTAL_SPACE_IN_MB;
     s_cameraSDCardState.availableCaptureCount = SDCARD_TOTAL_SPACE_IN_MB / SDCARD_PER_PHOTO_SPACE_IN_MB;
