@@ -204,8 +204,8 @@ static void DjiUser_ShowRgbImageCallback(CameraRGBImage img, void *userData)
             cout << "  x: " << faces[i].x;
             cout << "  y: " << faces[i].y << endl;
 
-            cv::rectangle(mat, cvPoint(faces[i].x, faces[i].y),
-                          cvPoint(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
+            cv::rectangle(mat, cv::Point(faces[i].x, faces[i].y),
+                          cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
                           Scalar(0, 0, 255), 2, 1, 0);
         }
         imshow(name, mat);
@@ -266,7 +266,7 @@ static void DjiUser_ShowRgbImageCallback(CameraRGBImage img, void *userData)
                 int baseLine = 0;
                 Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
                 rectangle(mat, Rect(Point(xLeftBottom, yLeftBottom - labelSize.height),
-                                    Size(labelSize.width, labelSize.height + baseLine)), Scalar(0, 255, 0), CV_FILLED);
+                                    Size(labelSize.width, labelSize.height + baseLine)), Scalar(0, 255, 0), cv::FILLED);
                 putText(mat, label, Point(xLeftBottom, yLeftBottom), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0));
             }
         }
