@@ -39,6 +39,7 @@
 #include <mop_channel/test_mop_channel.h>
 #include <payload_collaboration/test_payload_collaboration.h>
 #include <xport/test_payload_xport.h>
+#include <hms/test_hms.h>
 #include "monitor/sys_monitor.h"
 #include "osal/osal.h"
 #include "osal/osal_fs.h"
@@ -87,6 +88,7 @@ static T_DjiReturnCode DjiUser_LocalWriteFsInit(const char *path);
 static void *DjiUser_MonitorTask(void *argument);
 static T_DjiReturnCode DjiTest_HighPowerApplyPinInit();
 static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState);
+static void DjiUser_NormalExitHandler(int signalNum);
 
 /* Exported functions definition ---------------------------------------------*/
 int main(int argc, char **argv)
@@ -94,9 +96,18 @@ int main(int argc, char **argv)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    T_DjiFirmwareVersion firmwareVersion = {
+        .majorVersion = 1,
+        .minorVersion = 0,
+        .modifyVersion = 0,
+        .debugVersion = 0,
+    };
 
     USER_UTIL_UNUSED(argc);
     USER_UTIL_UNUSED(argv);
+
+    // attention: when the program is hand up ctrl-c will generate the coredump file
+    signal(SIGTERM, DjiUser_NormalExitHandler);
 
     /*!< Step 1: Prepare system environment, such as osal, hal uart, console function and so on. */
     returnCode = DjiUser_PrepareSystemEnvironment();
@@ -128,6 +139,18 @@ int main(int argc, char **argv)
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set alias error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set firmware version error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set serial number error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
@@ -228,12 +251,9 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
-            returnCode = DjiTest_MopChannelStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("mop channel sample init error");
-            }
+        returnCode = DjiTest_MopChannelStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("mop channel sample init error");
         }
 #endif
 
@@ -271,6 +291,13 @@ int main(int argc, char **argv)
         }
 #endif
     }
+
+#ifdef CONFIG_MODULE_SAMPLE_HMS_ON
+    returnCode = DjiTest_HmsStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("hms test init error");
+    }
+#endif
 
     /*!< Step 5: Tell the DJI Pilot you are ready. */
     returnCode = DjiCore_ApplicationStart();
@@ -658,6 +685,12 @@ static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinSta
 {
     //attention: please pull up the HWPR pin state by hardware.
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static void DjiUser_NormalExitHandler(int signalNum)
+{
+    USER_UTIL_UNUSED(signalNum);
+    exit(0);
 }
 
 #pragma GCC diagnostic pop

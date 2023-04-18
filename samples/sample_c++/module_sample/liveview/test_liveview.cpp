@@ -42,7 +42,7 @@ LiveviewSample::LiveviewSample()
 
     returnCode = DjiLiveview_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        throw std::runtime_error("Liveview init failed");
+        perror("Liveview init failed");
     }
 
     streamDecoder = {
@@ -59,7 +59,7 @@ LiveviewSample::~LiveviewSample()
 
     returnCode = DjiLiveview_Deinit();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        throw std::runtime_error("Liveview deinit failed");
+        perror("Liveview deinit failed");
     }
 
     for (auto pair : streamDecoder) {

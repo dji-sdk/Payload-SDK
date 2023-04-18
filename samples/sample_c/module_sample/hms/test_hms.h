@@ -40,6 +40,7 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_HmsRunSample(void);
+T_DjiReturnCode DjiTest_HmsStartService(void);
 
 #ifdef __cplusplus
 }

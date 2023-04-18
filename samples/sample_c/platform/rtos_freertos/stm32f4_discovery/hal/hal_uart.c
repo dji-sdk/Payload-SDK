@@ -30,7 +30,9 @@
 #include "dji_platform.h"
 
 #if USE_USB_HOST_UART
+
 #include "usbh_cdc.h"
+
 #endif
 
 /* Private constants ---------------------------------------------------------*/
@@ -53,7 +55,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
 {
     T_UartHandleStruct *uartHandleStruct;
 
-    uartHandleStruct = malloc(sizeof(T_UartHandleStruct));
+    uartHandleStruct = pvPortMalloc(sizeof(T_UartHandleStruct));
     if (uartHandleStruct == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
     }
@@ -72,12 +74,15 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
 
 T_DjiReturnCode HalUart_DeInit(T_DjiUartHandle uartHandle)
 {
+    vPortFree(uartHandle);
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 T_DjiReturnCode HalUart_WriteData(T_DjiUartHandle uartHandle, const uint8_t *buf, uint32_t len, uint32_t *realLen)
 {
     T_UartHandleStruct *uartHandleStruct = (T_UartHandleStruct *) uartHandle;
+    int32_t ret;
 
     if (uartHandleStruct->uartNum == USER_UART_NUM0) {
         UART_Write(COMMUNICATION_UART_NUM, buf, len);
@@ -91,6 +96,7 @@ T_DjiReturnCode HalUart_WriteData(T_DjiUartHandle uartHandle, const uint8_t *buf
 T_DjiReturnCode HalUart_ReadData(T_DjiUartHandle uartHandle, uint8_t *buf, uint32_t len, uint32_t *realLen)
 {
     T_UartHandleStruct *uartHandleStruct = (T_UartHandleStruct *) uartHandle;
+    int32_t ret;
 
     if (uartHandleStruct->uartNum == USER_UART_NUM0) {
         *realLen = UART_Read(COMMUNICATION_UART_NUM, buf, len);

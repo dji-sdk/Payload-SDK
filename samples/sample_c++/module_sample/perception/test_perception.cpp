@@ -42,12 +42,11 @@ PerceptionSample::PerceptionSample()
 
     returnCode = DjiPerception_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-
         if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT) {
             USER_LOG_ERROR("Perception feature will support on later version.");
         }
 
-        throw std::runtime_error("Perception init failed");
+        perror("Perception init failed");
     }
 }
 
@@ -57,7 +56,7 @@ PerceptionSample::~PerceptionSample()
 
     returnCode = DjiPerception_Deinit();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        throw std::runtime_error("Perception deinit failed");
+        perror("Perception deinit failed");
     }
 }
 

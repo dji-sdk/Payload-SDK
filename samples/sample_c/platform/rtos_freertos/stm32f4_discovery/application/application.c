@@ -23,6 +23,8 @@
  *********************************************************************
  */
 /* Includes ------------------------------------------------------------------*/
+#include <widget/test_widget_speaker.h>
+#include <hms/test_hms.h>
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "task.h"
@@ -101,13 +103,18 @@ void DjiUser_StartTask(void const *argument)
         .consoleLevel = DJI_LOGGER_CONSOLE_LOG_LEVEL_INFO,
         .isSupportColor = true,
     };
-
     T_DjiHalUartHandler uartHandler = {
         .UartInit = HalUart_Init,
         .UartDeInit = HalUart_DeInit,
         .UartWriteData = HalUart_WriteData,
         .UartReadData = HalUart_ReadData,
         .UartGetStatus = HalUart_GetStatus,
+    };
+    T_DjiFirmwareVersion firmwareVersion = {
+        .majorVersion = 1,
+        .minorVersion = 0,
+        .modifyVersion = 0,
+        .debugVersion = 0,
     };
 
     UART_Init(DJI_CONSOLE_UART_NUM, DJI_CONSOLE_UART_BAUD);
@@ -161,6 +168,18 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
+    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set firmware version error");
+        goto out;
+    }
+
+    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set serial number error");
+        goto out;
+    }
+
 #ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
     T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
         .pinInit = DjiTest_HighPowerApplyPinInit,
@@ -185,6 +204,13 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+    returnCode = DjiTest_WidgetSpeakerStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("widget speaker sample init error");
+    }
+#endif
+
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
     returnCode = DjiTest_DataTransmissionStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -199,20 +225,37 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
+#ifdef CONFIG_MODULE_SAMPLE_HMS_ON
+    returnCode = DjiTest_HmsStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("hms test init error");
+    }
+#endif
+
 #if !USE_USB_HOST_UART
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_ON
-    returnCode = DjiTest_CameraEmuBaseStartService();
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("camera emu common init error");
-        goto out;
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
+        && aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+        USER_LOG_WARN("Not support camera emu sample.");
+    } else {
+        returnCode = DjiTest_CameraEmuBaseStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("camera emu common init error");
+            goto out;
+        }
     }
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
-    if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-        aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
-        if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("psdk gimbal init error");
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
+        && aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+        USER_LOG_WARN("Not support gimbal emu sample.");
+    } else {
+        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+            if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("psdk gimbal init error");
+            }
         }
     }
 #endif

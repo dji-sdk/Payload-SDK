@@ -48,26 +48,46 @@ typedef enum {
 } E_DjiWaypointV3Action;
 
 /**
-*  Waypoint v3 current aircraft state.
+*  Waypoint v3 current mission state.
 */
 typedef enum {
-    DJI_WAYPOINT_V3_STATE_IDLE = 0, /*!< Waypoint v3 aircraft in idle state. */
-    DJI_WAYPOINT_V3_STATE_PREPARE = 16, /*!< Waypoint v3 aircraft in prepare state. */
-    DJI_WAYPOINT_V3_STATE_TRANS_MISSION = 32, /*!< Waypoint v3 aircraft in trans mission state. */
-    DJI_WAYPOINT_V3_STATE_MISSION = 48, /*!< Waypoint v3 aircraft in mission state. */
-    DJI_WAYPOINT_V3_STATE_BREAK = 64, /*!< Waypoint v3 aircraft in break state. */
-    DJI_WAYPOINT_V3_STATE_RESUME = 80, /*!< Waypoint v3 aircraft in resume state. */
-    DJI_WAYPOINT_V3_STATE_RETURN_FIRSTPOINT = 98, /*!< Waypoint v3 aircraft in return first point state. */
-} E_DjiWaypointV3State;
+    DJI_WAYPOINT_V3_MISSION_STATE_IDLE = 0, /*!< Waypoint v3 mission in idle state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_PREPARE = 16, /*!< Waypoint v3 mission in prepare state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_TRANS_MISSION = 32, /*!< Waypoint v3 mission in trans mission state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_MISSION = 48, /*!< Waypoint v3 mission in mission state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_BREAK = 64, /*!< Waypoint v3 mission in break state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_RESUME = 80, /*!< Waypoint v3 mission in resume state. */
+    DJI_WAYPOINT_V3_MISSION_STATE_RETURN_FIRSTPOINT = 98, /*!< Waypoint v3 mission in return first point state. */
+} E_DjiWaypointV3MissionState;
+
+/**
+*  Waypoint v3 current action state.
+*/
+typedef enum {
+    DJI_WAYPOINT_V3_ACTION_STATE_IDLE = 0, /*!< Waypoint v3 action in idle state. */
+    DJI_WAYPOINT_V3_ACTION_STATE_RUNNING = 1, /*!< Waypoint v3 action in idle state. */
+    DJI_WAYPOINT_V3_ACTION_STATE_FINISHED = 5, /*!< Waypoint v3 action in idle state. */
+} E_DjiWaypointV3ActionState;
 
 /**
 *  Waypoint v3 mission state.
 */
 typedef struct {
-    E_DjiWaypointV3State state; /*!< Waypoint v3 current aircraft state, #E_DjiWaypointV3State. */
+    E_DjiWaypointV3MissionState state; /*!< Waypoint v3 current mission state, #E_DjiWaypointV3MissionState. */
     uint32_t wayLineId; /*!< Waypoint v3 current way line id. */
     uint16_t currentWaypointIndex; /*!< Waypoint v3 current waypoint index. */
 } T_DjiWaypointV3MissionState;
+
+/**
+*  Waypoint v3 action state.
+*/
+typedef struct {
+    E_DjiWaypointV3ActionState state; /*!< Waypoint v3 current action state, #E_DjiWaypointV3ActionState. */
+    uint32_t wayLineId; /*!< Waypoint v3 current way line id. */
+    uint16_t currentWaypointIndex; /*!< Waypoint v3 current waypoint index. */
+    uint16_t actionGroupId; /*!< Waypoint v3 current action group index. */
+    uint16_t actionId; /*!< Waypoint v3 current action index. */
+} T_DjiWaypointV3ActionState;
 
 /**
  * @brief Prototype of callback function used to receive the waypoint v3 mission state.
@@ -76,7 +96,16 @@ typedef struct {
  * @param missionState: current waypoint v3 mission state.
  * @return Execution result.
  */
-typedef T_DjiReturnCode (*WaypointV3StateCallback)(T_DjiWaypointV3MissionState missionState);
+typedef T_DjiReturnCode (*WaypointV3MissionStateCallback)(T_DjiWaypointV3MissionState missionState);
+
+/**
+ * @brief Prototype of callback function used to receive the waypoint v3 mission state.
+ * @warning User can not execute blocking style operations or functions in callback function, because that will block
+ * root thread, causing problems such as slow system response, payload disconnection or infinite loop.
+ * @param missionState: current waypoint v3 mission state.
+ * @return Execution result.
+ */
+typedef T_DjiReturnCode (*WaypointV3ActionStateCallback)(T_DjiWaypointV3ActionState missionState);
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -112,7 +141,15 @@ T_DjiReturnCode DjiWaypointV3_Action(E_DjiWaypointV3Action action);
  * file or executing this mission action.
  * @return Execution result.
  */
-T_DjiReturnCode DjiWaypointV3_RegMissionStateCallback(WaypointV3StateCallback callback);
+T_DjiReturnCode DjiWaypointV3_RegMissionStateCallback(WaypointV3MissionStateCallback callback);
+
+/**
+ * @brief Register the action state callback for waypoint mission.
+ * @note If you want to monitor the state of waypoint action, this interface should be called before uploading kmz
+ * file or executing this mission action.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiWaypointV3_RegActionStateCallback(WaypointV3ActionStateCallback callback);
 
 #ifdef __cplusplus
 }

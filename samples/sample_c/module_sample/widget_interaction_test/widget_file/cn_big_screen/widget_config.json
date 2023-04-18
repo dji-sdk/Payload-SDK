@@ -218,6 +218,9 @@
           },
           {
             "item_name": "28_test_cammgr-media_download"
+          },
+          {
+            "item_name": "29_test_cammgr-thermometry"
           }
         ]
       },
@@ -225,6 +228,60 @@
         "widget_index": 10,
         "widget_type": "button",
         "widget_name": "Run"
+      },
+      {
+        "widget_index": 11,
+        "widget_type": "list",
+        "widget_name": "Please Select Errcode",
+        "list_item": [
+          {
+            "item_name": "0x1E020000"
+          },
+          {
+            "item_name": "0x1E020001"
+          },
+          {
+            "item_name": "0x1E020002"
+          },
+          {
+            "item_name": "0x1E020003"
+          },
+          {
+            "item_name": "0x1E020004"
+          }
+        ]
+      },
+      {
+        "widget_index": 12,
+        "widget_type": "list",
+        "widget_name": "Please Select ErrLevel",
+        "list_item": [
+          {
+            "item_name": "Error level 0"
+          },
+          {
+            "item_name": "Error level 1"
+          },
+          {
+            "item_name": "Error level 2"
+          },
+          {
+            "item_name": "Error level 3"
+          },
+          {
+            "item_name": "Error level 4"
+          }
+        ]
+      },
+      {
+        "widget_index": 13,
+        "widget_type": "button",
+        "widget_name": "Inject"
+      },
+      {
+        "widget_index": 14,
+        "widget_type": "button",
+        "widget_name": "Eliminate"
       }
     ]
   }

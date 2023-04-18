@@ -1,6 +1,6 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.3.0-red.svg)
+![](https://img.shields.io/badge/version-V3.4.0-pink.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -23,30 +23,37 @@ to get the latest version information.
 
 ## Latest Release
 
-PSDK 3.3.0 was released on 18 November 2022. This version of Payload SDK mainly add support for Mavic 3E/3T, also add
-some new features support and fixed some bugs. Please refer to the release notes for detailed changes list.
+PSDK 3.4.0 was released on 18 April 2023. This version of Payload SDK mainly add some new features support and fixed
+some bugs. Please refer to the release notes for detailed changes list.
 
-* Add the Mavic 3E/3T support
-* Add getting the perception image support on M30/M30T and M3E/M3T
-* Add downloading and deleting camera media file support on M30/M30T
-* Add USB convert to Ethernet support on M30/M30T and M3E/M3T
-* Add hybrid zoom function support of camera H20/H20T/H20N in Camera Manager module
-* Add gimbal speed control mode in Gimbal Manager module
-* Add getting aircraft connection state support in Aircraft Info module
-* Fix the problem that Camera P1 can not set the parameter of interval shooting in Camera Manager module
-* Fix the camera type recognition problem of H20 in Camera Manager module
-* Fix the abnormal camera switching working mode of H20/H20T/H20N in Camera Manager module
-* Fix the infrared zoom interface error in Camera Manager module
-* Fix the occasional problem that force landing fail in Flight Controller module
-* Fix the abnormal display in specific configuration of custom widget function
-* Fix the occasional black screen when the M300 RTK PSDK camera is playing back
-* Fix the abnormal display of custom widget icon in Pilot App because the dual PSDK payload is mounted on M300 RTK.
-* Fix the occasional abnormal bandwidth occupation of Data Subscription function on M30/M30T
-* Optimize the getting the camera laser measuring data function in Camera Manager module
-* Optimize the Gimbal Manager module Sample
-* Optimize the channel configuration method of USB-Bulk and Ethernet
-* Optimize the problem that the memory occupation is too large in STM32 platform in some cases
-* Optimize the import audio transmission quality of Speaker widget function
+* Added support for SDK interconnection on M30/M30T
+* Added support for downloading camera media files on M3E/M3T
+* Added support for infrared temperature in camera management on M30T/M3T
+* Added support for waypoint action status push on M30/M30T and M3E/M3T
+* Added support for custom HMS function on all models
+* Added support for custom device version number and serial number on all models
+* Added support for subscribing to video stream request I-frame on all models
+* Added support for obtaining H20N laser distance measurement data camera management on M300 RTK
+* Added support for controlling H20N infrared zoom in camera management on M300 RTK
+* Added support for subscribing perception grayscale image by Ethernet on M30/M30T and M3E/M3T
+* Added support for downloading camera media files by Ethernet on M30/M30T and M3E/M3T
+* Added support for Nvidia Jeston series development boards sample
+* Added support for H20/H20T model files
+* Fixed issue with unsuccessful initialization in USB single Bulk mode on M30/M30T and M3E/M3T
+* Fixed issue with unstable data transmission OSDK expansion port to PSDK port for passing through small data on M300 RTK
+* Fixed issue with third-party camera function causing payload disconnection due to deleting all media files in certain platforms on M300 RTK
+* Fixed issue with gimbal mode abnormal setting in gimbal management on M300 RTK
+* Fixed issue with deleting L1 camera media files in camera management on M300 RTK
+* Fixed issue with abnormal triggering of text input box widget function in RTOS platform on M300 RTK
+* Fixed issue with abnormal payload power supply during hot plugging in some scenarios in RTOS platform on M3E/M3T
+* Fixed issue with CPU loading abnormal usage due to multiple video stream subscriptions on M30/M30T
+* Fixed issue with occasional payload negotiation failure on M30/M30T and M3E/M3T
+* Fixed issue with obtaining camera work mode on M30/M30T and M3E/M3T
+* Fixed issue with obtaining camera zoom parameters on M30/M30T and M3E/M3T
+* Fixed issue with altitude and distance limitations when using joystick function in some scenarios on all models
+* Fixed some memory leak issues
+* Optimized camera management C++ Sample support
+* Optimized gimbal management C++ Sample support
 
 ## License
 

@@ -204,9 +204,17 @@ static void DjiUser_ShowRgbImageCallback(CameraRGBImage img, void *userData)
             cout << "  x: " << faces[i].x;
             cout << "  y: " << faces[i].y << endl;
 
+#ifdef OPEN_CV_VERSION_3
             cv::rectangle(mat, cvPoint(faces[i].x, faces[i].y),
                           cvPoint(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
                           Scalar(0, 0, 255), 2, 1, 0);
+#endif
+
+#ifdef OPEN_CV_VERSION_4
+            cv::rectangle(mat, cv::Point(faces[i].x, faces[i].y),
+                          cv::Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height),
+                          Scalar(0, 0, 255), 2, 1, 0);
+#endif
         }
         imshow(name, mat);
     } else if (s_demoIndex == 3) {
@@ -265,8 +273,15 @@ static void DjiUser_ShowRgbImageCallback(CameraRGBImage img, void *userData)
 
                 int baseLine = 0;
                 Size labelSize = getTextSize(label, FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
+#ifdef OPEN_CV_VERSION_3
                 rectangle(mat, Rect(Point(xLeftBottom, yLeftBottom - labelSize.height),
                                     Size(labelSize.width, labelSize.height + baseLine)), Scalar(0, 255, 0), CV_FILLED);
+#endif
+
+#ifdef OPEN_CV_VERSION_4
+                rectangle(mat, Rect(Point(xLeftBottom, yLeftBottom - labelSize.height),
+                                    Size(labelSize.width, labelSize.height + baseLine)), Scalar(0, 255, 0), cv::FILLED);
+#endif
                 putText(mat, label, Point(xLeftBottom, yLeftBottom), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0));
             }
         }

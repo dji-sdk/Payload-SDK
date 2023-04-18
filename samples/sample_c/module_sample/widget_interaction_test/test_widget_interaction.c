@@ -45,6 +45,8 @@
 #include <payload_collaboration/test_payload_collaboration.h>
 #include <waypoint_v3/test_waypoint_v3.h>
 #include "dji_sdk_config.h"
+#include "hms/hms_text_c/en/hms_text_config_json.h"
+#include "dji_hms.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define WIDGET_DIR_PATH_LEN_MAX         (256)
@@ -83,9 +85,26 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_CAMMGR_INTERVAL_PHOTO = 25,
     E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO = 26,
     E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD = 27,
+    E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY = 28,
 
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
+
+typedef enum {
+    E_DJI_HMS_ERROR_CODE_INDEX1 = 0,
+    E_DJI_HMS_ERROR_CODE_INDEX2,
+    E_DJI_HMS_ERROR_CODE_INDEX3,
+    E_DJI_HMS_ERROR_CODE_INDEX4,
+    E_DJI_HMS_ERROR_CODE_INDEX5,
+}E_DjiExtensionPortHmsErrorCodeIndex;
+
+typedef enum {
+    E_DJI_HMS_ERROR_LEVEL_INDEX1 = 0,
+    E_DJI_HMS_ERROR_LEVEL_INDEX2,
+    E_DJI_HMS_ERROR_LEVEL_INDEX3,
+    E_DJI_HMS_ERROR_LEVEL_INDEX4,
+    E_DJI_HMS_ERROR_LEVEL_INDEX5,
+}E_DjiExtensionPortHmsErrorLevelIndex;
 
 typedef struct {
     bool valid;
@@ -105,6 +124,10 @@ static T_DjiReturnCode DjiTestWidget_TriggerChangeAlias(void);
 static T_DjiTaskHandle s_widgetTestThread;
 static T_DjiTaskHandle s_widgetInteractionTestThread;
 static E_DjiExtensionPortSampleIndex s_extensionPortSampleIndex = E_DJI_SAMPLE_INDEX_FC_SUBSCRIPTION;
+static E_DjiExtensionPortHmsErrorCodeIndex s_extensionPortErrcodeIndex = E_DJI_HMS_ERROR_CODE_INDEX1;
+static E_DjiExtensionPortHmsErrorLevelIndex s_extensionPortErrLevelIndex = E_DJI_HMS_ERROR_LEVEL_INDEX1;
+static bool s_isInjectErrcode = false;
+static bool s_isEliminateErrcode = false;
 static bool s_isallowRunFlightControlSample = false;
 static bool s_isSampleStart = false;
 static E_DjiMountPosition s_mountPosition = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1;
@@ -124,6 +147,10 @@ static const T_DjiWidgetHandlerListItem s_widgetHandlerList[] = {
     {8,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
     {9,  DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
     {10, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {11, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {12, DJI_WIDGET_TYPE_LIST,          DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {13, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
+    {14, DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
 };
 
 static const char *s_widgetTypeNameArray[] = {
@@ -334,6 +361,8 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
 {
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiReturnCode returnCode;
+    uint32_t errorCode;
+    E_DjiHmsErrorLevel errorLevel;
 
     returnCode = DjiAircraftInfo_GetBaseInfo(&s_aircraftInfoBaseInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -343,6 +372,78 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
 
     while (1) {
         osalHandler->TaskSleepMs(100);
+
+        if (s_isInjectErrcode == true && s_isEliminateErrcode == false) {
+            switch (s_extensionPortErrcodeIndex) {
+                case E_DJI_HMS_ERROR_CODE_INDEX1:
+                    errorCode = 0x1E020000;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX2:
+                    errorCode = 0x1E020001;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX3:
+                    errorCode = 0x1E020002;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX4:
+                    errorCode = 0x1E020003;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX5:
+                    errorCode = 0x1E020004;
+                    break;
+                default:
+                    break;
+            }
+            switch (s_extensionPortErrLevelIndex) {
+                case E_DJI_HMS_ERROR_LEVEL_INDEX1:
+                    errorLevel = DJI_HMS_ERROR_LEVEL_NONE;
+                    break;
+                case E_DJI_HMS_ERROR_LEVEL_INDEX2:
+                    errorLevel = DJI_HMS_ERROR_LEVEL_HINT;
+                    break;
+                case E_DJI_HMS_ERROR_LEVEL_INDEX3:
+                    errorLevel = DJI_HMS_ERROR_LEVEL_WARN;
+                    break;
+                case E_DJI_HMS_ERROR_LEVEL_INDEX4:
+                    errorLevel = DJI_HMS_ERROR_LEVEL_CRITICAL;
+                    break;
+                case E_DJI_HMS_ERROR_LEVEL_INDEX5:
+                    errorLevel = DJI_HMS_ERROR_LEVEL_FATAL;
+                    break;
+                default:
+                    break;
+            }
+            DjiHms_InjectHmsErrorCode(errorCode, errorLevel);
+            osalHandler->TaskSleepMs(500);
+            s_isInjectErrcode = false;
+            s_isEliminateErrcode = false;
+            continue;
+        }
+        if (s_isEliminateErrcode == true && s_isInjectErrcode == false) {
+            switch (s_extensionPortErrcodeIndex) {
+                case E_DJI_HMS_ERROR_CODE_INDEX1:
+                    errorCode = 0x1E020000;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX2:
+                    errorCode = 0x1E020001;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX3:
+                    errorCode = 0x1E020002;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX4:
+                    errorCode = 0x1E020003;
+                    break;
+                case E_DJI_HMS_ERROR_CODE_INDEX5:
+                    errorCode = 0x1E020004;
+                    break;
+                default:
+                    break;
+            }
+            DjiHms_EliminateHmsErrorCode(errorCode);
+            osalHandler->TaskSleepMs(500);
+            s_isInjectErrcode = false;
+            s_isEliminateErrcode = false;
+            continue;
+        }
 
         if (s_isSampleStart != true) {
             continue;
@@ -495,12 +596,15 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                     DjiTest_CameraManagerRunSample(s_mountPosition,
                                                    E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE);
                     break;
+                case E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY:
+                    DjiTest_CameraManagerRunSample(s_mountPosition,
+                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_THERMOMETRY);
+                    break;
                 default:
                     break;
             }
         } else {
             USER_LOG_WARN("Can't support on payload port.");
-            break;
         }
 
         USER_LOG_INFO("--------------------------------------------------------------------------------------------->");
@@ -538,6 +642,28 @@ static T_DjiReturnCode DjiTestWidget_SetWidgetValue(E_DjiWidgetType widgetType, 
     if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 10) {
         if (value == 1) {
             s_isSampleStart = true;
+        }
+    }
+
+    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 11) {
+        s_extensionPortErrcodeIndex = value;
+    }
+
+    if (widgetType == DJI_WIDGET_TYPE_LIST && index == 12) {
+        s_extensionPortErrLevelIndex = value;
+    }
+
+    if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 13) {
+        if (value == 1) {
+            s_isInjectErrcode = true;
+            s_isEliminateErrcode = false;
+        }
+    }
+
+    if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 14) {
+        if (value == 1) {
+            s_isInjectErrcode = false;
+            s_isEliminateErrcode = true;
         }
     }
 

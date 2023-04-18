@@ -29,9 +29,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 extern "C" {
+#ifdef FFMPEG_INSTALLED
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
+#endif
 }
 
 #include "pthread.h"
@@ -66,6 +68,8 @@ private:
     void *cbUserParam;
 
     pthread_mutex_t decodemutex;
+
+#ifdef FFMPEG_INSTALLED
     AVCodecContext *pCodecCtx;
     AVCodec *pCodec;
     AVCodecParserContext *pCodecParserCtx;
@@ -73,6 +77,7 @@ private:
 
     AVFrame *pFrameYUV;
     AVFrame *pFrameRGB;
+#endif
     uint8_t *rgbBuf;
     size_t bufSize;
 };

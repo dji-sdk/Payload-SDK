@@ -29,6 +29,7 @@
 #include <dji_logger.h>
 #include <dji_core.h>
 #include <dji_aircraft_info.h>
+#include <csignal>
 #include "dji_sdk_config.h"
 
 #include "../common/osal/osal.h"
@@ -58,6 +59,7 @@ static FILE *s_djiLogFile;
 static FILE *s_djiLogFileCnt;
 
 /* Private functions declaration ---------------------------------------------*/
+static void DjiUser_NormalExitHandler(int signalNum);
 
 /* Exported functions definition ---------------------------------------------*/
 Application::Application(int argc, char **argv)
@@ -206,6 +208,15 @@ void Application::DjiUser_ApplicationStart()
     T_DjiUserInfo userInfo;
     T_DjiReturnCode returnCode;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    T_DjiFirmwareVersion firmwareVersion = {
+        .majorVersion = 1,
+        .minorVersion = 0,
+        .modifyVersion = 0,
+        .debugVersion = 0,
+    };
+
+    // attention: when the program is hand up ctrl-c will generate the coredump file
+    signal(SIGTERM, DjiUser_NormalExitHandler);
 
     returnCode = DjiUser_FillInUserInfo(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -229,6 +240,16 @@ void Application::DjiUser_ApplicationStart()
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         throw std::runtime_error("Set alias error.");
+    }
+
+    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("Set firmware version error.");
+    }
+
+    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("Set serial number error");
     }
 
     returnCode = DjiCore_ApplicationStart();
@@ -387,6 +408,12 @@ T_DjiReturnCode Application::DjiUser_LocalWriteFsInit(const char *path)
     }
 
     return djiReturnCode;
+}
+
+static void DjiUser_NormalExitHandler(int signalNum)
+{
+    USER_UTIL_UNUSED(signalNum);
+    exit(0);
 }
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/
