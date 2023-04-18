@@ -34,7 +34,6 @@
 extern "C" {
 #endif
 
-#ifdef SYSTEM_ARCH_LINUX
 
 /* Exported constants --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_WidgetSpeakerStartService(void);
@@ -42,8 +41,6 @@ T_DjiReturnCode DjiTest_WidgetSpeakerStartService(void);
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/
-
-#endif
 
 #ifdef __cplusplus
 }

@@ -38,6 +38,8 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_WIDGET_ON
 
+#define CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+
 #define CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
 
 #define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
@@ -49,6 +51,8 @@ extern "C" {
 #define CONFIG_MODULE_SAMPLE_XPORT_ON
 
 #define CONFIG_MODULE_SAMPLE_UPGRADE_ON
+
+#define CONFIG_MODULE_SAMPLE_HMS_ON
 
 /*!< Attention: Please uncomment it in gps environment.
 * */

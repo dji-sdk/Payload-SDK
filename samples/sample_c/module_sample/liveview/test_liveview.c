@@ -33,8 +33,11 @@
 #include "time.h"
 
 /* Private constants ---------------------------------------------------------*/
-#define TEST_LIVEVIEW_STREAM_FILE_PATH_STR_MAX_SIZE    256
-#define TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS   20
+#define TEST_LIVEVIEW_STREAM_FILE_PATH_STR_MAX_SIZE             256
+#define TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS            20
+
+#define TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_ON                 1
+#define TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_TICK_IN_SECONDS    5
 
 /* Private types -------------------------------------------------------------*/
 
@@ -109,15 +112,25 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
 
     for (int i = 0; i < TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS; ++i) {
         USER_LOG_INFO("Storing camera h264 stream, second: %d.", i + 1);
+#if TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_ON
+        if (i % TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_TICK_IN_SECONDS == 0) {
+            returnCode = DjiLiveview_RequestIntraframeFrameData((E_DjiLiveViewCameraPosition) mountPosition,
+                                                                DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Request stream I frame of payload %d failed, error code: 0x%08X", mountPosition,
+                               returnCode);
+            }
+        }
+#endif
         osalHandler->TaskSleepMs(1000);
     }
 
     USER_LOG_INFO("--> Step 3: Stop h264 stream of the fpv and selected payload\r\n");
     DjiTest_WidgetLogAppend("--> Step 3: Stop h264 stream of the fpv and selected payload");
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
-        //TODO: how to use on M3E
+
     } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
-        //TODO: how to use on M3T
+
     } else {
         returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -157,7 +170,7 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
         }
 
         returnCode = DjiLiveview_StopH264Stream((E_DjiLiveViewCameraPosition) mountPosition,
-                                                DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+                                                DJI_LIVEVIEW_CAMERA_SOURCE_M3T_IR);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Request to stop h264 of payload %d failed, error code: 0x%08X", mountPosition, returnCode);
             goto out;

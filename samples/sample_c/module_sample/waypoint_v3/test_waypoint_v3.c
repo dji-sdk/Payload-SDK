@@ -39,7 +39,8 @@
 static T_DjiWaypointV3MissionState s_lastWaypointV3MissionState = {0};
 
 /* Private functions declaration ---------------------------------------------*/
-static T_DjiReturnCode DjiTest_WaypointV3StateCallback(T_DjiWaypointV3MissionState missionState);
+static T_DjiReturnCode DjiTest_WaypointV3MissionStateCallback(T_DjiWaypointV3MissionState missionState);
+static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3ActionState actionState);
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
@@ -47,7 +48,7 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 #ifdef SYSTEM_ARCH_LINUX
-    FILE *kmzFile;
+    FILE *kmzFile = NULL;
     uint32_t kmzFileSize = 0;
     uint8_t *kmzFileBuf;
     uint16_t readLen;
@@ -60,9 +61,15 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
         return returnCode;
     }
 
-    returnCode = DjiWaypointV3_RegMissionStateCallback(DjiTest_WaypointV3StateCallback);
+    returnCode = DjiWaypointV3_RegMissionStateCallback(DjiTest_WaypointV3MissionStateCallback);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Register waypoint v3 state callback failed.");
+        goto out;
+    }
+
+    returnCode = DjiWaypointV3_RegActionStateCallback(DjiTest_WaypointV3ActionStateCallback);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Register waypoint v3 action state callback failed.");
         goto out;
     }
 
@@ -113,8 +120,8 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     returnCode = DjiWaypointV3_UploadKmzFile(waypoint_v3_test_file_kmz_fileBinaryArray,
                                              waypoint_v3_test_file_kmz_fileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Upload kmz file failed.");
-        goto out;
+        USER_LOG_ERROR("Upload kmz file binary array failed.");
+        return returnCode;
     }
 #endif
 
@@ -125,14 +132,24 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
         goto out;
     }
 
+#ifdef SYSTEM_ARCH_LINUX
+    fclose(kmzFile);
+#endif
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 
 out:
+#ifdef SYSTEM_ARCH_LINUX
+    if (kmzFile != NULL) {
+        fclose(kmzFile);
+    }
+#endif
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
 }
 
 /* Private functions definition-----------------------------------------------*/
-static T_DjiReturnCode DjiTest_WaypointV3StateCallback(T_DjiWaypointV3MissionState missionState)
+static T_DjiReturnCode DjiTest_WaypointV3MissionStateCallback(T_DjiWaypointV3MissionState missionState)
 {
     if (s_lastWaypointV3MissionState.state == missionState.state
         && s_lastWaypointV3MissionState.currentWaypointIndex == missionState.currentWaypointIndex
@@ -147,4 +164,16 @@ static T_DjiReturnCode DjiTest_WaypointV3StateCallback(T_DjiWaypointV3MissionSta
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+
+static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3ActionState actionState)
+{
+    USER_LOG_INFO(
+        "Waypoint v3 action state: %d, current waypoint index: %d, wayLine id: %d, action group: %d, action id: %d",
+        actionState.state,
+        actionState.currentWaypointIndex, actionState.wayLineId,
+        actionState.actionGroupId, actionState.actionId);
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

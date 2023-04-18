@@ -69,18 +69,6 @@ typedef enum {
     DJI_UPGRADE_END_STATE_UNKNOWN_ERROR = 2, /*!< Upgrade failure due to unknown reason. */
 } E_DjiUpgradeEndState;
 
-/**
- * @brief The firmware version of payload.
- * @note If majorVersion = AA, minorVersion = BB, modifyVersion = CC, debugVersion = DD, The version show in
- * terminal APP is AA.BB.CC.DD
- */
-typedef struct {
-    uint8_t majorVersion; /*!< The major version of firmware, the range is 0 ~ 99. */
-    uint8_t minorVersion; /*!< The minor version of firmware, the range is 0 ~ 99. */
-    uint8_t modifyVersion; /*!< The modify version of firmware, the range is 0 ~ 99. */
-    uint8_t debugVersion; /*!< The debug version of firmware, the range is 0 ~ 99. */
-} T_DjiFirmwareVersion;
-
 typedef struct {
     uint8_t upgradeProgress; /*!< The upgrade progress, the range is 0 ~ 100. */
 } T_DjiUpgradeOngoingInfo;

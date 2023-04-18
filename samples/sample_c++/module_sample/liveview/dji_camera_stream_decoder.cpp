@@ -43,6 +43,7 @@ DJICameraStreamDecoder::DJICameraStreamDecoder()
       cbThreadStatus(-1),
       cb(nullptr),
       cbUserParam(nullptr),
+#ifdef FFMPEG_INSTALLED
       pCodecCtx(nullptr),
       pCodec(nullptr),
       pCodecParserCtx(nullptr),
@@ -50,6 +51,7 @@ DJICameraStreamDecoder::DJICameraStreamDecoder()
       pFrameYUV(nullptr),
       pFrameRGB(nullptr),
       rgbBuf(nullptr),
+#endif
       bufSize(0)
 {
     pthread_mutex_init(&decodemutex, nullptr);
@@ -75,6 +77,7 @@ bool DJICameraStreamDecoder::init()
         return true;
     }
 
+#ifdef FFMPEG_INSTALLED
     avcodec_register_all();
     pCodecCtx = avcodec_alloc_context3(nullptr);
     if (!pCodecCtx) {
@@ -105,8 +108,8 @@ bool DJICameraStreamDecoder::init()
     pSwsCtx = nullptr;
 
     pCodecCtx->flags2 |= AV_CODEC_FLAG2_SHOW_ALL;
+#endif
     initSuccess = true;
-
     pthread_mutex_unlock(&decodemutex);
 
     return true;
@@ -117,6 +120,8 @@ void DJICameraStreamDecoder::cleanup()
     pthread_mutex_lock(&decodemutex);
 
     initSuccess = false;
+
+#ifdef FFMPEG_INSTALLED
     if (nullptr != pSwsCtx) {
         sws_freeContext(pSwsCtx);
         pSwsCtx = nullptr;
@@ -151,7 +156,7 @@ void DJICameraStreamDecoder::cleanup()
         av_free(pFrameRGB);
         pFrameRGB = nullptr;
     }
-
+#endif
     pthread_mutex_unlock(&decodemutex);
 }
 
@@ -184,6 +189,7 @@ void DJICameraStreamDecoder::decodeBuffer(const uint8_t *buf, int bufLen)
     int remainingLen = bufLen;
     int processedLen = 0;
 
+#ifdef FFMPEG_INSTALLED
     AVPacket pkt;
     av_init_packet(&pkt);
     pthread_mutex_lock(&decodemutex);
@@ -238,6 +244,7 @@ void DJICameraStreamDecoder::decodeBuffer(const uint8_t *buf, int bufLen)
     }
     pthread_mutex_unlock(&decodemutex);
     av_free_packet(&pkt);
+#endif
 }
 
 bool DJICameraStreamDecoder::registerCallback(CameraImageCallback f, void *param)

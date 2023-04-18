@@ -39,6 +39,8 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define USER_PERCEPTION_TASK_STACK_SIZE    (1024)
+#define USER_PERCEPTION_DIRECTION_NUM      (12)
+#define FPS_STRING_LEN                     (50)
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -320,6 +322,14 @@ static void *DjiTest_StereoImagesDisplayTask(void *arg)
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     auto *pack = (T_DjiTestStereoImagePacket *) arg;
     char nameStr[32] = {0};
+    char fpsStr[20] = "FPS: ";
+    int fps = 0;
+    double timePrev[USER_PERCEPTION_DIRECTION_NUM] = {0};
+    double timeNow[USER_PERCEPTION_DIRECTION_NUM] = {0};
+    double timeFess[USER_PERCEPTION_DIRECTION_NUM] = {0};
+    int count[USER_PERCEPTION_DIRECTION_NUM] = {1};
+    char showFpsString[USER_PERCEPTION_DIRECTION_NUM][FPS_STRING_LEN] = {0};
+    int i = 0;
 
     while (true) {
         osalHandler->TaskSleepMs(1);
@@ -338,7 +348,7 @@ static void *DjiTest_StereoImagesDisplayTask(void *arg)
             pack->imageRawBuffer = NULL;
         }
 
-        for (int i = 0; i < sizeof(positionName) / sizeof(T_DjiTestPerceptionCameraPositionName); ++i) {
+        for (i = 0; i < sizeof(positionName) / sizeof(T_DjiTestPerceptionCameraPositionName); ++i) {
             if (positionName[i].cameraPosition == pack->info.dataType) {
                 sprintf(nameStr, "Image position: %s", positionName[i].name);
                 break;
@@ -355,6 +365,31 @@ static void *DjiTest_StereoImagesDisplayTask(void *arg)
             cv::moveWindow(nameStr, (200 + (int) pack->info.rawInfo.width), 0);
         }
 
+        if (i < USER_PERCEPTION_DIRECTION_NUM) {
+            /*! Calculate frame rate */
+            timeNow[i] = (double) cv::getTickCount();
+            if (timePrev[i] != 0) {
+                timeFess[i] = (timeNow[i] - timePrev[i]) / cv::getTickFrequency() + timeFess[i];
+                count[i]++;
+            }
+            if (timeFess[i] > 1) {
+                memset(&showFpsString[i][0], 0, FPS_STRING_LEN);
+                fps = count[i] / timeFess[i];
+                timeFess[i] = 0;
+                count[i] = 0;
+                sprintf(&showFpsString[i][0], "%s%d", fpsStr, fps);
+            }
+            timePrev[i] = timeNow[i];
+#ifdef OPEN_CV_VERSION_3
+            cv::putText(cv_img_stereo, &showFpsString[i][0], cv::Point(5, 20),
+                        CV_FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+#endif
+
+#ifdef OPEN_CV_VERSION_4
+            cv::putText(cv_img_stereo, &showFpsString[i][0], cv::Point(5, 20),
+                        cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+#endif
+        }
         cv::imshow(nameStr, cv_img_stereo);
         cv::waitKey(1);
 #else

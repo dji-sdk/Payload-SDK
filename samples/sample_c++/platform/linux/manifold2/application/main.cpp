@@ -26,6 +26,7 @@
 #include <liveview/test_liveview_entry.hpp>
 #include <perception/test_perception_entry.hpp>
 #include <flight_control/test_flight_control.h>
+#include <gimbal/test_gimbal_entry.hpp>
 #include <hms/test_hms.h>
 #include <waypoint_v2/test_waypoint_v2.h>
 #include <waypoint_v3/test_waypoint_v3.h>
@@ -41,6 +42,7 @@
 #include <power_management/test_power_management.h>
 #include "data_transmission/test_data_transmission.h"
 #include <camera_manager/test_camera_manager.h>
+#include "camera_manager/test_camera_manager_entry.h"
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -75,8 +77,7 @@ start:
         << "| [7] Hms info sample - get health manger system info                                              |\n"
         << "| [8] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)             |\n"
         << "| [9] Waypoint 3.0 sample - run airline mission by kmz file (not support on M300 RTK)              |\n"
-        << "| [a] Gimbal manager sample - rotate gimbal on free mode                                           |\n"
-        << "| [b] Gimbal manager sample - rotate gimbal on yaw follow mode                                     |\n"
+        << "| [a] Gimbal manager sample                                                                        |\n"
         << "| [c] Camera stream view sample - display the camera video stream                                  |\n"
         << "| [d] Stereo vision view sample - display the stereo image                                         |\n"
         << "| [e] Start camera all features sample - you can operate the camera on DJI Pilot                   |\n"
@@ -85,8 +86,7 @@ start:
         << "| [h] Start widget speaker sample - you can operate the speaker on DJI Pilot2                      |\n"
         << "| [i] Start power management sample - you will see notification when aircraft power off            |\n"
         << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo               |\n"
-        << "| [l] Run camera manager sample - shoot photo by the selected camera mounted position              |\n"
-        << "| [m] Run camera manager download sample - download camera media file (not support on M3E/M3T)     |\n"
+        << "| [k] Run camera manager sample - you can test camera's functions interactively                    |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -122,10 +122,7 @@ start:
             DjiTest_WaypointV3RunSample();
             break;
         case 'a':
-            DjiTest_GimbalManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1, DJI_GIMBAL_MODE_FREE);
-            break;
-        case 'b':
-            DjiTest_GimbalManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1, DJI_GIMBAL_MODE_YAW_FOLLOW);
+            DjiUser_RunGimbalManagerSample();
             break;
         case 'c':
             DjiUser_RunCameraStreamViewSample();
@@ -203,14 +200,8 @@ start:
 
             USER_LOG_INFO("Start data transmission sample successfully");
             break;
-        case 'l':
-            DjiTest_CameraManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1,
-                                           E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO);
-            break;
-        case 'm':
-            DjiTest_CameraManagerRunSample(DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1,
-                                           E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE);
-            exit(1);
+        case 'k':
+            DjiUser_RunCameraManagerSample();
             break;
         default:
             break;

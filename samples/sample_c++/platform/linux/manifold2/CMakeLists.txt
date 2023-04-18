@@ -19,7 +19,9 @@ include_directories(../manifold2/application)
 
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/liveview/*.c*
+        ../../../module_sample/camera_manager/*.c*
         ../../../module_sample/perception/*.c*
+        ../../../module_sample/gimbal/*.c*
         ../../../../sample_c/module_sample/*.c
         )
 file(GLOB_RECURSE MODULE_COMMON_SRC ../common/*.c*)
@@ -49,7 +51,7 @@ add_executable(${PROJECT_NAME}
         ${MODULE_COMMON_SRC}
         ${MODULE_HAL_SRC})
 
-# Try to see if user has OpenCV installed因为额
+# Try to see if user has OpenCV installed
 # if yes, default callback will display the image
 find_package(OpenCV QUIET)
 if (OpenCV_FOUND)
@@ -58,6 +60,12 @@ if (OpenCV_FOUND)
     message(STATUS " - Includes: ${OpenCV_INCLUDE_DIRS}")
     message(STATUS " - Libraries: ${OpenCV_LIBRARIES}")
     add_definitions(-DOPEN_CV_INSTALLED)
+    execute_process(COMMAND opencv_version OUTPUT_VARIABLE OPENCV_VERSION)
+    if (${OPENCV_VERSION} STRLESS "4.0.0")
+        add_definitions(-DOPEN_CV_VERSION_3)
+    else()
+        add_definitions(-DOPEN_CV_VERSION_4)
+    endif()
 else ()
     message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
 endif ()
@@ -83,10 +91,11 @@ if (FFMPEG_FOUND)
     endif ()
 
     target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
+    include_directories(${FFMPEG_INCLUDE_DIR})
+    add_definitions(-DFFMPEG_INSTALLED)
 else ()
     message(STATUS "Cannot Find FFMPEG")
 endif (FFMPEG_FOUND)
-include_directories(${FFMPEG_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../psdk_lib/include)
 
 find_package(OPUS REQUIRED)

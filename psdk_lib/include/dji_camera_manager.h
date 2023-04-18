@@ -487,7 +487,7 @@ typedef struct {
 } T_DjiCameraManagerFileAttributeData;
 
 typedef struct {
-    char fileName[32];
+    char fileName[256];
     uint32_t fileSize;
     uint32_t fileIndex;
     T_DjiCameraManagerFileCreateTime createTime;
@@ -506,11 +506,47 @@ typedef enum {
     DJI_DOWNLOAD_FILE_EVENT_END,
 } E_DjiDownloadFileEvent;
 
+/*!< Attention: when the remote control is in split-screen mode, the coordinate range of the x-axis is 0 ~ 0.5
+* */
+typedef struct {
+    dji_f32_t pointX;               /*! x-coordinate of point thermometry, range: 0 ~ 1 */
+    dji_f32_t pointY;               /*! y-coordinate of point thermometry, range: 0 ~ 1 */
+} T_DjiCameraManagerPointThermometryCoordinate;
+
+typedef struct {
+    dji_f32_t areaTempLtX;          /*! x-coordinate of the upper left corner of the area thermometry, range: 0 ~ 1 */
+    dji_f32_t areaTempLtY;          /*! y-coordinate of the upper left corner of the area thermometry, range: 0 ~ 1 */
+    dji_f32_t areaTempRbX;          /*! x-coordinate of the lower right corner of the area thermometry, range: 0 ~ 1 */
+    dji_f32_t areaTempRbY;          /*! y-coordinate of the lower right corner of the area thermometry, range: 0 ~ 1 */
+} T_DjiCameraManagerAreaThermometryCoordinate;
+
+//result of point thermometry
+typedef struct {
+    dji_f32_t pointX;              /*! x-coordinate of point thermometry, range: 0 ~ 1 */
+    dji_f32_t pointY;              /*! y-coordinate of point thermometry, range: 0 ~ 1 */
+    dji_f32_t pointTemperature;    /*! The temperature of the current point */
+} T_DjiCameraManagerPointThermometryData;
+
+//result of area thermometry
+typedef struct {
+    dji_f32_t areaTempLtX;           /*! x_coordinate of the upper left corner of the current thermometry area */
+    dji_f32_t areaTempLtY;           /*! y_coordinate of the upper left corner of the current thermometry area */
+    dji_f32_t areaTempRbX;           /*! x_coordinate of the lower right corner of the current thermometry area */
+    dji_f32_t areaTempRbY;           /*! y_coordinate of the lower right corner of the current thermometry area */
+    dji_f32_t areaAveTemp;           /*! The average temperature of the current thermometry area */
+    dji_f32_t areaMinTemp;           /*! The minimum temperature of the current thermometry area */
+    dji_f32_t areaMaxTemp;           /*! The maximum temperature of the current thermometry area */
+    dji_f32_t areaMinTempPointX;     /*! x_coordinate of the minimum temperature in the thermometry area */
+    dji_f32_t areaMinTempPointY;     /*! y_coordinate of the minimum temperature in the thermometry area */
+    dji_f32_t areaMaxTempPointX;     /*! x_coordinate of the maximum temperature in the thermometry area */
+    dji_f32_t areaMaxTempPointY;     /*! y_coordinate of the maximum temperature in the thermometry area */
+} T_DjiCameraManagerAreaThermometryData;
+
 typedef struct {
     E_DjiDownloadFileEvent downloadFileEvent;
     uint32_t fileIndex;
     uint32_t fileSize;
-    float progressInPercent;
+    dji_f32_t progressInPercent;
 } T_DjiDownloadFilePacketInfo;
 
 typedef struct {
@@ -1012,6 +1048,47 @@ T_DjiReturnCode DjiCameraManager_DeleteFileByIndex(E_DjiMountPosition position, 
  */
 T_DjiReturnCode DjiCameraManager_GetLaserRangingInfo(E_DjiMountPosition position,
                                                      T_DjiCameraManagerLaserRangingInfo *laserRangingInfo);
+
+/**
+ * @brief Set point thermometry coordinates of the selected camera mounted position.
+ * @param position: camera mounted position
+ * @param pointCoordinate: point thermometry coordinates
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetPointThermometryCoordinate(E_DjiMountPosition position,
+                                                               T_DjiCameraManagerPointThermometryCoordinate pointCoordinate);
+
+/**
+ * @brief Get point thermometry result.
+ * @note Before get point thermometry data from camera, DjiCameraManager_SetPointThermometryCoordinate()
+ * function has to be called.
+ * @param position: camera mounted position
+ * @param pointThermometryData: point thermometry result
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetPointThermometryData(E_DjiMountPosition position,
+                                                         T_DjiCameraManagerPointThermometryData *pointThermometryData);
+
+/**
+ * @brief Set area thermometry coordinates of the selected camera mounted position.
+ * @param position: camera mounted position
+ * @param areaCoordinate: area thermometry coordinates
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetAreaThermometryCoordinate(E_DjiMountPosition position,
+                                                              T_DjiCameraManagerAreaThermometryCoordinate areaCoordinate);
+
+/**
+ * @brief Get area thermometry result.
+ * @note Before get area thermometry data from camera, DjiCameraManager_SetAreaThermometryCoordinate()
+ * function has to be called.
+ * @param position: camera mounted position
+ * @param areaThermometryData: area thermometry result
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetAreaThermometryData(E_DjiMountPosition position,
+                                                        T_DjiCameraManagerAreaThermometryData *areaThermometryData);
+
 #ifdef __cplusplus
 }
 #endif

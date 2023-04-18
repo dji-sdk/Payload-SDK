@@ -33,6 +33,10 @@
 /* Private constants ---------------------------------------------------------*/
 #define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             256
 #define TEST_CAMERA_MANAGER_MEDIA_DOWNLOAD_FILE_NUM              5
+#define CAMERA_MANAGER_SUBSCRIPTION_FREQ                         5
+
+#define TEST_CAMERA_MAX_INFRARED_ZOOM_FACTOR          8
+#define TEST_CAMERA_MIN_INFRARED_ZOOM_FACTOR          2
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -63,13 +67,17 @@ static T_DjiCameraManagerFileList s_meidaFileList;
 static uint32_t downloadStartMs = 0;
 static uint32_t downloadEndMs = 0;
 static char downloadFileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE] = {0};
-static uint32_t nextDownloadFileIndex = 0;
+static uint32_t s_nextDownloadFileIndex = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraType);
 static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_DjiMountPosition position);
 static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownloadFilePacketInfo packetInfo,
                                                                      const uint8_t *data, uint16_t len);
+static T_DjiReturnCode DjiTest_CameraManagerGetAreaThermometryData(E_DjiMountPosition position);
+static T_DjiReturnCode DjiTest_CameraManagerGetPointThermometryData(E_DjiMountPosition position);
+
+static T_DjiReturnCode DjiTest_CameraManagerGetLidarRangingInfo(E_DjiMountPosition position);
 
 /* Exported functions definition ---------------------------------------------*/
 /*! @brief Sample to set EV for camera, using async api
@@ -480,6 +488,7 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootSinglePhoto(E_DjiMountPosition po
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    E_DjiCameraManagerWorkMode workMode;
 
     /*!< set camera work mode as shoot photo */
     USER_LOG_INFO("Set mounted position %d camera's work mode as shoot-photo mode", position);
@@ -490,6 +499,17 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootSinglePhoto(E_DjiMountPosition po
                        " error code :0x%08X", position, returnCode);
         return returnCode;
     }
+
+    osalHandler->TaskSleepMs(1000);
+
+    returnCode = DjiCameraManager_GetMode(position, &workMode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+        returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+        USER_LOG_ERROR("get mounted position %d camera's work mode failed,"
+                       " error code :0x%08X", position, returnCode);
+        return returnCode;
+    }
+    USER_LOG_INFO("Camera current workmode is %d", workMode);
 
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as single-photo mode", position);
@@ -530,6 +550,7 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootBurstPhoto(E_DjiMountPosition pos
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    E_DjiCameraManagerWorkMode workMode;
 
     /*!< set camera work mode as shoot photo */
     USER_LOG_INFO("set mounted position %d camera's work mode as shoot photo mode.", position);
@@ -539,6 +560,17 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootBurstPhoto(E_DjiMountPosition pos
                        " error code :0x%08X.", position, returnCode);
         return returnCode;
     }
+
+    osalHandler->TaskSleepMs(1000);
+
+    returnCode = DjiCameraManager_GetMode(position, &workMode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+        returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+        USER_LOG_ERROR("get mounted position %d camera's work mode failed,"
+                       " error code :0x%08X", position, returnCode);
+        return returnCode;
+    }
+    USER_LOG_INFO("Camera current workmode is %d", workMode);
 
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as burst-photo mode", position);
@@ -592,6 +624,7 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootAEBPhoto(E_DjiMountPosition posit
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    E_DjiCameraManagerWorkMode workMode;
 
     /*!< set camera work mode as shoot photo */
     USER_LOG_INFO("set mounted position %d camera's work mode as shoot photo mode.", position);
@@ -602,6 +635,17 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootAEBPhoto(E_DjiMountPosition posit
                        " error code :0x%08X.", position, returnCode);
         return returnCode;
     }
+
+    osalHandler->TaskSleepMs(1000);
+
+    returnCode = DjiCameraManager_GetMode(position, &workMode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+        returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+        USER_LOG_ERROR("get mounted position %d camera's work mode failed,"
+                       " error code :0x%08X", position, returnCode);
+        return returnCode;
+    }
+    USER_LOG_INFO("Camera current workmode is %d", workMode);
 
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as AEB-photo mode", position);
@@ -654,6 +698,7 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootIntervalPhoto(E_DjiMountPosition 
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    E_DjiCameraManagerWorkMode workMode;
 
     /*!< set camera work mode as shoot photo */
     USER_LOG_INFO("set mounted position %d camera's work mode as shoot photo mode.", position);
@@ -665,6 +710,15 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootIntervalPhoto(E_DjiMountPosition 
     }
 
     osalHandler->TaskSleepMs(1000);
+
+    returnCode = DjiCameraManager_GetMode(position, &workMode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+        returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+        USER_LOG_ERROR("get mounted position %d camera's work mode failed,"
+                       " error code :0x%08X", position, returnCode);
+        return returnCode;
+    }
+    USER_LOG_INFO("Camera current workmode is %d", workMode);
 
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as interval-photo mode", position);
@@ -743,6 +797,9 @@ T_DjiReturnCode DjiTest_CameraManagerStopShootPhoto(E_DjiMountPosition position)
 T_DjiReturnCode DjiTest_CameraManagerStartRecordVideo(E_DjiMountPosition position)
 {
     T_DjiReturnCode returnCode;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    E_DjiCameraManagerWorkMode workMode;
+
     /*!< set camera work mode as record video */
     USER_LOG_INFO("set mounted position %d camera's work mode as record-video mode", position);
     returnCode = DjiCameraManager_SetMode(position, DJI_CAMERA_MANAGER_WORK_MODE_RECORD_VIDEO);
@@ -752,6 +809,17 @@ T_DjiReturnCode DjiTest_CameraManagerStartRecordVideo(E_DjiMountPosition positio
                        " error code :0x%08X", position, returnCode);
         return returnCode;
     }
+
+    osalHandler->TaskSleepMs(1000);
+
+    returnCode = DjiCameraManager_GetMode(position, &workMode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+        returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+        USER_LOG_ERROR("get mounted position %d camera's work mode failed,"
+                       " error code :0x%08X", position, returnCode);
+        return returnCode;
+    }
+    USER_LOG_INFO("Camera current workmode is %d", workMode);
 
     /*!< start to take video */
     USER_LOG_INFO("Mounted position %d camera start to record video.", position);
@@ -797,7 +865,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
     T_DjiCameraManagerFocusPosData focusPosData;
     T_DjiCameraManagerTapZoomPosData tapZoomPosData;
 
-    USER_LOG_INFO("Camera manager sample start");
+    USER_LOG_INFO("Camera manager sample start, cameraManagerSampleSelect %d", cameraManagerSampleSelect);
     DjiTest_WidgetLogAppend("Camera manager sample start");
 
     USER_LOG_INFO("--> Step 1: Init camera manager module");
@@ -835,8 +903,9 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             USER_LOG_INFO("--> Function a: Set camera shutter speed to 1/100 s");
             DjiTest_WidgetLogAppend("--> Function a: Set camera shutter speed to 1/100 s");
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
-                cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T ||
-                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
+                cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
+                cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_M3T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -872,9 +941,10 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_APERTURE: {
             USER_LOG_INFO("--> Function b: Set camera aperture to 400(F/4)");
             DjiTest_WidgetLogAppend("--> Function b: Set camera aperture to 400(F/4)");
-            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T
-                || cameraType == DJI_CAMERA_TYPE_M30 || cameraType == DJI_CAMERA_TYPE_M30T
-                || cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
+            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20N
+                || cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30
+                || cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E
+                || cameraType == DJI_CAMERA_TYPE_M3T) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -1117,13 +1187,54 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             }
             break;
         }
-        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE:
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE: {
 #ifdef SYSTEM_ARCH_LINUX
             DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(mountPosition);
 #else
             USER_LOG_WARN("This feature does not support RTOS platform.");
 #endif
             break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_THERMOMETRY: {
+            returnCode = DjiTest_CameraManagerGetPointThermometryData(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera start point thermometry failed, error code: 0x%08X\r\n",
+                               mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiTest_CameraManagerGetAreaThermometryData(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera start area thermometry failed, error code: 0x%08X\r\n",
+                               mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_LIDAR_RANGING_INFO: {
+            returnCode = DjiTest_CameraManagerGetLidarRangingInfo(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Get lidar ranging info failed at position %d, error code: 0x%08X\r\n",
+                              mountPosition, returnCode);
+            }
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_IR_CAMERA_ZOOM_PARAM: {
+            for (uint16_t factor = TEST_CAMERA_MIN_INFRARED_ZOOM_FACTOR;
+                 factor <= TEST_CAMERA_MAX_INFRARED_ZOOM_FACTOR;
+                 factor = factor * 2) {
+
+                USER_LOG_INFO("Set infrared zoom factor to %d", factor);
+                returnCode = DjiCameraManager_SetInfraredZoomParam(mountPosition, (dji_f32_t) factor);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Mounted position %d camera infrared zoom factor %d rfailed, error code: 0x%08X\r\n",
+                                   mountPosition, factor, returnCode);
+                    goto exitCameraModule;
+                }
+                osalHandler->TaskSleepMs(2000);
+            }
+            break;
+        }
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
@@ -1160,8 +1271,8 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     uint16_t downloadCount = 0;
-    nextDownloadFileIndex = 0;
 
+    s_nextDownloadFileIndex = 0;
     returnCode = DjiCameraManager_RegDownloadFileDataCallback(position, DjiTest_CameraManagerDownloadFileDataCallback);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Register download file data callback failed, error code: 0x%08X.", returnCode);
@@ -1216,14 +1327,14 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
 
         for (int i = 0; i < downloadCount; ++i) {
         redownload:
-            if (i != nextDownloadFileIndex) {
-                i = nextDownloadFileIndex;
+            if (i != s_nextDownloadFileIndex) {
+                i = s_nextDownloadFileIndex;
             }
 
             returnCode = DjiCameraManager_DownloadFileByIndex(position, s_meidaFileList.fileListInfo[i].fileIndex);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Download media file by index failed, error code: 0x%08X.", returnCode);
-                nextDownloadFileIndex--;
+                s_nextDownloadFileIndex--;
                 goto redownload;
             }
         }
@@ -1252,7 +1363,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
     if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_START) {
         for (i = 0; i < s_meidaFileList.totalCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileIndex == packetInfo.fileIndex) {
-                nextDownloadFileIndex = i + 1;
+                s_nextDownloadFileIndex = i + 1;
                 break;
             }
         }
@@ -1260,7 +1371,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
 
         memset(downloadFileName, 0, sizeof(downloadFileName));
         snprintf(downloadFileName, sizeof(downloadFileName), "%s", s_meidaFileList.fileListInfo[i].fileName);
-        USER_LOG_INFO("Start download media file, index : %d, next download media file, index: %d", i, nextDownloadFileIndex);
+        USER_LOG_INFO("Start download media file, index : %d, next download media file, index: %d", i, s_nextDownloadFileIndex);
         s_downloadMediaFile = fopen(downloadFileName, "wb+");
         if (s_downloadMediaFile == NULL) {
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
@@ -1288,6 +1399,120 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
         USER_LOG_INFO("End download media file, Download Speed %.2f KB/S\r\n\r\n", downloadSpeed);
         fclose(s_downloadMediaFile);
         s_downloadMediaFile = NULL;
+    }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_CameraManagerGetPointThermometryData(E_DjiMountPosition position)
+{
+    T_DjiReturnCode djiStat;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiCameraManagerPointThermometryCoordinate pointCoordinate = {0};
+    T_DjiCameraManagerPointThermometryData pointThermometryData = {0};
+
+    USER_LOG_INFO("--> Step 1: Set point thermometry coordinate");
+
+    pointCoordinate.pointX = 0.5;
+    pointCoordinate.pointY = 0.5;
+    djiStat = DjiCameraManager_SetPointThermometryCoordinate(position, pointCoordinate);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Set point thermometry coordinate failed, stat = 0x%08llX", djiStat);
+        return djiStat;
+    }
+
+    USER_LOG_INFO("--> Step 2: Get data of point thermometry");
+
+    for (int i = 0; i < 30; ++i) {
+        osalHandler->TaskSleepMs(1000 / CAMERA_MANAGER_SUBSCRIPTION_FREQ);
+
+        djiStat = DjiCameraManager_GetPointThermometryData(position, &pointThermometryData);
+        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get data of point thermometry error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
+
+        USER_LOG_INFO("received camera point thermometry data, point_x = %.2f, point_y = %.2f "
+                      "point temperature = %.2f\r\n", pointThermometryData.pointX,
+                      pointThermometryData.pointY, pointThermometryData.pointTemperature);
+    }
+
+    return djiStat;
+}
+
+static T_DjiReturnCode DjiTest_CameraManagerGetAreaThermometryData(E_DjiMountPosition position)
+{
+    T_DjiReturnCode djiStat;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiCameraManagerAreaThermometryData areaThermometryData = {0};
+    T_DjiCameraManagerAreaThermometryCoordinate areaCoordinate = {0};
+
+    USER_LOG_INFO("--> Step 1: Set area thermometry coordinate");
+    areaCoordinate.areaTempLtX = 0.2;
+    areaCoordinate.areaTempLtY = 0.2;
+    areaCoordinate.areaTempRbX = 0.8;
+    areaCoordinate.areaTempRbY = 0.8;
+
+    djiStat = DjiCameraManager_SetAreaThermometryCoordinate(position, areaCoordinate);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Set area coordinate failed, stat = 0x%08llX", djiStat);
+        return djiStat;
+    }
+
+    USER_LOG_INFO("--> Step 2: Get data of area thermometry");
+
+    for (int i = 0; i < 30; ++i) {
+        osalHandler->TaskSleepMs(1000 / CAMERA_MANAGER_SUBSCRIPTION_FREQ);
+
+        djiStat = DjiCameraManager_GetAreaThermometryData(position, &areaThermometryData);
+        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get data of area thermometry error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
+
+        USER_LOG_INFO("received camera area thermometry data, lt_point_x = %.2f, lt_point_y = %.2f "
+                      "rb_point_x = %.2f, rb_point_y = %.2f, area min temperature = %.2f, area max temperature = %.2f, "
+                      "area average temperature = %.2f\r\n", areaThermometryData.areaTempLtX,
+                      areaThermometryData.areaTempLtY,
+                      areaThermometryData.areaTempRbX, areaThermometryData.areaTempRbY, areaThermometryData.areaMinTemp,
+                      areaThermometryData.areaMaxTemp, areaThermometryData.areaAveTemp);
+        USER_LOG_INFO("min temperature point_x = %.2f, min temperature point_y = %.2f, max temperature point_x = %.2f, "
+                      "max temperature point_y = %.2f\r\n", areaThermometryData.areaMinTempPointX,
+                      areaThermometryData.areaMinTempPointY,
+                      areaThermometryData.areaMaxTempPointX, areaThermometryData.areaMaxTempPointY);
+    }
+
+    return djiStat;
+}
+
+static T_DjiReturnCode DjiTest_CameraManagerGetLidarRangingInfo(E_DjiMountPosition position)
+{
+    T_DjiReturnCode returnCode = 0;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+
+    T_DjiCameraManagerLaserRangingInfo rangingInfo = {0};
+
+    for (int i = 0; i < 5; i++) {
+
+        osalHandler->TaskSleepMs(1000);
+
+        returnCode = DjiCameraManager_GetLaserRangingInfo(position, &rangingInfo);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get mounted position %d laser ranging info failed, error code: 0x%08X.",
+                           position, returnCode);
+            return returnCode;
+        }
+
+        USER_LOG_INFO(
+            "Receive lidar range info, lon:%.6f, lat:%.6f, alt:%.1f, dis:%d, enable:%d, exception:%d, x:%d, y:%d",
+            rangingInfo.longitude,
+            rangingInfo.latitude,
+            (float) rangingInfo.altitude / 10,
+            rangingInfo.distance,
+            rangingInfo.enable_lidar,
+            rangingInfo.exception,
+            rangingInfo.screenX,
+            rangingInfo.screenY);
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

@@ -38,6 +38,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
 #ifdef LIBUSB_INSTALLED
 
 #include <libusb-1.0/libusb.h>

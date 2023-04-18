@@ -9,6 +9,8 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   ├── reference_designs
 │   │   └── Type-C Schematic Reference.pdf
 │   └── simple_model
+│       ├── H20.stp
+│       ├── H20T.stp
 │       ├── M300_OSDK_Adapter.stp
 │       ├── M300_RTK_1.stp
 │       ├── M300_RTK_2.stp
@@ -147,6 +149,14 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   ├── test_gimbal_manager.c
 │   │   │   │   └── test_gimbal_manager.h
 │   │   │   ├── hms
+│   │   │   │   ├── hms_text
+│   │   │   │   │   ├── cn
+│   │   │   │   │   │   └── hms_text_config.json
+│   │   │   │   │   └── en
+│   │   │   │   │       └── hms_text_config.json
+│   │   │   │   ├── hms_text_c
+│   │   │   │   │   └── en
+│   │   │   │   │       └── hms_text_config_json.h
 │   │   │   │   ├── test_hms.c
 │   │   │   │   └── test_hms.h
 │   │   │   ├── liveview
@@ -293,7 +303,20 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       │   │   └── upgrade_platform_opt
 │   │       │   │       ├── upgrade_platform_opt_linux.c
 │   │       │   │       └── upgrade_platform_opt_linux.h
-│   │       │   └── manifold2
+│   │       │   ├── manifold2
+│   │       │   │   ├── application
+│   │       │   │   │   ├── dji_sdk_app_info.h
+│   │       │   │   │   ├── dji_sdk_config.h
+│   │       │   │   │   └── main.c
+│   │       │   │   ├── CMakeLists.txt
+│   │       │   │   └── hal
+│   │       │   │       ├── hal_network.c
+│   │       │   │       ├── hal_network.h
+│   │       │   │       ├── hal_uart.c
+│   │       │   │       ├── hal_uart.h
+│   │       │   │       ├── hal_usb_bulk.c
+│   │       │   │       └── hal_usb_bulk.h
+│   │       │   └── nvidia_jeston
 │   │       │       ├── application
 │   │       │       │   ├── dji_sdk_app_info.h
 │   │       │       │   ├── dji_sdk_config.h
@@ -420,10 +443,17 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               └── readme.txt
 │   └── sample_c++
 │       ├── module_sample
+│       │   ├── camera_manager
+│       │   │   ├── test_camera_manager_entry.cpp
+│       │   │   └── test_camera_manager_entry.h
+│       │   ├── gimbal
+│       │   │   ├── test_gimbal_entry.cpp
+│       │   │   └── test_gimbal_entry.hpp
 │       │   ├── liveview
 │       │   │   ├── data
 │       │   │   │   ├── haarcascade_frontalface_alt.xml
 │       │   │   │   └── tensorflow
+│       │   │   │       ├── frozen_inference_graph.pb
 │       │   │   │       └── ssd_inception_v2_coco_2017_11_17.pbtxt
 │       │   │   ├── dji_camera_image_handler.cpp
 │       │   │   ├── dji_camera_image_handler.hpp
@@ -452,7 +482,22 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │               │       ├── osal.h
 │               │       ├── osal_socket.c
 │               │       └── osal_socket.h
-│               └── manifold2
+│               ├── manifold2
+│               │   ├── application
+│               │   │   ├── application.cpp
+│               │   │   ├── application.hpp
+│               │   │   ├── dji_sdk_app_info.h
+│               │   │   ├── dji_sdk_config.h
+│               │   │   └── main.cpp
+│               │   ├── CMakeLists.txt
+│               │   └── hal
+│               │       ├── hal_network.c
+│               │       ├── hal_network.h
+│               │       ├── hal_uart.c
+│               │       ├── hal_uart.h
+│               │       ├── hal_usb_bulk.c
+│               │       └── hal_usb_bulk.h
+│               └── nvidia_jeston
 │                   ├── application
 │                   │   ├── application.cpp
 │                   │   ├── application.hpp

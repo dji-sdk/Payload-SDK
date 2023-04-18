@@ -107,6 +107,15 @@ T_DjiReturnCode DjiLiveview_StartH264Stream(E_DjiLiveViewCameraPosition position
  */
 T_DjiReturnCode DjiLiveview_StopH264Stream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
 
+/**
+ * @brief Request the intraframe Frame of Camera H264 Stream by selected position.
+ * @param position: point out which camera to output the H264 stream
+ * @param source: point out which sub camera to output the H264 stream
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_RequestIntraframeFrameData(E_DjiLiveViewCameraPosition position,
+                                                       E_DjiLiveViewCameraSource source);
+
 #ifdef __cplusplus
 }
 #endif

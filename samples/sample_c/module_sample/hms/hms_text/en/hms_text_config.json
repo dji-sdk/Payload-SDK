@@ -1,0 +1,76 @@
+{
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "hms_database": {
+    "hms_position_desc": "Payload %position_index",
+    "hms_error_code_list": [
+      {
+        "hms_error_code": "0x1E020000",
+        "hms_interface": {
+          "message_title": "HMS test text: I am error code Title 0",
+          "message_content": "HMS test text: I am error code Content 0"
+        },
+        "fpv_interface": {
+          "message_on_the_ground": "HMS test text: I got error on the ground 0",
+          "is_keep_history_on_the_ground": false,
+          "message_in_the_sky": "HMS test text: I got error in the sky 0",
+          "is_keep_history_in_the_sky": false
+        }
+      },
+      {
+        "hms_error_code": "0x1E020001",
+        "hms_interface": {
+          "message_title": "HMS test text: I am error code Title 1",
+          "message_content": "HMS test text: I am error code Content 1"
+        },
+        "fpv_interface": {
+          "message_on_the_ground": "HMS test text: I got error on the ground 1",
+          "is_keep_history_on_the_ground": false,
+          "message_in_the_sky": "HMS test text: I got error in the sky 1",
+          "is_keep_history_in_the_sky": false
+        }
+      },
+      {
+        "hms_error_code": "0x1E020002",
+        "hms_interface": {
+          "message_title": "HMS test text: I am error code Title 2",
+          "message_content": "HMS test text: I am error code Content 2"
+        },
+        "fpv_interface": {
+          "message_on_the_ground": "HMS test text: I got error on the ground 2",
+          "is_keep_history_on_the_ground": true,
+          "message_in_the_sky": "HMS test text: I got error in the sky 2",
+          "is_keep_history_in_the_sky": true
+        }
+      },
+      {
+        "hms_error_code": "0x1E020003",
+        "hms_interface": {
+          "message_title": "HMS test text: I am error code Title 3",
+          "message_content": "HMS test text: I am error code Content 3"
+        },
+        "fpv_interface": {
+          "message_on_the_ground": "HMS test text: I got error on the ground 3",
+          "is_keep_history_on_the_ground": true,
+          "message_in_the_sky": "HMS test text: I got error in the sky 3",
+          "is_keep_history_in_the_sky": true
+        }
+      },
+      {
+        "hms_error_code": "0x1E020004",
+        "hms_interface": {
+          "message_title": "HMS test text: I am error code Title 4",
+          "message_content": "HMS test text: I am error code Content 4"
+        },
+        "fpv_interface": {
+          "message_on_the_ground": "HMS test text: I got error on the ground 4",
+          "is_keep_history_on_the_ground": true,
+          "message_in_the_sky": "HMS test text: I got error in the sky 4",
+          "is_keep_history_in_the_sky": true
+        }
+      }
+    ]
+  }
+}

@@ -24,25 +24,34 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <widget_interaction_test/test_widget_interaction.h>
+#include <utils/util_misc.h>
 #include "test_hms.h"
 #include "dji_hms.h"
 #include "dji_hms_info_table.h"
 #include "dji_logger.h"
 #include "dji_platform.h"
 #include "dji_fc_subscription.h"
+#include "hms_text_c/en/hms_text_config_json.h"
 
 /* Private constants ---------------------------------------------------------*/
-#define MAX_HMS_PRINT_COUNT 150
-#define MAX_BUFFER_LEN 256
-#define MIN_HMS_ERROR_LEVEL 0
-#define MID_HMS_ERROR_LEVEL 3
-#define MAX_HMS_ERROR_LEVEL 6
+#define MAX_HMS_PRINT_COUNT              (150)
+#define MAX_BUFFER_LEN                   (256)
+#define MIN_HMS_ERROR_LEVEL              (0)
+#define MID_HMS_ERROR_LEVEL              (3)
+#define MAX_HMS_ERROR_LEVEL              (6)
+#define HMS_DIR_PATH_LEN_MAX             (256)
+
+#define DJI_CUSTOM_HMS_CODE_INJECT_ON    (0)
+
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
 static const char *oldReplaceAlarmIdStr = "%alarmid";
 static const char *oldReplaceIndexStr = "%index";
 static const char *oldReplaceComponentIndexStr = "%component_index";
+static T_DjiHmsFileBinaryArray s_EnHmsTextConfigFileBinaryArrayList[] = {
+    {hms_text_config_json_fileName, hms_text_config_json_fileSize, hms_text_config_json_fileBinaryArray},
+};
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiTest_HmsInit(void);
@@ -94,6 +103,75 @@ out:
     return returnCode;
 }
 
+T_DjiReturnCode DjiTest_HmsStartService(void)
+{
+    T_DjiReturnCode returnCode;
+#ifdef SYSTEM_ARCH_LINUX
+    char curFileDirPath[HMS_DIR_PATH_LEN_MAX];
+    char tempPath[HMS_DIR_PATH_LEN_MAX];
+#endif
+
+    returnCode = DjiHms_Init();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Hms init error, error code:0x%08llX", returnCode);
+        return returnCode;
+    }
+
+#ifdef SYSTEM_ARCH_LINUX
+    //Step 2 : Set hms text Config (Linux environment)
+    returnCode = DjiUserUtil_GetCurrentFileDirPath(__FILE__, HMS_DIR_PATH_LEN_MAX, curFileDirPath);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/en", curFileDirPath);
+
+    //set default hms text config path
+    returnCode = DjiHms_RegDefaultHmsTextConfigByDirPath(tempPath);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add default hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    //set hms text config for English language
+    returnCode = DjiHms_RegHmsTextConfigByDirPath(DJI_MOBILE_APP_LANGUAGE_ENGLISH,
+                                                  tempPath);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    //set hms text config for Chinese language
+    snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/cn", curFileDirPath);
+    returnCode = DjiHms_RegHmsTextConfigByDirPath(DJI_MOBILE_APP_LANGUAGE_CHINESE,
+                                                  tempPath);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+#else
+    //Step 2 : Set hms text Config (RTOS environment)
+    T_DjiHmsBinaryArrayConfig enHmsTextBinaryArrayConfig = {
+        .binaryArrayCount = sizeof(s_EnHmsTextConfigFileBinaryArrayList) / sizeof(T_DjiHmsFileBinaryArray),
+        .fileBinaryArrayList = s_EnHmsTextConfigFileBinaryArrayList
+    };
+
+    //set default hms text config
+    returnCode = DjiHms_RegDefaultHmsTextConfigByBinaryArray(&enHmsTextBinaryArrayConfig);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add default hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+#endif
+
+#if DJI_CUSTOM_HMS_CODE_INJECT_ON
+    DjiHms_InjectHmsErrorCode(0x1E020000, DJI_HMS_ERROR_LEVEL_FATAL);
+#endif
+
+    return returnCode;
+}
+
 /* Private functions definition-----------------------------------------------*/
 static T_DjiReturnCode DjiTest_HmsInit(void)
 {
@@ -134,17 +212,17 @@ static T_DjiReturnCode DjiTest_HmsDeInit(void)
 
 static T_DjiFcSubscriptionFlightStatus DjiTest_GetValueOfFlightStatus(void)
 {
-    T_DjiReturnCode djiStat;
+    T_DjiReturnCode returnCode;
     T_DjiFcSubscriptionFlightStatus flightStatus;
     T_DjiDataTimestamp flightStatusTimestamp = {0};
 
-    djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
-                                                      (uint8_t *) &flightStatus,
-                                                      sizeof(T_DjiFcSubscriptionFlightStatus),
-                                                      &flightStatusTimestamp);
+    returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
+                                                         (uint8_t *) &flightStatus,
+                                                         sizeof(T_DjiFcSubscriptionFlightStatus),
+                                                         &flightStatusTimestamp);
 
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", djiStat);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", returnCode);
         flightStatus = 0;
     } else {
         USER_LOG_DEBUG("Timestamp: millisecond %u microsecond %u.", flightStatusTimestamp.millisecond,
@@ -183,7 +261,6 @@ static bool DjiTest_ReplaceStr(char *buffer, uint32_t bufferMaxLen, const char *
     snprintf(buffer, bufferMaxLen, "%s%s%s", printBuffHeader, dest, printBuffTail);
     return true;
 }
-
 
 static bool DjiTest_MarchErrCodeInfoTable(T_DjiHmsInfoTable hmsInfoTable)
 {

@@ -82,6 +82,22 @@ T_DjiReturnCode DjiCore_Init(const T_DjiUserInfo *userInfo);
 T_DjiReturnCode DjiCore_SetAlias(const char *productAlias);
 
 /**
+ * @brief Set custom firmware version for DJI application or product.
+ * @details Payload firmware version will always display in DJI Pilot payload settings interface.
+ * @param version: the custom firmware version to be set.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCore_SetFirmwareVersion(T_DjiFirmwareVersion version);
+
+/**
+ * @brief Set custom serial number for DJI application or product.
+ * @details Payload custom serial number will always display in DJI Pilot payload settings interface.
+ * @param productSerialNumber: the custom serial number to be set, needs to be no larger than 32 bytes.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCore_SetSerialNumber(const char *productSerialNumber);
+
+/**
  * @brief Notify that the Payload SDK core application starts.
  * @note The call location of this interface requires special attention, The call needs to be completed after all the
  * module initialize and register interfaces.

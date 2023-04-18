@@ -42,13 +42,8 @@
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode Osal_FileOpen(const char *fileName, const char *fileMode, T_DjiFileHandle *fileObj)
 {
-    if (fileName == NULL || fileMode == NULL) {
+    if (fileName == NULL || fileMode == NULL || fileObj == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
-    }
-
-    *fileObj = malloc(sizeof(FILE));
-    if (*fileObj == NULL) {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
     }
 
     *fileObj = fopen(fileName, fileMode);

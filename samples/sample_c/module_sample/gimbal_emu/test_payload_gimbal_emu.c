@@ -391,7 +391,7 @@ static void *UserGimbal_Task(void *arg)
                                                NULL);
     if (djiStat == DJI_ERROR_SUBSCRIPTION_MODULE_CODE_TOPIC_DUPLICATE) {
         USER_LOG_DEBUG("Subscribe topic quaternion duplicate.");
-    } else {
+    } else if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)  {
         USER_LOG_ERROR("Subscribe topic quaternion error.");
     }
 
