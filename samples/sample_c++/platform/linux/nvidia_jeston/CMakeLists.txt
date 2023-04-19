@@ -17,7 +17,7 @@ endif ()
 include_directories(../../../module_sample)
 include_directories(../../../../sample_c/module_sample)
 include_directories(../common)
-include_directories(../manifold2/application)
+include_directories(../nvidia_jeston/application)
 
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/liveview/*.c*
@@ -36,8 +36,8 @@ add_definitions(-DSYSTEM_ARCH_LINUX=1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../common/3rdparty)
 
-link_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../out/lib/${TOOLCHAIN_NAME})
-link_libraries(${CMAKE_CURRENT_LIST_DIR}/../../../../../out/lib/${TOOLCHAIN_NAME}/libpayloadsdk.a -lstdc++)
+link_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../psdk_lib/lib/${TOOLCHAIN_NAME})
+link_libraries(${CMAKE_CURRENT_LIST_DIR}/../../../../../psdk_lib/lib/${TOOLCHAIN_NAME}/libpayloadsdk.a -lstdc++)
 
 add_executable(${PROJECT_NAME}
         ${MODULE_APP_SRC}
@@ -70,12 +70,13 @@ if (FFMPEG_FOUND)
     message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
     message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
     add_definitions(-DFFMPEG_INSTALLED)
+    include_directories(${FFMPEG_INCLUDE_DIR})
 
     EXECUTE_PROCESS(COMMAND ffmpeg -version
-            OUTPUT_VARIABLE ffmpeg_version_output
+            OUTPUT_VARIABLE ffmpeg_version_psdk_libput
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
+    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_psdk_libput})
     string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
     string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
 
@@ -90,8 +91,7 @@ else ()
     message(STATUS "Cannot Find FFMPEG")
 endif (FFMPEG_FOUND)
 
-include_directories(${FFMPEG_INCLUDE_DIR})
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../out/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../psdk_lib/include)
 
 
 find_package(OPUS REQUIRED)
