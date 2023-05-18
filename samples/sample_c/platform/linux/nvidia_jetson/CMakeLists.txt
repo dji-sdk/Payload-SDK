@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(dji_sdk_demo_on_jeston C)
+project(dji_sdk_demo_on_jetson C)
 
 set(CMAKE_C_FLAGS "-pthread -std=gnu99")
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")

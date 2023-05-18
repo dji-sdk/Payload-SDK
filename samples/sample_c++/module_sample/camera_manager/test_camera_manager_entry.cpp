@@ -50,6 +50,7 @@ static const char *s_cameraManagerSampleSelectList[] = {
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_INTERVAL_PHOTO]           = "Shoot interval photo                                |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO]                   = "Record video                                        |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE] = "Download and delete media file                      |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_FILE_LIST_BY_SLICES]   = "Download file list by slices                        |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_THERMOMETRY]                    = "Thermometry test                                    |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_LIDAR_RANGING_INFO]         = "Get lidar ranging info                              |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_IR_CAMERA_ZOOM_PARAM]           = "Set ir camera zoom param                            |",
@@ -120,8 +121,7 @@ void DjiUser_RunCameraManagerSample(void)
         if (posNum > 3 || posNum < 1) {
             USER_LOG_ERROR("Input mount position is invalid");
             continue;
-        }
-        else {
+        } else {
             break;
         }
     }
@@ -140,15 +140,15 @@ void DjiUser_RunCameraManagerSample(void)
             return;
         }
 
-        sampleSelectNum =  atoi(sampleSelectStr.c_str());
+        sampleSelectNum = atoi(sampleSelectStr.c_str());
 
         if (sampleSelectNum < 0 ||
-            sampleSelectNum >= (int)E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_INDEX_MAX) {
+            sampleSelectNum >= (int) E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_INDEX_MAX) {
             USER_LOG_ERROR("Input camera sample is invalid");
             continue;
         }
 
-        cameraSample = (E_DjiTestCameraManagerSampleSelect)sampleSelectNum;
+        cameraSample = (E_DjiTestCameraManagerSampleSelect) sampleSelectNum;
 
         cout << "Start test: position " << cameraMountPosition
              << ", sample " << cameraSample << endl;

@@ -126,7 +126,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
     }
 
     USER_LOG_INFO("--> Step 2: Subscribe the topics of quaternion, velocity and gps position");
-    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ,
+    djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ,
                                                DjiTest_FcSubscriptionReceiveQuaternionCallback);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Subscribe topic quaternion error.");

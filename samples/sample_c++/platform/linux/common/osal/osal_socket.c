@@ -72,7 +72,8 @@ T_DjiReturnCode Osal_Socket(E_DjiSocketMode mode, T_DjiSocketHandle *socketHandl
             goto out;
         }
 
-        if (setsockopt(socketHandleStruct->socketFd, SOL_SOCKET, SO_RCVBUF, &rcvBufSize, optlen) < 0) {
+        if (setsockopt(socketHandleStruct->socketFd, SOL_SOCKET, SO_RCVBUF, &rcvBufSize, optlen) < 0)
+        {
             goto out;
         }
     } else if (mode == DJI_SOCKET_MODE_TCP) {
@@ -86,7 +87,6 @@ T_DjiReturnCode Osal_Socket(E_DjiSocketMode mode, T_DjiSocketHandle *socketHandl
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 
 out:
-
     close(socketHandleStruct->socketFd);
     free(socketHandleStruct);
 

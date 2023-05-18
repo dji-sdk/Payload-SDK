@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-project(dji_sdk_demo_on_jeston_cxx CXX)
+project(dji_sdk_demo_on_jetson_cxx CXX)
 
 set(CMAKE_C_FLAGS "-pthread -std=gnu99")
+set(CMAKE_CXX_FLAGS "-std=c++11 -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_C_COMPILER "aarch64-linux-gnu-gcc")
 set(CMAKE_CXX_COMPILER "aarch64-linux-gnu-g++")
 add_definitions(-D_GNU_SOURCE)
 
 if (BUILD_TEST_CASES_ON MATCHES TRUE)
-    set(COMMON_CXX_FLAGS "-std=c++11 -pthread")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS} -fprofile-arcs -ftest-coverage -Wno-deprecated-declarations")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -Wno-deprecated-declarations")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
 endif ()
@@ -17,7 +17,7 @@ endif ()
 include_directories(../../../module_sample)
 include_directories(../../../../sample_c/module_sample)
 include_directories(../common)
-include_directories(../nvidia_jeston/application)
+include_directories(../nvidia_jetson/application)
 
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/liveview/*.c*
@@ -57,9 +57,11 @@ if (OpenCV_FOUND)
     execute_process(COMMAND opencv_version OUTPUT_VARIABLE OPENCV_VERSION)
     if (${OPENCV_VERSION} STRLESS "4.0.0")
         add_definitions(-DOPEN_CV_VERSION_3)
-    else()
+
+    else ()
         add_definitions(-DOPEN_CV_VERSION_4)
-    endif()
+
+    endif ()
 else ()
     message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
 endif ()
@@ -69,8 +71,6 @@ if (FFMPEG_FOUND)
     message(STATUS "Found FFMPEG installed in the system")
     message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
     message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
-    add_definitions(-DFFMPEG_INSTALLED)
-    include_directories(${FFMPEG_INCLUDE_DIR})
 
     EXECUTE_PROCESS(COMMAND ffmpeg -version
             OUTPUT_VARIABLE ffmpeg_version_psdk_libput
@@ -87,6 +87,8 @@ if (FFMPEG_FOUND)
     endif ()
 
     target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
+    include_directories(${FFMPEG_INCLUDE_DIR})
+    add_definitions(-DFFMPEG_INSTALLED)
 else ()
     message(STATUS "Cannot Find FFMPEG")
 endif (FFMPEG_FOUND)

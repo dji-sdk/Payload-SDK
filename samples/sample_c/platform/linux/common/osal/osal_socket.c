@@ -46,7 +46,7 @@ typedef struct {
 T_DjiReturnCode Osal_Socket(E_DjiSocketMode mode, T_DjiSocketHandle *socketHandle)
 {
     T_SocketHandleStruct *socketHandleStruct;
-    socklen_t optlen = sizeof(int);
+    socklen_t optlen = sizeof (int);
     int rcvBufSize = SOCKET_RECV_BUF_MAX_SIZE;
     int opt = 1;
 
@@ -72,7 +72,8 @@ T_DjiReturnCode Osal_Socket(E_DjiSocketMode mode, T_DjiSocketHandle *socketHandl
             goto out;
         }
 
-        if (setsockopt(socketHandleStruct->socketFd, SOL_SOCKET, SO_RCVBUF, &rcvBufSize, optlen) < 0) {
+        if (setsockopt(socketHandleStruct->socketFd, SOL_SOCKET, SO_RCVBUF, &rcvBufSize, optlen) < 0)
+        {
             goto out;
         }
     } else if (mode == DJI_SOCKET_MODE_TCP) {

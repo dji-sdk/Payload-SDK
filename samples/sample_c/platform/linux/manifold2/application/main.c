@@ -81,6 +81,7 @@ static pthread_t s_monitorThread = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void);
+static T_DjiReturnCode DjiUser_CleanSystemEnvironment(void);
 static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo);
 static T_DjiReturnCode DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen);
 static T_DjiReturnCode DjiUser_LocalWrite(const uint8_t *data, uint16_t dataLen);
@@ -180,7 +181,8 @@ int main(int argc, char **argv)
 #endif
 
     if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK) {
+        (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)) {
         returnCode = DjiTest_WidgetInteractionStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget interaction sample init error");
@@ -190,6 +192,13 @@ int main(int argc, char **argv)
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget speaker test init error");
         }
+
+#ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
+        returnCode = DjiTest_MopChannelStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("mop channel sample init error");
+        }
+#endif
     } else {
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
         returnCode = DjiTest_CameraEmuBaseStartService();
@@ -339,6 +348,7 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         .Free = Osal_Free,
         .GetTimeMs = Osal_GetTimeMs,
         .GetTimeUs = Osal_GetTimeUs,
+        .GetRandomNum  = Osal_GetRandomNum,
     };
 
     T_DjiLoggerConsole printConsole = {
@@ -464,6 +474,39 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiUser_CleanSystemEnvironment(void)
+{
+    T_DjiReturnCode returnCode;
+    T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+#ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
+    returnCode = DjiTest_PowerManagementStopService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        perror("power management deinit error");
+    }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
+    returnCode = DjiTest_DataTransmissionStopService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        perror("widget sample deinit error");
+    }
+#endif
+
+    returnCode = DjiCore_DeInit();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        perror("Core deinit failed.");
+    }
+
+    return returnCode;
 }
 
 static T_DjiReturnCode DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
@@ -689,7 +732,15 @@ static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinSta
 
 static void DjiUser_NormalExitHandler(int signalNum)
 {
+    T_DjiReturnCode returnCode;
+
     USER_UTIL_UNUSED(signalNum);
+
+    returnCode = DjiUser_CleanSystemEnvironment();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        perror("Clean up system environment failed.");
+    }
+
     exit(0);
 }
 

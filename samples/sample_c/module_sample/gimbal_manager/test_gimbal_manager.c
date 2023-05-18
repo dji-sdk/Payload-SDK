@@ -45,7 +45,7 @@ typedef struct {
 
 /* Private values -------------------------------------------------------------*/
 static const T_DjiTestGimbalActionList s_rotationActionList[] =
-    {
+{
         {.action = DJI_TEST_GIMBAL_RESET},
         {.action = DJI_TEST_GIMBAL_ROTATION, .rotation.rotationMode = DJI_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 30,  0,   0,  0.2},
         {.action = DJI_TEST_GIMBAL_ROTATION, .rotation.rotationMode = DJI_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, -30, 0,   0,  0.2},
@@ -63,7 +63,7 @@ static const T_DjiTestGimbalActionList s_rotationActionList[] =
         {.action = DJI_TEST_GIMBAL_ROTATION, .rotation.rotationMode = DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -60, 0,   0,  0.5},
         {.action = DJI_TEST_GIMBAL_ROTATION, .rotation.rotationMode = DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -30, 0,   0,  0.5},
         {.action = DJI_TEST_GIMBAL_RESET},
-    };
+};
 
 /* Private functions declaration ---------------------------------------------*/
 
@@ -151,6 +151,4 @@ out:
 }
 
 /* Private functions definition-----------------------------------------------*/
-
-
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

@@ -49,3 +49,4 @@ void DjiUser_RunGimbalManagerSample(void);
 
 #endif // TEST_GIMBAL_ENTRY_H
 /************************ (C) COPYRIGHT DJI Innovations *******END OF FILE******/
+

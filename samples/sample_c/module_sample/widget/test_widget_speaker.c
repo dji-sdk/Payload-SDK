@@ -163,6 +163,7 @@ T_DjiReturnCode DjiTest_WidgetSpeakerStartService(void)
 
 /* Private functions definition-----------------------------------------------*/
 #ifdef SYSTEM_ARCH_LINUX
+
 static uint32_t DjiTest_GetVoicePlayProcessId(void)
 {
     FILE *fp;
@@ -220,21 +221,21 @@ static T_DjiReturnCode DjiTest_DecodeAudioData(void)
     /*! Attention: you can use "ffmpeg -i xxx.mp3 -ar 16000 -ac 1 out.wav" and use opus-tools to generate opus file for test */
     fin = fopen(WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME, "r");
     if (fin == NULL) {
-        USER_LOG_ERROR("failed to open input file: %s\n", strerror(errno));
+        fprintf(stderr, "failed to open input file: %s\n", strerror(errno));
         return EXIT_FAILURE;
-    }
-
-    fout = fopen(WIDGET_SPEAKER_AUDIO_PCM_FILE_NAME, "w");
-    if (fout == NULL) {
-        USER_LOG_ERROR("failed to open output file: %s\n", strerror(errno));
-        goto open_pcm_audio_failed;
     }
 
     /* Create a new decoder state. */
     decoder = opus_decoder_create(WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE, WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS, &err);
     if (err < 0) {
-        USER_LOG_ERROR("failed to create decoder: %s\n", opus_strerror(err));
-        goto create_decoder_failed;
+        fprintf(stderr, "failed to create decoder: %s\n", opus_strerror(err));
+        goto close_fin;
+    }
+
+    fout = fopen(WIDGET_SPEAKER_AUDIO_PCM_FILE_NAME, "w");
+    if (fout == NULL) {
+        fprintf(stderr, "failed to open output file: %s\n", strerror(errno));
+        goto close_fin;
     }
 
     while (1) {
@@ -254,8 +255,8 @@ static T_DjiReturnCode DjiTest_DecodeAudioData(void)
            the frame size returned. */
         frame_size = opus_decode(decoder, cbits, nbBytes, out, WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE, 0);
         if (frame_size < 0) {
-            USER_LOG_ERROR("decoder failed: %s\n", opus_strerror(frame_size));
-            goto decode_data_failed;
+            fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
+            goto close_fout;
         }
 
         USER_LOG_DEBUG("decode data to file: %d\r\n", frame_size * WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS);
@@ -278,8 +279,18 @@ create_decoder_failed:
 open_pcm_audio_failed:
     fclose(fin);
 #endif
+    return EXIT_SUCCESS;
 
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+#ifdef OPUS_INSTALLED
+close_fout:
+    fclose(fout);
+
+close_fin:
+    fclose(fin);
+
+    return EXIT_FAILURE;
+#endif
+
 }
 
 static T_DjiReturnCode DjiTest_PlayAudioData(void)
@@ -364,7 +375,7 @@ static T_DjiReturnCode DjiTest_CheckFileMd5Sum(const char *path, uint8_t *buf, u
     uint32_t readFileTotalSize = 0;
     uint16_t readLen;
     T_DjiReturnCode returnCode;
-    uint8_t readBuf[1024];
+    uint8_t readBuf[1024] = {0};
     uint8_t md5Sum[16] = {0};
     FILE *file = NULL;;
 
@@ -407,6 +418,7 @@ static T_DjiReturnCode DjiTest_CheckFileMd5Sum(const char *path, uint8_t *buf, u
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+
 #endif
 
 static void SetSpeakerState(E_DjiWidgetSpeakerState speakerState)
@@ -628,6 +640,7 @@ static T_DjiReturnCode ReceiveTtsData(E_DjiWidgetTransmitDataEvent event,
 #ifdef SYSTEM_ARCH_LINUX
         if (s_ttsFile != NULL) {
             fclose(s_ttsFile);
+            s_ttsFile = NULL;
         }
 
         returnCode = DjiTest_CheckFileMd5Sum(WIDGET_SPEAKER_TTS_FILE_NAME, buf, size);
@@ -685,6 +698,7 @@ static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
         USER_LOG_INFO("Close voice file.");
         if (s_audioFile != NULL) {
             fclose(s_audioFile);
+            s_audioFile = NULL;
         }
 
 #ifdef SYSTEM_ARCH_LINUX

@@ -76,7 +76,6 @@ typedef enum {
  */
 typedef enum {
     DJI_FLIGHT_CONTROLLER_ENABLE_EMERGENCY_STOP_MOTOR = 0x01, /*!< Execute emergency-stop-motor action */
-    DJI_FLIGHT_CONTROLLER_DISABLE_EMERGENCY_STOP_MOTOR = 0x02  /*!< Cancel emergency-stop-motor status */
 } E_DjiFlightControllerEmergencyStopMotor;
 
 /**

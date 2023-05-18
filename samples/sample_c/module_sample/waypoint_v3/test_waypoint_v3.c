@@ -29,6 +29,7 @@
 #include "dji_logger.h"
 #include "dji_waypoint_v3.h"
 #include "waypoint_file_c/waypoint_v3_test_file_kmz.h"
+#include "dji_fc_subscription.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define DJI_TEST_WAYPOINT_V3_KMZ_FILE_PATH_LEN_MAX         (256)
@@ -47,6 +48,9 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiFcSubscriptionFlightStatus flightStatus = 0;
+    T_DjiDataTimestamp flightStatusTimestamp = {0};
+
 #ifdef SYSTEM_ARCH_LINUX
     FILE *kmzFile = NULL;
     uint32_t kmzFileSize = 0;
@@ -94,25 +98,25 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     returnCode = UtilFile_GetFileSize(kmzFile, &kmzFileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Get kmz file size failed.");
-        goto out;
+        goto close_file;
     }
 
     kmzFileBuf = osalHandler->Malloc(kmzFileSize);
     if (kmzFileBuf == NULL) {
         USER_LOG_ERROR("Malloc kmz file buf error.");
-        goto out;
+        goto close_file;
     }
 
     readLen = fread(kmzFileBuf, 1, kmzFileSize, kmzFile);
     if (readLen != kmzFileSize) {
         USER_LOG_ERROR("Read kmz file data failed.");
-        goto out;
+        goto close_file;
     }
 
     returnCode = DjiWaypointV3_UploadKmzFile(kmzFileBuf, kmzFileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Upload kmz file failed.");
-        goto out;
+        goto close_file;
     }
 
     osalHandler->Free(kmzFileBuf);
@@ -129,14 +133,43 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     returnCode = DjiWaypointV3_Action(DJI_WAYPOINT_V3_ACTION_START);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Execute start action failed.");
+        goto close_file;
+    }
+
+    osalHandler->TaskSleepMs(2000);
+
+close_file:
+#ifdef SYSTEM_ARCH_LINUX
+    returnCode = fclose(kmzFile);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Close KMZ file failed.");
+    }
+    kmzFile = NULL;
+#endif
+
+    returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
+                                                  DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
+                                                  NULL);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Subscribe topic flight status failed, error code:0x%08llX", returnCode);
         goto out;
     }
 
-#ifdef SYSTEM_ARCH_LINUX
-    fclose(kmzFile);
-#endif
+    do {
+        osalHandler->TaskSleepMs(2000);
 
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+        returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
+                                                            (uint8_t *) &flightStatus,
+                                                            sizeof(T_DjiFcSubscriptionFlightStatus),
+                                                            &flightStatusTimestamp);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", returnCode);
+        }
+
+        USER_LOG_INFO("flight status: %d", flightStatus);
+    } while(flightStatus == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR);
+
+    USER_LOG_INFO("The aircraft is on the ground now.");
 
 out:
 #ifdef SYSTEM_ARCH_LINUX
@@ -145,7 +178,7 @@ out:
     }
 #endif
 
-    return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    return DjiWaypointV3_DeInit();
 }
 
 /* Private functions definition-----------------------------------------------*/

@@ -35,6 +35,7 @@
 #define PAYLOAD_GIMBAL_EMU_TASK_STACK_SIZE  (2048)
 #define PAYLOAD_GIMBAL_TASK_FREQ            1000
 #define PAYLOAD_GIMBAL_CALIBRATION_TIME_MS  2000
+#define PAYLOAD_GIMBAL_MIN_ACTION_TIME      5
 
 /* Private types -------------------------------------------------------------*/
 typedef enum {
@@ -389,10 +390,14 @@ static void *UserGimbal_Task(void *arg)
 
     djiStat = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
                                                NULL);
-    if (djiStat == DJI_ERROR_SUBSCRIPTION_MODULE_CODE_TOPIC_DUPLICATE) {
-        USER_LOG_DEBUG("Subscribe topic quaternion duplicate.");
-    } else if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)  {
-        USER_LOG_ERROR("Subscribe topic quaternion error.");
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        if (djiStat == DJI_ERROR_SUBSCRIPTION_MODULE_CODE_TOPIC_DUPLICATE) {
+            USER_LOG_WARN("Subscribe topic quaternion duplicate.");
+        } else {
+            USER_LOG_ERROR("Subscribe topic quaternion error.");
+        }
+    } else {
+        USER_LOG_DEBUG("Subscribe topic quaternion success.");
     }
 
     while (1) {
@@ -1075,6 +1080,11 @@ DjiTest_GimbalCalculateSpeed(T_DjiAttitude3d originalAttitude, T_DjiAttitude3d t
     if (speed == NULL) {
         USER_LOG_ERROR("input pointer is null.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    if (actionTime == 0) {
+        USER_LOG_WARN("Input action time is zero, now used max speed to rotate.");
+        actionTime = PAYLOAD_GIMBAL_MIN_ACTION_TIME;
     }
 
     pitchSpeedTemp = (float) (targetAttitude.pitch - originalAttitude.pitch) / (float) actionTime * 100;

@@ -186,7 +186,10 @@ T_DjiReturnCode DjiTest_FlightControlInit(void)
                                                   DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ,
                                                   NULL);
 
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+    if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+    } else if (returnCode == DJI_ERROR_SUBSCRIPTION_MODULE_CODE_TOPIC_DUPLICATE) {
+        USER_LOG_WARN("Subscribe topic quaternion duplicate");
+    } else {
         USER_LOG_ERROR("Subscribe topic quaternion failed,error code:0x%08llX", returnCode);
         return returnCode;
     }
@@ -703,7 +706,8 @@ void DjiTest_FlightControlSetGetParamSample()
     DjiTest_WidgetLogAppend("--> Step 3: Turn on horizontal radar obstacle avoidance");
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) {
         returnCode = DjiFlightController_SetHorizontalRadarObstacleAvoidanceEnableStatus(
             DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -717,7 +721,8 @@ void DjiTest_FlightControlSetGetParamSample()
     DjiTest_WidgetLogAppend("--> Step 4: Get horizontal radar obstacle avoidance status\r\n");
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) {
         returnCode = DjiFlightController_GetHorizontalRadarObstacleAvoidanceEnableStatus(
             &horizontalRadarObstacleAvoidanceStatus);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -756,7 +761,8 @@ void DjiTest_FlightControlSetGetParamSample()
     DjiTest_WidgetLogAppend("--> Step 7: Turn on upwards radar obstacle avoidance.");
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) {
         returnCode = DjiFlightController_SetUpwardsRadarObstacleAvoidanceEnableStatus(
             DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -770,7 +776,8 @@ void DjiTest_FlightControlSetGetParamSample()
     DjiTest_WidgetLogAppend("--> Step 8: Get upwards radar obstacle avoidance status\r\n");
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30 ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) {
         returnCode = DjiFlightController_GetUpwardsRadarObstacleAvoidanceEnableStatus(
             &upwardsRadarObstacleAvoidanceStatus);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -846,7 +853,8 @@ void DjiTest_FlightControlSetGetParamSample()
     s_osalHandler->TaskSleepMs(1000);
 
     /*! Set rc lost action */
-    if (aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M300_RTK) {
+    if (aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M300_RTK &&
+        aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M350_RTK) {
         USER_LOG_INFO("--> Step 15: Set rc lost action");
         DjiTest_WidgetLogAppend("--> Step 15: Set rc lost action");
         returnCode = DjiFlightController_SetRCLostAction(DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GOHOME);

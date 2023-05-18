@@ -77,14 +77,14 @@ Application::~Application()
 void Application::DjiUser_SetupEnvironment()
 {
     T_DjiReturnCode returnCode;
-    T_DjiOsalHandler osalHandler;
-    T_DjiHalUartHandler uartHandler;
-    T_DjiHalUsbBulkHandler usbBulkHandler;
+    T_DjiOsalHandler osalHandler = {0};
+    T_DjiHalUartHandler uartHandler = {0};
+    T_DjiHalUsbBulkHandler usbBulkHandler = {0};
     T_DjiLoggerConsole printConsole;
     T_DjiLoggerConsole localRecordConsole;
-    T_DjiFileSystemHandler fileSystemHandler;
-    T_DjiSocketHandler socketHandler;
-    T_DjiHalNetworkHandler networkHandler;
+    T_DjiFileSystemHandler fileSystemHandler = {0};
+    T_DjiSocketHandler socketHandler {0};
+    T_DjiHalNetworkHandler networkHandler = {0};
 
     networkHandler.NetworkInit = HalNetWork_Init;
     networkHandler.NetworkDeInit = HalNetWork_DeInit;
@@ -117,6 +117,7 @@ void Application::DjiUser_SetupEnvironment()
     osalHandler.Free = Osal_Free;
     osalHandler.GetTimeMs = Osal_GetTimeMs;
     osalHandler.GetTimeUs = Osal_GetTimeUs;
+    osalHandler.GetRandomNum = Osal_GetRandomNum;
 
     printConsole.func = DjiUser_PrintConsole;
     printConsole.consoleLevel = DJI_LOGGER_CONSOLE_LOG_LEVEL_INFO;

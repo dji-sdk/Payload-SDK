@@ -41,6 +41,7 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_DataTransmissionStartService(void);
+T_DjiReturnCode DjiTest_DataTransmissionStopService(void);
 
 #ifdef __cplusplus
 }
