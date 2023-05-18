@@ -442,6 +442,12 @@ typedef enum {
     DJI_CAMERA_MANAGER_RECORDING_CONTROL_RESUME = 3,
 } E_DjiCameraManagerRecordingControl;
 
+typedef enum {
+    DJI_CAMERA_MANAGER_FILE_LIST_COUNT_60_PER_SLICE = 60,
+    DJI_CAMERA_MANAGER_FILE_LIST_COUNT_120_PER_SLICE = 120,
+    DJI_CAMERA_MANAGER_FILE_LIST_COUNT_ALL_PER_SLICE = 0xFFFF,
+} E_DjiCameraManagerFileListCountPerSlice;
+
 typedef struct {
     uint8_t firmware_version[4];
 } T_DjiCameraManagerFirmwareVersion;
@@ -499,6 +505,11 @@ typedef struct {
     uint16_t totalCount;
     T_DjiCameraManagerFileListInfo *fileListInfo;
 } T_DjiCameraManagerFileList;
+
+typedef struct {
+    uint16_t sliceStartIndex;
+    E_DjiCameraManagerFileListCountPerSlice countPerSlice;
+} T_DjiCameraManagerSliceConfig;
 
 typedef enum {
     DJI_DOWNLOAD_FILE_EVENT_START,
@@ -1011,6 +1022,18 @@ T_DjiReturnCode DjiCameraManager_StopRecordVideo(E_DjiMountPosition position);
  */
 T_DjiReturnCode DjiCameraManager_DownloadFileList(E_DjiMountPosition position, T_DjiCameraManagerFileList *fileList);
 
+/**
+ * @brief Download selected camera media file list by slices.
+ * @note The interface is a synchronous interface, which occupies more CPU resources when using it.
+ * If the download file fails, the timeout time is 3S.
+ * @param position: the mount position of the camera
+ * @param sliceConfig: the slices config for downloading file list
+ * @param fileList: the pointer to the downloaded camera file list
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_DownloadFileListBySlices(E_DjiMountPosition position,
+                                                          T_DjiCameraManagerSliceConfig sliceConfig,
+                                                          T_DjiCameraManagerFileList *fileList);
 /**
  * @brief Regsiter selected camera download file data callback,
  * @param position: the mount position of the camera

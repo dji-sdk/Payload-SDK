@@ -62,17 +62,19 @@ T_DjiReturnCode HalUsbBulk_Init(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHan
 #ifdef LIBUSB_INSTALLED
         ret = libusb_init(NULL);
         if (ret < 0) {
+            USER_LOG_ERROR("init usb bulk failed, errno = %d", ret);
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
 
         handle = libusb_open_device_with_vid_pid(NULL, usbBulkInfo.vid, usbBulkInfo.pid);
         if (handle == NULL) {
+            USER_LOG_ERROR("open usb device failed");
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
 
         ret = libusb_claim_interface(handle, usbBulkInfo.channelInfo.interfaceNum);
         if (ret != LIBUSB_SUCCESS) {
-            printf("libusb claim interface error");
+            USER_LOG_ERROR("libusb claim interface failed, errno = %d", ret);
             libusb_close(handle);
             return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
@@ -114,6 +116,7 @@ T_DjiReturnCode HalUsbBulk_Init(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHan
 T_DjiReturnCode HalUsbBulk_DeInit(T_DjiUsbBulkHandle usbBulkHandle)
 {
     struct libusb_device_handle *handle = NULL;
+    int32_t ret;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
     if (usbBulkHandle == NULL) {
@@ -124,7 +127,11 @@ T_DjiReturnCode HalUsbBulk_DeInit(T_DjiUsbBulkHandle usbBulkHandle)
 
     if (((T_HalUsbBulkObj *) usbBulkHandle)->usbBulkInfo.isUsbHost == true) {
 #ifdef LIBUSB_INSTALLED
-        libusb_release_interface(handle, ((T_HalUsbBulkObj *) usbBulkHandle)->usbBulkInfo.channelInfo.interfaceNum);
+        ret = libusb_release_interface(handle, ((T_HalUsbBulkObj *) usbBulkHandle)->usbBulkInfo.channelInfo.interfaceNum);
+        if(ret != 0) {
+            USER_LOG_ERROR("release usb bulk interface failed, errno = %d", ret);
+            return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        }
         osalHandler->TaskSleepMs(100);
         libusb_exit(NULL);
 #endif

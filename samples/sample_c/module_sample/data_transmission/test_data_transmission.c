@@ -60,7 +60,6 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
     char ipAddr[DJI_IP_ADDR_STR_SIZE_MAX];
     uint16_t port;
 
-
     djiStat = DjiLowSpeedDataChannel_Init();
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("init data transmission module error.");
@@ -118,6 +117,25 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
                                 DATA_TRANSMISSION_TASK_STACK_SIZE, NULL, &s_userDataTransmissionThread) !=
         DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("user data transmission task create error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode DjiTest_DataTransmissionStopService(void)
+{
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiReturnCode returnCode;
+
+    if (osalHandler->TaskDestroy(s_userDataTransmissionThread) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("user data transmission task destroy error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = DjiLowSpeedDataChannel_DeInit();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("deinit data transmission module error.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 

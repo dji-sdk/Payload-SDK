@@ -87,7 +87,8 @@ T_DjiReturnCode DjiTest_PowerManagementStartService(void)
         return returnCode;
     }
 
-    if (baseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK &&
+    if ((baseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+         baseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) &&
         (baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
          baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT)) {
         // apply high power
@@ -128,6 +129,19 @@ T_DjiReturnCode DjiTest_PowerManagementStartService(void)
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode DjiTest_PowerManagementStopService(void)
+{
+    T_DjiReturnCode returnCode;
+
+    returnCode = DjiPowerManagement_DeInit();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("power management deinit error: 0x%08llX.", returnCode);
+        return returnCode;
+    }
+
+    return returnCode;
 }
 
 /* Private functions definition-----------------------------------------------*/

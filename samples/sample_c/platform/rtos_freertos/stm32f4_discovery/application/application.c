@@ -97,6 +97,7 @@ void DjiUser_StartTask(void const *argument)
         .Free = Osal_Free,
         .GetTimeMs = Osal_GetTimeMs,
         .GetTimeUs = Osal_GetTimeUs,
+        .GetRandomNum = Osal_GetRandomNum,
     };
     T_DjiLoggerConsole printConsole = {
         .func = DjiUser_PrintConsole,
@@ -247,7 +248,8 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
+    if ((aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)
         && aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
         USER_LOG_WARN("Not support gimbal emu sample.");
     } else {
@@ -294,7 +296,8 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_POSITIONING_ON
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
+    if ((aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)
         && aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT) {
         if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk positioning init error");

@@ -361,8 +361,8 @@ typedef enum {
     DJI_FC_SUBSCRIPTION_TOPIC_STATUS_MOTOR_START_ERROR = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC,
                                                                                      31),
     /*!
-     * @brief Battery information topic name. Please refer to ::T_DjiFcSubscriptionBatteryInfo for information about data structure.
-     * @datastruct \ref T_DjiFcSubscriptionBatteryInfo
+     * @brief Battery information topic name. Please refer to ::T_DjiFcSubscriptionWholeBatteryInfo for information about data structure.
+     * @datastruct \ref T_DjiFcSubscriptionWholeBatteryInfo
      */
     DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 32),
     /*!
@@ -977,13 +977,13 @@ typedef struct BatteryWholeInfo {
 typedef struct BatterySingleInfo {
     uint8_t reserve;
     uint8_t batteryIndex;
-    int32_t currentVoltage;          /*!< uint:mV. */
-    int32_t currentElectric;         /*!< uint:mA. */
-    uint32_t fullCapacity;           /*!< uint:mAh. */
-    uint32_t remainedCapacity;       /*!< uint:mAh. */
-    int16_t batteryTemperature;      /*!< uint:℃. */
+    int32_t currentVoltage;          /*!< uint: mV. */
+    int32_t currentElectric;         /*!< uint: mA. */
+    uint32_t fullCapacity;           /*!< uint: mAh. */
+    uint32_t remainedCapacity;       /*!< uint: mAh. */
+    int16_t batteryTemperature;      /*!< uint: 0.1℃. */
     uint8_t cellCount;
-    uint8_t batteryCapacityPercent;  /*!< uint:%. */
+    uint8_t batteryCapacityPercent;  /*!< uint: %. */
     T_DjiFcSubscriptionSingleBatteryState batteryState;
     uint8_t reserve1;
     uint8_t reserve2;

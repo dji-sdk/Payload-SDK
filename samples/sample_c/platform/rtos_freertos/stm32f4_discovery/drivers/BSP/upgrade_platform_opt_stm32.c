@@ -81,10 +81,14 @@ T_DjiReturnCode DjiUpgradePlatformStm32_WriteUpgradeProgramFile(uint32_t offset,
 {
     uint32_t result;
 
+    __disable_irq();
+
     result = FLASH_If_Write(APPLICATION_STORE_ADDRESS + offset, (uint8_t *) data, dataLen);
     if (result != FLASHIF_OK) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
+
+    __enable_irq();
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

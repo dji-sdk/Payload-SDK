@@ -1,6 +1,6 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.4.0-pink.svg)
+![](https://img.shields.io/badge/version-V3.5.0-yellow.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -23,37 +23,22 @@ to get the latest version information.
 
 ## Latest Release
 
-PSDK 3.4.0 was released on 18 April 2023. This version of Payload SDK mainly add some new features support and fixed
-some bugs. Please refer to the release notes for detailed changes list.
+PSDK 3.5.0 was released on 18 May 2023. This version of Payload SDK mainly add support for M350 RTK, also add some new features support and fixed some bugs. 
+Please refer to the release notes for detailed changes list.
 
-* Added support for SDK interconnection on M30/M30T
-* Added support for downloading camera media files on M3E/M3T
-* Added support for infrared temperature in camera management on M30T/M3T
-* Added support for waypoint action status push on M30/M30T and M3E/M3T
-* Added support for custom HMS function on all models
-* Added support for custom device version number and serial number on all models
-* Added support for subscribing to video stream request I-frame on all models
-* Added support for obtaining H20N laser distance measurement data camera management on M300 RTK
-* Added support for controlling H20N infrared zoom in camera management on M300 RTK
-* Added support for subscribing perception grayscale image by Ethernet on M30/M30T and M3E/M3T
-* Added support for downloading camera media files by Ethernet on M30/M30T and M3E/M3T
-* Added support for Nvidia Jeston series development boards sample
-* Added support for H20/H20T model files
-* Fixed issue with unsuccessful initialization in USB single Bulk mode on M30/M30T and M3E/M3T
-* Fixed issue with unstable data transmission OSDK expansion port to PSDK port for passing through small data on M300 RTK
-* Fixed issue with third-party camera function causing payload disconnection due to deleting all media files in certain platforms on M300 RTK
-* Fixed issue with gimbal mode abnormal setting in gimbal management on M300 RTK
-* Fixed issue with deleting L1 camera media files in camera management on M300 RTK
-* Fixed issue with abnormal triggering of text input box widget function in RTOS platform on M300 RTK
-* Fixed issue with abnormal payload power supply during hot plugging in some scenarios in RTOS platform on M3E/M3T
-* Fixed issue with CPU loading abnormal usage due to multiple video stream subscriptions on M30/M30T
-* Fixed issue with occasional payload negotiation failure on M30/M30T and M3E/M3T
-* Fixed issue with obtaining camera work mode on M30/M30T and M3E/M3T
-* Fixed issue with obtaining camera zoom parameters on M30/M30T and M3E/M3T
-* Fixed issue with altitude and distance limitations when using joystick function in some scenarios on all models
-* Fixed some memory leak issues
-* Optimized camera management C++ Sample support
-* Optimized gimbal management C++ Sample support
+* Added support for new drone model Matrice 350 RTK
+* Matrice 300 RTK added support for DJI RC Plus
+* Added support for downloading media files in pieces on all drone models
+* Added support for Osal get random number callback interface on all drone model
+* Fixed issue with the black screen problem when uses third-party camera to playback video on M300 RTK and DJI smart controller screen combination
+* Fixed issue with failure of subscribing L1 camera code stream on M300 RTK
+* Fixed issue with failure of subscribing main camera code stream in dual control mode on M300 RTK
+* Fixed issue with local upgrade function of RTOS platform on Mavic 3E/3T
+* Fixed issue with the initialization failure of using PSDK Payload device and millimeter wave radar on M300 RTK
+* Fixed issue with custom HMS function on M300 RTK and X-Port combination
+* Fixed issue with invalid TTS option of speaker widget on M300 RTK
+* Fixed issue with downloading file list with high probability of failure when the camera photos are over 400 on M300 RTK
+* Fixed some of the memory leaks
 
 ## License
 

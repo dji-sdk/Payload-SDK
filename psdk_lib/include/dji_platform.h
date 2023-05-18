@@ -89,11 +89,14 @@ typedef enum {
     * Baud rate support list on M300 RTK Extension Port: 115200, 230400, 460800, 921600, 1000000.
     * Baud rate support list on M30/M30T: 115200, 230400, 460800, 921600, 1000000.
     * Baud rate support list on M3E/M3T: 921600.
+    * Baud rate support list on M350 RTK Payload Port: 115200, 230400, 460800, 921600.
+    * Baud rate support list on M350 RTK Extension Port: 115200, 230400, 460800, 921600, 1000000.
     * */
     DJI_HAL_UART_NUM_0,
     /**
-    * Only support on M300 RTK Extension Port by USB virtual serial port, such as /dev/ttyACM0.
+    * Only support on M300/M350 RTK Extension Port by USB virtual serial port, such as /dev/ttyACM0.
     * Baud rate support list on M300 RTK Extension Port: 921600.
+    * Baud rate support list on M350 RTK Extension Port: 921600.
     * */
     DJI_HAL_UART_NUM_1,
 } E_DjiHalUartNum;
@@ -220,6 +223,8 @@ typedef struct {
     T_DjiReturnCode (*GetTimeMs)(uint32_t *ms);
 
     T_DjiReturnCode (*GetTimeUs)(uint64_t *us);
+
+    T_DjiReturnCode (*GetRandomNum)(uint16_t *randomNum);
 
     void *(*Malloc)(uint32_t size);
 

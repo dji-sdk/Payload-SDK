@@ -72,6 +72,12 @@ typedef T_DjiReturnCode (*DjiPowerOffNotificationCallback)(bool *powerOffPrepara
 T_DjiReturnCode DjiPowerManagement_Init(void);
 
 /**
+ * @brief DeInitialise power management module, and user should call this function before using power management features.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiPowerManagement_DeInit(void);
+
+/**
  * @brief Apply high power from aircraft in blocking mode.
  * @details Before applying, user should register callback function used to set level state of high power application
  * pin using DjiPowerManagement_RegWriteHighPowerApplyPinCallback() function. After applying high power, power pin of

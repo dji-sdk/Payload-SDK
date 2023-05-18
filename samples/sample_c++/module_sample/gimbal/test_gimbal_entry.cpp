@@ -88,6 +88,7 @@ start:
     if (mountPosition == 'q') {
         return;
     }
+
     if (mountPosition > '3' || mountPosition < '1') {
         USER_LOG_ERROR("Input mount position is invalid");
         goto start;

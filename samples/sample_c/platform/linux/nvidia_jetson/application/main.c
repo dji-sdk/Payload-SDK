@@ -337,6 +337,7 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         .SemaphorePost = Osal_SemaphorePost,
         .Malloc = Osal_Malloc,
         .Free = Osal_Free,
+        .GetRandomNum = Osal_GetRandomNum,
         .GetTimeMs = Osal_GetTimeMs,
         .GetTimeUs = Osal_GetTimeUs,
     };

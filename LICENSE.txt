@@ -316,7 +316,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       │   │       ├── hal_uart.h
 │   │       │   │       ├── hal_usb_bulk.c
 │   │       │   │       └── hal_usb_bulk.h
-│   │       │   └── nvidia_jeston
+│   │       │   └── nvidia_jetson
 │   │       │       ├── application
 │   │       │       │   ├── dji_sdk_app_info.h
 │   │       │       │   ├── dji_sdk_config.h
@@ -497,7 +497,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │               │       ├── hal_uart.h
 │               │       ├── hal_usb_bulk.c
 │               │       └── hal_usb_bulk.h
-│               └── nvidia_jeston
+│               └── nvidia_jetson
 │                   ├── application
 │                   │   ├── application.cpp
 │                   │   ├── application.hpp

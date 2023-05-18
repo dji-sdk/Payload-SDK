@@ -30,7 +30,6 @@
 #include <hms/test_hms.h>
 #include <waypoint_v2/test_waypoint_v2.h>
 #include <waypoint_v3/test_waypoint_v3.h>
-#include <gimbal_manager/test_gimbal_manager.h>
 #include "application.hpp"
 #include "fc_subscription/test_fc_subscription.h"
 #include <gimbal_emu/test_payload_gimbal_emu.h>

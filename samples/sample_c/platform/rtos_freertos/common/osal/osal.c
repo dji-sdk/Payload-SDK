@@ -28,6 +28,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "stdlib.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define SEM_MUTEX_WAIT_FOREVER      0xFFFFFFFF
@@ -64,6 +65,10 @@ T_DjiReturnCode Osal_TaskCreate(const char *name, void *(*taskFunc)(void *), uin
 
 T_DjiReturnCode Osal_TaskDestroy(T_DjiTaskHandle task)
 {
+    if (task == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     vTaskDelete(task);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -83,6 +88,10 @@ T_DjiReturnCode Osal_TaskSleepMs(uint32_t timeMs)
 
 T_DjiReturnCode Osal_MutexCreate(T_DjiMutexHandle *mutex)
 {
+    if (mutex == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     *mutex = xSemaphoreCreateMutex();
     if (*mutex == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
@@ -93,6 +102,10 @@ T_DjiReturnCode Osal_MutexCreate(T_DjiMutexHandle *mutex)
 
 T_DjiReturnCode Osal_MutexDestroy(T_DjiMutexHandle mutex)
 {
+    if (mutex == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     vQueueDelete((SemaphoreHandle_t) mutex);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -117,6 +130,10 @@ T_DjiReturnCode Osal_MutexLock(T_DjiMutexHandle mutex)
 
 T_DjiReturnCode Osal_MutexUnlock(T_DjiMutexHandle mutex)
 {
+    if (mutex == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     if (xSemaphoreGive(mutex) != pdTRUE) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
@@ -127,6 +144,10 @@ T_DjiReturnCode Osal_MutexUnlock(T_DjiMutexHandle mutex)
 T_DjiReturnCode Osal_SemaphoreCreate(uint32_t initValue, T_DjiSemaHandle *semaphore)
 {
     uint32_t maxCount = UINT_MAX;
+
+    if (semaphore == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
 
     *semaphore = xSemaphoreCreateCounting(maxCount, initValue);
 
@@ -139,6 +160,10 @@ T_DjiReturnCode Osal_SemaphoreCreate(uint32_t initValue, T_DjiSemaHandle *semaph
 
 T_DjiReturnCode Osal_SemaphoreDestroy(T_DjiSemaHandle semaphore)
 {
+    if (semaphore == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     vSemaphoreDelete(semaphore);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -177,6 +202,10 @@ T_DjiReturnCode Osal_SemaphoreWait(T_DjiSemaHandle semaphore)
 
 T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore)
 {
+    if (semaphore == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     if (xSemaphoreGive(semaphore) != pdTRUE) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
@@ -186,6 +215,10 @@ T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore)
 
 T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
 {
+    if (ms == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     *ms = xTaskGetTickCount();
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -193,7 +226,18 @@ T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms)
 
 T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
 {
+    if (us == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     *us = xTaskGetTickCount() * 1000;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode Osal_GetRandomNum(uint16_t *randomNum)
+{
+    *randomNum = rand() % 65535;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

@@ -98,6 +98,10 @@ T_DjiReturnCode Osal_MutexCreate(T_DjiMutexHandle *mutex)
 {
     int result;
 
+    if (!mutex) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
     *mutex = malloc(sizeof(pthread_mutex_t));
     if (*mutex == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
@@ -118,7 +122,11 @@ T_DjiReturnCode Osal_MutexCreate(T_DjiMutexHandle *mutex)
  */
 T_DjiReturnCode Osal_MutexDestroy(T_DjiMutexHandle mutex)
 {
-    int result;
+    int result = 0;
+
+    if (!mutex) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
 
     result = pthread_mutex_destroy(mutex);
     if (result != 0) {
@@ -136,8 +144,13 @@ T_DjiReturnCode Osal_MutexDestroy(T_DjiMutexHandle mutex)
  */
 T_DjiReturnCode Osal_MutexLock(T_DjiMutexHandle mutex)
 {
-    int result = pthread_mutex_lock(mutex);
+    int result = 0;
 
+    if (!mutex) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    result = pthread_mutex_lock(mutex);
     if (result != 0) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
@@ -152,8 +165,13 @@ T_DjiReturnCode Osal_MutexLock(T_DjiMutexHandle mutex)
  */
 T_DjiReturnCode Osal_MutexUnlock(T_DjiMutexHandle mutex)
 {
-    int result = pthread_mutex_unlock(mutex);
+    int result = 0;
 
+    if (!mutex) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    result = pthread_mutex_unlock(mutex);
     if (result != 0) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
@@ -304,6 +322,14 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
     } else {
         *us = *us - s_localTimeMsOffset;
     }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode Osal_GetRandomNum(uint16_t *randomNum)
+{
+    srand(time(NULL));
+    *randomNum = random() % 65535;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

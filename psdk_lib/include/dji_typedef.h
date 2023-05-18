@@ -83,7 +83,7 @@ typedef enum {
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 = 1,
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 = 2,
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3 = 3,
-    DJI_MOUNT_POSITION_EXTENSION_PORT = 4
+    DJI_MOUNT_POSITION_EXTENSION_PORT = 4,
 } E_DjiMountPosition;
 
 typedef enum {
@@ -92,6 +92,7 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_M300 = 2,
     DJI_AIRCRAFT_SERIES_M30 = 3,
     DJI_AIRCRAFT_SERIES_M3 = 4,
+    DJI_AIRCRAFT_SERIES_M350 = 5,
 } E_DjiAircraftSeries;
 
 typedef enum {
@@ -104,6 +105,7 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M30T = 68, /*!< Aircraft type is Matrice 30T. */
     DJI_AIRCRAFT_TYPE_M3E = 77, /*!< Aircraft type is Mavic 3E. */
     DJI_AIRCRAFT_TYPE_M3T = 79, /*!< Aircraft type is Mavic 3T. */
+    DJI_AIRCRAFT_TYPE_M350_RTK = 89, /*!< Aircraft type is Matrice 350 RTK. */
 } E_DjiAircraftType;
 
 /**

@@ -63,6 +63,7 @@ T_DjiReturnCode Osal_SemaphorePost(T_DjiSemaHandle semaphore);
 
 T_DjiReturnCode Osal_GetTimeMs(uint32_t *ms);
 T_DjiReturnCode Osal_GetTimeUs(uint64_t *us);
+T_DjiReturnCode Osal_GetRandomNum(uint16_t *randomNum);
 
 void *Osal_Malloc(uint32_t size);
 void Osal_Free(void *ptr);

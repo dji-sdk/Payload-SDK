@@ -46,6 +46,7 @@ typedef struct {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_PowerManagementStartService(void);
+T_DjiReturnCode DjiTest_PowerManagementStopService(void);
 T_DjiReturnCode DjiTest_RegApplyHighPowerHandler(T_DjiTestApplyHighPowerHandler *applyHighPowerHandler);
 
 #ifdef __cplusplus

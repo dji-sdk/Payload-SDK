@@ -55,6 +55,13 @@
 #define WIDGET_LOG_STRING_MAX_SIZE      (40)
 #define WIDGET_LOG_LINE_MAX_NUM         (5)
 
+#define DJI_HMS_ERROR_CODE_VALUE0    0x1E020000
+#define DJI_HMS_ERROR_CODE_VALUE1    0x1E020001
+#define DJI_HMS_ERROR_CODE_VALUE2    0x1E020002
+#define DJI_HMS_ERROR_CODE_VALUE3    0x1E020003
+#define DJI_HMS_ERROR_CODE_VALUE4    0x1E020004
+
+
 /* Private types -------------------------------------------------------------*/
 typedef enum {
     E_DJI_SAMPLE_INDEX_FC_SUBSCRIPTION = 0,
@@ -86,7 +93,6 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO = 26,
     E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD = 27,
     E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY = 28,
-
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
 
@@ -376,19 +382,19 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
         if (s_isInjectErrcode == true && s_isEliminateErrcode == false) {
             switch (s_extensionPortErrcodeIndex) {
                 case E_DJI_HMS_ERROR_CODE_INDEX1:
-                    errorCode = 0x1E020000;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE0;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX2:
-                    errorCode = 0x1E020001;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE1;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX3:
-                    errorCode = 0x1E020002;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE2;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX4:
-                    errorCode = 0x1E020003;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE3;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX5:
-                    errorCode = 0x1E020004;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE4;
                     break;
                 default:
                     break;
@@ -421,19 +427,19 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
         if (s_isEliminateErrcode == true && s_isInjectErrcode == false) {
             switch (s_extensionPortErrcodeIndex) {
                 case E_DJI_HMS_ERROR_CODE_INDEX1:
-                    errorCode = 0x1E020000;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE0;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX2:
-                    errorCode = 0x1E020001;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE1;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX3:
-                    errorCode = 0x1E020002;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE2;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX4:
-                    errorCode = 0x1E020003;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE3;
                     break;
                 case E_DJI_HMS_ERROR_CODE_INDEX5:
-                    errorCode = 0x1E020004;
+                    errorCode = DJI_HMS_ERROR_CODE_VALUE4;
                     break;
                 default:
                     break;

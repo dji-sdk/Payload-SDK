@@ -52,6 +52,7 @@ static const char *oldReplaceComponentIndexStr = "%component_index";
 static T_DjiHmsFileBinaryArray s_EnHmsTextConfigFileBinaryArrayList[] = {
     {hms_text_config_json_fileName, hms_text_config_json_fileSize, hms_text_config_json_fileBinaryArray},
 };
+static bool s_hmsServiceRunFlag = false;
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiTest_HmsInit(void);
@@ -169,6 +170,8 @@ T_DjiReturnCode DjiTest_HmsStartService(void)
     DjiHms_InjectHmsErrorCode(0x1E020000, DJI_HMS_ERROR_LEVEL_FATAL);
 #endif
 
+    s_hmsServiceRunFlag = true;
+
     return returnCode;
 }
 
@@ -193,6 +196,10 @@ static T_DjiReturnCode DjiTest_HmsInit(void)
         return returnCode;
     }
 
+    if (s_hmsServiceRunFlag == true) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    }
+
     return DjiHms_Init();
 }
 
@@ -205,6 +212,10 @@ static T_DjiReturnCode DjiTest_HmsDeInit(void)
         USER_LOG_ERROR("Deinit data subscription module failed, error code:0x%08llX",
                        returnCode);
         return returnCode;
+    }
+
+    if (s_hmsServiceRunFlag == true) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
 
     return DjiHms_DeInit();
