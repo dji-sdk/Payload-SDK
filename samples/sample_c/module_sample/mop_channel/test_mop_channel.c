@@ -493,7 +493,11 @@ static void *DjiTest_MopChannelFileServiceSendTask(void *arg)
                     USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
                     exit(1);
                 }
-                snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smop_channel_test_file/mop_send_test_file.mp4", curFileDirPath);
+                int pathLen = snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smop_channel_test_file/mop_send_test_file.mp4", curFileDirPath);
+                if (pathLen < 0 || pathLen >= DJI_FILE_PATH_SIZE_MAX) {
+                    USER_LOG_ERROR("snprintf error, pathLen = %d", pathLen);
+                    exit(1);
+                }
 
                 downloadFile = fopen(tempPath, "rb");
                 if (downloadFile == NULL) {

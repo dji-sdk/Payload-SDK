@@ -1303,7 +1303,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         for (int i = 0; i < downloadCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileSize < 1 * 1024 * 1024) {
                 printf(
-                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d \033[0m\r\n",
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %lu, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1316,7 +1316,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
                     s_meidaFileList.fileListInfo[i].type);
             } else {
                 printf(
-                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d \033[0m\r\n",
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %lu, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1394,7 +1394,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadFileListBySlices(E_DjiM
         for (int i = 0; i < downloadCount; ++i) {
             if (s_meidaFileList.fileListInfo[i].fileSize < 1 * 1024 * 1024) {
                 printf(
-                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d \033[0m\r\n",
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %lu, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f KB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1407,7 +1407,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadFileListBySlices(E_DjiM
                     s_meidaFileList.fileListInfo[i].type);
             } else {
                 printf(
-                    "\033[1;32;40m ### Media file_%03d name: %s, index: %d, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d \033[0m\r\n",
+                    "\033[1;32;40m ### Media file_%03d name: %s, index: %lu, time:%04d-%02d-%02d_%02d:%02d:%02d, size: %.2f MB, type: %d \033[0m\r\n",
                     i, s_meidaFileList.fileListInfo[i].fileName,
                     s_meidaFileList.fileListInfo[i].fileIndex,
                     s_meidaFileList.fileListInfo[i].createTime.year,
@@ -1463,7 +1463,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
         if (s_downloadMediaFile != NULL) {
             fwrite(data, 1, len, s_downloadMediaFile);
         }
-        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %lu, fileIndex: %lu\033[0m\r\n",
                packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
         printf("\033[1A");
         USER_LOG_DEBUG("Transfer download media file data, len: %d, percent: %.1f", len, packetInfo.progressInPercent);
@@ -1474,7 +1474,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
         osalHandler->GetTimeMs(&downloadEndMs);
 
         downloadSpeed = (float) packetInfo.fileSize / (float) (downloadEndMs - downloadStartMs);
-        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %lu, fileIndex: %lu\033[0m\r\n",
                packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
         printf("\033[1A");
         printf("\r\n");
