@@ -237,7 +237,7 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
 
 T_DjiReturnCode Osal_GetRandomNum(uint16_t *randomNum)
 {
-    *randomNum = rand() % 65535;
+    *randomNum = rand() >> 16;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
