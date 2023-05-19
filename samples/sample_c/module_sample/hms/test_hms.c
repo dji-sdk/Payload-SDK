@@ -292,7 +292,7 @@ static bool DjiTest_MarchErrCodeInfoTable(T_DjiHmsInfoTable hmsInfoTable)
         for (int j = 0; j < sizeof(hmsErrCodeInfoTbl) / sizeof(T_DjiHmsErrCodeInfo); j++) {
             if (hmsInfoTable.hmsInfo[i].errorCode == hmsErrCodeInfoTbl[j].alarmId) {
                 hmsCodeMatchFlag = 1;
-                snprintf(alarmIdStr, sizeof(alarmIdStr), "%u", hmsInfoTable.hmsInfo[i].errorCode);
+                snprintf(alarmIdStr, sizeof(alarmIdStr), "%lu", hmsInfoTable.hmsInfo[i].errorCode);
                 //note:sensor_idx:[0,5].In order to be consistent with the display of pilot, add one.
                 snprintf(sensorIdStr, sizeof(sensorIdStr), "%d", hmsInfoTable.hmsInfo[i].componentIndex + 1);
                 snprintf(componentIdStr, sizeof(componentIdStr), "0x%02X", hmsInfoTable.hmsInfo[i].componentIndex + 1);
