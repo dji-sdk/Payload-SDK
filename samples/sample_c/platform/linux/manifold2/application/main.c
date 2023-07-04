@@ -188,11 +188,6 @@ int main(int argc, char **argv)
             USER_LOG_ERROR("widget interaction sample init error");
         }
 
-        returnCode = DjiTest_WidgetSpeakerStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget speaker test init error");
-        }
-
 #ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
         returnCode = DjiTest_MopChannelStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
