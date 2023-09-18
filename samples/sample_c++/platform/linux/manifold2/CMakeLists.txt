@@ -31,6 +31,8 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/camera_manager/*.c*
         ../../../module_sample/perception/*.c*
         ../../../module_sample/gimbal/*.c*
+        ../../../module_sample/flight_controller/*.c*
+        ../../../module_sample/hms_manager/*.c*
         ../../../../sample_c/module_sample/*.c
         )
 file(GLOB_RECURSE MODULE_COMMON_SRC ../common/*.c*)
@@ -72,9 +74,11 @@ if (OpenCV_FOUND)
     execute_process(COMMAND opencv_version OUTPUT_VARIABLE OPENCV_VERSION)
     if (${OPENCV_VERSION} STRLESS "4.0.0")
         add_definitions(-DOPEN_CV_VERSION_3)
-    else()
+
+    else ()
         add_definitions(-DOPEN_CV_VERSION_4)
-    endif()
+
+    endif ()
 else ()
     message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
 endif ()

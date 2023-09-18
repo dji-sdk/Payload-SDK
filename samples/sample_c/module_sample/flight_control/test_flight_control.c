@@ -34,14 +34,6 @@
 /* Private constants ---------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
-#pragma pack(1)
-typedef struct {
-    dji_f32_t x;
-    dji_f32_t y;
-    dji_f32_t z;
-} T_DjiTestFlightControlVector3f; // pack(1)
-#pragma pack()
-
 typedef struct {
     E_DjiFcSubscriptionDisplayMode displayMode;
     char *displayModeStr;
@@ -96,8 +88,6 @@ static bool DjiTest_FlightControlMoveByPositionOffset(T_DjiTestFlightControlVect
                                                       float yawDesiredInDeg,
                                                       float posThresholdInM,
                                                       float yawThresholdInDeg);
-static void DjiTest_FlightControlVelocityAndYawRateCtrl(T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
-                                                        uint32_t timeMs);
 static T_DjiReturnCode DjiTest_FlightControlInit(void);
 static T_DjiReturnCode DjiTest_FlightControlDeInit(void);
 static void DjiTest_FlightControlTakeOffLandingSample(void);
@@ -138,11 +128,16 @@ T_DjiReturnCode DjiTest_FlightControlRunSample(E_DjiTestFlightCtrlSampleSelect f
 T_DjiReturnCode DjiTest_FlightControlInit(void)
 {
     T_DjiReturnCode returnCode;
+    T_DjiFlightControllerRidInfo ridInfo = {0};
 
     s_osalHandler = DjiPlatform_GetOsalHandler();
     if (!s_osalHandler) return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
 
-    returnCode = DjiFlightController_Init();
+    ridInfo.latitude = 22.542812;
+    ridInfo.longitude = 113.958902;
+    ridInfo.altitude = 10;
+
+    returnCode = DjiFlightController_Init(ridInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Init flight controller module failed, error code:0x%08llX", returnCode);
         return returnCode;
@@ -236,7 +231,7 @@ T_DjiReturnCode DjiTest_FlightControlDeInit(void)
 {
     T_DjiReturnCode returnCode;
 
-    returnCode = DjiFlightController_Deinit();
+    returnCode = DjiFlightController_DeInit();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Deinit flight controller module failed, error code:0x%08llX",
                        returnCode);
@@ -325,25 +320,25 @@ void DjiTest_FlightControlPositionControlSample()
     USER_LOG_INFO("Successful take off\r\n");
     DjiTest_WidgetLogAppend("Successful take off\r\n");
 
-    USER_LOG_INFO("--> Step 3: Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point");
-    DjiTest_WidgetLogAppend("--> Step 3: Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point");
+    USER_LOG_INFO("--> Step 3: Move to north:0(m), east:6(m), up:6(m) , yaw:30(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 3: Move to north:0(m), east:6(m), up:6(m) , yaw:30(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {0, 6, 6}, 30, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:0(m), east:6(m), up:6(m) , yaw:30(degree) from current point failed");
         goto out;
     };
 
-    USER_LOG_INFO("--> Step 4: Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point");
+    USER_LOG_INFO("--> Step 4: Move to north:6(m), east:0(m), up:-3(m) , yaw:-30(degree) from current point");
     DjiTest_WidgetLogAppend(
-        "--> Step 4: Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point");
+        "--> Step 4: Move to north:6(m), east:0(m), up:-3(m) , yaw:-30(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {6, 0, -3}, -30, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:6(m), east:0(m), up:-3(m) , yaw:-30(degree) from current point failed");
         goto out;
     };
 
-    USER_LOG_INFO("--> Step 5: Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point");
-    DjiTest_WidgetLogAppend("--> Step 5: Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point");
+    USER_LOG_INFO("--> Step 5: Move to north:-6(m), east:-6(m), up:0(m) , yaw:0(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 5: Move to north:-6(m), east:-6(m), up:0(m) , yaw:0(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {-6, -6, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:-6(m), east:-6(m), up:0(m) , yaw:0(degree) from current point failed");
         goto out;
     }
 
@@ -394,17 +389,17 @@ void DjiTest_FlightControlGoHomeForceLandingSample()
     USER_LOG_INFO("Successful take off\r\n");
     DjiTest_WidgetLogAppend("Successful take off\r\n");
 
-    USER_LOG_INFO("--> Step 3: Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point");
-    DjiTest_WidgetLogAppend("--> Step 3: Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point");
+    USER_LOG_INFO("--> Step 3: Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 3: Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {0, 0, 30}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point failed");
         goto out;
     }
 
-    USER_LOG_INFO("--> Step 4: Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    DjiTest_WidgetLogAppend("--> Step 4: Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
+    USER_LOG_INFO("--> Step 4: Move to north:10(m), east:0(m), up:0(m) , yaw:0(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 4: Move to north:10(m), east:0(m), up:0(m) , yaw:0(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {10, 0, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:10(m), east:0(m), up:0(m) , yaw:0(degree) from current point failed");
         goto out;
     }
 
@@ -434,10 +429,10 @@ void DjiTest_FlightControlGoHomeForceLandingSample()
     USER_LOG_INFO("Current go home altitude is %d m\r\n", goHomeAltitude);
     DjiTest_WidgetLogAppend("Current go home altitude is %d m\r\n", goHomeAltitude);
 
-    USER_LOG_INFO("--> Step 7: Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    DjiTest_WidgetLogAppend("--> Step 7: Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
+    USER_LOG_INFO("--> Step 7: Move to north:20(m), east:0(m), up:0(m) , yaw:0(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 7: Move to north:20(m), east:0(m), up:0(m) , yaw:0(degree) from current point");
     if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {20, 0, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point failed");
+        USER_LOG_ERROR("Move to north:20(m), east:0(m), up:0(m) , yaw:0(degree) from current point failed");
         goto out;
     }
 
@@ -489,9 +484,9 @@ void DjiTest_FlightControlVelocityControlSample()
     DjiTest_WidgetLogAppend("Successful take off\r\n");
 
     USER_LOG_INFO(
-        "--> Step 3: Move with north:0(m/s), earth:0(m/s), up:5(m/s), yaw:0(deg/s) from current point for 2s!");
+        "--> Step 3: Move with north:0(m/s), east:0(m/s), up:5(m/s), yaw:0(deg/s) from current point for 2s!");
     DjiTest_WidgetLogAppend(
-        "--> Step 3: Move with north:0(m/s), earth:0(m/s), up:5(m/s), yaw:0(deg/s) from current point for 2s!");
+        "--> Step 3: Move with north:0(m/s), east:0(m/s), up:5(m/s), yaw:0(deg/s) from current point for 2s!");
     DjiTest_FlightControlVelocityAndYawRateCtrl((T_DjiTestFlightControlVector3f) {0, 0, 5.0}, 0, 2000);
 
     USER_LOG_INFO("--> Step 4: Emergency brake for 2s");
@@ -509,9 +504,9 @@ void DjiTest_FlightControlVelocityControlSample()
     }
 
     USER_LOG_INFO(
-        "--> Step 5: Move with north:-1.5(m/s), earth:2(m/s), up:0(m/s), yaw:20(deg/s) from current point for 2s!");
+        "--> Step 5: Move with north:-1.5(m/s), east:2(m/s), up:0(m/s), yaw:20(deg/s) from current point for 2s!");
     DjiTest_WidgetLogAppend(
-        "--> Step 5: Move with north:-1.5(m/s), earth:2(m/s), up:0(m/s), yaw:20(deg/s) from current point for 2s!");
+        "--> Step 5: Move with north:-1.5(m/s), east:2(m/s), up:0(m/s), yaw:20(deg/s) from current point for 2s!");
     DjiTest_FlightControlVelocityAndYawRateCtrl((T_DjiTestFlightControlVector3f) {-1.5, 2, 0}, 20, 2000);
 
     USER_LOG_INFO("--> Step 6: Emergency brake for 2s");
@@ -529,9 +524,9 @@ void DjiTest_FlightControlVelocityControlSample()
     }
 
     USER_LOG_INFO(
-        "--> Step 7: Move with north:3(m/s), earth:0(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.5s!");
+        "--> Step 7: Move with north:3(m/s), east:0(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.5s!");
     DjiTest_WidgetLogAppend(
-        "--> Step 7: Move with north:3(m/s), earth:0(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.5s!");
+        "--> Step 7: Move with north:3(m/s), east:0(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.5s!");
     DjiTest_FlightControlVelocityAndYawRateCtrl((T_DjiTestFlightControlVector3f) {3, 0, 0}, 0, 2500);
 
     USER_LOG_INFO("--> Step 8: Emergency brake for 2s");
@@ -549,9 +544,9 @@ void DjiTest_FlightControlVelocityControlSample()
     }
 
     USER_LOG_INFO(
-        "--> Step 9: Move with north:-1.6(m/s), earth:-2(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.2s!");
+        "--> Step 9: Move with north:-1.6(m/s), east:-2(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.2s!");
     DjiTest_WidgetLogAppend(
-        "--> Step 9: Move with north:-1.6(m/s), earth:-2(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.2s!");
+        "--> Step 9: Move with north:-1.6(m/s), east:-2(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.2s!");
     DjiTest_FlightControlVelocityAndYawRateCtrl((T_DjiTestFlightControlVector3f) {-1.6, -2, 0}, 0, 2200);
 
     USER_LOG_INFO("--> Step 10: Emergency brake for 2s");
@@ -1218,6 +1213,12 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
 {
     T_DjiReturnCode djiStat;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    E_DjiFlightControllerObstacleAvoidanceEnableStatus enableStatus;
+
+    djiStat = DjiFlightController_GetDownwardsVisualObstacleAvoidanceEnableStatus(&enableStatus);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get downwards visual obstacle avoidance enable status error");
+    }
 
     djiStat = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1272,11 +1273,20 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
         return false;
     }
 
-    if (!DjiTest_FlightControlCheckActionStarted(DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING)) {
-        return false;
+    if (enableStatus == DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE) {
+        if (!DjiTest_FlightControlCheckActionStarted(DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING)) {
+            return false;
+        } else {
+            while (DjiTest_FlightControlGetValueOfFlightStatus() == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR &&
+                   DjiTest_FlightControlGetValueOfDisplayMode() ==
+                   DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING) {
+                s_osalHandler->TaskSleepMs(1000);
+            }
+        }
     } else {
         while (DjiTest_FlightControlGetValueOfFlightStatus() == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR &&
-               DjiTest_FlightControlGetValueOfDisplayMode() == DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING) {
+               DjiTest_FlightControlGetValueOfDisplayMode() ==
+               DJI_FC_SUBSCRIPTION_DISPLAY_MODE_FORCE_AUTO_LANDING) {
             s_osalHandler->TaskSleepMs(1000);
         }
     }
@@ -1454,11 +1464,12 @@ DjiTest_FlightControlMoveByPositionOffset(const T_DjiTestFlightControlVector3f o
 void DjiTest_FlightControlVelocityAndYawRateCtrl(const T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
                                                  uint32_t timeMs)
 {
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     uint32_t originTime = 0;
     uint32_t currentTime = 0;
     uint32_t elapsedTimeInMs = 0;
-    s_osalHandler->GetTimeMs(&originTime);
-    s_osalHandler->GetTimeMs(&currentTime);
+    osalHandler->GetTimeMs(&originTime);
+    osalHandler->GetTimeMs(&currentTime);
     elapsedTimeInMs = currentTime - originTime;
     T_DjiFlightControllerJoystickMode joystickMode = {
         DJI_FLIGHT_CONTROLLER_HORIZONTAL_VELOCITY_CONTROL_MODE,
@@ -1474,8 +1485,8 @@ void DjiTest_FlightControlVelocityAndYawRateCtrl(const T_DjiTestFlightControlVec
 
     while (elapsedTimeInMs <= timeMs) {
         DjiFlightController_ExecuteJoystickAction(joystickCommand);
-        s_osalHandler->TaskSleepMs(2);
-        s_osalHandler->GetTimeMs(&currentTime);
+        osalHandler->TaskSleepMs(2);
+        osalHandler->GetTimeMs(&currentTime);
         elapsedTimeInMs = currentTime - originTime;
     }
 }

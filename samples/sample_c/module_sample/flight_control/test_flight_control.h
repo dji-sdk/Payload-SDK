@@ -44,10 +44,20 @@ typedef enum {
     E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_SET_GET_PARAM,
 } E_DjiTestFlightCtrlSampleSelect;
 
+#pragma pack(1)
+typedef struct {
+    dji_f32_t x;
+    dji_f32_t y;
+    dji_f32_t z;
+} T_DjiTestFlightControlVector3f; // pack(1)
+#pragma pack()
+
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_FlightControlRunSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect);
+void DjiTest_FlightControlVelocityAndYawRateCtrl(const T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
+                                                 uint32_t timeMs);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,6 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.5.0-yellow.svg)
+![](https://img.shields.io/badge/version-V3.6.0-purple.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
@@ -23,37 +23,40 @@ to get the latest version information.
 
 ## Latest Release
 
-PSDK 3.5.0 was released on 18 May 2023. This version of Payload SDK mainly add support for M350 RTK, also add some new features support and fixed some bugs. 
+PSDK 3.6.0 was released on 18 Sep 2023. This version of Payload SDK mainly add some new features support and fixed some
+bugs.
 Please refer to the release notes for detailed changes list.
 
-* Added support for new drone model Matrice 350 RTK
-* Matrice 300 RTK added support for DJI RC Plus
-* Added support for downloading media files in pieces on all drone models
-* Added support for Osal get random number callback interface on all drone model
-* Fixed issue with the black screen problem when uses third-party camera to playback video on M300 RTK and DJI smart controller screen combination
-* Fixed issue with failure of subscribing L1 camera code stream on M300 RTK
-* Fixed issue with failure of subscribing main camera code stream in dual control mode on M300 RTK
-* Fixed issue with local upgrade function of RTOS platform on Mavic 3E/3T
-* Fixed issue with the initialization failure of using PSDK Payload device and millimeter wave radar on M300 RTK
-* Fixed issue with custom HMS function on M300 RTK and X-Port combination
-* Fixed issue with invalid TTS option of speaker widget on M300 RTK
-* Fixed issue with downloading file list with high probability of failure when the camera photos are over 400 on M300 RTK
-* Fixed some of the memory leaks
+* Added support for multi-language display in HMS management.
+* Added support for PSDK Non-RC flight.
+* Added support for aircraft version number retrieval.
+* Added support for RTCM data subscription.
+* Added support for cloud-based custom small data communication on Matrice 30/30T PSDK.
+* Added Support for Matrice 30/30T PSDK speaker cloud integration.
+* Added support for custom widgets wayline actions on Matrice 30/30T and Mavic 3E/3T aircraft.
+* Added support for grayscale image retrieval on M350 RTK.
+* Added support for time synchronization on M300 RTK and Matrice 30/30T.
+* Added support for third-party firmware upgrades through M350 RTK E-Port.
+* Added support for SDK interconnection on Mavic 3E/3T.
+* Added support for hotspot orbit function on Mavic 3E/3T.
+* Added support for expanded camera and gimbal management interfaces.
+* Fixed issue with the 500m altitude limit for flight control across all models.
+* Fixed issue with incomplete small data transmission on specific models.
+* Fixed issue with H20 I-frame retrieval on M300 RTK.
+* Fixed issue with occasional custom widget display failure in DJI Pilot.
+* Fixed issues with multiple live stream retrieval on Matrice 30/30T.
+* Fixed issues with camera mode retrieval on Matrice 30/30T.
+* Fixed issues with camera focal length value retrieval on Matrice 30/30T.
+* Fixed issue with X-Port failed to self-check when both X-Port and SkyPort V2 were equipped on M300 RTK.
+* Fixed issue with gimbal angle subscription data mismatching App display on M300 RTK.
+* Fixed issue with flight control feature initialization failure on specific models after multiple calls.
+* Fixed compatibility issues with initialization failures on some HiSilicon platforms.
+* Optimized PSDK startup delays in single UART mode.
+* Optimized slow media file download speeds for Mavic 3E/3T on ethernet links.
 
 ## License
 
 Payload SDK codebase is MIT-licensed. Please refer to the LICENSE file for detailed information.
-
-## Contributing
-
-Please read the following guidelines before starting work on a pull request.
-
-#### Summary of the guidelines:
-
-* One pull request per issue;
-* Choose the right base branch;
-* Clean up "oops" commits before submitting;
-* Follow the coding style by "doc/dji_sdk_code_style"
 
 ## Support
 

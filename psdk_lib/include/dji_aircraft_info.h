@@ -49,11 +49,22 @@ typedef struct {
  * @brief Some base information of aircraft system, mainly including some constant parameters information of system.
  */
 typedef struct {
+    E_DjiAircraftSeries aircraftSeries; /*!< Aircraft series. */
+    E_DjiMountPositionType mountPositionType; /*!< Mount position type. */
     E_DjiAircraftType aircraftType; /*!< Aircraft type. */
     E_DjiSdkAdapterType djiAdapterType; /*!< DJI adapter type. */
     E_DjiMountPosition mountPosition; /*!< Payload mount position. */
 } T_DjiAircraftInfoBaseInfo;
 
+/**
+ * @brief Aircraft version information.
+ */
+typedef struct {
+    uint8_t debugVersion;
+    uint8_t modifyVersion;
+    uint8_t minorVersion;
+    uint8_t majorVersion;
+} T_DjiAircraftVersion;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -78,6 +89,13 @@ T_DjiReturnCode DjiAircraftInfo_GetMobileAppInfo(T_DjiMobileAppInfo *mobileAppIn
  * @return Execution result.
  */
 T_DjiReturnCode DjiAircraftInfo_GetConnectionStatus(bool *isConnected);
+
+/**
+ * @brief Get version of aircraft.
+ * @param aircraftVersion: pointer to aircraft version.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiAircraftInfo_GetAircraftVersion(T_DjiAircraftVersion *aircraftVersion);
 
 #ifdef __cplusplus
 }

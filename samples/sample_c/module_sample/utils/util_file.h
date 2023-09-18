@@ -52,8 +52,8 @@ typedef struct {
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode UtilFile_GetCreateTime(const char *filePath, T_UtilFileCreateTime *createTime);
 T_DjiReturnCode UtilFile_GetFileSizeByPath(const char *filePath, uint32_t *fileSize);
-T_DjiReturnCode UtilFile_GetFileDataByPath(const char *filePath, uint32_t offset, uint16_t len,
-                                           uint8_t *data, uint16_t *realLen);
+T_DjiReturnCode UtilFile_GetFileDataByPath(const char *filePath, uint32_t offset, uint32_t len,
+                                           uint8_t *data, uint32_t *realLen);
 T_DjiReturnCode DjiFile_Delete(const char *filePath);
 
 T_DjiReturnCode UtilFile_GetFileSize(FILE *file, uint32_t *fileSize);

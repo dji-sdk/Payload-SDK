@@ -147,9 +147,9 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    USER_LOG_INFO("--> Step 3: Get latest value of the subscribed topics in the next 20 seconds\r\n");
+    USER_LOG_INFO("--> Step 3: Get latest value of the subscribed topics in the next 10 seconds\r\n");
 
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 10; ++i) {
         osalHandler->TaskSleepMs(1000 / FC_SUBSCRIPTION_TASK_FREQ);
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY,
                                                           (uint8_t *) &velocity,
@@ -204,7 +204,26 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         }
     }
 
-    USER_LOG_INFO("--> Step 4: Deinit fc subscription module");
+    USER_LOG_INFO("--> Step 4: Unsubscribe the topics of quaternion, velocity and gps position");
+    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_POSITION);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    USER_LOG_INFO("--> Step 5: Deinit fc subscription module");
 
     djiStat = DjiFcSubscription_DeInit();
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

@@ -226,8 +226,8 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
-#ifdef CONFIG_MODULE_SAMPLE_HMS_ON
-    returnCode = DjiTest_HmsStartService();
+#ifdef CONFIG_MODULE_SAMPLE_HMS_CUSTOMIZATION_ON
+    returnCode = DjiTest_HmsCustomizationStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("hms test init error");
     }

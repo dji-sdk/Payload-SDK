@@ -97,6 +97,7 @@ int main(int argc, char **argv)
     T_DjiReturnCode returnCode;
     T_DjiUserInfo userInfo;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    T_DjiAircraftVersion aircraftInfoVersion;
     T_DjiFirmwareVersion firmwareVersion = {
         .majorVersion = 1,
         .minorVersion = 0,
@@ -135,6 +136,17 @@ int main(int argc, char **argv)
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("get aircraft base info error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    if (aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT) {
+        returnCode = DjiAircraftInfo_GetAircraftVersion(&aircraftInfoVersion);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("get aircraft version info error");
+        } else {
+            USER_LOG_INFO("Aircraft version is V%d.%d.%d.%d", aircraftInfoVersion.debugVersion,
+                          aircraftInfoVersion.modifyVersion, aircraftInfoVersion.minorVersion,
+                          aircraftInfoVersion.majorVersion);
+        }
     }
 
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
@@ -192,6 +204,30 @@ int main(int argc, char **argv)
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget speaker test init error");
         }
+
+#ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
+        T_DjiTestUpgradePlatformOpt linuxUpgradePlatformOpt = {
+            .rebootSystem = DjiUpgradePlatformLinux_RebootSystem,
+            .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea,
+            .createUpgradeProgramFile = DjiUpgradePlatformLinux_CreateUpgradeProgramFile,
+            .writeUpgradeProgramFile = DjiUpgradePlatformLinux_WriteUpgradeProgramFile,
+            .readUpgradeProgramFile = DjiUpgradePlatformLinux_ReadUpgradeProgramFile,
+            .closeUpgradeProgramFile = DjiUpgradePlatformLinux_CloseUpgradeProgramFile,
+            .replaceOldProgram = DjiUpgradePlatformLinux_ReplaceOldProgram,
+            .setUpgradeRebootState = DjiUpgradePlatformLinux_SetUpgradeRebootState,
+            .getUpgradeRebootState = DjiUpgradePlatformLinux_GetUpgradeRebootState,
+            .cleanUpgradeRebootState = DjiUpgradePlatformLinux_CleanUpgradeRebootState,
+        };
+        T_DjiTestUpgradeConfig testUpgradeConfig = {
+            .firmwareVersion = {1, 0, 0, 0},
+            .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
+            .needReplaceProgramBeforeReboot = true
+        };
+        if (DjiTest_UpgradeStartService(&linuxUpgradePlatformOpt, testUpgradeConfig) !=
+            DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("psdk upgrade init error");
+        }
+#endif
 
 #ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
         returnCode = DjiTest_MopChannelStartService();
@@ -301,8 +337,8 @@ int main(int argc, char **argv)
 #endif
     }
 
-#ifdef CONFIG_MODULE_SAMPLE_HMS_ON
-    returnCode = DjiTest_HmsStartService();
+#ifdef CONFIG_MODULE_SAMPLE_HMS_CUSTOMIZATION_ON
+    returnCode = DjiTest_HmsCustomizationStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("hms test init error");
     }

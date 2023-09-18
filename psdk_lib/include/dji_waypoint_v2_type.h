@@ -184,7 +184,7 @@ typedef enum {
      *  using ``DJIWaypointV2_pointOfInterest`` setting point of interest coordiate and ``DJIWaypointV2_pointOfInterestAltitude``
      *  setting point of interset altitute.
      */
-    DJI_WAYPOINT_V2_HEADING_TOWARDS_POINT_OD_INTEREST,
+    DJI_WAYPOINT_V2_HEADING_TOWARDS_POINT_OF_INTEREST,
 
     /**
      *  The aircraft's heading rotate simultaneously with its gimbal's yaw.

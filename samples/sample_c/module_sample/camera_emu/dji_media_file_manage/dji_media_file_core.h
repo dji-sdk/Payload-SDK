@@ -57,7 +57,7 @@ typedef struct {
     T_DjiReturnCode (*getAttrFunc)(struct _DjiMediaFile *mediaFileHandle, T_DjiCameraMediaFileAttr *mediaFileAttr);
 
     T_DjiReturnCode (*getDataOrgFunc)(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                      uint8_t *data, uint16_t *realLen);
+                                      uint8_t *data, uint32_t *realLen);
     T_DjiReturnCode (*getFileSizeOrgFunc)(struct _DjiMediaFile *mediaFileHandle, uint32_t *fileSize);
 
     T_DjiReturnCode (*createThmFunc)(struct _DjiMediaFile *mediaFileHandle);
@@ -91,7 +91,7 @@ T_DjiReturnCode DjiMediaFile_GetMediaFileAttr(T_DjiMediaFileHandle mediaFileHand
                                               T_DjiCameraMediaFileAttr *mediaFileAttr);
 
 T_DjiReturnCode DjiMediaFile_GetDataOrg(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                        uint8_t *data, uint16_t *realLen);
+                                        uint8_t *data, uint32_t *realLen);
 T_DjiReturnCode DjiMediaFile_GetFileSizeOrg(struct _DjiMediaFile *mediaFileHandle, uint32_t *fileSize);
 
 T_DjiReturnCode DjiMediaFile_CreateThm(T_DjiMediaFileHandle mediaFileHandle);

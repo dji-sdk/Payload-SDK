@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(dji_sdk_demo_linux C)
 
 set(CMAKE_C_FLAGS "-pthread -std=gnu99")
+set(CMAKE_CXX_FLAGS "-std=c++11 -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
@@ -11,10 +12,11 @@ if (NOT USE_SYSTEM_ARCH)
     add_definitions(-DSYSTEM_ARCH_LINUX)
 endif ()
 
-set(COMMON_CXX_FLAGS "-std=c++11 -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
+if (BUILD_TEST_CASES_ON MATCHES TRUE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
+endif ()
 
 set(PACKAGE_NAME payloadsdk)
 
