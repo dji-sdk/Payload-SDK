@@ -32,22 +32,34 @@
 #include "dji_platform.h"
 #include "time_sync/test_time_sync.h"
 
+#ifdef SYSTEM_ARCH_LINUX
+
+#include "time.h"
+
+#endif
+
 /* Private constants ---------------------------------------------------------*/
 #define POSITIONING_TASK_FREQ                     (1)
-#define POSITIONING_TASK_STACK_SIZE               (1024)
+#define POSITIONING_TASK_STACK_SIZE               (2048)
+#define TEST_RTCM_FILE_PATH_STR_MAX_SIZE          (64)
 
 #define DJI_TEST_POSITIONING_EVENT_COUNT          (2)
 #define DJI_TEST_TIME_INTERVAL_AMONG_EVENTS_US    (200000)
 
 /* Private types -------------------------------------------------------------*/
 
-
 /* Private functions declaration ---------------------------------------------*/
 static void *DjiTest_PositioningTask(void *arg);
+static T_DjiReturnCode DjiTest_ReceiveRtkOnAircraftRtcmDataCallback(uint8_t index, const uint8_t *data,
+                                                                    uint16_t dataLen);
+static T_DjiReturnCode DjiTest_ReceiveRtkBaseStationRtcmDataCallback(uint8_t index, const uint8_t *data,
+                                                                     uint16_t dataLen);
 
 /* Private variables ---------------------------------------------------------*/
 static T_DjiTaskHandle s_userPositioningThread;
 static int32_t s_eventIndex = 0;
+static char s_rtkOnAircraftRtcmFilePath[TEST_RTCM_FILE_PATH_STR_MAX_SIZE];
+static char s_rtkBaseStationRtcmFilePath[TEST_RTCM_FILE_PATH_STR_MAX_SIZE];
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_PositioningStartService(void)
@@ -63,11 +75,39 @@ T_DjiReturnCode DjiTest_PositioningStartService(void)
 
     DjiPositioning_SetTaskIndex(0);
 
+#ifndef SYSTEM_ARCH_LINUX
     if (osalHandler->TaskCreate("user_positioning_task", DjiTest_PositioningTask,
                                 POSITIONING_TASK_STACK_SIZE, NULL, &s_userPositioningThread) !=
         DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("user positioning task create error.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+#else
+    time_t currentTime = time(NULL);
+    struct tm *localTime = NULL;
+
+    localTime = localtime(&currentTime);
+    sprintf(s_rtkOnAircraftRtcmFilePath, "rtk_on_aircraft_%04d%02d%02d_%02d-%02d-%02d.rtcm",
+            localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
+            localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+
+    localTime = localtime(&currentTime);
+    sprintf(s_rtkBaseStationRtcmFilePath, "rtk_base_station_%04d%02d%02d_%02d-%02d-%02d.rtcm",
+            localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
+            localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+#endif
+    djiStat = DjiPositioning_RegReceiveRtcmDataCallback(DJI_POSITIONING_RTCM_DATA_TYPE_RTK_BASE_STATION,
+                                                        DjiTest_ReceiveRtkBaseStationRtcmDataCallback);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Register receive rtk base station callback error.");
+        return djiStat;
+    }
+
+    djiStat = DjiPositioning_RegReceiveRtcmDataCallback(DJI_POSITIONING_RTCM_DATA_TYPE_RTK_ON_AIRCRAFT,
+                                                        DjiTest_ReceiveRtkOnAircraftRtcmDataCallback);
+    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Register receive rtk on aircraft callback error.");
+        return djiStat;
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -157,5 +197,52 @@ static void *DjiTest_PositioningTask(void *arg)
 #ifndef __CC_ARM
 #pragma GCC diagnostic pop
 #endif
+
+static int32_t DjiTest_SaveRtcmData(char *filePath, const uint8_t *data, uint32_t len)
+{
+#ifdef SYSTEM_ARCH_LINUX
+    FILE *fp = NULL;
+    size_t size;
+
+    fp = fopen(filePath, "ab+");
+    if (fp == NULL) {
+        printf("fopen failed!\n");
+        return -1;
+    }
+
+    size = fwrite(data, 1, len, fp);
+    if (size != len) {
+        fclose(fp);
+        return -1;
+    }
+
+    fflush(fp);
+    fclose(fp);
+#endif
+    return 0;
+}
+
+static T_DjiReturnCode DjiTest_ReceiveRtkOnAircraftRtcmDataCallback(uint8_t index, const uint8_t *data,
+                                                                    uint16_t dataLen)
+{
+    USER_LOG_INFO("Receive rtcm data from rtk on aircraft, index: %d, len: %d", index, dataLen);
+
+#ifdef SYSTEM_ARCH_LINUX
+    DjiTest_SaveRtcmData(s_rtkOnAircraftRtcmFilePath, data, dataLen);
+#endif
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_ReceiveRtkBaseStationRtcmDataCallback(uint8_t index, const uint8_t *data,
+                                                                     uint16_t dataLen)
+{
+    USER_LOG_INFO("Receive rtcm data from rtk base station, index: %d, len: %d", index, dataLen);
+
+#ifdef SYSTEM_ARCH_LINUX
+    DjiTest_SaveRtcmData(s_rtkBaseStationRtcmFilePath, data, dataLen);
+#endif
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

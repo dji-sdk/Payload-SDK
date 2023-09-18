@@ -260,21 +260,29 @@ typedef struct {
 typedef struct {
     char serialNum[32];
 } T_DjiFlightControllerGeneralInfo;
+
+typedef struct {
+    dji_f64_t latitude;  /*!< unit: rad */
+    dji_f64_t longitude; /*!< unit: rad */
+    uint16_t altitude;
+} T_DjiFlightControllerRidInfo;
+
 #pragma pack()
 
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialise flight controller module, and user should call this function
  * before using flight controller features.
+ * @param ridInfo: Use PSDK to control the aircraft, must report the correct RID information.
  * @return Execution result.
  */
-T_DjiReturnCode DjiFlightController_Init(void);
+T_DjiReturnCode DjiFlightController_Init(T_DjiFlightControllerRidInfo ridInfo);
 
 /**
  * @brief DeInitialise flight controller module.
  * @return Execution result.
  */
-T_DjiReturnCode DjiFlightController_Deinit(void);
+T_DjiReturnCode DjiFlightController_DeInit(void);
 
 /**
  * @brief Enable/Disable RTK position function.
@@ -519,7 +527,7 @@ T_DjiReturnCode DjiFlightController_SetHomeLocationUsingCurrentAircraftLocation(
  * @brief Set go home altitude.
  * @note If aircraft's current altitude is higher than the setting value of go home altitude, aircraft will go home
  * using current altitude. Otherwise, it will climb to setting of go home altitude ,and then execute go home action.
- * Go home altitude setting is 20m ~ 500m.
+ * Go home altitude setting is 20m ~ 1500m.
  * @param altitude: go home altitude, unit: meter
  * @return Execution result.
  */

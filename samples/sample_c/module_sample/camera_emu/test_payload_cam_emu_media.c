@@ -770,7 +770,7 @@ static T_DjiReturnCode GetMediaFileDir(char *dirPath)
 static T_DjiReturnCode GetMediaFileOriginData(const char *filePath, uint32_t offset, uint32_t length, uint8_t *data)
 {
     T_DjiReturnCode returnCode;
-    uint16_t realLen = 0;
+    uint32_t realLen = 0;
     T_DjiMediaFileHandle mediaFileHandle;
 
     returnCode = DjiMediaFile_CreateHandle(filePath, &mediaFileHandle);

@@ -55,6 +55,7 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_H20T,    "Zenmuse H20T"},
     {DJI_CAMERA_TYPE_P1,      "Zenmuse P1"},
     {DJI_CAMERA_TYPE_L1,      "Zenmuse L1"},
+    {DJI_CAMERA_TYPE_L2,      "Zenmuse L2"},
     {DJI_CAMERA_TYPE_H20N,    "Zenmuse H20N"},
     {DJI_CAMERA_TYPE_M30,     "M30 Camera"},
     {DJI_CAMERA_TYPE_M30T,    "M30T Camera"},
@@ -906,7 +907,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
                 cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
-                cameraType == DJI_CAMERA_TYPE_M3T) {
+                cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3T ||
+                cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -945,7 +947,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20N
                 || cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30
                 || cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E
-                || cameraType == DJI_CAMERA_TYPE_M3T) {
+                || cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -1245,6 +1247,876 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             }
             break;
         }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_NIGHT_SCENE_MODE: {
+            E_DjiCameraManagerNightSceneMode nightSceneMode;
+            T_DjiCameraManagerRangeList nightSceneModeRange;
+
+            if (cameraType == DJI_CAMERA_TYPE_XT2 || cameraType == DJI_CAMERA_TYPE_XTS ||
+                cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_L2 ||
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
+                USER_LOG_INFO("Camera type %d does not support night scene mode!", cameraType);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Step 1: Change camera stream source to zoom camera.");
+            returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                if (returnCode == DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+                    USER_LOG_WARN("For camera type %d, it does not need to change stream source.\r\n", cameraType);
+                }
+                else {
+                    goto exitCameraModule;
+                }
+            }
+
+            USER_LOG_INFO("Step 2: Get night scene mode range.");
+            returnCode = DjiCameraManager_GetNightSceneModeRange(mountPosition, &nightSceneModeRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get night scene mode range of camera at position %d failed, return code 0x%08llX",
+                                mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(10);
+            printf("Supported night scene mode:");
+            for(uint32_t i = 0; i < nightSceneModeRange.size; i++) {
+                printf(" %d", nightSceneModeRange.nightSceneMode[i]);
+            }
+            printf("\n");
+
+            USER_LOG_INFO("Step 3: Set ningh scene mode as enable.");
+            returnCode = DjiCameraManager_SetNightSceneMode(mountPosition, DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_ENABLE);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set ningh scene mode as enable failed at position %d, error code: 0x%08X\r\n",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_GetNightSceneMode(mountPosition, &nightSceneMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get night scene mode failed at position %d, error code: 0x%08X\r\n",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Now the night scene mode is %d", nightSceneMode);
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Step 4: Set night scene mode as auto.");
+            if (cameraType == DJI_CAMERA_TYPE_H20T) {
+                USER_LOG_WARN("Camera H20T does not support set night scene mode as auto");
+            }
+            else {
+                returnCode = DjiCameraManager_SetNightSceneMode(mountPosition, DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_AUTO);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Set ningh scene mode as auto failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+
+                returnCode = DjiCameraManager_GetNightSceneMode(mountPosition, &nightSceneMode);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get night scene mode failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+
+                USER_LOG_INFO("Now the night scene mode is %d", nightSceneMode);
+
+                USER_LOG_INFO("Sleep 2s...");
+                osalHandler->TaskSleepMs(2000);
+            }
+
+            USER_LOG_INFO("Step 5: Set ningt scene mode as disable.");
+            returnCode = DjiCameraManager_SetNightSceneMode(mountPosition, DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_DISABLE);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get lidar ranging info failed at position %d, error code: 0x%08X\r\n",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_GetNightSceneMode(mountPosition, &nightSceneMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get lidar ranging info failed at position %d, error code: 0x%08X\r\n",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Now the night scene mode is %d", nightSceneMode);
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAPTURE_RECORDING_STREAMS: {
+            T_DjiCameraManagerStreamList streamList;
+            T_DjiCameraManagerStreamList getStreamList = {0};
+            T_DjiCameraManagerRangeList streamStorageRange = {0};
+
+            if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
+                cameraType == DJI_CAMERA_TYPE_XTS || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_L1) {
+                USER_LOG_INFO("Camera type %d does not support set capture or recording stream(s) to storage.",
+                                cameraType);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_SetMode(mountPosition, DJI_CAMERA_MANAGER_WORK_MODE_SHOOT_PHOTO);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Set camera work mode failed, position %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_GetStreamStorageRange(mountPosition,
+                                                               &streamStorageRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                goto exitCameraModule;
+            }
+
+            for (uint32_t i = 0; i < streamStorageRange.size; i++) {
+                streamList.streamStorage[i] = streamStorageRange.streamStorage[i];
+            }
+            streamList.size = streamStorageRange.size;
+
+            USER_LOG_INFO("Step 1: Select all capture stream to be storaged.");
+            returnCode = DjiCameraManager_SetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_CAPTURE,
+                                                                     &streamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Set capture storaged streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Step 2: Read back capture storage streams:");
+            returnCode = DjiCameraManager_GetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_CAPTURE,
+                                                                     &getStreamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Get capture storage streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            for (uint32_t i = 0; i < getStreamList.size; i++) {
+                USER_LOG_INFO("    stream %d is %d", i, getStreamList.streamStorage[i]);
+            }
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Step 3: Select all video stream to be storaged.");
+            returnCode = DjiCameraManager_SetMode(mountPosition, DJI_CAMERA_MANAGER_WORK_MODE_RECORD_VIDEO);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_SetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING,
+                                                                     &streamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Set recording storage streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Step 4: Read back video storage streams:");
+            returnCode = DjiCameraManager_GetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING,
+                                                                     &getStreamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Get capture storage streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            for (uint32_t i = 0; i < getStreamList.size; i++) {
+                USER_LOG_INFO("    stream %d is %d", i, getStreamList.streamStorage[i]);
+            }
+
+            streamList.streamStorage[0] = streamStorageRange.streamStorage[0];
+            streamList.size = 1;
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Step 5: Select default video stream to storage.");
+            returnCode = DjiCameraManager_SetMode(mountPosition, DJI_CAMERA_MANAGER_WORK_MODE_RECORD_VIDEO);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_SetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING,
+                                                                     &streamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Set recording storage streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Step 6: Read back video storage streams:");
+            returnCode = DjiCameraManager_GetCaptureRecordingStreams(mountPosition,
+                                                                     DJI_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING,
+                                                                     &getStreamList);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_WARN("Get capture storage streams failed %d, error code: 0x%08X\r\n", mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            for (uint32_t i = 0; i < getStreamList.size; i++) {
+                USER_LOG_INFO("    stream %d is %d", i, getStreamList.streamStorage[i]);
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOW_STORAGE_INFO: {
+            T_DjiCameraManagerStorageInfo storageInfo;
+
+            for (uint32_t i = 0; i < 30; i++) {
+                returnCode = DjiCameraManager_GetStorageInfo(mountPosition, &storageInfo);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_INFO("Get storage info failed!");
+                    goto exitCameraModule;
+                }
+
+                USER_LOG_INFO("total capacity: %d, remainCapcity: %d", storageInfo.totalCapacity, storageInfo.remainCapacity);
+
+                osalHandler->TaskSleepMs(200);
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FORMAT_SD_CARD: {
+            returnCode = DjiCameraManager_FormatStorage(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Faile to Format SD card.");
+                goto exitCameraModule;
+            }
+            USER_LOG_INFO("Format SD card successfully!");
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_LINK_ZOOM: {
+
+            USER_LOG_INFO("Set synchronized split screen zoom enabled");
+            returnCode = DjiCameraManager_SetSynchronizedSplitScreenZoomEnabled(mountPosition, true);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Sleep 5s...");
+            osalHandler->TaskSleepMs(5000);
+
+            USER_LOG_INFO("Set synchronized split screen zoom disabled");
+            returnCode = DjiCameraManager_SetSynchronizedSplitScreenZoomEnabled(mountPosition, false);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                goto exitCameraModule;
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_USER_CUSTOM_DIR_FILE_NAME: {
+            uint8_t dirName[240] = {0};
+            uint32_t dirNameSize = 0;
+            uint8_t fileName[240] = {0};
+            uint32_t fileNameSize = 0;
+            uint8_t getNameString[100] = {0};
+            uint32_t getNameStringSize;
+
+            osalHandler->TaskSleepMs(5);
+            printf("Input expand directory name: ");
+            scanf("%s", dirName);
+            dirNameSize = strlen(dirName);
+
+            returnCode = DjiCameraManager_SetCustomExpandName(mountPosition,
+                                                              DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_DIR,
+                                                              dirName,
+                                                              dirNameSize);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set Custom expand directory name failed");
+                goto exitCameraModule;
+            }
+
+            if (cameraType != DJI_CAMERA_TYPE_L1) {
+                osalHandler->TaskSleepMs(5);
+                printf("Input expand file name: ");
+                scanf("%s", fileName);
+                fileNameSize = strlen(fileName);
+
+                returnCode = DjiCameraManager_SetCustomExpandName(mountPosition,
+                                                                DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_FILE,
+                                                                fileName,
+                                                                fileNameSize);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Set Custom expand file name failed");
+                    goto exitCameraModule;
+                }
+            }
+
+
+            getNameStringSize = sizeof(getNameString) - 1;
+            returnCode =  DjiCameraManager_GetCustomExpandName(mountPosition,
+                                                               DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_DIR,
+                                                               getNameString,
+                                                               &getNameStringSize);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get Custom expand directory name failed, stat = 0x%08llX", returnCode);
+                goto exitCameraModule;
+            }
+            getNameString[getNameStringSize] = '\0';
+            USER_LOG_INFO("Latest directory name: %s", getNameString);
+
+            if (cameraType != DJI_CAMERA_TYPE_L1) {
+                getNameStringSize = sizeof(getNameString) - 1;
+                returnCode =  DjiCameraManager_GetCustomExpandName(mountPosition,
+                                                                DJI_CAMERA_MANAGER_EXPAND_NAME_TYPE_FILE,
+                                                                getNameString,
+                                                                &getNameStringSize);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get Custom expand file name failed");
+                    goto exitCameraModule;
+                }
+                getNameString[getNameStringSize] = '\0';
+                USER_LOG_INFO("Latest file name: %s", getNameString);
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RESET_CAMERA_SETTINGS: {
+            returnCode = DjiCameraManager_ResetCameraSetting(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("reset camera at position %d failed", mountPosition);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Reset camera settings success!");
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_AE_LOCK_MODE: {
+            bool enable;
+
+            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
+                cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
+                cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_M3T) {
+                returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_WARN("Change camera stream source to zoom camera failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+            }
+
+            USER_LOG_INFO("Try to set ae locked...");
+            returnCode = DjiCameraManager_SetAELockEnabled(mountPosition, true);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera ae lock mode at position %d failed", mountPosition);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(2000);
+            USER_LOG_INFO("Sleep 2s...");
+
+            returnCode = DjiCameraManager_GetAELockEnabled(mountPosition, &enable);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get camera ae lock mode at position %d failed", mountPosition);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("The camera ae lock mode now is %d", enable);
+
+            USER_LOG_INFO("Try to set ae unlocked...");
+            returnCode = DjiCameraManager_SetAELockEnabled(mountPosition, false);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera ae lock mode at position %d failed", mountPosition);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(2000);
+            USER_LOG_INFO("Sleep 2s...");
+
+            if (cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_P1) {
+                USER_LOG_INFO("Camera type %d does not support get AE lock mode, please check by yourself.",
+                               cameraType);
+            }
+            else {
+                returnCode = DjiCameraManager_GetAELockEnabled(mountPosition, &enable);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera ae lock mode at position %d failed", mountPosition);
+                    goto exitCameraModule;
+                }
+
+                USER_LOG_INFO("The camera ae lock mode now is %d", enable);
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_FOCUS_RING_VALUE: {
+            uint16_t focusRingValue;
+            T_DjiCameraManagerRangeList focusRingRange;
+
+            if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20N ||
+                cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30 ||
+                cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_M3T) {
+                USER_LOG_INFO("Set camera stream source to zoom camera.");
+                returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_WARN("Change camera stream source to zoom camera failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+            }
+
+            USER_LOG_INFO("Set camera's focus mode to manual mode.");
+            returnCode = DjiCameraManager_SetFocusMode(mountPosition, DJI_CAMERA_MANAGER_FOCUS_MODE_MANUAL);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set mounted position %d camera's focus mode(%d) failed,"
+                            " error code :0x%08X.", mountPosition, DJI_CAMERA_MANAGER_FOCUS_MODE_MANUAL,
+                            returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_GetFocusRingRange(mountPosition, &focusRingRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get range failed!");
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Focus ring vlaue range: %d to %d.", focusRingRange.minValue, focusRingRange.maxValue);
+
+            osalHandler->TaskSleepMs(10);
+            printf("Input focus ring value to set: ");
+            scanf("%d", &focusRingValue);
+
+            USER_LOG_INFO("Try to set focus ring value as %d", focusRingValue);
+            returnCode = DjiCameraManager_SetFocusRingValue(mountPosition, focusRingValue);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera focus ring value at position %d failed", mountPosition);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(2000);
+
+            if (cameraType != DJI_CAMERA_TYPE_Z30) {
+                returnCode = DjiCameraManager_GetFocusRingValue(mountPosition, &focusRingValue);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera focus ring value at position %d failed", mountPosition);
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("Current focus ring value is %d", focusRingValue);
+            }
+
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_CONNECT_STATUS_TEST: {
+            bool connectStatus;
+            uint32_t loopTime = 10;
+
+            osalHandler->TaskSleepMs(10);
+            printf("Please input checking time: ");
+            scanf("%d", &loopTime);
+
+            do {
+                returnCode = DjiCameraManager_GetCameraConnectStatus(mountPosition,
+                                                                     &connectStatus);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    goto exitCameraModule;
+                }
+
+                USER_LOG_INFO("Camera's connect state is %d", connectStatus);
+
+                osalHandler->TaskSleepMs(1500);
+            } while(loopTime--);
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GET_PHOTO_VIDEO_PARAM: {
+            E_DjiCameraManagerPhotoRatio photoRatio;
+            E_DjiCameraManagerPhotoStorageFormat photoFormat;
+            E_DjiCameraManagerVideoStorageFormat videoFormat;
+            T_DjiCameraManagerRangeList photoRatioRange;
+            T_DjiCameraManagerRangeList photoFormatRange;
+            T_DjiCameraManagerRangeList videoFormatRange;
+            T_DjiCameraManagerVideoFormat videoParam;
+
+            returnCode = DjiCameraManager_GetPhotoRatioRange(mountPosition, &photoRatioRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get range failed!");
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(5);
+            printf("photo ratio range:");
+            for (uint32_t i = 0; i < photoRatioRange.size; i++) {
+                printf(" %d", photoRatioRange.photoRatioFormat[i]);
+            }
+            printf("\n");
+
+            returnCode = DjiCameraManager_GetPhotoFormatStorageRange(mountPosition, &photoFormatRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get range failed!");
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(5);
+            printf("photo storage format range:");
+            for (uint32_t i = 0; i < photoFormatRange.size; i++) {
+                printf(" %d", photoFormatRange.photoStorageFormat[i]);
+            }
+            printf("\n");
+
+            returnCode = DjiCameraManager_GetVideoFormatRange(mountPosition, &videoFormatRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get range failed!");
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(5);
+            printf("video storage format range:");
+            for (uint32_t i = 0; i < videoFormatRange.size; i++) {
+                printf(" %d", videoFormatRange.videoStorageFormat[i]);
+            }
+            printf("\n");
+
+            USER_LOG_INFO("Set camera work mode as shoot photo.");
+            returnCode = DjiCameraManager_SetMode(mountPosition, DJI_CAMERA_MANAGER_WORK_MODE_SHOOT_PHOTO);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+                returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+                USER_LOG_ERROR("set mounted position %d camera's work mode as shoot-photo mode failed,"
+                            " error code :0x%08X", mountPosition, returnCode);
+                return returnCode;
+            }
+
+            USER_LOG_INFO("Set photo ratio to type %d", photoRatioRange.photoRatioFormat[0]);
+            returnCode = DjiCameraManager_SetPhotoRatio(mountPosition,
+                                                        photoRatioRange.photoRatioFormat[0]);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
+                USER_LOG_ERROR("Set photo ratio failed.");
+                goto exitCameraModule;
+            }
+
+            if (cameraType == DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Camera type %d does not support get photo ratio.", cameraType);
+            }
+            else {
+                returnCode = DjiCameraManager_GetPhotoRatio(mountPosition,
+                                                            &photoRatio);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera photo ratio at position %d failed, ret = 0x%08llX",
+                                    mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("Current photo ratio type: %d", photoRatio);
+            }
+
+            USER_LOG_INFO("Set photo storage format to type %d", photoFormatRange.photoStorageFormat[0]);
+            returnCode = DjiCameraManager_SetPhotoFormat(mountPosition, photoFormatRange.photoStorageFormat[0]);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
+                USER_LOG_ERROR("Set photo storage format failed.");
+                goto exitCameraModule;
+            }
+
+            if (cameraType == DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Camera type %d does not support get photo storage format.", cameraType);
+            }
+            else {
+                returnCode = DjiCameraManager_GetPhotoFormat(mountPosition, &photoFormat);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera photo storage format at position %d failed, ret = 0x%08llX",
+                                    mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("Current photo storage format type: %d", photoFormat);
+            }
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Set camera work mode as record video.");
+            returnCode = DjiCameraManager_SetMode(mountPosition, DJI_CAMERA_MANAGER_WORK_MODE_RECORD_VIDEO);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+                returnCode != DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+                USER_LOG_ERROR("set mounted position %d camera's work mode as shoot-photo mode failed,"
+                            " error code :0x%08X", mountPosition, returnCode);
+                return returnCode;
+            }
+
+            USER_LOG_INFO("Set video storage format as type %d", videoFormatRange.videoStorageFormat[0]);
+            returnCode = DjiCameraManager_SetVideoStorageFormat(mountPosition, videoFormatRange.videoStorageFormat[0]);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
+                USER_LOG_ERROR("Set video storage format failed.");
+                goto exitCameraModule;
+            }
+
+            if (cameraType == DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Camera type %d does not support get video storage format, video resolution and frame rate.",
+                              cameraType);
+            }
+            else {
+                returnCode = DjiCameraManager_GetVideoFormat(mountPosition, &videoFormat);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera video storage format at position %d failed, ret = 0x%08llX",
+                                    mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("Current video stroage format: %d", videoFormat);
+
+                returnCode = DjiCameraManager_GetVideoResolutionFrameRate(mountPosition,
+                                                                        &videoParam);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera video resolution and framerate failed at position %d failed",
+                                    mountPosition);
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("resolution: %d, frame rate: %d", videoParam.videoResolution, videoParam.videoFrameRate);
+            }
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_MODE: {
+            E_DjiCameraManagerMeteringMode meteringMode;
+
+            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(200);
+
+            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get camera metering mode failed.");
+                goto exitCameraModule;
+            }
+            USER_LOG_INFO("Current metering mode is %d", meteringMode);
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
+            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(200);
+
+            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get camera metering mode failed.");
+                goto exitCameraModule;
+            }
+            USER_LOG_INFO("Current metering mode is %d", meteringMode);
+
+            USER_LOG_INFO("Sleep 2s...");
+            osalHandler->TaskSleepMs(2000);
+
+            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
+            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(200);
+
+            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get camera metering mode failed.");
+                goto exitCameraModule;
+            }
+            USER_LOG_INFO("Current metering mode is %d", meteringMode);
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_POINT: {
+            int32_t x, y;
+            uint8_t horizonRegionNum;
+            uint8_t viticalRegionNum;
+
+            if (cameraType == DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Camera type %d does not support to set metering point.", cameraType);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_GetMeteringPointRegionRange(mountPosition, &horizonRegionNum, &viticalRegionNum);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get metering point region range failed!");
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("region range: horizon %d, vitical %d", horizonRegionNum, viticalRegionNum);
+
+            osalHandler->TaskSleepMs(5);
+            printf("Input meterting point (x, y) you want to set: ");
+            scanf("%d %d", &x, &y);
+
+            USER_LOG_INFO("Try to set metering point as (%d, %d)", (uint8_t)x, (uint8_t)y);
+            returnCode = DjiCameraManager_SetMeteringPoint(mountPosition, x, y);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set metering point failed");
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(500);
+
+            returnCode = DjiCameraManager_GetMeteringPoint(mountPosition, &x, &y);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Get metering point failed");
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Current metering point: (%d, %d)", x, y);
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FFC_MODE_AND_TRRIGER: {
+            E_DjiCameraManagerFfcMode ffcMode;
+
+            if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
+                cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
+                cameraType == DJI_CAMERA_TYPE_M3E) {
+                USER_LOG_WARN("Camera type %d don't support FFC function.", cameraType);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(10);
+            printf("Input mode to set FFC (0 manual, 1 auto):");
+            scanf("%d", &ffcMode);
+
+            if (cameraType != DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Set camera stream source to infrared camera.");
+                returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_IR_CAM);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Change camera stream source to infrared camera failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+            }
+
+            returnCode = DjiCameraManager_SetFfcMode(mountPosition, ffcMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Set FFC mode %d failed, camera position %d, error code 0x%08llX",
+                            ffcMode, mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            returnCode = DjiCameraManager_TriggerFfc(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Trigger FFC mode, camera position %d, error code 0x%08llX",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Trriger FFC successfully!");
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GAIN_MODE: {
+            E_DjiCameraManagerIrGainMode gainMode;
+            T_DjiCameraManagerIrTempMeterRange tempRange = {0};
+
+            if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
+                cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
+                cameraType == DJI_CAMERA_TYPE_M3E) {
+                USER_LOG_WARN("Camera type %d don't support infrared function.", cameraType);
+                goto exitCameraModule;
+            }
+
+            osalHandler->TaskSleepMs(10);
+            printf("Input gain mode to set (1 low, 2 high):");
+            scanf("%d", &gainMode);
+
+            if (cameraType != DJI_CAMERA_TYPE_XTS) {
+                USER_LOG_INFO("Set camera stream source to infrared camera.");
+                returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_IR_CAM);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Change camera stream source to infrared camera failed at position %d, error code: 0x%08X\r\n",
+                                mountPosition, returnCode);
+                    goto exitCameraModule;
+                }
+            }
+
+            USER_LOG_INFO("Get temperature range of different gain mode...");
+            returnCode = DjiCameraManager_GetInfraredCameraGainModeTemperatureRange(mountPosition, &tempRange);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Fail to get infrared mode temperature range. position %d, error code 0x%08llX",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("low_min: %.2f, low_max: %.2f, high_min: %.2f, high_max: %.2f",
+                          tempRange.lowGainTempMin, tempRange.lowGainTempMax,
+                          tempRange.highGainTempMin, tempRange.highGainTempMax);
+
+            returnCode = DjiCameraManager_SetInfraredCameraGainMode(mountPosition, gainMode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_INFO("Fail to set infrared camera gain mode. position %d, error code 0x%08llX",
+                              mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+
+            USER_LOG_INFO("Set gain mode to %d successfully!", gainMode);
+
+            break;
+        }
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_CAMERA_STATUS: {
+            E_DjiCameraManagerCapturingState capturingState;
+            E_DjiCameraManagerRecordingState recordingState;
+            uint16_t recordingTime;
+            uint8_t remainingTime;
+
+            if (cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_P1) {
+                USER_LOG_INFO("Camera type %d does not support to get camera stauts such as "
+                              "capturing state, recording state.", cameraType);
+                goto exitCameraModule;
+            }
+
+            for (uint32_t i = 0; i < 30; i++) {
+                returnCode = DjiCameraManager_GetCapturingState(mountPosition, &capturingState);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_INFO("Get capturing state failed!");
+                    goto exitCameraModule;
+                }
+
+                returnCode = DjiCameraManager_GetRecordingState(mountPosition, &recordingState);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_INFO("Get recording state failed!");
+                    goto exitCameraModule;
+                }
+
+                returnCode = DjiCameraManager_GetRecordingTime(mountPosition, &recordingTime);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_INFO("Get recording time failed!");
+                    goto exitCameraModule;
+                }
+
+                returnCode = DjiCameraManager_GetIntervalShootingRemainTime(mountPosition, &remainingTime);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_INFO("Get interval shooting remain time failed!");
+                    goto exitCameraModule;
+                }
+
+                USER_LOG_INFO("cap_state: %d, rec_state: %d, rec_time: %d, cap_remain: %d",
+                            capturingState,
+                            recordingState,
+                            recordingTime,
+                            remainingTime);
+
+                osalHandler->TaskSleepMs(200);
+            }
+
+            break;
+        }
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
@@ -1287,6 +2159,11 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Register download file data callback failed, error code: 0x%08X.", returnCode);
         return returnCode;
+    }
+
+    returnCode = DjiCameraManager_ObtainDownloaderRights(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Obtain downloader rights failed, error code: 0x%08X.", returnCode);
     }
 
     returnCode = DjiCameraManager_DownloadFileList(position, &s_meidaFileList);
@@ -1360,6 +2237,11 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         USER_LOG_WARN("Media file is not existed in sdcard.\r\n");
     }
 
+    returnCode = DjiCameraManager_ReleaseDownloaderRights(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Release downloader rights failed, error code: 0x%08X.", returnCode);
+    }
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
@@ -1375,6 +2257,11 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadFileListBySlices(E_DjiM
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Register download file data callback failed, error code: 0x%08X.", returnCode);
         return returnCode;
+    }
+
+    returnCode = DjiCameraManager_ObtainDownloaderRights(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Obtain downloader rights failed, error code: 0x%08X.", returnCode);
     }
 
     sliceConfig.countPerSlice = DJI_CAMERA_MANAGER_FILE_LIST_COUNT_ALL_PER_SLICE;
@@ -1431,6 +2318,11 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadFileListBySlices(E_DjiM
         USER_LOG_WARN("Media file is not existed in sdcard.\r\n");
     }
 
+    returnCode = DjiCameraManager_ReleaseDownloaderRights(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Release downloader rights failed, error code: 0x%08X.", returnCode);
+    }
+
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
@@ -1463,18 +2355,21 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
         if (s_downloadMediaFile != NULL) {
             fwrite(data, 1, len, s_downloadMediaFile);
         }
-        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %u, fileIndex: %d\033[0m\r\n",
                packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
         printf("\033[1A");
         USER_LOG_DEBUG("Transfer download media file data, len: %d, percent: %.1f", len, packetInfo.progressInPercent);
     } else if (packetInfo.downloadFileEvent == DJI_DOWNLOAD_FILE_EVENT_END) {
-        if (s_downloadMediaFile != NULL) {
-            fwrite(data, 1, len, s_downloadMediaFile);
+        if (s_downloadMediaFile == NULL) {
+            return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
+
+        fwrite(data, 1, len, s_downloadMediaFile);
+
         osalHandler->GetTimeMs(&downloadEndMs);
 
         downloadSpeed = (float) packetInfo.fileSize / (float) (downloadEndMs - downloadStartMs);
-        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %d, fileIndex: %d\033[0m\r\n",
+        printf("\033[1;32;40m ### [Complete rate : %0.1f%%] (%s), size: %u, fileIndex: %d\033[0m\r\n",
                packetInfo.progressInPercent, downloadFileName, packetInfo.fileSize, packetInfo.fileIndex);
         printf("\033[1A");
         printf("\r\n");

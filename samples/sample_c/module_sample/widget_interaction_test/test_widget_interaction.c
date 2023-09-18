@@ -73,7 +73,7 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_TAKE_OFF_VELOCITY_CTRL_LANDING = 6,
     E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_ARREST_FLYING = 7,
     E_DJI_SAMPLE_INDEX_FLIGHT_CONTROL_SET_GET_PARAM = 8,
-    E_DJI_SAMPLE_INDEX_HMS = 9,
+    E_DJI_SAMPLE_INDEX_HMS_MANAGER = 9,
     E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_FREE_MODE = 10,
     E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE = 11,
     E_DJI_SAMPLE_INDEX_LIVEVIEW = 12,
@@ -102,7 +102,7 @@ typedef enum {
     E_DJI_HMS_ERROR_CODE_INDEX3,
     E_DJI_HMS_ERROR_CODE_INDEX4,
     E_DJI_HMS_ERROR_CODE_INDEX5,
-}E_DjiExtensionPortHmsErrorCodeIndex;
+} E_DjiExtensionPortHmsErrorCodeIndex;
 
 typedef enum {
     E_DJI_HMS_ERROR_LEVEL_INDEX1 = 0,
@@ -110,7 +110,7 @@ typedef enum {
     E_DJI_HMS_ERROR_LEVEL_INDEX3,
     E_DJI_HMS_ERROR_LEVEL_INDEX4,
     E_DJI_HMS_ERROR_LEVEL_INDEX5,
-}E_DjiExtensionPortHmsErrorLevelIndex;
+} E_DjiExtensionPortHmsErrorLevelIndex;
 
 typedef struct {
     bool valid;
@@ -418,7 +418,7 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 default:
                     break;
             }
-            DjiHms_InjectHmsErrorCode(errorCode, errorLevel);
+            DjiHmsCustomization_InjectHmsErrorCode(errorCode, errorLevel);
             osalHandler->TaskSleepMs(500);
             s_isInjectErrcode = false;
             s_isEliminateErrcode = false;
@@ -444,7 +444,7 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 default:
                     break;
             }
-            DjiHms_EliminateHmsErrorCode(errorCode);
+            DjiHmsCustomization_EliminateHmsErrorCode(errorCode);
             osalHandler->TaskSleepMs(500);
             s_isInjectErrcode = false;
             s_isEliminateErrcode = false;
@@ -530,8 +530,8 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 case E_DJI_SAMPLE_INDEX_GIMBAL_MANAGER_YAW_FOLLOW_MODE:
                     DjiTest_GimbalManagerRunSample(s_mountPosition, DJI_GIMBAL_MODE_YAW_FOLLOW);
                     break;
-                case E_DJI_SAMPLE_INDEX_HMS:
-                    DjiTest_HmsRunSample();
+                case E_DJI_SAMPLE_INDEX_HMS_MANAGER:
+                    DjiTest_HmsManagerRunSample(DJI_MOBILE_APP_LANGUAGE_ENGLISH);
                     break;
                 case E_DJI_SAMPLE_INDEX_LIVEVIEW:
 #ifdef SYSTEM_ARCH_LINUX

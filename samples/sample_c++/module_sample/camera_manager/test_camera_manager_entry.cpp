@@ -54,6 +54,22 @@ static const char *s_cameraManagerSampleSelectList[] = {
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_THERMOMETRY]                    = "Thermometry test                                    |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_LIDAR_RANGING_INFO]         = "Get lidar ranging info                              |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_IR_CAMERA_ZOOM_PARAM]           = "Set ir camera zoom param                            |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_NIGHT_SCENE_MODE]           = "Set night scene mode                                |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAPTURE_RECORDING_STREAMS]  = "Set capture or recording streams storage type       |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOW_STORAGE_INFO]              = "Show storage info                                   |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FORMAT_SD_CARD]                 = "Format SD card                                      |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_LINK_ZOOM]                  = "Set synchronized split screen zoom                  |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_USER_CUSTOM_DIR_FILE_NAME]  = "Set custom directory or file name of media file     |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RESET_CAMERA_SETTINGS]          = "Reset camera settings                               |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_AE_LOCK_MODE]               = "Set AE lock mode                                    |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_FOCUS_RING_VALUE]           = "Set focus ring value                                |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_CONNECT_STATUS_TEST]            = "Camera connect status test                          |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GET_PHOTO_VIDEO_PARAM]      = "Set camera photo and video storage param            |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_MODE]              = "Set camera metering mode                            |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_POINT]             = "Set and get camera metering point                   |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FFC_MODE_AND_TRRIGER]           = "Set FFC mode and trriger a FFC                      |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GAIN_MODE]                  = "Set infrared camera gain mode                       |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_CAMERA_STATUS]              = "Get camera status, capturing & recording status etc |",
 };
 
 /* Private types -------------------------------------------------------------*/

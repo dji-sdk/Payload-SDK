@@ -520,6 +520,12 @@ typedef enum {
     DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX2 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC,
                                                                                        47),
 
+    /*!
+     * @brief Please refer to ::T_DjiFcSubscriptionImuAttiNaviDataWithTimestamp for information about data structure.
+     * @datastruct \ref T_DjiFcSubscriptionImuAttiNaviDataWithTimestamp
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_IMU_ATTI_NAVI_DATA_WITH_TIMESTAMP = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 48),
+
     /*! Total number of topics that can be subscribed. */
     DJI_FC_SUBSCRIPTION_TOPIC_TOTAL_NUMBER,
 } E_DjiFcSubscriptionTopic;
@@ -1164,6 +1170,27 @@ typedef struct GimbalSingleData {
 typedef struct GimbalThreeData {
     GimbalAnglesData anglesData[3];
 } T_DjiFcSubscriptionThreeGimbalData;
+
+/**
+ * @brief Struct for the topic DJI_FC_SUBSCRIPTION_TOPIC_IMU_ATTI_NAVI_DATA_WITH_TIMESTAMP. Used in M300
+ */
+typedef struct ImuAttiNaviDataWithTimestamp {
+    uint16_t version;
+    uint16_t flag;
+    dji_f32_t pn_x;
+    dji_f32_t pn_y;
+    dji_f32_t pn_z;
+    dji_f32_t vn_x;
+    dji_f32_t vn_y;
+    dji_f32_t vn_z;
+    dji_f32_t an_x;
+    dji_f32_t an_y;
+    dji_f32_t an_z;
+    dji_f32_t q[4];
+    uint16_t resv;
+    uint16_t cnt;
+    uint32_t timestamp;
+} T_DjiFcSubscriptionImuAttiNaviDataWithTimestamp;
 
 #pragma pack()
 

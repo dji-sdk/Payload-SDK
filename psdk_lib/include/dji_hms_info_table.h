@@ -43,7 +43,9 @@ typedef struct {
     const char *flyAlarmInfo;    /*! alarm information when the flight is in the air*/
 } T_DjiHmsErrCodeInfo;
 
-/*! HMS's error code table*/
+/*! Note: This api header file will not be maintained in the future, please refer to the latest hms error code file in
+ * the hms sample.
+ */
 const T_DjiHmsErrCodeInfo hmsErrCodeInfoTbl[] = {
     {0x16070035, "Aircraft D-RTK antenna error. Fly with caution",                                                                                        ""},
     {0x16070034, "RTK flight heading inconsistent with other sources. Fly with caution",                                                                  ""},

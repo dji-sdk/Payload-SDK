@@ -25,6 +25,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <dji_logger.h>
 #include "hal_uart.h"
+#include "dji_config_manager.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define UART_DEV_NAME_STR_SIZE             (128)
@@ -48,20 +49,32 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
     struct flock lock;
     T_DjiReturnCode returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     char uartName[UART_DEV_NAME_STR_SIZE];
+    char uart1Name[UART_DEV_NAME_STR_SIZE];
+    char uart2Name[UART_DEV_NAME_STR_SIZE];
     char systemCmd[DJI_SYSTEM_CMD_STR_MAX_SIZE];
     char *ret = NULL;
     char lineBuf[DJI_SYSTEM_RESULT_STR_MAX_SIZE] = {0};
     FILE *fp;
+    T_DjiUserLinkConfig linkConfig = {0};
 
     uartHandleStruct = malloc(sizeof(T_UartHandleStruct));
     if (uartHandleStruct == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
     }
 
+    if (DjiUserConfigManager_IsEnable()) {
+        DjiUserConfigManager_GetLinkConfig(&linkConfig);
+        strcpy(uart1Name, linkConfig.uartConfig.uart1DeviceName);
+        strcpy(uart2Name, linkConfig.uartConfig.uart2DeviceName);
+    } else {
+        strcpy(uart1Name, LINUX_UART_DEV1);
+        strcpy(uart2Name, LINUX_UART_DEV2);
+    }
+
     if (uartNum == DJI_HAL_UART_NUM_0) {
-        strcpy(uartName, LINUX_UART_DEV1);
+        strcpy(uartName, uart1Name);
     } else if (uartNum == DJI_HAL_UART_NUM_1) {
-        strcpy(uartName, LINUX_UART_DEV2);
+        strcpy(uartName, uart2Name);
     } else {
         goto free_uart_handle;
     }
@@ -88,7 +101,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
     sprintf(systemCmd, "chmod 777 %s", uartName);
     fp = popen(systemCmd, "r");
     if (fp == NULL) {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto free_uart_handle;
     }
 #endif
 
@@ -244,10 +257,17 @@ T_DjiReturnCode HalUart_ReadData(T_DjiUartHandle uartHandle, uint8_t *buf, uint3
 
 T_DjiReturnCode HalUart_GetStatus(E_DjiHalUartNum uartNum, T_DjiUartStatus *status)
 {
+    T_DjiUserLinkConfig linkConfig = {0};
+
     if (uartNum == DJI_HAL_UART_NUM_0) {
         status->isConnect = true;
     } else if (uartNum == DJI_HAL_UART_NUM_1) {
-        status->isConnect = true;
+        if (DjiUserConfigManager_IsEnable()) {
+            DjiUserConfigManager_GetLinkConfig(&linkConfig);
+            status->isConnect = linkConfig.uartConfig.uart2DeviceEnable;
+        } else {
+            status->isConnect = true;
+        }
     } else {
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }

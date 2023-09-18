@@ -52,7 +52,7 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_UPGRADE_ON
 
-#define CONFIG_MODULE_SAMPLE_HMS_ON
+#define CONFIG_MODULE_SAMPLE_HMS_CUSTOMIZATION_ON
 
 /*!< Attention: Please uncomment it in gps environment.
 * */

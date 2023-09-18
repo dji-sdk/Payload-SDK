@@ -111,6 +111,11 @@ FIND_LIBRARY(FFMPEG_z_LIBRARY z
   /usr/lib
 )
 
+FIND_LIBRARY(FFMPEG_swresample_LIBRARY swresample
+  /usr/local/lib
+  /usr/lib
+)
+
 SET(FFMPEG_LIBRARIES)
 IF(FFMPEG_INCLUDE_DIR)
   IF(FFMPEG_avformat_LIBRARY)
@@ -120,7 +125,8 @@ IF(FFMPEG_INCLUDE_DIR)
         SET( FFMPEG_BASIC_LIBRARIES 
           ${FFMPEG_avcodec_LIBRARY} 
           ${FFMPEG_avformat_LIBRARY}
-          ${FFMPEG_avutil_LIBRARY} 
+          ${FFMPEG_avutil_LIBRARY}
+          ${FFMPEG_swresample_LIBRARY}
           )
 
         # swscale is always a part of newer ffmpeg distros
@@ -178,4 +184,5 @@ MARK_AS_ADVANCED(
   FFMPEG_gsm_LIBRARY
   FFMPEG_swscale_LIBRARY
   FFMPEG_z_LIBRARY
+  FFMPEG_swresample_LIBRARY
   )

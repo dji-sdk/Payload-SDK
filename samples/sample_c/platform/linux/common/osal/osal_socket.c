@@ -142,7 +142,7 @@ T_DjiReturnCode Osal_UdpSendData(T_DjiSocketHandle socketHandle, const char *ipA
     T_SocketHandleStruct *socketHandleStruct = (T_SocketHandleStruct *) socketHandle;
     int32_t ret;
 
-    if (socketHandle <= 0 || ipAddr == NULL || port == 0 || buf == NULL || len == 0 || realLen == NULL) {
+    if (socketHandle == NULL || ipAddr == NULL || port == 0 || buf == NULL || len == 0 || realLen == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 

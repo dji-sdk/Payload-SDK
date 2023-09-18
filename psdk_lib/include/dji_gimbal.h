@@ -66,6 +66,12 @@ typedef enum {
     /*! Reset yaw axis and pitch axis of gimbal. Reset angle of yaw axis to sum of yaw axis angle of aircraft and fine tune 
      * angle of yaw axis of gimbal, and reset pitch axis angle to the fine tune angle. */
     DJI_GIMBAL_RESET_MODE_PITCH_AND_YAW = 3,
+    /*! Reset only pitch axis of gimbal. */
+    DJI_GIMBAL_RESET_MODE_PITCH_ONLY = 4,
+    /*! Reset only roll axis of gimbal. */
+    DJI_GIMBAL_RESET_MODE_ROLL_ONLY = 5,
+    /*! Reset only yaw axis of gimbal. */
+    DJI_GIMBAL_RESET_MODE_YAW_ONLY = 6,
     /*! Reset yaw axis and pitch axis of gimbal. Reset angle of yaw axis to sum of yaw axis angle of aircraft and fine tune
      * angle of yaw axis of gimbal, and reset pitch axis angle to sum of -90 degree and fine tune angle if gimbal
      * downward, sum of 90 degree and fine tune angle if upward. */

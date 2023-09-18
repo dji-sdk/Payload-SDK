@@ -155,7 +155,7 @@ T_DjiReturnCode DjiMediaFile_GetMediaFileAttr(T_DjiMediaFileHandle mediaFileHand
 }
 
 T_DjiReturnCode DjiMediaFile_GetDataOrg(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                        uint8_t *data, uint16_t *realLen)
+                                        uint8_t *data, uint32_t *realLen)
 {
     if (mediaFileHandle->mediaFileOptItem.getDataOrgFunc == NULL) {
         USER_LOG_ERROR("Media file handle getDataOrgFunc null error");

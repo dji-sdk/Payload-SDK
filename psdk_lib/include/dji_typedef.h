@@ -122,6 +122,7 @@ typedef enum {
     DJI_CAMERA_TYPE_H20N = 61, /*!< Camera type is H20N. */
     DJI_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
     DJI_CAMERA_TYPE_L1, /*!< Camera type is L1. */
+    DJI_CAMERA_TYPE_L2, /*!< Camera type is L2. */
     DJI_CAMERA_TYPE_M30, /*!< Camera type is M30. */
     DJI_CAMERA_TYPE_M30T, /*!< Camera type is M30T. */
     DJI_CAMERA_TYPE_M3E, /*!< Camera type is M3E. */
@@ -136,6 +137,8 @@ typedef enum {
     DJI_CAMERA_FILE_TYPE_DNG = 1, /*!< Media file DNG type. */
     DJI_CAMERA_FILE_TYPE_MOV = 2, /*!< Media file MOV type. */
     DJI_CAMERA_FILE_TYPE_MP4 = 3, /*!< Media file MP4 type. */
+    DJI_CAMERA_FILE_TYPE_TIFF = 5, /*!< Media file TIFF type. */
+    DJI_CAMERA_FILE_TYPE_PCD = 24, /*!< Media file point cloud type. */
     DJI_CAMERA_FILE_TYPE_UNKNOWN = 255, /*!< Media file unknown type. */
 } E_DjiCameraMediaFileType;
 
@@ -228,6 +231,7 @@ typedef enum {
     DJI_CHANNEL_ADDRESS_EXTENSION_PORT,
     DJI_CHANNEL_ADDRESS_MASTER_RC_APP,
     DJI_CHANNEL_ADDRESS_SLAVE_RC_APP,
+    DJI_CHANNEL_ADDRESS_CLOUD_API,
 } E_DjiChannelAddress;
 
 /**

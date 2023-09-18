@@ -28,6 +28,7 @@
 #define DJI_GIMBAL_MANAGER_H
 
 /* Includes ------------------------------------------------------------------*/
+#include <dji_gimbal.h>
 #include "dji_typedef.h"
 
 #ifdef __cplusplus
@@ -73,9 +74,10 @@ T_DjiReturnCode DjiGimbalManager_SetMode(E_DjiMountPosition mountPosition, E_Dji
 /**
  * @brief Reset the pitch and yaw of the gimbal.
  * @param mountPosition: gimbal mount position, input limit see enum E_DjiMountPosition
+ * @param mode: Reset mode, input limit see enum E_DjiGimbalResetMode
  * @return Execution result.
  */
-T_DjiReturnCode DjiGimbalManager_Reset(E_DjiMountPosition mountPosition);
+T_DjiReturnCode DjiGimbalManager_Reset(E_DjiMountPosition mountPosition, E_DjiGimbalResetMode resetMode);
 
 /**
  * @brief Rotate the angle of the gimbal.
@@ -85,6 +87,46 @@ T_DjiReturnCode DjiGimbalManager_Reset(E_DjiMountPosition mountPosition);
  * @return Execution result.
  */
 T_DjiReturnCode DjiGimbalManager_Rotate(E_DjiMountPosition mountPosition, T_DjiGimbalManagerRotation rotation);
+
+/*!
+ * @brief Prototype of callback function used to enable or disable extended pitch axis angle range.
+ * @details Switching the gimbal limit euler angle of pitch axis to the extended limit angle or the default limit
+ * angle.
+ * @param mountPosition: gimbal mount position, input limit see enum E_DjiMountPosition
+ * @param enabledFlag: flag specified whether enable or disable extended pitch axis angle range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiGimbalManager_SetPitchRangeExtensionEnabled(E_DjiMountPosition mountPosition, bool enabledFlag);
+
+/**
+ * @brief Set max speed percentage for gimbal controller.
+ * @param mountPosition: gimbal mount position, input limit see enum E_DjiMountPosition
+ * @param axis: axis to be set.
+ * @param maxSpeedPercentage: max speed value. Recommended calculation formula is "spd = default_max_spd * x / 100",
+ * x is default max speed value. Range from 1 to 100.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiGimbalManager_SetControllerMaxSpeedPercentage(E_DjiMountPosition mountPosition, E_DjiGimbalAxis axis,
+                                                                 uint8_t maxSpeedPercentage);
+
+/**
+ * @brief Set smooth factor for gimbal controller, using to smooth control.
+ * @param mountPosition: gimbal mount position, input limit see enum E_DjiMountPosition
+ * @param axis: axis to be set.
+ * @param smoothingFactor: smooth factor. The larger the value, the smaller the acceleration of gimbal. Recommended
+ * calculation formula is "acc = 10000 * (0.8 ^ (1 + x)) deg/s^2", x is smooth factor. Range from 0 to 30.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiGimbalManager_SetControllerSmoothFactor(E_DjiMountPosition mountPosition, E_DjiGimbalAxis axis,
+                                                           uint8_t smoothingFactor);
+
+/**
+ * @brief Restore factory settings of gimbal, including fine tune angle, pitch angle extension enable flag and max
+ * speed etc.
+ * @param mountPosition: gimbal mount position, input limit see enum E_DjiMountPosition
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiGimbalManager_RestoreFactorySettings(E_DjiMountPosition mountPosition);
 
 #ifdef __cplusplus
 }

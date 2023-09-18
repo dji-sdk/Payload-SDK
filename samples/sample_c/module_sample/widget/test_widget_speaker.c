@@ -384,6 +384,7 @@ static T_DjiReturnCode DjiTest_CheckFileMd5Sum(const char *path, uint8_t *buf, u
     file = fopen(path, "rb");
     if (file == NULL) {
         USER_LOG_ERROR("Open tts file error.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
     while (1) {
@@ -585,7 +586,7 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
                  (int32_t) realVolume);
 
         returnCode = DjiUserUtil_RunSystemCmd(cmdStr);
-        if (returnCode < 0) {
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
         }
     } else {

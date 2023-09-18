@@ -31,6 +31,7 @@
 #include <dji_aircraft_info.h>
 #include <csignal>
 #include "dji_sdk_config.h"
+#include "dji_config_manager.h"
 
 #include "../common/osal/osal.h"
 #include "../common/osal/osal_fs.h"
@@ -52,6 +53,8 @@
 #define USER_UTIL_MIN(a, b)                                 (((a) < (b)) ? (a) : (b))
 #define USER_UTIL_MAX(a, b)                                 (((a) > (b)) ? (a) : (b))
 
+#define DJI_USE_SDK_CONFIG_BY_JSON      (0)
+
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
@@ -64,7 +67,7 @@ static void DjiUser_NormalExitHandler(int signalNum);
 /* Exported functions definition ---------------------------------------------*/
 Application::Application(int argc, char **argv)
 {
-    Application::DjiUser_SetupEnvironment();
+    Application::DjiUser_SetupEnvironment(argc, argv);
     Application::DjiUser_ApplicationStart();
 
     Osal_TaskSleepMs(3000);
@@ -74,7 +77,7 @@ Application::~Application()
 = default;
 
 /* Private functions definition-----------------------------------------------*/
-void Application::DjiUser_SetupEnvironment()
+void Application::DjiUser_SetupEnvironment(int argc, char **argv)
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler osalHandler = {0};
@@ -83,8 +86,9 @@ void Application::DjiUser_SetupEnvironment()
     T_DjiLoggerConsole printConsole;
     T_DjiLoggerConsole localRecordConsole;
     T_DjiFileSystemHandler fileSystemHandler = {0};
-    T_DjiSocketHandler socketHandler {0};
+    T_DjiSocketHandler socketHandler{0};
     T_DjiHalNetworkHandler networkHandler = {0};
+    T_DjiUserLinkConfig linkConfig;
 
     networkHandler.NetworkInit = HalNetWork_Init;
     networkHandler.NetworkDeInit = HalNetWork_DeInit;
@@ -163,6 +167,28 @@ void Application::DjiUser_SetupEnvironment()
         throw std::runtime_error("Register hal uart handler error.");
     }
 
+#if DJI_USE_SDK_CONFIG_BY_JSON
+    if (argc > 1) {
+        DjiUserConfigManager_LoadConfiguration(argv[1]);
+    } else {
+        DjiUserConfigManager_LoadConfiguration(nullptr);
+    }
+
+    DjiUserConfigManager_GetLinkConfig(&linkConfig);
+    if (linkConfig.type == DJI_USER_LINK_CONFIG_USE_UART_AND_NETWORK_DEVICE) {
+        returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            throw std::runtime_error("Register hal network handler error");
+        }
+    } else if (linkConfig.type == DJI_USER_LINK_CONFIG_USE_UART_AND_USB_BULK_DEVICE) {
+        returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            throw std::runtime_error("Register hal usb bulk handler error.");
+        }
+    } else {
+        /*!< Attention: Only use uart hardware connection. */
+    }
+#else
 #if (CONFIG_HARDWARE_CONNECTION == DJI_USE_UART_AND_USB_BULK_DEVICE)
     returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -176,6 +202,7 @@ void Application::DjiUser_SetupEnvironment()
 #elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_UART)
     /*!< Attention: Only use uart hardware connection.
      */
+#endif
 #endif
 
     //Attention: if you want to use camera stream view function, please uncomment it.
@@ -219,13 +246,18 @@ void Application::DjiUser_ApplicationStart()
     // attention: when the program is hand up ctrl-c will generate the coredump file
     signal(SIGTERM, DjiUser_NormalExitHandler);
 
+#if DJI_USE_SDK_CONFIG_BY_JSON
+    DjiUserConfigManager_GetAppInfo(&userInfo);
+#else
     returnCode = DjiUser_FillInUserInfo(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         throw std::runtime_error("Fill user info error, please check user info config.");
     }
+#endif
 
     returnCode = DjiCore_Init(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        sleep(1);
         throw std::runtime_error("Core init error.");
     }
 

@@ -40,6 +40,14 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /**
+ * @brief Positioning rtcm data type.
+ */
+typedef enum {
+    DJI_POSITIONING_RTCM_DATA_TYPE_RTK_ON_AIRCRAFT = 0,
+    DJI_POSITIONING_RTCM_DATA_TYPE_RTK_BASE_STATION = 1,
+} E_DjiPositioningRtcmDataType;
+
+/**
  * @brief Data structure that describes a positioning event.
  */
 typedef struct {
@@ -84,6 +92,15 @@ typedef struct {
     T_DjiPositioningPositionStandardDeviation targetPointPositionStandardDeviation; /*!< Specifies position standard deviation of target points. */
 } T_DjiPositioningPositionInfo;
 
+/**
+ * @brief Prototype of callback function used to receive the rtk rtcm raw data.
+ * @param index: the index of rtcm data package.
+ * @param data: pointer to receive rtk rtcm data from aircraft.
+ * @param dataLen: receive data length of rtcm data from aircraft.
+ * @return Execution result.
+ */
+typedef T_DjiReturnCode (*DjiReceiveRtkRtcmDataCallback)(uint8_t index, const uint8_t *data, uint16_t dataLen);
+
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialise positioning module in blocking mode. User should call this function before all other positioning
@@ -127,6 +144,15 @@ void DjiPositioning_SetTaskIndex(uint8_t index);
  */
 T_DjiReturnCode DjiPositioning_GetPositionInformationSync(uint8_t eventCount, T_DjiPositioningEventInfo *eventInfo,
                                                           T_DjiPositioningPositionInfo *positionInfo);
+
+/**
+ * @brief Register callback function used to receive rtk rtcm raw data by data type.
+ * @note The callback function will be called after registering. The call frequency depends on the number of satellites.
+ * @param callback: pointer to the callback function.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiPositioning_RegReceiveRtcmDataCallback(E_DjiPositioningRtcmDataType dataType,
+                                                          DjiReceiveRtkRtcmDataCallback callback);
 
 #ifdef __cplusplus
 }

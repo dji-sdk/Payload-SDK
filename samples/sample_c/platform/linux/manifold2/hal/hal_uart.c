@@ -88,7 +88,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
     sprintf(systemCmd, "chmod 777 %s", uartName);
     fp = popen(systemCmd, "r");
     if (fp == NULL) {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto free_uart_handle;
     }
 #endif
 
