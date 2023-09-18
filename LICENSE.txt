@@ -33,8 +33,11 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   ├── dji_gimbal.h
 │   │   ├── dji_gimbal_manager.h
 │   │   ├── dji_high_speed_data_channel.h
+│   │   ├── dji_hms_customization.h
 │   │   ├── dji_hms.h
 │   │   ├── dji_hms_info_table.h
+│   │   ├── dji_hms_manager.h
+│   │   ├── dji_interest_point.h
 │   │   ├── dji_liveview.h
 │   │   ├── dji_logger.h
 │   │   ├── dji_low_speed_data_channel.h
@@ -149,6 +152,9 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   ├── test_gimbal_manager.c
 │   │   │   │   └── test_gimbal_manager.h
 │   │   │   ├── hms
+│   │   │   │   ├── data
+│   │   │   │   │   ├── hms_2023_05_18.json
+│   │   │   │   │   └── hms_2023_08_22.json
 │   │   │   │   ├── hms_text
 │   │   │   │   │   ├── cn
 │   │   │   │   │   │   └── hms_text_config.json
@@ -159,6 +165,9 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   │       └── hms_text_config_json.h
 │   │   │   │   ├── test_hms.c
 │   │   │   │   └── test_hms.h
+│   │   │   ├── interest_point
+│   │   │   │   ├── test_interest_point.c
+│   │   │   │   └── test_interest_point.h
 │   │   │   ├── liveview
 │   │   │   │   ├── test_liveview.c
 │   │   │   │   └── test_liveview.h
@@ -190,6 +199,8 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   ├── test_upgrade_platform_opt.c
 │   │   │   │   └── test_upgrade_platform_opt.h
 │   │   │   ├── utils
+│   │   │   │   ├── cJSON.c
+│   │   │   │   ├── cJSON.h
 │   │   │   │   ├── util_buffer.c
 │   │   │   │   ├── util_buffer.h
 │   │   │   │   ├── util_file.c
@@ -383,10 +394,196 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │   │   ├── Device
 │   │               │   │   │   └── ST
 │   │               │   │   │       └── STM32F4xx
+│   │               │   │   │           ├── Include
+│   │               │   │   │           │   ├── stm32f407xx.h
+│   │               │   │   │           │   ├── stm32f4xx.h
+│   │               │   │   │           │   └── system_stm32f4xx.h
+│   │               │   │   │           └── Source
+│   │               │   │   │               └── Templates
+│   │               │   │   │                   ├── arm
+│   │               │   │   │                   │   ├── startup_stm32f401xc.s
+│   │               │   │   │                   │   ├── startup_stm32f401xe.s
+│   │               │   │   │                   │   ├── startup_stm32f405xx.s
+│   │               │   │   │                   │   ├── startup_stm32f407xx.s
+│   │               │   │   │                   │   ├── startup_stm32f410cx.s
+│   │               │   │   │                   │   ├── startup_stm32f410rx.s
+│   │               │   │   │                   │   ├── startup_stm32f410tx.s
+│   │               │   │   │                   │   ├── startup_stm32f411xe.s
+│   │               │   │   │                   │   ├── startup_stm32f412cx.s
+│   │               │   │   │                   │   ├── startup_stm32f412rx.s
+│   │               │   │   │                   │   ├── startup_stm32f412vx.s
+│   │               │   │   │                   │   ├── startup_stm32f412zx.s
+│   │               │   │   │                   │   ├── startup_stm32f413xx.s
+│   │               │   │   │                   │   ├── startup_stm32f415xx.s
+│   │               │   │   │                   │   ├── startup_stm32f417xx.s
+│   │               │   │   │                   │   ├── startup_stm32f423xx.s
+│   │               │   │   │                   │   ├── startup_stm32f427xx.s
+│   │               │   │   │                   │   ├── startup_stm32f429xx.s
+│   │               │   │   │                   │   ├── startup_stm32f437xx.s
+│   │               │   │   │                   │   ├── startup_stm32f439xx.s
+│   │               │   │   │                   │   ├── startup_stm32f446xx.s
+│   │               │   │   │                   │   ├── startup_stm32f469xx.s
+│   │               │   │   │                   │   └── startup_stm32f479xx.s
+│   │               │   │   │                   ├── gcc
+│   │               │   │   │                   │   ├── startup_stm32f401xc.s
+│   │               │   │   │                   │   ├── startup_stm32f401xe.s
+│   │               │   │   │                   │   ├── startup_stm32f405xx.s
+│   │               │   │   │                   │   ├── startup_stm32f407xx.s
+│   │               │   │   │                   │   ├── startup_stm32f410cx.s
+│   │               │   │   │                   │   ├── startup_stm32f410rx.s
+│   │               │   │   │                   │   ├── startup_stm32f410tx.s
+│   │               │   │   │                   │   ├── startup_stm32f411xe.s
+│   │               │   │   │                   │   ├── startup_stm32f412cx.s
+│   │               │   │   │                   │   ├── startup_stm32f412rx.s
+│   │               │   │   │                   │   ├── startup_stm32f412vx.s
+│   │               │   │   │                   │   ├── startup_stm32f412zx.s
+│   │               │   │   │                   │   ├── startup_stm32f413xx.s
+│   │               │   │   │                   │   ├── startup_stm32f415xx.s
+│   │               │   │   │                   │   ├── startup_stm32f417xx.s
+│   │               │   │   │                   │   ├── startup_stm32f423xx.s
+│   │               │   │   │                   │   ├── startup_stm32f427xx.s
+│   │               │   │   │                   │   ├── startup_stm32f429xx.s
+│   │               │   │   │                   │   ├── startup_stm32f437xx.s
+│   │               │   │   │                   │   ├── startup_stm32f439xx.s
+│   │               │   │   │                   │   ├── startup_stm32f446xx.s
+│   │               │   │   │                   │   ├── startup_stm32f469xx.s
+│   │               │   │   │                   │   └── startup_stm32f479xx.s
+│   │               │   │   │                   └── iar
+│   │               │   │   │                       ├── linker
+│   │               │   │   │                       │   ├── stm32f401xc_flash.icf
+│   │               │   │   │                       │   ├── stm32f401xc_sram.icf
+│   │               │   │   │                       │   ├── stm32f401xe_flash.icf
+│   │               │   │   │                       │   ├── stm32f401xe_sram.icf
+│   │               │   │   │                       │   ├── stm32f405xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f405xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f407xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f407xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f410cx_flash.icf
+│   │               │   │   │                       │   ├── stm32f410cx_sram.icf
+│   │               │   │   │                       │   ├── stm32f410rx_flash.icf
+│   │               │   │   │                       │   ├── stm32f410rx_sram.icf
+│   │               │   │   │                       │   ├── stm32f410tx_flash.icf
+│   │               │   │   │                       │   ├── stm32f410tx_sram.icf
+│   │               │   │   │                       │   ├── stm32f411xe_flash.icf
+│   │               │   │   │                       │   ├── stm32f411xe_sram.icf
+│   │               │   │   │                       │   ├── stm32f412cx_flash.icf
+│   │               │   │   │                       │   ├── stm32f412cx_sram.icf
+│   │               │   │   │                       │   ├── stm32f412rx_flash.icf
+│   │               │   │   │                       │   ├── stm32f412rx_sram.icf
+│   │               │   │   │                       │   ├── stm32f412vx_flash.icf
+│   │               │   │   │                       │   ├── stm32f412vx_sram.icf
+│   │               │   │   │                       │   ├── stm32f412zx_flash.icf
+│   │               │   │   │                       │   ├── stm32f412zx_sram.icf
+│   │               │   │   │                       │   ├── stm32f413xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f413xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f415xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f415xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f417xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f417xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f423xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f423xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f427xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f427xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f429xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f429xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f437xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f437xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f439xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f439xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f446xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f446xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f469xx_flash.icf
+│   │               │   │   │                       │   ├── stm32f469xx_sram.icf
+│   │               │   │   │                       │   ├── stm32f479xx_flash.icf
+│   │               │   │   │                       │   └── stm32f479xx_sram.icf
+│   │               │   │   │                       ├── startup_stm32f401xc.s
+│   │               │   │   │                       ├── startup_stm32f401xe.s
+│   │               │   │   │                       ├── startup_stm32f405xx.s
+│   │               │   │   │                       ├── startup_stm32f407xx.s
+│   │               │   │   │                       ├── startup_stm32f410cx.s
+│   │               │   │   │                       ├── startup_stm32f410rx.s
+│   │               │   │   │                       ├── startup_stm32f410tx.s
+│   │               │   │   │                       ├── startup_stm32f411xe.s
+│   │               │   │   │                       ├── startup_stm32f412cx.s
+│   │               │   │   │                       ├── startup_stm32f412rx.s
+│   │               │   │   │                       ├── startup_stm32f412vx.s
+│   │               │   │   │                       ├── startup_stm32f412zx.s
+│   │               │   │   │                       ├── startup_stm32f413xx.s
+│   │               │   │   │                       ├── startup_stm32f415xx.s
+│   │               │   │   │                       ├── startup_stm32f417xx.s
+│   │               │   │   │                       ├── startup_stm32f423xx.s
+│   │               │   │   │                       ├── startup_stm32f427xx.s
+│   │               │   │   │                       ├── startup_stm32f429xx.s
+│   │               │   │   │                       ├── startup_stm32f437xx.s
+│   │               │   │   │                       ├── startup_stm32f439xx.s
+│   │               │   │   │                       ├── startup_stm32f446xx.s
+│   │               │   │   │                       ├── startup_stm32f469xx.s
+│   │               │   │   │                       └── startup_stm32f479xx.s
 │   │               │   │   └── Include
+│   │               │   │       ├── cmsis_armcc.h
+│   │               │   │       ├── cmsis_armclang.h
+│   │               │   │       ├── cmsis_compiler.h
+│   │               │   │       ├── cmsis_gcc.h
+│   │               │   │       ├── cmsis_iccarm.h
+│   │               │   │       ├── cmsis_version.h
+│   │               │   │       ├── core_armv8mbl.h
+│   │               │   │       ├── core_armv8mml.h
+│   │               │   │       ├── core_cm0.h
+│   │               │   │       ├── core_cm0plus.h
+│   │               │   │       ├── core_cm1.h
+│   │               │   │       ├── core_cm23.h
+│   │               │   │       ├── core_cm33.h
+│   │               │   │       ├── core_cm3.h
+│   │               │   │       ├── core_cm4.h
+│   │               │   │       ├── core_cm7.h
+│   │               │   │       ├── core_sc000.h
+│   │               │   │       ├── core_sc300.h
+│   │               │   │       ├── mpu_armv7.h
+│   │               │   │       ├── mpu_armv8.h
+│   │               │   │       └── tz_context.h
 │   │               │   ├── STM32F4xx_HAL_Driver
 │   │               │   │   ├── Inc
+│   │               │   │   │   ├── Legacy
+│   │               │   │   │   │   └── stm32_hal_legacy.h
+│   │               │   │   │   ├── stm32f4xx_hal_cortex.h
+│   │               │   │   │   ├── stm32f4xx_hal_def.h
+│   │               │   │   │   ├── stm32f4xx_hal_dma_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_dma.h
+│   │               │   │   │   ├── stm32f4xx_hal_exti.h
+│   │               │   │   │   ├── stm32f4xx_hal_flash_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_flash.h
+│   │               │   │   │   ├── stm32f4xx_hal_flash_ramfunc.h
+│   │               │   │   │   ├── stm32f4xx_hal_gpio_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_gpio.h
+│   │               │   │   │   ├── stm32f4xx_hal.h
+│   │               │   │   │   ├── stm32f4xx_hal_hcd.h
+│   │               │   │   │   ├── stm32f4xx_hal_pwr_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_pwr.h
+│   │               │   │   │   ├── stm32f4xx_hal_rcc_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_rcc.h
+│   │               │   │   │   ├── stm32f4xx_hal_tim_ex.h
+│   │               │   │   │   ├── stm32f4xx_hal_tim.h
+│   │               │   │   │   ├── stm32f4xx_hal_uart.h
+│   │               │   │   │   └── stm32f4xx_ll_usb.h
 │   │               │   │   └── Src
+│   │               │   │       ├── stm32f4xx_hal.c
+│   │               │   │       ├── stm32f4xx_hal_cortex.c
+│   │               │   │       ├── stm32f4xx_hal_dma.c
+│   │               │   │       ├── stm32f4xx_hal_dma_ex.c
+│   │               │   │       ├── stm32f4xx_hal_exti.c
+│   │               │   │       ├── stm32f4xx_hal_flash.c
+│   │               │   │       ├── stm32f4xx_hal_flash_ex.c
+│   │               │   │       ├── stm32f4xx_hal_flash_ramfunc.c
+│   │               │   │       ├── stm32f4xx_hal_gpio.c
+│   │               │   │       ├── stm32f4xx_hal_hcd.c
+│   │               │   │       ├── stm32f4xx_hal_pwr.c
+│   │               │   │       ├── stm32f4xx_hal_pwr_ex.c
+│   │               │   │       ├── stm32f4xx_hal_rcc.c
+│   │               │   │       ├── stm32f4xx_hal_rcc_ex.c
+│   │               │   │       ├── stm32f4xx_hal_tim.c
+│   │               │   │       ├── stm32f4xx_hal_tim_ex.c
+│   │               │   │       ├── stm32f4xx_hal_uart.c
+│   │               │   │       └── stm32f4xx_ll_usb.c
 │   │               │   └── USB_HOST
 │   │               │       ├── App
 │   │               │       │   ├── usb_host.c
@@ -422,11 +619,65 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │       └── FreeRTOS
 │   │               │           └── Source
 │   │               │               ├── CMSIS_RTOS
+│   │               │               │   ├── cmsis_os.c
+│   │               │               │   └── cmsis_os.h
 │   │               │               ├── croutine.c
 │   │               │               ├── event_groups.c
 │   │               │               ├── include
+│   │               │               │   ├── atomic.h
+│   │               │               │   ├── croutine.h
+│   │               │               │   ├── deprecated_definitions.h
+│   │               │               │   ├── event_groups.h
+│   │               │               │   ├── FreeRTOS.h
+│   │               │               │   ├── list.h
+│   │               │               │   ├── message_buffer.h
+│   │               │               │   ├── mpu_prototypes.h
+│   │               │               │   ├── mpu_wrappers.h
+│   │               │               │   ├── portable.h
+│   │               │               │   ├── projdefs.h
+│   │               │               │   ├── queue.h
+│   │               │               │   ├── semphr.h
+│   │               │               │   ├── stack_macros.h
+│   │               │               │   ├── StackMacros.h
+│   │               │               │   ├── stream_buffer.h
+│   │               │               │   ├── task.h
+│   │               │               │   └── timers.h
 │   │               │               ├── list.c
 │   │               │               ├── portable
+│   │               │               │   ├── GCC
+│   │               │               │   │   └── ARM_CM4F
+│   │               │               │   │       ├── port.c
+│   │               │               │   │       └── portmacro.h
+│   │               │               │   ├── MemMang
+│   │               │               │   │   └── heap_4.c
+│   │               │               │   └── RVDS
+│   │               │               │       ├── ARM7_LPC21xx
+│   │               │               │       │   ├── portASM.s
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   ├── portmacro.h
+│   │               │               │       │   └── portmacro.inc
+│   │               │               │       ├── ARM_CA9
+│   │               │               │       │   ├── portASM.s
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   ├── portmacro.h
+│   │               │               │       │   └── portmacro.inc
+│   │               │               │       ├── ARM_CM0
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   └── portmacro.h
+│   │               │               │       ├── ARM_CM3
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   └── portmacro.h
+│   │               │               │       ├── ARM_CM4F
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   └── portmacro.h
+│   │               │               │       ├── ARM_CM4_MPU
+│   │               │               │       │   ├── port.c
+│   │               │               │       │   └── portmacro.h
+│   │               │               │       └── ARM_CM7
+│   │               │               │           ├── r0p1
+│   │               │               │           │   ├── port.c
+│   │               │               │           │   └── portmacro.h
+│   │               │               │           └── ReadMe.txt
 │   │               │               ├── queue.c
 │   │               │               ├── stream_buffer.c
 │   │               │               ├── tasks.c
@@ -446,9 +697,19 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       │   ├── camera_manager
 │       │   │   ├── test_camera_manager_entry.cpp
 │       │   │   └── test_camera_manager_entry.h
+│       │   ├── flight_controller
+│       │   │   ├── config
+│       │   │   │   └── flying_config.json
+│       │   │   ├── test_flight_controller_command_flying.cpp
+│       │   │   ├── test_flight_controller_command_flying.h
+│       │   │   ├── test_flight_controller_entry.cpp
+│       │   │   └── test_flight_controller_entry.h
 │       │   ├── gimbal
 │       │   │   ├── test_gimbal_entry.cpp
 │       │   │   └── test_gimbal_entry.hpp
+│       │   ├── hms_manager
+│       │   │   ├── hms_manager_entry.cpp
+│       │   │   └── hms_manager_entry.h
 │       │   ├── liveview
 │       │   │   ├── data
 │       │   │   │   ├── haarcascade_frontalface_alt.xml
@@ -486,8 +747,11 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │               │   ├── application
 │               │   │   ├── application.cpp
 │               │   │   ├── application.hpp
+│               │   │   ├── dji_config_manager.c
+│               │   │   ├── dji_config_manager.h
 │               │   │   ├── dji_sdk_app_info.h
 │               │   │   ├── dji_sdk_config.h
+│               │   │   ├── dji_sdk_config.json
 │               │   │   └── main.cpp
 │               │   ├── CMakeLists.txt
 │               │   └── hal

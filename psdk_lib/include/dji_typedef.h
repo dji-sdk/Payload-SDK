@@ -122,7 +122,6 @@ typedef enum {
     DJI_CAMERA_TYPE_H20N = 61, /*!< Camera type is H20N. */
     DJI_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
     DJI_CAMERA_TYPE_L1, /*!< Camera type is L1. */
-    DJI_CAMERA_TYPE_L2, /*!< Camera type is L2. */
     DJI_CAMERA_TYPE_M30, /*!< Camera type is M30. */
     DJI_CAMERA_TYPE_M30T, /*!< Camera type is M30T. */
     DJI_CAMERA_TYPE_M3E, /*!< Camera type is M3E. */
