@@ -1579,7 +1579,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             break;
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RESET_CAMERA_SETTINGS: {
-            returnCode = DjiCameraManager_ResetCameraSetting(mountPosition);
+            returnCode = DjiCameraManager_ResetCameraSettings(mountPosition);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("reset camera at position %d failed", mountPosition);
                 goto exitCameraModule;
