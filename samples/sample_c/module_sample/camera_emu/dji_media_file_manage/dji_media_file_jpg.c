@@ -82,7 +82,7 @@ T_DjiReturnCode DjiMediaFile_GetAttrFunc_JPG(struct _DjiMediaFile *mediaFileHand
 }
 
 T_DjiReturnCode DjiMediaFile_GetDataOrigin_JPG(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                               uint8_t *data, uint16_t *realLen)
+                                               uint8_t *data, uint32_t *realLen)
 {
     return UtilFile_GetFileDataByPath(mediaFileHandle->filePath, offset, len, data, realLen);
 }

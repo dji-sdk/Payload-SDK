@@ -127,6 +127,7 @@ static T_DjiPlaybackInfo s_playbackInfo = {0};
 static T_DjiTaskHandle s_userSendVideoThread;
 static T_UtilBuffer s_mediaPlayCommandBufferHandler = {0};
 static T_DjiMutexHandle s_mediaPlayCommandBufferMutex = {0};
+static T_DjiSemaHandle s_mediaPlayWorkSem = NULL;
 static uint8_t s_mediaPlayCommandBuffer[sizeof(T_TestPayloadCameraPlaybackCommand) * 32] = {0};
 static const char *s_frameKeyChar = "[PACKET]";
 static const char *s_frameDurationTimeKeyChar = "duration_time";
@@ -178,6 +179,11 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
 
     s_psdkCameraMedia.StartDownloadNotification = StartDownloadNotification;
     s_psdkCameraMedia.StopDownloadNotification = StopDownloadNotification;
+
+    if (DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS != osalHandler->SemaphoreCreate(0, &s_mediaPlayWorkSem)) {
+        USER_LOG_ERROR("SemaphoreCreate(\"%s\") error.", "s_mediaPlayWorkSem");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
 
     if (osalHandler->MutexCreate(&s_mediaPlayCommandBufferMutex) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("mutex create error");
@@ -303,6 +309,7 @@ static T_DjiReturnCode DjiPlayback_PausePlay(T_DjiPlaybackInfo *playbackInfo)
             USER_LOG_ERROR("mutex unlock error");
             return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
         }
+        osalHandler->SemaphorePost(s_mediaPlayWorkSem);
     }
 
     playbackInfo->isInPlayProcess = 0;
@@ -485,7 +492,7 @@ static T_DjiReturnCode DjiPlayback_StartPlayProcess(const char *filePath, uint32
         USER_LOG_ERROR("mutex unlock error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
-
+    osalHandler->SemaphorePost(s_mediaPlayWorkSem);
     return returnCode;
 }
 
@@ -514,7 +521,7 @@ static T_DjiReturnCode DjiPlayback_StopPlayProcess(void)
         USER_LOG_ERROR("mutex unlock error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
-
+    osalHandler->SemaphorePost(s_mediaPlayWorkSem);
     return returnCode;
 }
 
@@ -1160,10 +1167,13 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
     int lengthOfDataHaveBeenSent = 0;
     char *dataBuffer = NULL;
     T_TestPayloadCameraPlaybackCommand playbackCommand = {0};
-    uint16_t bufferReadSize = 0;
+    uint16_t bufferReadSize = 0; 
     char *videoFilePath = NULL;
     char *transcodedFilePath = NULL;
     float frameRate = 1.0f;
+    uint32_t waitDuration = 1000 / SEND_VIDEO_TASK_FREQ;
+    uint32_t rightNow = 0;
+    uint32_t sendExpect = 0;
     T_TestPayloadCameraVideoFrameInfo *frameInfo = NULL;
     uint32_t frameNumber = 0;
     uint32_t frameCount = 0;
@@ -1216,8 +1226,16 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
         exit(1);
     }
 
+    (void)osalHandler->GetTimeMs(&rightNow);
+    sendExpect = rightNow + waitDuration;
     while (1) {
-        osalHandler->TaskSleepMs(1000 / SEND_VIDEO_TASK_FREQ);
+        (void)osalHandler->GetTimeMs(&rightNow);
+        if (sendExpect > rightNow) {
+            waitDuration = sendExpect - rightNow;
+        } else {
+            waitDuration = 1000 / SEND_VIDEO_TASK_FREQ;
+        }
+        (void)osalHandler->SemaphoreTimedWait(s_mediaPlayWorkSem, waitDuration);
 
         // response playback command
         if (osalHandler->MutexLock(s_mediaPlayCommandBufferMutex) != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1295,94 +1313,94 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
             continue;
         }
 
-send:
-        if (fpFile == NULL) {
-            USER_LOG_ERROR("open video file fail.");
-            continue;
-        }
-
-        if (sendVideoFlag != true)
-            continue;
-
-        returnCode = DjiTest_CameraGetMode(&mode);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            continue;
-        }
-
-        returnCode = DjiTest_CameraGetVideoStreamType(&videoStreamType);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            continue;
-        }
-
-        if (mode == DJI_CAMERA_MODE_PLAYBACK && s_playbackInfo.isInPlayProcess == false) {
-            continue;
-        }
-
-        if (!USER_UTIL_IS_WORK_TURN(sendVideoStep++, frameRate, SEND_VIDEO_TASK_FREQ))
-            continue;
-
-        frameBufSize = frameInfo[frameNumber].size;
-        if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
-            frameBufSize = frameBufSize + VIDEO_FRAME_AUD_LEN;
-        }
-
-        dataBuffer = calloc(frameBufSize, 1);
-        if (dataBuffer == NULL) {
-            USER_LOG_ERROR("malloc fail.");
-            goto free;
-        }
-
-        ret = fseek(fpFile, frameInfo[frameNumber].positionInFile, SEEK_SET);
-        if (ret != 0) {
-            USER_LOG_ERROR("fseek fail.");
-            goto free;
-        }
-
-        dataLength = fread(dataBuffer, 1, frameInfo[frameNumber].size, fpFile);
-        if (dataLength != frameInfo[frameNumber].size) {
-            USER_LOG_ERROR("read data from video file error.");
-        } else {
-            USER_LOG_DEBUG("read data from video file success, len = %d B\r\n", dataLength);
-        }
-
-        if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
-            memcpy(&dataBuffer[frameInfo[frameNumber].size], s_frameAudInfo, VIDEO_FRAME_AUD_LEN);
-            dataLength = dataLength + VIDEO_FRAME_AUD_LEN;
-        }
-
-        lengthOfDataHaveBeenSent = 0;
-        while (dataLength - lengthOfDataHaveBeenSent) {
-            lengthOfDataToBeSent = USER_UTIL_MIN(DATA_SEND_FROM_VIDEO_STREAM_MAX_LEN,
-                                                 dataLength - lengthOfDataHaveBeenSent);
-            returnCode = DjiPayloadCamera_SendVideoStream((const uint8_t *) dataBuffer + lengthOfDataHaveBeenSent,
-                                                          lengthOfDataToBeSent);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("send video stream error: 0x%08llX.", returnCode);
+        send:
+            if (fpFile == NULL) {
+                USER_LOG_ERROR("open video file fail.");
+                continue;
             }
-            lengthOfDataHaveBeenSent += lengthOfDataToBeSent;
-        }
 
-        if ((frameNumber++) >= frameCount) {
-            USER_LOG_DEBUG("reach file tail.");
-            frameNumber = 0;
+            if (sendVideoFlag != true)
+                continue;
 
-            if (sendOneTimeFlag == true)
-                sendVideoFlag = false;
-        }
+            returnCode = DjiTest_CameraGetMode(&mode);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                continue;
+            }
 
-        returnCode = DjiPayloadCamera_GetVideoStreamState(&videoStreamState);
-        if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_DEBUG(
-                "video stream state: realtimeBandwidthLimit: %d, realtimeBandwidthBeforeFlowController: %d, realtimeBandwidthAfterFlowController:%d busyState: %d.",
-                videoStreamState.realtimeBandwidthLimit, videoStreamState.realtimeBandwidthBeforeFlowController,
-                videoStreamState.realtimeBandwidthAfterFlowController,
-                videoStreamState.busyState);
-        } else {
-            USER_LOG_ERROR("get video stream state error.");
-        }
+            returnCode = DjiTest_CameraGetVideoStreamType(&videoStreamType);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                continue;
+            }
 
-free:
-        free(dataBuffer);
+            if (mode == DJI_CAMERA_MODE_PLAYBACK && s_playbackInfo.isInPlayProcess == false) {
+                continue;
+            }
+
+            frameBufSize = frameInfo[frameNumber].size;
+            if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
+                frameBufSize = frameBufSize + VIDEO_FRAME_AUD_LEN;
+            }
+
+            dataBuffer = calloc(frameBufSize, 1);
+            if (dataBuffer == NULL) {
+                USER_LOG_ERROR("malloc fail.");
+                goto free;
+            }
+
+            ret = fseek(fpFile, frameInfo[frameNumber].positionInFile, SEEK_SET);
+            if (ret != 0) {
+                USER_LOG_ERROR("fseek fail.");
+                goto free;
+            }
+
+            dataLength = fread(dataBuffer, 1, frameInfo[frameNumber].size, fpFile);
+            if (dataLength != frameInfo[frameNumber].size) {
+                USER_LOG_ERROR("read data from video file error.");
+            } else {
+                USER_LOG_DEBUG("read data from video file success, len = %d B\r\n", dataLength);
+            }
+
+            if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
+                memcpy(&dataBuffer[frameInfo[frameNumber].size], s_frameAudInfo, VIDEO_FRAME_AUD_LEN);
+                dataLength = dataLength + VIDEO_FRAME_AUD_LEN;
+            }
+
+            lengthOfDataHaveBeenSent = 0;
+            while (dataLength - lengthOfDataHaveBeenSent) {
+                lengthOfDataToBeSent = USER_UTIL_MIN(DATA_SEND_FROM_VIDEO_STREAM_MAX_LEN,
+                                                    dataLength - lengthOfDataHaveBeenSent);
+                returnCode = DjiPayloadCamera_SendVideoStream((const uint8_t *) dataBuffer + lengthOfDataHaveBeenSent,
+                                                            lengthOfDataToBeSent);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("send video stream error: 0x%08llX.", returnCode);
+                }
+                lengthOfDataHaveBeenSent += lengthOfDataToBeSent;
+            }
+
+            (void)osalHandler->GetTimeMs(&sendExpect);
+            sendExpect += (1000 / frameRate);
+
+            if ((frameNumber++) >= frameCount) {
+                USER_LOG_DEBUG("reach file tail.");
+                frameNumber = 0;
+
+                if (sendOneTimeFlag == true)
+                    sendVideoFlag = false;
+            }
+
+            returnCode = DjiPayloadCamera_GetVideoStreamState(&videoStreamState);
+            if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_DEBUG(
+                    "video stream state: realtimeBandwidthLimit: %d, realtimeBandwidthBeforeFlowController: %d, realtimeBandwidthAfterFlowController:%d busyState: %d.",
+                    videoStreamState.realtimeBandwidthLimit, videoStreamState.realtimeBandwidthBeforeFlowController,
+                    videoStreamState.realtimeBandwidthAfterFlowController,
+                    videoStreamState.busyState);
+            } else {
+                USER_LOG_ERROR("get video stream state error.");
+            }
+
+        free:
+            free(dataBuffer);
     }
 }
 

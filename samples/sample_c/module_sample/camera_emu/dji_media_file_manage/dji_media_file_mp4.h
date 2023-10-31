@@ -49,7 +49,7 @@ T_DjiReturnCode DjiMediaFile_GetAttrFunc_MP4(struct _DjiMediaFile *mediaFileHand
                                              T_DjiCameraMediaFileAttr *mediaFileAttr);
 
 T_DjiReturnCode DjiMediaFile_GetDataOrigin_MP4(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                               uint8_t *data, uint16_t *realLen);
+                                               uint8_t *data, uint32_t *realLen);
 T_DjiReturnCode DjiMediaFile_GetFileSizeOrigin_MP4(struct _DjiMediaFile *mediaFileHandle, uint32_t *fileSize);
 
 T_DjiReturnCode DjiMediaFile_CreateThumbNail_MP4(struct _DjiMediaFile *mediaFileHandle);

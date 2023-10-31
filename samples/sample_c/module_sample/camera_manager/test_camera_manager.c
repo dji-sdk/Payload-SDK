@@ -25,10 +25,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include <widget_interaction_test/test_widget_interaction.h>
 #include <utils/util_misc.h>
+#include <time.h>
 #include "test_camera_manager.h"
 #include "dji_camera_manager.h"
 #include "dji_platform.h"
 #include "dji_logger.h"
+#include "dji_mop_channel.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             256
@@ -37,6 +39,12 @@
 
 #define TEST_CAMERA_MAX_INFRARED_ZOOM_FACTOR          8
 #define TEST_CAMERA_MIN_INFRARED_ZOOM_FACTOR          2
+#define TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_CHANNEL_ID         49152
+#define TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_RECV_BUFFER        (512 * 1024)
+#define TEST_CAMERA_MOP_CHANNEL_COLOR_POINTS_BUFFER                      (512 * 1024)
+#define TEST_CAMERA_MOP_CHANNEL_WAIT_TIME_MS                             (3 * 1000)
+#define TEST_CAMERA_MOP_CHANNEL_MAX_RECV_COUNT                           30
+#define TEST_CAMEAR_POINT_CLOUD_FILE_PATH_STR_MAX_SIZE                   256
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -55,6 +63,7 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_H20T,    "Zenmuse H20T"},
     {DJI_CAMERA_TYPE_P1,      "Zenmuse P1"},
     {DJI_CAMERA_TYPE_L1,      "Zenmuse L1"},
+    {DJI_CAMERA_TYPE_L2,      "Zenmuse L2"},
     {DJI_CAMERA_TYPE_H20N,    "Zenmuse H20N"},
     {DJI_CAMERA_TYPE_M30,     "M30 Camera"},
     {DJI_CAMERA_TYPE_M30T,    "M30T Camera"},
@@ -68,6 +77,8 @@ static uint32_t downloadStartMs = 0;
 static uint32_t downloadEndMs = 0;
 static char downloadFileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE] = {0};
 static uint32_t s_nextDownloadFileIndex = 0;
+static T_DjiMopChannelHandle s_mopChannelHandle;
+static char s_pointCloudFilePath[TEST_CAMEAR_POINT_CLOUD_FILE_PATH_STR_MAX_SIZE];
 
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraType);
@@ -79,6 +90,7 @@ static T_DjiReturnCode DjiTest_CameraManagerGetAreaThermometryData(E_DjiMountPos
 static T_DjiReturnCode DjiTest_CameraManagerGetPointThermometryData(E_DjiMountPosition position);
 
 static T_DjiReturnCode DjiTest_CameraManagerGetLidarRangingInfo(E_DjiMountPosition position);
+T_DjiReturnCode DjiTest_CameraManagerSubscribePointCloud(E_DjiMountPosition position);
 
 /* Exported functions definition ---------------------------------------------*/
 /*! @brief Sample to set EV for camera, using async api
@@ -906,7 +918,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
                 cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
-                cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3T) {
+                cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3T ||
+                cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -945,7 +958,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20N
                 || cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30
                 || cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E
-                || cameraType == DJI_CAMERA_TYPE_M3T) {
+                || cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -1251,9 +1264,10 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             if (cameraType == DJI_CAMERA_TYPE_XT2 || cameraType == DJI_CAMERA_TYPE_XTS ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
-                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M3E ||
-                cameraType == DJI_CAMERA_TYPE_M3T) {
-                USER_LOG_INFO("Camera type %d does not support night scene mode!", cameraType);
+                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_L2 ||
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
+                USER_LOG_INFO("Camera type %s does not support night scene mode!",
+                              s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
             }
 
@@ -1355,8 +1369,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_XTS || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1) {
-                USER_LOG_INFO("Camera type %d does not support set capture or recording stream(s) to storage.",
-                                cameraType);
+                USER_LOG_INFO("Camera type %s does not support set capture or recording stream(s) to storage.",
+                                s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
             }
 
@@ -1684,9 +1698,9 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             osalHandler->TaskSleepMs(10);
             printf("Input focus ring value to set: ");
-            scanf("%d", &focusRingValue);
+            scanf("%hd", &focusRingValue);
 
-            USER_LOG_INFO("Try to set focus ring value as %d", focusRingValue);
+            USER_LOG_INFO("Try to set focus ring value as %hd", focusRingValue);
             returnCode = DjiCameraManager_SetFocusRingValue(mountPosition, focusRingValue);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set camera focus ring value at position %d failed", mountPosition);
@@ -1936,6 +1950,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_POINT: {
             int32_t x, y;
+            uint8_t getX, getY;
             uint8_t horizonRegionNum;
             uint8_t viticalRegionNum;
 
@@ -1965,24 +1980,26 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             osalHandler->TaskSleepMs(500);
 
-            returnCode = DjiCameraManager_GetMeteringPoint(mountPosition, &x, &y);
+            returnCode = DjiCameraManager_GetMeteringPoint(mountPosition, &getX, &getY);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Get metering point failed");
                 goto exitCameraModule;
             }
 
-            USER_LOG_INFO("Current metering point: (%d, %d)", x, y);
+            USER_LOG_INFO("Current metering point: (%d, %d)", getX, getY);
 
             break;
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FFC_MODE_AND_TRRIGER: {
-            E_DjiCameraManagerFfcMode ffcMode;
+            uint32_t ffcMode;
 
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
-                cameraType == DJI_CAMERA_TYPE_M3E) {
-                USER_LOG_WARN("Camera type %d don't support FFC function.", cameraType);
+                cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_L2) {
+                USER_LOG_WARN("Camera type %s don't support FFC function.",
+                              s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
             }
 
@@ -2000,7 +2017,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 }
             }
 
-            returnCode = DjiCameraManager_SetFfcMode(mountPosition, ffcMode);
+            returnCode = DjiCameraManager_SetFfcMode(mountPosition, (E_DjiCameraManagerFfcMode)ffcMode);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set FFC mode %d failed, camera position %d, error code 0x%08llX",
                             ffcMode, mountPosition, returnCode);
@@ -2019,14 +2036,16 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             break;
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GAIN_MODE: {
-            E_DjiCameraManagerIrGainMode gainMode;
+            uint32_t gainMode;
             T_DjiCameraManagerIrTempMeterRange tempRange = {0};
 
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
-                cameraType == DJI_CAMERA_TYPE_M3E) {
-                USER_LOG_WARN("Camera type %d don't support infrared function.", cameraType);
+                cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_L2) {
+                USER_LOG_WARN("Camera type %s don't support infrared function.",
+                              s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
             }
 
@@ -2056,14 +2075,14 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                           tempRange.lowGainTempMin, tempRange.lowGainTempMax,
                           tempRange.highGainTempMin, tempRange.highGainTempMax);
 
-            returnCode = DjiCameraManager_SetInfraredCameraGainMode(mountPosition, gainMode);
+            returnCode = DjiCameraManager_SetInfraredCameraGainMode(mountPosition, (E_DjiCameraManagerIrGainMode)gainMode);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_INFO("Fail to set infrared camera gain mode. position %d, error code 0x%08llX",
                               mountPosition, returnCode);
                 goto exitCameraModule;
             }
 
-            USER_LOG_INFO("Set gain mode to %d successfully!", gainMode);
+            USER_LOG_INFO("Set gain mode to %d successfully!", (E_DjiCameraManagerIrGainMode)gainMode);
 
             break;
         }
@@ -2115,6 +2134,17 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             break;
         }
+#ifndef SYSTEM_ARCH_RTOS
+        case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SUBSCRIBE_POINT_CLOUD: {
+            returnCode = DjiTest_CameraManagerSubscribePointCloud(mountPosition);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Fail to subscribe point cloud. position %d, error code 0x%08llX",
+                               mountPosition, returnCode);
+                goto exitCameraModule;
+            }
+            break;
+        }
+#endif
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
@@ -2492,5 +2522,121 @@ static T_DjiReturnCode DjiTest_CameraManagerGetLidarRangingInfo(E_DjiMountPositi
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+
+#ifndef SYSTEM_ARCH_RTOS
+T_DjiReturnCode DjiTest_CameraManagerSubscribePointCloud(E_DjiMountPosition position)
+{
+    T_DjiReturnCode returnCode;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    uint8_t recvBuf[TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_RECV_BUFFER] = {0};
+    uint8_t colorPointsBuf[TEST_CAMERA_MOP_CHANNEL_COLOR_POINTS_BUFFER] = {0};
+    uint32_t realLen;
+    uint32_t recvDataCount = 0;
+    struct tm *localTime = NULL;
+    time_t currentTime = time(NULL);
+    FILE *fp = NULL;
+    size_t size;
+    T_DjiCameraManagerColorPointCloud *colorPointCloud;
+    uint32_t colorPointCloudDataByte = 0;
+    uint32_t colorPointsNum = 0;
+
+    returnCode = DjiCameraManager_StartRecordPointCloud(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Start record point cloud failed, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    localTime = localtime(&currentTime);
+    sprintf(s_pointCloudFilePath, "payload%d_point_cloud_%04d%02d%02d_%02d-%02d-%02d.ldrt",
+            position, localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
+            localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+
+    fp = fopen(s_pointCloudFilePath, "ab+");
+    if (fp == NULL) {
+        USER_LOG_ERROR("fopen point cloud file failed!\n");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = DjiMopChannel_Init();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fclose(fp);
+        USER_LOG_ERROR("Mop channel init error, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = DjiMopChannel_Create(&s_mopChannelHandle, DJI_MOP_CHANNEL_TRANS_UNRELIABLE);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fclose(fp);
+        USER_LOG_ERROR("Mop channel create send handle error, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+RECONNECT:
+    osalHandler->TaskSleepMs(TEST_CAMERA_MOP_CHANNEL_WAIT_TIME_MS);
+    returnCode = DjiMopChannel_Connect(s_mopChannelHandle, DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
+                                       TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_CHANNEL_ID);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Connect point cloud mop channel error, stat:0x%08llX.", returnCode);
+        goto RECONNECT;
+    }
+
+    while (1) {
+        if (recvDataCount == TEST_CAMERA_MOP_CHANNEL_MAX_RECV_COUNT) {
+            USER_LOG_INFO("Subscribe point cloud success, the point cloud data is stored in %s", s_pointCloudFilePath);
+            break;
+        }
+
+        memset(recvBuf, 0, TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_RECV_BUFFER);
+
+        returnCode = DjiMopChannel_RecvData(s_mopChannelHandle, recvBuf,
+                                            TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_RECV_BUFFER, &realLen);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            if (returnCode == DJI_ERROR_MOP_CHANNEL_MODULE_CODE_CONNECTION_CLOSE) {
+                USER_LOG_INFO("mop channel is disconnected");
+                osalHandler->TaskSleepMs(TEST_CAMERA_MOP_CHANNEL_WAIT_TIME_MS);
+                goto RECONNECT;
+            }
+        }
+
+        colorPointCloud = (T_DjiCameraManagerColorPointCloud *) recvBuf;
+        colorPointCloudDataByte = (colorPointCloud->pointCloudHeader).dataByte;
+        colorPointsNum = colorPointCloudDataByte / sizeof(T_DjiCameraManagerPointXYZRGBInfo);
+        memcpy(colorPointsBuf, (uint8_t *)(colorPointCloud->points), colorPointCloudDataByte);
+        USER_LOG_INFO("Mop channel recv data from channel length:%d, count:%d, points num = %d, points byte = %d",
+                      realLen, recvDataCount++, colorPointsNum, colorPointCloudDataByte);
+
+        size = fwrite(colorPointsBuf, 1, colorPointCloudDataByte, fp);
+        if (size != colorPointCloudDataByte) {
+            USER_LOG_ERROR("fwrite point cloud file failed!\n");
+            fclose(fp);
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
+
+        fflush(fp);
+    }
+
+    fclose(fp);
+
+    returnCode = DjiMopChannel_Close(s_mopChannelHandle);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Close mop channel error, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = DjiMopChannel_Destroy(s_mopChannelHandle);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Destroy mop channel error, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = DjiCameraManager_StopRecordPointCloud(position);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Stop record point cloud failed, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+#endif
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

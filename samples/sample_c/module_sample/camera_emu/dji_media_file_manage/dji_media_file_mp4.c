@@ -115,7 +115,7 @@ out:
 }
 
 T_DjiReturnCode DjiMediaFile_GetDataOrigin_MP4(struct _DjiMediaFile *mediaFileHandle, uint32_t offset, uint16_t len,
-                                               uint8_t *data, uint16_t *realLen)
+                                               uint8_t *data, uint32_t *realLen)
 {
     return UtilFile_GetFileDataByPath(mediaFileHandle->filePath, offset, len, data, realLen);
 }

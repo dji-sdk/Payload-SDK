@@ -242,7 +242,6 @@ void DjiUser_StartTask(void const *argument)
         returnCode = DjiTest_CameraEmuBaseStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("camera emu common init error");
-            goto out;
         }
     }
 #endif

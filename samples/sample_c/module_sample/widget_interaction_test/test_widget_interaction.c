@@ -462,7 +462,8 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
         USER_LOG_INFO("--------------------------------------------------------------------------------------------->");
         DjiTest_WidgetLogAppend("-> Sample Start");
 
-        if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
+        if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT
+            || DJI_MOUNT_POSITION_EXTENSION_LITE_PORT == s_aircraftInfoBaseInfo.mountPosition) {
             switch (s_extensionPortSampleIndex) {
                 case E_DJI_SAMPLE_INDEX_WAYPOINT_V2:
                     if (s_isallowRunFlightControlSample == true) {

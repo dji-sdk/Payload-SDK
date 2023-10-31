@@ -81,9 +81,9 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     DjiTest_WidgetLogAppend("--> Step 2: Start h264 stream of the fpv and selected payload\r\n");
 
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
-        //TODO: how to use on M3E
+
     } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
-        //TODO: how to use on M3T
+
     } else {
         localTime = localtime(&currentTime);
         sprintf(s_fpvCameraStreamFilePath, "fpv_stream_%04d%02d%02d_%02d-%02d-%02d.h264",

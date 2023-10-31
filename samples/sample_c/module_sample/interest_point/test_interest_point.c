@@ -52,13 +52,13 @@ T_DjiReturnCode DjiTest_InterestPointRunSample(void)
 
     returnCode = DjiFlightController_Init(ridInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_INFO("Flight control init failed, errno=%lld", returnCode);
+        USER_LOG_ERROR("Flight control init failed, errno=%lld", returnCode);
         return returnCode;
     }
 
     returnCode = DjiInterestPoint_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_INFO("Point interest init failed, errno=%lld", returnCode);
+        USER_LOG_ERROR("Point interest init failed, errno=%lld", returnCode);
         return returnCode;
     }
 
@@ -92,7 +92,7 @@ T_DjiReturnCode DjiTest_InterestPointRunSample(void)
     DjiInterestPoint_SetSpeed(5.0f);
 
     for (int i = 0; i < 60; ++i) {
-        USER_LOG_ERROR("Interest point mission running %d.", i);
+        USER_LOG_INFO("Interest point mission running %d.", i);
         osalHandler->TaskSleepMs(1000);
     }
 

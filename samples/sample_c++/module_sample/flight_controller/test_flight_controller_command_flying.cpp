@@ -32,6 +32,7 @@
 #include "dji_flight_controller.h"
 #include "dji_logger.h"
 #include "dji_fc_subscription.h"
+#include "cmath"
 
 #ifdef OPEN_CV_INSTALLED
 
@@ -813,6 +814,8 @@ static T_DjiReturnCode DjiUser_FlightControlUpdateConfig(void)
         USER_LOG_ERROR("Malloc failed.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
+
+    memset(jsonData, 0, fileSize);
 
     UtilFile_GetFileDataByPath(tempFileDirPath, 0, fileSize, jsonData, &readRealSize);
 
