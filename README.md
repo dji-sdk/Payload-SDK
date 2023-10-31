@@ -59,3 +59,7 @@ You can also communicate with other developers by the following methods:
 
 - Post questions on [**Stackoverflow**](http://stackoverflow.com) using [**
   dji-sdk**](http://stackoverflow.com/questions/tagged/dji-sdk) tag
+
+## About Pull Request
+As always, the DJI Dev Team is committed to improving your developer experience, and we also welcome your contribution,
+but the code review of any pull request maybe not timely, when you have any questionplease send an email to dev@dji.com.
