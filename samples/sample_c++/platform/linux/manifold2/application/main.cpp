@@ -49,8 +49,6 @@
 /* Private values -------------------------------------------------------------*/
 
 /* Private functions declaration ---------------------------------------------*/
-static T_DjiReturnCode DjiTest_HighPowerApplyPinInit();
-static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState);
 
 /* Exported functions definition ---------------------------------------------*/
 int main(int argc, char **argv)
@@ -71,14 +69,8 @@ start:
         << "| [a] Gimbal manager sample - you can control gimbal by PSDK                                       |\n"
         << "| [c] Camera stream view sample - display the camera video stream                                  |\n"
         << "| [d] Stereo vision view sample - display the stereo image                                         |\n"
-        << "| [e] Start camera all features sample - you can operate the camera on DJI Pilot                   |\n"
-        << "| [f] Start gimbal all features sample - you can operate the gimbal on DJI Pilot                   |\n"
-        << "| [g] Start widget all features sample - you can operate the widget on DJI Pilot                   |\n"
-        << "| [h] Start widget speaker sample - you can operate the speaker on DJI Pilot2                      |\n"
-        << "| [i] Start power management sample - you will see notification when aircraft power off            |\n"
-        << "| [j] Start data transmission sample - you can send or recv custom data on MSDK demo               |\n"
-        << "| [k] Run camera manager sample - you can test camera's functions interactively                    |\n"
-        << "| [l] Start rtk positioning sample - you can receive rtk rtcm data when rtk signal is ok           |\n"
+        << "| [e] Run camera manager sample - you can test camera's functions interactively                    |\n"
+        << "| [f] Start rtk positioning sample - you can receive rtk rtcm data when rtk signal is ok           |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -102,79 +94,9 @@ start:
             DjiUser_RunStereoVisionViewSample();
             break;
         case 'e':
-            returnCode = DjiTest_CameraEmuBaseStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("camera emu common init error");
-                break;
-            }
-
-            if (DjiPlatform_GetSocketHandler() != nullptr) {
-                returnCode = DjiTest_CameraEmuMediaStartService();
-                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_ERROR("camera emu media init error");
-                    break;
-                }
-            }
-
-            USER_LOG_INFO("Start camera all feautes sample successfully");
-            break;
-        case 'f':
-            if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("psdk gimbal init error");
-                break;
-            }
-
-            USER_LOG_INFO("Start gimbal all feautes sample successfully");
-            break;
-        case 'g':
-            returnCode = DjiTest_WidgetStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("widget sample init error");
-                break;
-            }
-
-            USER_LOG_INFO("Start widget all feautes sample successfully");
-            break;
-        case 'h':
-            returnCode = DjiTest_WidgetSpeakerStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("widget speaker test init error");
-                break;
-            }
-
-            USER_LOG_INFO("Start widget speaker sample successfully");
-            break;
-        case 'i':
-            applyHighPowerHandler.pinInit = DjiTest_HighPowerApplyPinInit;
-            applyHighPowerHandler.pinWrite = DjiTest_WriteHighPowerApplyPin;
-
-            returnCode = DjiTest_RegApplyHighPowerHandler(&applyHighPowerHandler);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("regsiter apply high power handler error");
-                break;
-            }
-
-            returnCode = DjiTest_PowerManagementStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("power management init error");
-                break;
-            }
-
-            USER_LOG_INFO("Start power management sample successfully");
-            break;
-        case 'j':
-            returnCode = DjiTest_DataTransmissionStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("data transmission sample init error");
-                break;
-            }
-
-            USER_LOG_INFO("Start data transmission sample successfully");
-            break;
-        case 'k':
             DjiUser_RunCameraManagerSample();
             break;
-        case 'l':
+        case 'f':
             returnCode = DjiTest_PositioningStartService();
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("rtk positioning sample init error");
@@ -193,15 +115,5 @@ start:
 }
 
 /* Private functions definition-----------------------------------------------*/
-static T_DjiReturnCode DjiTest_HighPowerApplyPinInit()
-{
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
-
-static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState)
-{
-    //attention: please pull up the HWPR pin state by hardware.
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-}
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

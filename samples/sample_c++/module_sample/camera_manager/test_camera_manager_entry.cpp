@@ -70,6 +70,7 @@ static const char *s_cameraManagerSampleSelectList[] = {
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_FFC_MODE_AND_TRRIGER]           = "Set FFC mode and trriger a FFC                      |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_GAIN_MODE]                  = "Set infrared camera gain mode                       |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_GET_CAMERA_STATUS]              = "Get camera status, capturing & recording status etc |",
+    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SUBSCRIBE_POINT_CLOUD]          = "Subscribe point cloud                               |",
 };
 
 /* Private types -------------------------------------------------------------*/

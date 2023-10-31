@@ -1,11 +1,11 @@
 {
   "dji_sdk_app_info": {
-    "user_app_name": "PSDK_APPNAME",
-    "user_app_id": "53453",
-    "user_app_key": "871bf75511531682636f0db7243a9e7",
-    "user_app_license": "BO86stxOf200Sv9FMEZUSFCZhJhWxKG1jVYBACSnFvz42nnWEnc8vU+GKGHc/OUTxuFH+5TizymlZkuIxq6WAonqut3Y58KAcmTU6HHCVCW5HJSidwbNv0Gf3Gm+O7tc18lpHiSNRr/uEbSTJeVPkshOlcEEwpSc4tUUlRBb37BkUpZQFAPKaykyznLdxdYDlFh5OAqSl6kLltdt+A3/VOiZavKfsKHM7J9jbjsTDETe3fRRRiauE5K+s8yO6uAFLE0fwHWnanl7gPkzgNJJ53qVqnKiGwEtlim5E8WvnnaiEoxLOWrDijFOEmh9tLOU7Kx/oDEM2l9O/idaqmLxKA==",
-    "user_develop_account": "payloadsdk_account@163.com",
-    "user_baud_rate": "921600"
+    "user_app_name": "your_app_name",
+    "user_app_id": "your_app_id",
+    "user_app_key": "your_app_key",
+    "user_app_license": "your_app_license",
+    "user_develop_account": "your_developer_account",
+    "user_baud_rate": "460800"
   },
   "dji_sdk_link_config": {
     "link_available": "use_only_uart/use_uart_and_usb_bulk_device/use_uart_and_network_device",

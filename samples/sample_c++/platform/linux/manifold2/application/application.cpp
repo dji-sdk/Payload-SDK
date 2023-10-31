@@ -40,9 +40,17 @@
 #include "../manifold2/hal/hal_uart.h"
 #include "../manifold2/hal/hal_network.h"
 
+#include <gimbal_emu/test_payload_gimbal_emu.h>
+#include <camera_emu/test_payload_cam_emu_media.h>
+#include <camera_emu/test_payload_cam_emu_base.h>
+#include "widget/test_widget.h"
+#include "widget/test_widget_speaker.h"
+#include <power_management/test_power_management.h>
+#include "data_transmission/test_data_transmission.h"
+
 /* Private constants ---------------------------------------------------------*/
 #define DJI_LOG_PATH                    "Logs/DJI"
-#define DJI_LOG_INDEX_FILE_NAME         "Logs/latest"
+#define DJI_LOG_INDEX_FILE_NAME         "Logs/index"
 #define DJI_LOG_FOLDER_NAME             "Logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
@@ -63,6 +71,8 @@ static FILE *s_djiLogFileCnt;
 
 /* Private functions declaration ---------------------------------------------*/
 static void DjiUser_NormalExitHandler(int signalNum);
+static T_DjiReturnCode DjiTest_HighPowerApplyPinInit();
+static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState);
 
 /* Exported functions definition ---------------------------------------------*/
 Application::Application(int argc, char **argv)
@@ -266,7 +276,8 @@ void Application::DjiUser_ApplicationStart()
         throw std::runtime_error("Get aircraft base info error.");
     }
 
-    if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT) {
+    if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT
+        && DJI_MOUNT_POSITION_EXTENSION_LITE_PORT != aircraftInfoBaseInfo.mountPosition) {
         throw std::runtime_error("Please run this sample on extension port.");
     }
 
@@ -284,6 +295,65 @@ void Application::DjiUser_ApplicationStart()
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         throw std::runtime_error("Set serial number error");
     }
+
+#ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
+        returnCode = DjiTest_CameraEmuBaseStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("camera emu common init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON
+        returnCode = DjiTest_CameraEmuMediaStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("camera emu media init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
+        returnCode = DjiTest_GimbalStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("psdk gimbal init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
+        returnCode = DjiTest_WidgetStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget sample init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+        returnCode = DjiTest_WidgetSpeakerStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("widget speaker test init error");
+        }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
+    T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
+        .pinInit = DjiTest_HighPowerApplyPinInit,
+        .pinWrite = DjiTest_WriteHighPowerApplyPin,
+    };
+
+    returnCode = DjiTest_RegApplyHighPowerHandler(&applyHighPowerHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("regsiter apply high power handler error");
+    }
+
+    returnCode = DjiTest_PowerManagementStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("power management init error");
+    }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
+    returnCode = DjiTest_DataTransmissionStartService();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("widget sample init error");
+    }
+#endif
 
     returnCode = DjiCore_ApplicationStart();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -440,6 +510,8 @@ T_DjiReturnCode Application::DjiUser_LocalWriteFsInit(const char *path)
         }
     }
 
+    sprintf(systemCmd, "ln -sfrv %s " DJI_LOG_FOLDER_NAME "/latest.log", filePath);
+    system(systemCmd);
     return djiReturnCode;
 }
 
@@ -447,6 +519,17 @@ static void DjiUser_NormalExitHandler(int signalNum)
 {
     USER_UTIL_UNUSED(signalNum);
     exit(0);
+}
+
+static T_DjiReturnCode DjiTest_HighPowerApplyPinInit()
+{
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_WriteHighPowerApplyPin(E_DjiPowerManagementPinState pinState)
+{
+    //attention: please pull up the HWPR pin state by hardware.
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

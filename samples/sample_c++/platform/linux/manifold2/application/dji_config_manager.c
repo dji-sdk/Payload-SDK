@@ -125,6 +125,8 @@ static T_DjiReturnCode DjiUserConfigManager_GetAppInfoInner(const char *path, T_
         return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
 
+    memset(jsonData, 0, fileSize);
+
     UtilFile_GetFileDataByPath(path, 0, fileSize, jsonData, &readRealSize);
 
     jsonData[readRealSize] = '\0';
@@ -222,6 +224,8 @@ static T_DjiReturnCode DjiUserConfigManager_GetLinkConfigInner(const char *path,
         USER_LOG_ERROR("Malloc failed.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
+
+    memset(jsonData, 0, fileSize);
 
     UtilFile_GetFileDataByPath(path, 0, fileSize, jsonData, &readRealSize);
 

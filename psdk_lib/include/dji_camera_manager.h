@@ -704,6 +704,30 @@ typedef struct {
     uint32_t remainCapacity;    /* MByte */
 } T_DjiCameraManagerStorageInfo;
 
+typedef struct {
+    uint32_t flag; /* 0xFFFFFFFF */
+    uint32_t seqNum;
+    uint64_t timestamp;
+    uint32_t dataByte; /* actual num of bytes used for points */
+} T_DjiCameraManagerPointCloudHeader;
+
+typedef struct {
+    float x; /* the x-axis of NED coordinate system */
+    float y; /* the y-axis of NED coordinate system */
+    float z; /* the z-axis of NED coordinate system */
+    uint8_t intensity;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} T_DjiCameraManagerPointXYZRGBInfo;
+
+typedef struct {
+    T_DjiCameraManagerPointCloudHeader pointCloudHeader;
+    uint32_t crc_header;
+    uint32_t crc_rest;
+    T_DjiCameraManagerPointXYZRGBInfo points[1];
+} T_DjiCameraManagerColorPointCloud;
+
 typedef T_DjiReturnCode (*DjiCameraManagerDownloadFileDataCallback)(T_DjiDownloadFilePacketInfo packetInfo,
                                                                     const uint8_t *data,
                                                                     uint16_t dataLen);
@@ -1662,6 +1686,22 @@ T_DjiReturnCode DjiCameraManager_SetMeteringPoint(E_DjiMountPosition position,
  */
 T_DjiReturnCode DjiCameraManager_GetMeteringPoint(E_DjiMountPosition position,
                                                   uint8_t *x, uint8_t *y);
+
+
+/**
+ * @brief Start to record point cloud of the selected camera mounted position.
+ * @param position: camera mounted position
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_StartRecordPointCloud(E_DjiMountPosition position);
+
+/**
+ * @brief Stop to record point cloud of the selected camera mounted position.
+ * @note Precondition: The camera is recording currently.
+ * @param position: camera mounted position
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_StopRecordPointCloud(E_DjiMountPosition position);
 
 #ifdef __cplusplus
 }
