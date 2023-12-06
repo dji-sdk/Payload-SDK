@@ -779,7 +779,7 @@ typedef T_DjiVector3f T_DjiFcSubscriptionAngularRateFusioned;
 typedef T_DjiVector3f T_DjiFcSubscriptionAngularRateRaw;
 
 /**
- * @brief DJI_FC_SUBSCRIPTION_TOPIC_ANGULAR_RATE_RAW topic data structure.
+ * @brief DJI_FC_SUBSCRIPTION_TOPIC_ALTITUDE_FUSED topic data structure.
  */
 typedef dji_f32_t T_DjiFcSubscriptionAltitudeFused;
 
