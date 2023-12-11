@@ -139,7 +139,7 @@ typedef enum {
      */
     DJI_FC_SUBSCRIPTION_TOPIC_ALTITUDE_BAROMETER = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 8),
     /*!
-     * @brief Provides the altitude from sea level when the aircraft last took off.
+     * @brief Provides the altitude from sea level when the aircraft last took off @ up to 1Hz
      * @details
      * This is a fusion output from the flight control system, and also uses the ICAO model.
      *
