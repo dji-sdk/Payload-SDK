@@ -82,8 +82,14 @@ void DjiUser_RunCameraStreamViewSample()
     char mainName[] = "MAIN_CAM";
     char viceName[] = "VICE_CAM";
     char topName[] = "TOP_CAM";
-    auto *liveviewSample = new LiveviewSample();
     T_DjiReturnCode returnCode;
+
+    LiveviewSample *liveviewSample;
+    try {
+        liveviewSample = new LiveviewSample();
+    } catch (...) {
+        return;
+    }
 
     returnCode = DjiUser_GetCurrentFileDirPath(__FILE__, DJI_FILE_PATH_SIZE_MAX, curFileDirPath);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

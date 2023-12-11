@@ -291,7 +291,7 @@ int main(int argc, char **argv)
             .cleanUpgradeRebootState = DjiUpgradePlatformLinux_CleanUpgradeRebootState,
         };
         T_DjiTestUpgradeConfig testUpgradeConfig = {
-            .firmwareVersion = {1, 0, 0, 0},
+            .firmwareVersion = firmwareVersion,
             .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
             .needReplaceProgramBeforeReboot = true
         };

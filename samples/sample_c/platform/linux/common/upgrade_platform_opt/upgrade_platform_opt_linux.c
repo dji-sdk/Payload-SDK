@@ -132,7 +132,7 @@ T_DjiReturnCode DjiUpgradePlatformLinux_CreateUpgradeProgramFile(const T_DjiUpgr
     snprintf(filePath, DJI_FILE_PATH_SIZE_MAX, "%s%s", DJI_TEST_UPGRADE_FILE_DIR, fileInfo->fileName);
     s_upgradeProgramFile = fopen(filePath, "w+");
     if (s_upgradeProgramFile == NULL) {
-        USER_LOG_ERROR("Upgrade program file can't create: \"%s\"", filePath);
+        USER_LOG_ERROR("Upgrade program file can't create");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 

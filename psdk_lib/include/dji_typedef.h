@@ -76,7 +76,7 @@ typedef enum {
     DJI_MOUNT_POSITION_TYPE_UNKNOWN = 0,
     DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT = 1,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT = 2,
-    DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3,
+    DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3
 } E_DjiMountPositionType;
 
 typedef enum {
@@ -95,6 +95,7 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_M30 = 3,
     DJI_AIRCRAFT_SERIES_M3 = 4,
     DJI_AIRCRAFT_SERIES_M350 = 5,
+    DJI_AIRCRAFT_SERIES_M3D = 6,
     DJI_AIRCRAFT_SERIES_FC30 = 7,
 } E_DjiAircraftSeries;
 
@@ -110,6 +111,8 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_FC30 = 78, /* !<Aircraft type is FlyCart 30> */
     DJI_AIRCRAFT_TYPE_M3T = 79, /*!< Aircraft type is Mavic 3T. */
     DJI_AIRCRAFT_TYPE_M350_RTK = 89, /*!< Aircraft type is Matrice 350 RTK. */
+    DJI_AIRCRAFT_TYPE_M3D = 91, /*!< Aircraft type is Matrice 3D. */
+    DJI_AIRCRAFT_TYPE_M3TD = 93, /*!< Aircraft type is Matrice 3TD. */
 } E_DjiAircraftType;
 
 /**
@@ -131,6 +134,8 @@ typedef enum {
     DJI_CAMERA_TYPE_M30T, /*!< Camera type is M30T. */
     DJI_CAMERA_TYPE_M3E, /*!< Camera type is M3E. */
     DJI_CAMERA_TYPE_M3T, /*!< Camera type is M3T. */
+    DJI_CAMERA_TYPE_M3D, /*!< Camera type is Matrice 3D. */
+    DJI_CAMERA_TYPE_M3TD, /*!< Camera type is Matrice 3TD. */
 } E_DjiCameraType;
 
 /**

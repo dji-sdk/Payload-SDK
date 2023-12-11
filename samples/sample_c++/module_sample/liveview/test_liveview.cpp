@@ -42,7 +42,7 @@ LiveviewSample::LiveviewSample()
 
     returnCode = DjiLiveview_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        perror("Liveview init failed");
+        throw ("Liveview init failed");
     }
 
     streamDecoder = {

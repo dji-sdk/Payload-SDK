@@ -286,7 +286,8 @@ start:
                 }
                 USER_LOG_INFO("Subscribe topic DJI_FC_SUBSCRIPTION_TOPIC_THREE_GIMBAL_DATA succefully.");
             }
-            else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3) {
+            else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3 ||
+                     aircraftSeries == DJI_AIRCRAFT_SERIES_M3D) {
                 returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("DjiFcSubscription_SubscribeTopic %d return %d", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
@@ -401,7 +402,8 @@ start:
                                   threeGimbalData.anglesData[gimbalMountPosition - 1].roll,
                                   threeGimbalData.anglesData[gimbalMountPosition - 1].yaw);
                 }
-                else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3) {
+                else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3 ||
+                         aircraftSeries == DJI_AIRCRAFT_SERIES_M3D) {
                     returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES,
                                                                         (uint8_t *) &gimbalAngles,
                                                                         sizeof(T_DjiFcSubscriptionGimbalAngles),

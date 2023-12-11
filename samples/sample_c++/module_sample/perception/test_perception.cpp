@@ -46,7 +46,7 @@ PerceptionSample::PerceptionSample()
             USER_LOG_ERROR("Perception feature will support on later version.");
         }
 
-        perror("Perception init failed");
+        throw ("Perception init failed");
     }
 }
 

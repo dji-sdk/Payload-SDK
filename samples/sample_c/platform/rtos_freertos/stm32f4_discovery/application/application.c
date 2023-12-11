@@ -112,10 +112,10 @@ void DjiUser_StartTask(void const *argument)
         .UartGetStatus = HalUart_GetStatus,
     };
     T_DjiFirmwareVersion firmwareVersion = {
-        .majorVersion = 1,
-        .minorVersion = 0,
-        .modifyVersion = 0,
-        .debugVersion = 0,
+        .majorVersion = USER_FIRMWARE_MAJOR_VERSION,
+        .minorVersion = USER_FIRMWARE_MINOR_VERSION,
+        .modifyVersion = USER_FIRMWARE_MODIFY_VERSION,
+        .debugVersion = USER_FIRMWARE_DEBUG_VERSION,
     };
 
     UART_Init(DJI_CONSOLE_UART_NUM, DJI_CONSOLE_UART_BAUD);
@@ -233,7 +233,6 @@ void DjiUser_StartTask(void const *argument)
     }
 #endif
 
-#if !USE_USB_HOST_UART
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_ON
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK
         && aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
@@ -318,7 +317,12 @@ void DjiUser_StartTask(void const *argument)
         .cleanUpgradeRebootState = DjiUpgradePlatformStm32_CleanUpgradeRebootState,
     };
     T_DjiTestUpgradeConfig testUpgradeConfig = {
-        .firmwareVersion = {1, 0, 0, 0},
+        .firmwareVersion = {
+            USER_FIRMWARE_MAJOR_VERSION,
+            USER_FIRMWARE_MINOR_VERSION,
+            USER_FIRMWARE_MODIFY_VERSION,
+            USER_FIRMWARE_DEBUG_VERSION
+        },
         .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
         .needReplaceProgramBeforeReboot = false
     };
@@ -326,7 +330,6 @@ void DjiUser_StartTask(void const *argument)
         DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("psdk upgrade init error");
     }
-#endif
 #endif
 
     returnCode = DjiCore_ApplicationStart();

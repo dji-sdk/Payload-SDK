@@ -1167,7 +1167,7 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
     int lengthOfDataHaveBeenSent = 0;
     char *dataBuffer = NULL;
     T_TestPayloadCameraPlaybackCommand playbackCommand = {0};
-    uint16_t bufferReadSize = 0; 
+    uint16_t bufferReadSize = 0;
     char *videoFilePath = NULL;
     char *transcodedFilePath = NULL;
     float frameRate = 1.0f;

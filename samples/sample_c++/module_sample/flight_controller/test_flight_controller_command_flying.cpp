@@ -444,63 +444,63 @@ static void DjiUser_ShowFlightStatusByOpenCV(void)
     }
 
     // Display latest flight status
-    cv::putText(img, "Status: ", cvPoint(30, 20), FONT_HERSHEY_SIMPLEX, 0.6,
+    cv::putText(img, "Status: ", cv::Point(30, 20), FONT_HERSHEY_SIMPLEX, 0.6,
                 cv::Scalar(255, 0, 0));
 
-    cv::putText(img, "Roll: " + cv::format("%.4f", aircraftAngles.y), cvPoint(50, 50), FONT_HERSHEY_SIMPLEX, 0.5,
+    cv::putText(img, "Roll: " + cv::format("%.4f", aircraftAngles.y), cv::Point(50, 50), FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(200, 0, 0));
-    cv::putText(img, "Pitch: " + cv::format("%.4f", aircraftAngles.x), cvPoint(50, 80), FONT_HERSHEY_SIMPLEX, 0.5,
+    cv::putText(img, "Pitch: " + cv::format("%.4f", aircraftAngles.x), cv::Point(50, 80), FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(200, 0, 0));
-    cv::putText(img, "Yaw: " + cv::format("%.4f", aircraftAngles.z), cvPoint(50, 110), FONT_HERSHEY_SIMPLEX, 0.5,
+    cv::putText(img, "Yaw: " + cv::format("%.4f", aircraftAngles.z), cv::Point(50, 110), FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(200, 0, 0));
-    cv::putText(img, "WorldX: " + cv::format("%.4f", positionVo.x), cvPoint(50, 140), FONT_HERSHEY_SIMPLEX, 0.5,
+    cv::putText(img, "WorldX: " + cv::format("%.4f", positionVo.x), cv::Point(50, 140), FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(200, 0, 0));
-    cv::putText(img, "WorldY: " + cv::format("%.4f", positionVo.y), cvPoint(50, 170), FONT_HERSHEY_SIMPLEX, 0.5,
+    cv::putText(img, "WorldY: " + cv::format("%.4f", positionVo.y), cv::Point(50, 170), FONT_HERSHEY_SIMPLEX, 0.5,
                 cv::Scalar(200, 0, 0));
-    cv::putText(img, "WorldZ: " + cv::format("%.4f", altitudeOfHomePoint), cvPoint(50, 200), FONT_HERSHEY_SIMPLEX,
+    cv::putText(img, "WorldZ: " + cv::format("%.4f", altitudeOfHomePoint), cv::Point(50, 200), FONT_HERSHEY_SIMPLEX,
                 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "Latitude: " + cv::format("%.4f", (dji_f64_t) s_gpsPosition.y / 10000000), cvPoint(50, 230),
+    cv::putText(img, "Latitude: " + cv::format("%.4f", (dji_f64_t) s_gpsPosition.y / 10000000), cv::Point(50, 230),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "Longitude: " + cv::format("%.4f", (dji_f64_t) s_gpsPosition.x / 10000000), cvPoint(50, 260),
+    cv::putText(img, "Longitude: " + cv::format("%.4f", (dji_f64_t) s_gpsPosition.x / 10000000), cv::Point(50, 260),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "Battery1: " + cv::format("%d%%", singleBatteryInfo1.batteryCapacityPercent), cvPoint(50, 290),
+    cv::putText(img, "Battery1: " + cv::format("%d%%", singleBatteryInfo1.batteryCapacityPercent), cv::Point(50, 290),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "Battery2: " + cv::format("%d%%", singleBatteryInfo2.batteryCapacityPercent), cvPoint(50, 320),
+    cv::putText(img, "Battery2: " + cv::format("%d%%", singleBatteryInfo2.batteryCapacityPercent), cv::Point(50, 320),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
 
-    cv::putText(img, "Config: ", cvPoint(300, 20), FONT_HERSHEY_SIMPLEX, 0.6,
+    cv::putText(img, "Config: ", cv::Point(300, 20), FONT_HERSHEY_SIMPLEX, 0.6,
                 cv::Scalar(255, 0, 0));
     cv::putText(img, "-> RcLostAction(Sync APP): " + cv::format("%d  (0-hover 1-landing 2-gohome)", rcLostAction),
-                cvPoint(320, 50),
+                cv::Point(320, 50),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> GoHomeAltitude(Sync APP): " + cv::format("%d", s_goHomeAltitude), cvPoint(320, 80),
+    cv::putText(img, "-> GoHomeAltitude(Sync APP): " + cv::format("%d", s_goHomeAltitude), cv::Point(320, 80),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> RTK-Enable(Sync APP): " + cv::format("%d", rtkPositionEnableStatus), cvPoint(320, 110),
+    cv::putText(img, "-> RTK-Enable(Sync APP): " + cv::format("%d", rtkPositionEnableStatus), cv::Point(320, 110),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> HomePointLatitude: " + cv::format("%.4f", s_homeLocation.latitude), cvPoint(320, 140),
+    cv::putText(img, "-> HomePointLatitude: " + cv::format("%.4f", s_homeLocation.latitude), cv::Point(320, 140),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> HomePointLongitude: " + cv::format("%.4f", s_homeLocation.longitude), cvPoint(320, 170),
+    cv::putText(img, "-> HomePointLongitude: " + cv::format("%.4f", s_homeLocation.longitude), cv::Point(320, 170),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> FlyingSpeed: " + cv::format("%.2f", s_flyingSpeed), cvPoint(320, 200),
+    cv::putText(img, "-> FlyingSpeed: " + cv::format("%.2f", s_flyingSpeed), cv::Point(320, 200),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> downwardsVisEnable(Sync APP): " + cv::format("%d", downwardsVisEnable), cvPoint(320, 230),
+    cv::putText(img, "-> downwardsVisEnable(Sync APP): " + cv::format("%d", downwardsVisEnable), cv::Point(320, 230),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> upwardsVisEnable(Sync APP): " + cv::format("%d", upwardsVisEnable), cvPoint(320, 260),
+    cv::putText(img, "-> upwardsVisEnable(Sync APP): " + cv::format("%d", upwardsVisEnable), cv::Point(320, 260),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> horizontalVisEnable(Sync APP): " + cv::format("%d", horizontalVisEnable), cvPoint(320, 290),
+    cv::putText(img, "-> horizontalVisEnable(Sync APP): " + cv::format("%d", horizontalVisEnable), cv::Point(320, 290),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
-    cv::putText(img, "-> ControlDevice: " + cv::format("%d", controlDevice.deviceStatus), cvPoint(320, 320),
+    cv::putText(img, "-> ControlDevice: " + cv::format("%d", controlDevice.deviceStatus), cv::Point(320, 320),
                 FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(200, 0, 0));
 
     cv::putText(img,
                 "[Q]-Up    [W]-Front  [E]-Down   [R]-TakeOff  [T]-CancelLanding  [Y]-CancelGoHome  [I]-ArrestFly  [O]-CancelArrestFly  [P]-EmgStopMotor",
-                cvPoint(30, 400), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
+                cv::Point(30, 400), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
     cv::putText(img,
                 "[A]-Left   [S]-Near   [D]-Right   [F]-ForceLand   [G]-Landing   [H]-GoHome  [J]-UpdateConfig  [K]-Brake  [L]-CancelBrakeI",
-                cvPoint(30, 430), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
+                cv::Point(30, 430), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
     cv::putText(img,
                 "[Z]-Yaw-  [X]-RefreshHomePoint   [C]-Yaw+  [V]-ConfirmLanding   [B]-TurnOn  [N]-TurnOff  [M]-ObtainCtrlAuth",
-                cvPoint(30, 460), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
+                cv::Point(30, 460), FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(128, 0, 0));
 
     cv::imshow("Payload SDK Command Flying Data Observation Window", img);
     cv::waitKey(1);

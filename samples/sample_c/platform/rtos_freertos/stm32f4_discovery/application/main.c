@@ -27,6 +27,8 @@
 #include "application.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "core_cm4.h"
+#include "flash_if.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define USER_START_TASK_STACK_SIZE          2048
@@ -53,6 +55,10 @@ void Error_Handler(void);
 
 int main(void)
 {
+    __disable_irq();
+    SCB->VTOR = APPLICATION_ADDRESS;
+    __enable_irq();
+
     /* STM32F4xx HAL library initialization:
          - Configure the Flash prefetch, instruction and Data caches
          - Configure the Systick to generate an interrupt each 1 msec

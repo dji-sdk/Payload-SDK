@@ -80,11 +80,10 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     USER_LOG_INFO("--> Step 2: Start h264 stream of the fpv and selected payload\r\n");
     DjiTest_WidgetLogAppend("--> Step 2: Start h264 stream of the fpv and selected payload\r\n");
 
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
+    if (aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M300 ||
+        aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M350 ||
+        aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M30) {
 
-    } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
-
-    } else {
         localTime = localtime(&currentTime);
         sprintf(s_fpvCameraStreamFilePath, "fpv_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
                 localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
@@ -127,11 +126,9 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
 
     USER_LOG_INFO("--> Step 3: Stop h264 stream of the fpv and selected payload\r\n");
     DjiTest_WidgetLogAppend("--> Step 3: Stop h264 stream of the fpv and selected payload");
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E) {
-
-    } else if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
-
-    } else {
+    if (aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M300 ||
+        aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M350 ||
+        aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M30) {
         returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Request to stop h264 of fpv failed, error code: 0x%08X", returnCode);
@@ -149,7 +146,8 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     USER_LOG_INFO("Fpv stream is saved to file: %s", s_fpvCameraStreamFilePath);
     USER_LOG_INFO("Payload%d stream is saved to file: %s\r\n", mountPosition, s_payloadCameraStreamFilePath);
 
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
         USER_LOG_INFO("--> Start h264 stream of the fpv and selected payload\r\n");
 
         localTime = localtime(&currentTime);

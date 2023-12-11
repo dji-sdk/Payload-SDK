@@ -1253,7 +1253,9 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
             T_DjiFcSubscriptionHeightFusion heightFusion = DjiTest_FlightControlGetValueOfHeightFusion();
             s_osalHandler->TaskSleepMs(1000);
             if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E ||
-                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T ||
+                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D ||
+                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
                 if ((dji_f64_t) 0.45 < heightFusion && heightFusion < (dji_f64_t) 0.55) {
                     break;
                 }

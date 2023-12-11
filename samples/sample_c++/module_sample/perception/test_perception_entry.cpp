@@ -103,9 +103,15 @@ void DjiUser_RunStereoVisionViewSample(void)
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     char inputChar;
     char isQuit;
-    auto *perceptionSample = new PerceptionSample;
     T_DjiReturnCode returnCode;
     T_DjiPerceptionCameraParametersPacket cameraParametersPacket = {0};
+
+    PerceptionSample *perceptionSample;
+    try {
+        perceptionSample = new PerceptionSample;
+    } catch (...) {
+        return;
+    }
 
     returnCode = osalHandler->MutexCreate(&s_stereoImagePacket.mutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

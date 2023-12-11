@@ -535,6 +535,11 @@
 </File>
 <File>
 <FileType>1</FileType>
+<FileName>util_link_list.c</FileName>
+<FilePath>..\..\..\..\..\module_sample\utils\util_link_list.c</FilePath>
+</File>
+<File>
+<FileType>1</FileType>
 <FileName>util_md5.c</FileName>
 <FilePath>..\..\..\..\..\module_sample\utils\util_md5.c</FilePath>
 </File>
