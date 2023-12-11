@@ -140,7 +140,8 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
 
             rotation = s_rotationActionList[i].rotation;
 
-            if (aircraftSeries == DJI_AIRCRAFT_SERIES_M3 || aircraftSeries == DJI_AIRCRAFT_SERIES_M30) {
+            if (aircraftSeries == DJI_AIRCRAFT_SERIES_M3 || aircraftSeries == DJI_AIRCRAFT_SERIES_M30
+	        || aircraftSeries == DJI_AIRCRAFT_SERIES_M3D) {
                 if (s_rotationActionList[i].rotation.rotationMode == DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE) {
                     T_DjiFcSubscriptionGimbalAngles gimbalAngles = {0};
                     T_DjiDataTimestamp timestamp = {0};

@@ -322,7 +322,9 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
     }
 
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
         return DjiTest_PlayAudioData();
     } else {
         txtFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "r");

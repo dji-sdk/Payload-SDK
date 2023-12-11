@@ -406,6 +406,8 @@ static bool DjiTest_MarchErrCodeInfoTableByJson(T_DjiHmsInfoTable hmsInfoTable)
                           hmsInfoTable.hmsInfo[i].errorCode);
         }
     }
+
+    cJSON_Delete(hmsJsonRoot);
 }
 
 static T_DjiReturnCode DjiTest_HmsInfoCallback(T_DjiHmsInfoTable hmsInfoTable)

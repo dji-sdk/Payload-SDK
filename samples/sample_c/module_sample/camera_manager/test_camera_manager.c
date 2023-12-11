@@ -69,6 +69,8 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_M30T,    "M30T Camera"},
     {DJI_CAMERA_TYPE_M3E,     "M3E Camera"},
     {DJI_CAMERA_TYPE_M3T,     "M3T Camera"},
+    {DJI_CAMERA_TYPE_M3D,     "M3D Camera"},
+    {DJI_CAMERA_TYPE_M3TD,    "M3TD Camera"},
 };
 
 static FILE *s_downloadMediaFile = NULL;
@@ -918,8 +920,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20T ||
                 cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
-                cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3T ||
-                cameraType == DJI_CAMERA_TYPE_L2) {
+                cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3D ||
+                cameraType == DJI_CAMERA_TYPE_M3TD) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -958,7 +960,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_H20N
                 || cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30
                 || cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E
-                || cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_L2) {
+                || cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_M3D
+                || cameraType == DJI_CAMERA_TYPE_M3TD) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
                 returnCode = DjiTest_CameraManagerSetExposureMode(mountPosition,
@@ -1265,7 +1268,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_XT2 || cameraType == DJI_CAMERA_TYPE_XTS ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_L2 ||
-                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T) {
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3T ||
+                cameraType == DJI_CAMERA_TYPE_M3D || cameraType == DJI_CAMERA_TYPE_M3TD) {
                 USER_LOG_INFO("Camera type %s does not support night scene mode!",
                               s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
@@ -1368,7 +1372,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_XTS || cameraType == DJI_CAMERA_TYPE_P1 ||
-                cameraType == DJI_CAMERA_TYPE_L1) {
+                cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M3D) {
                 USER_LOG_INFO("Camera type %s does not support set capture or recording stream(s) to storage.",
                                 s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
@@ -1482,6 +1486,12 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOW_STORAGE_INFO: {
             T_DjiCameraManagerStorageInfo storageInfo;
+
+            if (cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_M3D || cameraType == DJI_CAMERA_TYPE_M3TD) {
+                USER_LOG_INFO("Position %d, camera type %d, doesn't support get storage info. Sample exits.");
+                goto exitCameraModule;
+            }
 
             for (uint32_t i = 0; i < 30; i++) {
                 returnCode = DjiCameraManager_GetStorageInfo(mountPosition, &storageInfo);
@@ -1996,7 +2006,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
-                cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3D ||
                 cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_WARN("Camera type %s don't support FFC function.",
                               s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
@@ -2042,7 +2052,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             if (cameraType == DJI_CAMERA_TYPE_Z30 || cameraType == DJI_CAMERA_TYPE_XT2 ||
                 cameraType == DJI_CAMERA_TYPE_H20 || cameraType == DJI_CAMERA_TYPE_P1 ||
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
-                cameraType == DJI_CAMERA_TYPE_M3E ||
+                cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3D ||
                 cameraType == DJI_CAMERA_TYPE_L2) {
                 USER_LOG_WARN("Camera type %s don't support infrared function.",
                               s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
@@ -2092,7 +2102,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             uint16_t recordingTime;
             uint8_t remainingTime;
 
-            if (cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_P1) {
+            if (cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_P1 ||
+                cameraType == DJI_CAMERA_TYPE_M3D || cameraType == DJI_CAMERA_TYPE_M3TD) {
                 USER_LOG_INFO("Camera type %d does not support to get camera stauts such as "
                               "capturing state, recording state.", cameraType);
                 goto exitCameraModule;
