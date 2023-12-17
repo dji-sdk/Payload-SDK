@@ -69,7 +69,7 @@ typedef struct {
 typedef struct {
     dji_f64_t longitude; /*!< Specifies longitude, unit: degree. */
     dji_f64_t latitude; /*!< Specifies latitude, unit: degree. */
-    dji_f64_t height; /*!< Specifies height above sea level, unit: m. */
+    dji_f64_t height; /*!< Specifies height above sea level or above ground level, unit: m. */
 } T_DjiPositioningPosition;
 
 /**
