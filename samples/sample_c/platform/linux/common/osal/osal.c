@@ -320,7 +320,7 @@ T_DjiReturnCode Osal_GetTimeUs(uint64_t *us)
     if (s_localTimeUsOffset == 0) {
         s_localTimeUsOffset = *us;
     } else {
-        *us = *us - s_localTimeMsOffset;
+        *us = *us - s_localTimeUsOffset;
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
