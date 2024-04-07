@@ -239,30 +239,6 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │           ├── icon_switch_select_png.h
 │   │   │   │           ├── icon_switch_unselect_png.h
 │   │   │   │           └── widget_config_json.h
-│   │   │   ├── widget_business_cases
-│   │   │   │   ├── test_widget_action.c
-│   │   │   │   ├── test_widget_action.h
-│   │   │   │   ├── test_widget_business_cases.c
-│   │   │   │   ├── test_widget_business_cases.h
-│   │   │   │   └── widget_file
-│   │   │   │       ├── cn_big_screen
-│   │   │   │       │   ├── icon_button1.png
-│   │   │   │       │   ├── icon_button2.png
-│   │   │   │       │   ├── icon_list_item1.png
-│   │   │   │       │   ├── icon_list_item2.png
-│   │   │   │       │   ├── icon_scale.png
-│   │   │   │       │   ├── icon_switch_select.png
-│   │   │   │       │   ├── icon_switch_unselect.png
-│   │   │   │       │   └── widget_config.json
-│   │   │   │       └── en_big_screen
-│   │   │   │           ├── icon_button1.png
-│   │   │   │           ├── icon_button2.png
-│   │   │   │           ├── icon_list_item1.png
-│   │   │   │           ├── icon_list_item2.png
-│   │   │   │           ├── icon_scale.png
-│   │   │   │           ├── icon_switch_select.png
-│   │   │   │           ├── icon_switch_unselect.png
-│   │   │   │           └── widget_config.json
 │   │   │   ├── widget_interaction_test
 │   │   │   │   ├── file_binary_array_list_en.c
 │   │   │   │   ├── file_binary_array_list_en.h
