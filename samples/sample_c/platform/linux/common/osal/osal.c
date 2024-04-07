@@ -75,6 +75,9 @@ T_DjiReturnCode Osal_TaskCreate(const char *name, void *(*taskFunc)(void *), uin
 
 T_DjiReturnCode Osal_TaskDestroy(T_DjiTaskHandle task)
 {
+    if (task == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
     pthread_cancel(*(pthread_t *) task);
     free(task);
 

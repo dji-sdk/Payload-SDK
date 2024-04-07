@@ -45,7 +45,6 @@ static const char *s_cameraManagerSampleSelectList[] = {
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_TAP_ZOOM_POINT]      = "Set camera tap zoom point                           |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_ZOOM_PARAM]          = "Set camera zoom param                               |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO]             = "Shoot single photo                                  |",
-    [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_AEB_PHOTO]                = "Shoot aeb photo                                     |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_BURST_PHOTO]              = "Shoot busrt photo                                   |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_INTERVAL_PHOTO]           = "Shoot interval photo                                |",
     [E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO]                   = "Record video                                        |",

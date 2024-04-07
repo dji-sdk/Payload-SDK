@@ -143,7 +143,7 @@ int main(int argc, char **argv)
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get aircraft version info error");
         } else {
-            USER_LOG_INFO("Aircraft version is V%d.%d.%d.%d", aircraftInfoVersion.majorVersion,
+            USER_LOG_INFO("Aircraft version is V%02d.%02d.%02d.%02d", aircraftInfoVersion.majorVersion,
                           aircraftInfoVersion.minorVersion, aircraftInfoVersion.modifyVersion,
                           aircraftInfoVersion.debugVersion);
         }

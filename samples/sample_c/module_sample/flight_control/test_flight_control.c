@@ -664,6 +664,7 @@ void DjiTest_FlightControlSetGetParamSample()
     E_DjiFlightControllerRtkPositionEnableStatus rtkEnableStatus;
     E_DjiFlightControllerRCLostAction rcLostAction;
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    uint16_t countryCode;
 
     returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -672,6 +673,12 @@ void DjiTest_FlightControlSetGetParamSample()
 
     USER_LOG_INFO("Flight control set-get-param sample start");
     DjiTest_WidgetLogAppend("Flight control set-get-param sample start");
+
+    returnCode = DjiFlightController_GetCountryCode(&countryCode);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Get aircraft country code error.");
+    }
+    USER_LOG_INFO("country code: %hd", countryCode);
 
     /*! Turn on horizontal vision avoid enable */
     USER_LOG_INFO("--> Step 1: Turn on horizontal visual obstacle avoidance");

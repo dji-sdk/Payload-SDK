@@ -25,7 +25,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "hal_usb_bulk.h"
 #include "dji_logger.h"
-#include "dji_config_manager.h"
+#include "utils/dji_config_manager.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define LINUX_USB_BULK_TRANSFER_TIMEOUT_MS    (50)

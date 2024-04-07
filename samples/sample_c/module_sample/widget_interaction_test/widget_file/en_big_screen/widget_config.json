@@ -205,22 +205,19 @@
             "item_name": "23_test_cammgr-single_photo"
           },
           {
-            "item_name": "24_test_cammgr-AEB_photo"
+            "item_name": "24_test_cammgr-burst_photo"
           },
           {
-            "item_name": "25_test_cammgr-burst_photo"
+            "item_name": "25_test_cammgr-interval_photo"
           },
           {
-            "item_name": "26_test_cammgr-interval_photo"
+            "item_name": "26_test_cammgr-recorder_video"
           },
           {
-            "item_name": "27_test_cammgr-recorder_video"
+            "item_name": "27_test_cammgr-media_download"
           },
           {
-            "item_name": "28_test_cammgr-media_download"
-          },
-          {
-            "item_name": "29_test_cammgr-thermometry"
+            "item_name": "28_test_cammgr-thermometry"
           }
         ]
       },

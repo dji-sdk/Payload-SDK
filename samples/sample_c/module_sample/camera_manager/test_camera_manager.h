@@ -47,7 +47,6 @@ typedef enum {
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_TAP_ZOOM_POINT,
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_ZOOM_PARAM,
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO,
-    E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_AEB_PHOTO,
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_BURST_PHOTO,
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_INTERVAL_PHOTO,
     E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO,
@@ -222,18 +221,6 @@ T_DjiReturnCode DjiTest_CameraManagerStartShootSinglePhoto(E_DjiMountPosition po
  */
 T_DjiReturnCode DjiTest_CameraManagerStartShootBurstPhoto(E_DjiMountPosition position,
                                                           E_DjiCameraBurstCount burstCount);
-
-/*! @brief Sample to shoot AEB photo, using async api
- *
- *  @note In this interface, camera will be set to be the SHOOT_PHOTO mode
- * then start to shoot a AEB photo.
- *  @param index payload node index, input limit see enum
- * DJI::OSDK::PayloadIndexType
- *  @param photoNum The number of pictures in each AEB shooting
- *  @return T_DjiReturnCode error code
- */
-T_DjiReturnCode DjiTest_CameraManagerStartShootAEBPhoto(E_DjiMountPosition position,
-                                                        E_DjiCameraManagerPhotoAEBCount aebCount);
 
 /*! @brief Sample to start shooting interval photo, using async api
  *
