@@ -7,8 +7,8 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   ├── dji_sdk_template.c
 │   │   └── dji_sdk_template.h
 │   ├── reference_designs
-│   │   ├── E-Port Lite Schematic Reference.pdf
-│   │   └── Type-C Schematic Reference.pdf
+│   │   ├── E-Port Lite Schematic Reference.pdf
+│   │   └── E-Port Schematic Reference.pdf
 │   └── simple_model
 │       ├── H20.stp
 │       ├── H20T.stp
@@ -80,37 +80,15 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       ├── psdk_widget.h
 │   │       └── psdk_xport.h
 │   └── lib
-│       ├── aarch64-himix100-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── aarch64-linux-android-gcc
-│       │   └── libpayloadsdk.a
 │       ├── aarch64-linux-gnu-gcc
 │       │   └── libpayloadsdk.a
 │       ├── armcc_cortex-m4
 │       │   └── libpayload.lib
-│       ├── arm-himix100-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-himix200-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-hisiv300-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-hisiv400-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-hisiv500-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-hisiv600-linux-gcc
-│       │   └── libpayloadsdk.a
-│       ├── arm-linux-androideabi-gcc
-│       │   └── libpayloadsdk.a
 │       ├── arm-linux-gnueabi-gcc
 │       │   └── libpayloadsdk.a
 │       ├── arm-linux-gnueabihf-gcc
 │       │   └── libpayloadsdk.a
-│       ├── arm-none-eabi-gcc
-│       │   └── libpayloadsdk.a
-│       ├── x86_64-linux-gnu-gcc
-│       │   └── libpayloadsdk.a
-│       └── xtensa-esp32-elf-gcc
+│       └── x86_64-linux-gnu-gcc
 │           └── libpayloadsdk.a
 ├── README.md
 ├── samples
@@ -154,8 +132,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │   └── test_gimbal_manager.h
 │   │   │   ├── hms
 │   │   │   │   ├── data
-│   │   │   │   │   ├── hms_2023_05_18.json
-│   │   │   │   │   └── hms_2023_08_22.json
+│   │   │   │   │   └── hms.json
 │   │   │   │   ├── hms_text
 │   │   │   │   │   ├── cn
 │   │   │   │   │   │   └── hms_text_config.json
@@ -202,6 +179,8 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   ├── utils
 │   │   │   │   ├── cJSON.c
 │   │   │   │   ├── cJSON.h
+│   │   │   │   ├── dji_config_manager.c
+│   │   │   │   ├── dji_config_manager.h
 │   │   │   │   ├── util_buffer.c
 │   │   │   │   ├── util_buffer.h
 │   │   │   │   ├── util_file.c
@@ -260,6 +239,30 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │   │   │           ├── icon_switch_select_png.h
 │   │   │   │           ├── icon_switch_unselect_png.h
 │   │   │   │           └── widget_config_json.h
+│   │   │   ├── widget_business_cases
+│   │   │   │   ├── test_widget_action.c
+│   │   │   │   ├── test_widget_action.h
+│   │   │   │   ├── test_widget_business_cases.c
+│   │   │   │   ├── test_widget_business_cases.h
+│   │   │   │   └── widget_file
+│   │   │   │       ├── cn_big_screen
+│   │   │   │       │   ├── icon_button1.png
+│   │   │   │       │   ├── icon_button2.png
+│   │   │   │       │   ├── icon_list_item1.png
+│   │   │   │       │   ├── icon_list_item2.png
+│   │   │   │       │   ├── icon_scale.png
+│   │   │   │       │   ├── icon_switch_select.png
+│   │   │   │       │   ├── icon_switch_unselect.png
+│   │   │   │       │   └── widget_config.json
+│   │   │   │       └── en_big_screen
+│   │   │   │           ├── icon_button1.png
+│   │   │   │           ├── icon_button2.png
+│   │   │   │           ├── icon_list_item1.png
+│   │   │   │           ├── icon_list_item2.png
+│   │   │   │           ├── icon_scale.png
+│   │   │   │           ├── icon_switch_select.png
+│   │   │   │           ├── icon_switch_unselect.png
+│   │   │   │           └── widget_config.json
 │   │   │   ├── widget_interaction_test
 │   │   │   │   ├── file_binary_array_list_en.c
 │   │   │   │   ├── file_binary_array_list_en.h
@@ -330,19 +333,19 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       │   │       ├── hal_uart.h
 │   │       │   │       ├── hal_usb_bulk.c
 │   │       │   │       └── hal_usb_bulk.h
-│   │       │   ├── nvidia_jetson
-│   │       │   │   ├── application
-│   │       │   │   │   ├── dji_sdk_app_info.h
-│   │       │   │   │   ├── dji_sdk_config.h
-│   │       │   │   │   └── main.c
-│   │       │   │   ├── CMakeLists.txt
-│   │       │   │   └── hal
-│   │       │   │       ├── hal_network.c
-│   │       │   │       ├── hal_network.h
-│   │       │   │       ├── hal_uart.c
-│   │       │   │       ├── hal_uart.h
-│   │       │   │       ├── hal_usb_bulk.c
-│   │       │   │       └── hal_usb_bulk.h
+│   │       │   └── nvidia_jetson
+│   │       │       ├── application
+│   │       │       │   ├── dji_sdk_app_info.h
+│   │       │       │   ├── dji_sdk_config.h
+│   │       │       │   └── main.c
+│   │       │       ├── CMakeLists.txt
+│   │       │       └── hal
+│   │       │           ├── hal_network.c
+│   │       │           ├── hal_network.h
+│   │       │           ├── hal_uart.c
+│   │       │           ├── hal_uart.h
+│   │       │           ├── hal_usb_bulk.c
+│   │       │           └── hal_usb_bulk.h
 │   │       └── rtos_freertos
 │   │           ├── common
 │   │           │   └── osal
@@ -750,8 +753,6 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │               │   ├── application
 │               │   │   ├── application.cpp
 │               │   │   ├── application.hpp
-│               │   │   ├── dji_config_manager.c
-│               │   │   ├── dji_config_manager.h
 │               │   │   ├── dji_sdk_app_info.h
 │               │   │   ├── dji_sdk_config.h
 │               │   │   ├── dji_sdk_config.json
@@ -764,21 +765,21 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │               │       ├── hal_uart.h
 │               │       ├── hal_usb_bulk.c
 │               │       └── hal_usb_bulk.h
-│               ├── nvidia_jetson
-│               │   ├── application
-│               │   │   ├── application.cpp
-│               │   │   ├── application.hpp
-│               │   │   ├── dji_sdk_app_info.h
-│               │   │   ├── dji_sdk_config.h
-│               │   │   └── main.cpp
-│               │   ├── CMakeLists.txt
-│               │   └── hal
-│               │       ├── hal_network.c
-│               │       ├── hal_network.h
-│               │       ├── hal_uart.c
-│               │       ├── hal_uart.h
-│               │       ├── hal_usb_bulk.c
-│               │       └── hal_usb_bulk.h
+│               └── nvidia_jetson
+│                   ├── application
+│                   │   ├── application.cpp
+│                   │   ├── application.hpp
+│                   │   ├── dji_sdk_app_info.h
+│                   │   ├── dji_sdk_config.h
+│                   │   └── main.cpp
+│                   ├── CMakeLists.txt
+│                   └── hal
+│                       ├── hal_network.c
+│                       ├── hal_network.h
+│                       ├── hal_uart.c
+│                       ├── hal_uart.h
+│                       ├── hal_usb_bulk.c
+│                       └── hal_usb_bulk.h
 └── tools
     └── file2c
         ├── file2c.exe

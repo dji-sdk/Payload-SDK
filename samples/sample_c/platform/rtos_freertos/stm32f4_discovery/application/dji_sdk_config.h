@@ -62,6 +62,11 @@ extern "C" {
 
 //#endif
 
+#define USER_FIRMWARE_MAJOR_VERSION         (1)
+#define USER_FIRMWARE_MINOR_VERSION         (33)
+#define USER_FIRMWARE_MODIFY_VERSION        (88)
+#define USER_FIRMWARE_DEBUG_VERSION         (99)
+
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/

@@ -54,13 +54,6 @@ if (OpenCV_FOUND)
     message(STATUS " - Includes: ${OpenCV_INCLUDE_DIRS}")
     message(STATUS " - Libraries: ${OpenCV_LIBRARIES}")
     add_definitions(-DOPEN_CV_INSTALLED)
-    if ("${OpenCV_VERSION}" STRLESS "4.0.0")
-        add_definitions(-DOPEN_CV_VERSION_3)
-
-    else ()
-        add_definitions(-DOPEN_CV_VERSION_4)
-
-    endif ()
 else ()
     message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
 endif ()
@@ -72,10 +65,10 @@ if (FFMPEG_FOUND)
     message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
 
     EXECUTE_PROCESS(COMMAND ffmpeg -version
-            OUTPUT_VARIABLE ffmpeg_version_psdk_libput
+            OUTPUT_VARIABLE ffmpeg_version_output
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_psdk_libput})
+    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
     string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
     string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
 

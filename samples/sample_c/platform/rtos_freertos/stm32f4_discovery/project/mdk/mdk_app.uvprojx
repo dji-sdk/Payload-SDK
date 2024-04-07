@@ -410,6 +410,11 @@
 </File>
 <File>
 <FileType>1</FileType>
+<FileName>dji_config_manager.c</FileName>
+<FilePath>..\..\..\..\..\module_sample\utils\dji_config_manager.c</FilePath>
+</File>
+<File>
+<FileType>1</FileType>
 <FileName>file_binary_array_list_en.c</FileName>
 <FilePath>..\..\..\..\..\module_sample\widget\file_binary_array_list_en.c</FilePath>
 </File>

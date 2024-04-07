@@ -1,0 +1,264 @@
+{
+    "version": {
+        "major": 1,
+        "minor": 0
+    },
+    "main_interface": {
+        "floating_window": {
+            "is_enable": true
+        },
+        "speaker": {
+            "is_enable_tts": false,
+            "is_enable_voice": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 0,
+                "widget_type": "button",
+                "widget_name": "Button",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_button1.png",
+                    "icon_file_name_unselected": "icon_button1.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 0
+                }
+            },
+            {
+                "widget_index": 1,
+                "widget_type": "list",
+                "widget_name": "List",
+                "list_item": [
+                    {
+                        "item_name": "Item_1",
+                        "icon_file_set": {
+                            "icon_file_name_selected": "icon_list_item1.png",
+                            "icon_file_name_unselected": "icon_list_item1.png"
+                        }
+                    },
+                    {
+                        "item_name": "Item_2",
+                        "icon_file_set": {
+                            "icon_file_name_selected": "icon_list_item2.png",
+                            "icon_file_name_unselected": "icon_list_item2.png"
+                        }
+                    }
+                ],
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 1
+                }
+            },
+            {
+                "widget_index": 2,
+                "widget_type": "switch",
+                "widget_name": "Switch",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_switch_select.png",
+                    "icon_file_name_unselected": "icon_switch_unselect.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 2
+                }
+            },
+            {
+                "widget_index": 3,
+                "widget_type": "scale",
+                "widget_name": "Scale",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_scale.png",
+                    "icon_file_name_unselected": "icon_scale.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 3,
+                    "button_value_step_length": 5
+                }
+            }
+        ]
+    },
+    "config_interface": {
+        "text_input_box": {
+            "widget_name": "TextInputBox",
+            "placeholder_text": "Please input message",
+            "is_enable": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 4,
+                "widget_type": "int_input_box",
+                "widget_name": "fc subscription: topic id",
+                "user_data" : {
+                    "ganged_index" : 1515521028,
+                    "trigger_action" : ""
+                }
+            },
+            {
+                "widget_index": 5,
+                "widget_type": "int_input_box",
+                "widget_name": "fc subscription: topic frequence",
+                "user_data" : {
+                    "ganged_index" : 1515521029,
+                    "trigger_action" : "DjiTestWidget_FcSubscriptionTopicCoupledIntInputBoxAction"
+                }
+            },
+            {
+                "widget_index": 6,
+                "widget_type": "list",
+                "widget_name": "fc subscription: batch test-level",
+                "user_data" : {
+                    "ganged_index" : 1514276358,
+                    "useless comments for introduce widget coupling" : {
+                        "comment" : "widget coupling is a dangerous feature so the user needs to know exactly what will be doing",
+                        "gang_index" : "0x5A420606=1514276358",
+                        "gang_magic" : "0x5A",
+                        "major_type" : 4,
+                        "minor_type" : 2,
+                        "leader_idx" : 6,
+                        "unique_idx" : 6
+                    }
+                },
+                "list_item": [
+                    {
+                        "item_name": "low"
+                    },
+                    {
+                        "item_name": "mid"
+                    },
+                    {
+                        "item_name": "high"
+                    }
+                ]
+            },
+            {
+                "widget_index": 7,
+                "widget_type": "switch",
+                "widget_name": "fc subscription: batch test-switch",
+                "user_data" : {
+                    "trigger_action" : "DjiTestWidget_FcSubscriptionBatchCoupledSwitchAction",
+                    "ganged_index" : 1514276359,
+                    "useless comments for introduce widget coupling" : {
+                        "gang_index" : "0x5A420607=1514276359",
+                        "gang_magic" : "0x5A",
+                        "major_type" : 4,
+                        "minor_type" : 2,
+                        "leader_idx" : 6,
+                        "unique_idx" : 7
+                    }
+                }
+            },
+            {
+                "widget_index": 9,
+                "widget_type": "button",
+                "widget_name": " "
+            },
+            {
+                "widget_index": 10,
+                "widget_type": "button",
+                "widget_name": "camera simulator",
+                "user_data" : {
+                    "trigger_action" : "DjiTestWidget_CameraSimulatorButtonAction"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 6
+                }
+            },
+            {
+                "widget_index": 20,
+                "widget_type": "list",
+                "widget_name": "Payload list",
+                "list_item": [
+                    {
+                        "item_name": "FPV"
+                    },
+                    {
+                        "item_name": "main"
+                    },
+                    {
+                        "item_name": "vice"
+                    },
+                    {
+                        "item_name": "top"
+                    },
+                    {
+                        "item_name": "E-Port"
+                    }
+                ],
+                "user_data" : {
+                    "ganged_index" : 1514279956,
+                    "trigger_action" : ""
+                }
+            },
+            {
+                "widget_index": 21,
+                "widget_type": "switch",
+                "widget_name": "live view",
+                "user_data" : {
+                    "ganged_index" : 1514279957,
+                    "trigger_action" : "DjiTestWidget_LiveViewCoupledSwitchAction"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 21
+                }
+            },
+            {
+                "widget_index": 30,
+                "widget_type": "list",
+                "widget_name": "depth image: direction",
+                "user_data" : {
+                    "ganged_index" : 1514282526
+                },
+                "list_item": [
+                    {
+                        "item_name": "down"
+                    },
+                    {
+                        "item_name": "front"
+                    },
+                    {
+                        "item_name": "rear"
+                    },
+                    {
+                        "item_name": "up"
+                    },
+                    {
+                        "item_name": "left"
+                    },
+                    {
+                        "item_name": "right"
+                    }
+                ]
+            },
+            {
+                "widget_index": 31,
+                "widget_type": "switch",
+                "widget_name": "depth image: switch",
+                "user_data" : {
+                    "ganged_index" : 1514282527,
+                    "trigger_action" : "DjiTestWidget_DepthImageCoupledSwitchAction"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 31
+                }
+            },
+            {
+                "widget_index": 250,
+                "widget_type": "int_input_box",
+                "widget_name": "HMS:Interposer[bits:24~16-Level|15~0-Code]",
+                "user_data" : {
+                    "trigger_action" : "DjiTestWidget_HMSIntInputBoxAction"
+                }
+            },
+            {
+                "widget_index": 255,
+                "widget_type": "button",
+                "widget_name": " "
+            }
+        ]
+    }
+}

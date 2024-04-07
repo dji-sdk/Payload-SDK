@@ -379,15 +379,8 @@ static void *DjiTest_StereoImagesDisplayTask(void *arg)
                 sprintf(&showFpsString[i][0], "%s%d", fpsStr, fps);
             }
             timePrev[i] = timeNow[i];
-#ifdef OPEN_CV_VERSION_3
-            cv::putText(cv_img_stereo, &showFpsString[i][0], cv::Point(5, 20),
-                        CV_FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
-#endif
-
-#ifdef OPEN_CV_VERSION_4
             cv::putText(cv_img_stereo, &showFpsString[i][0], cv::Point(5, 20),
                         cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
-#endif
         }
         cv::imshow(nameStr, cv_img_stereo);
         cv::waitKey(1);

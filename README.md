@@ -1,7 +1,7 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.8.0-cyan.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-cyan.svg)
+![](https://img.shields.io/badge/version-V3.8.1-purple.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## What is the DJI Payload SDK?
@@ -23,20 +23,22 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.8.0. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.8.1. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* Added support for the M3D series models
-* Fixed memory leak in the HMS Sample
-* Resolved compilation errors of Sample header files in certain environments
-* Fixed unexpected crashes in C++ Sample when attempting to use unsupported features
-* Enhanced prompts for camera Sample file downloads
-* Optimized some improper uses of CMake in samples
-* Change firmware version numbers in the PSDK Sample now align across DJI Assistant 2 and Pilot 2.
-> Note: DJI Assistant 2 prevents firmware downgrading during payload upgrades. Ensure your upgrade package's name (the version number) is higher than the payload's reported firmware version.
-> To comply with DJI Assistant 2 verification: You can simply rename your payload firmware upgrade package to make it valid, or maintain the previous practice of independently setting a version number to be checked during upgrades.
-* In the STM32 FreeRTOS Sample, the heap size has been increased to 90,000 bytes.
-> This may cause startup or build failures on some devices. You can adjust the stack size according to the business requirements of your hardware.
+* Removed the camera management module interface DjiCameraManager_GetPhotoBurstCount.
+* Removed the AEB photography function in the camera management module.
+* Fixed the issue where subscribing to real-time point cloud data was not byte-aligned on some platforms.
+* Fixed the discrepancy between flight speed units and annotations in the motion planning WP 2.0 feature.
+* Fixed issues with obtaining the camera shooting mode and zoom magnification on the Mavic 3 series drones.
+* Optimized the startup time for PSDK initialization.
+* Complemented the flight control topic CONTROL_DEVICE data structure definition and added related enumeration ranges.
+* Fixed the incorrect zoom multiplier retrieval for the H20N camera.
+* Fixed the issue where custom media file suffix names were not taking effect.
+* Fixed the occasional subscription errors for single battery data in the M300 RTK and M350 RTK.
+* Fixed anomalous Pilot widget values for the M30 series, M300 RTK, and M350 RTK remote controllers.
+* Note: Streamlined the toolchain for compiling PSDK, removing low-usage toolchain libraries.
+> We have stopped offering some toolchains on GitHub. If you have trouble building your project, reach out to the SDK Support Team for help.
 
 ## License
 

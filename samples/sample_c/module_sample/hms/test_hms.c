@@ -212,7 +212,7 @@ static T_DjiReturnCode DjiTest_HmsManagerInit(void)
         return returnCode;
     }
 
-    snprintf(tempFileDirPath, HMS_DIR_PATH_LEN_MAX, "%s/data/hms_2023_08_22.json", curFileDirPath);
+    snprintf(tempFileDirPath, HMS_DIR_PATH_LEN_MAX, "%s/data/hms.json", curFileDirPath);
 
     returnCode = UtilFile_GetFileSizeByPath(tempFileDirPath, &fileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
