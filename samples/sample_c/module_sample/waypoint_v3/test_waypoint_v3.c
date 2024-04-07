@@ -42,6 +42,7 @@ static T_DjiWaypointV3MissionState s_lastWaypointV3MissionState = {0};
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiTest_WaypointV3MissionStateCallback(T_DjiWaypointV3MissionState missionState);
 static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3ActionState actionState);
+static T_DjiReturnCode DjiTest_WaypointV3WaitEndFlightStatus(T_DjiFcSubscriptionFlightStatus status);
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
@@ -136,8 +137,6 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
         goto close_file;
     }
 
-    osalHandler->TaskSleepMs(2000);
-
 close_file:
 #ifdef SYSTEM_ARCH_LINUX
     returnCode = fclose(kmzFile);
@@ -155,21 +154,49 @@ close_file:
         goto out;
     }
 
-    do {
-        osalHandler->TaskSleepMs(2000);
+    USER_LOG_INFO("The aircraft is on the ground and motors are stoped...");
+    returnCode = DjiTest_WaypointV3WaitEndFlightStatus(DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_STOPED);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Wait end flight status error.");
+        goto out;
+    }
 
-        returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
-                                                            (uint8_t *) &flightStatus,
-                                                            sizeof(T_DjiFcSubscriptionFlightStatus),
-                                                            &flightStatusTimestamp);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", returnCode);
-        }
+    USER_LOG_INFO("The aircraft is on the ground and motors are rotating...");
+    returnCode = DjiTest_WaypointV3WaitEndFlightStatus(DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_ON_GROUND);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Wait end flight status error.");
+        goto out;
+    }
 
-        USER_LOG_INFO("flight status: %d", flightStatus);
-    } while(flightStatus == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR);
+    USER_LOG_INFO("The aircraft is in the air...");
+    returnCode = DjiTest_WaypointV3WaitEndFlightStatus(DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Wait end flight status error.");
+        goto out;
+    }
 
-    USER_LOG_INFO("The aircraft is on the ground now.");
+    USER_LOG_INFO("The aircraft is on the ground and motors are rotating...");
+    returnCode = DjiTest_WaypointV3WaitEndFlightStatus(DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_ON_GROUND);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Wait end flight status error.");
+        goto out;
+    }
+
+    returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
+                                                        (uint8_t *) &flightStatus,
+                                                        sizeof(T_DjiFcSubscriptionFlightStatus),
+                                                        &flightStatusTimestamp);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", returnCode);
+        goto out;
+    }
+
+    if (flightStatus != DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_STOPED) {
+        USER_LOG_ERROR("Aircraft's flight status error, motors are not stoped.");
+        goto out;
+    }
+
+    USER_LOG_INFO("The aircraft is on the ground now, and motor are stoped.");
 
 out:
 #ifdef SYSTEM_ARCH_LINUX
@@ -205,6 +232,27 @@ static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3Acti
         actionState.state,
         actionState.currentWaypointIndex, actionState.wayLineId,
         actionState.actionGroupId, actionState.actionId);
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_WaypointV3WaitEndFlightStatus(T_DjiFcSubscriptionFlightStatus status) {
+    T_DjiReturnCode returnCode;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiDataTimestamp flightStatusTimestamp = {0};
+    T_DjiFcSubscriptionFlightStatus flightStatus = 0;
+
+    do {
+        osalHandler->TaskSleepMs(20);
+
+        returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
+                                                            (uint8_t *)&flightStatus,
+                                                            sizeof(T_DjiFcSubscriptionFlightStatus),
+                                                            &flightStatusTimestamp);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get value of topic flight status failed, error code:0x%08llX", returnCode);
+        }
+    } while(flightStatus == status);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

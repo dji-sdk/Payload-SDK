@@ -25,7 +25,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <dji_logger.h>
 #include "hal_uart.h"
-#include "dji_config_manager.h"
+#include "utils/dji_config_manager.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define UART_DEV_NAME_STR_SIZE             (128)

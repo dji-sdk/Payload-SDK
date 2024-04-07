@@ -541,6 +541,15 @@ T_DjiReturnCode DjiFlightController_SetGoHomeAltitude(E_DjiFlightControllerGoHom
 T_DjiReturnCode DjiFlightController_GetGoHomeAltitude(E_DjiFlightControllerGoHomeAltitude *altitude);
 
 /**
+ * @brief Get country code.
+ * @param countryCode: Pointer of buffer to return country code. The country code indicates the current country or
+ * region where the aircraft is located. Please refer to the ISO 3166-1 code table for the specific meaning of the
+ * country code.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetCountryCode(uint16_t *countryCode);
+
+/**
  * @brief Request go home action when the UAV is in the air
  * @return Execution result.
  */

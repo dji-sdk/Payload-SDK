@@ -42,11 +42,11 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
-#define DJI_PI                     (3.14159265358979323846f)
-#define DJI_FILE_NAME_SIZE_MAX     256
-#define DJI_FILE_PATH_SIZE_MAX     (DJI_FILE_NAME_SIZE_MAX + 256)
-#define DJI_IP_ADDR_STR_SIZE_MAX   15
-#define DJI_MD5_BUFFER_LEN         16
+#define DJI_PI                                  (3.14159265358979323846f)
+#define DJI_FILE_NAME_SIZE_MAX                  256
+#define DJI_FILE_PATH_SIZE_MAX                  (DJI_FILE_NAME_SIZE_MAX + 256)
+#define DJI_IP_ADDR_STR_SIZE_MAX                15
+#define DJI_MD5_BUFFER_LEN                      16
 
 #define DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET    24u
 #define DJI_SUBSCRIPTION_MODULE_INDEX_MASK      0xFF000000u
@@ -54,9 +54,9 @@ extern "C" {
 #define DJI_SUBSCRIPTION_TOPIC_CODE_MASK        0x00FFFFFFu
 
 #define DJI_DATA_SUBSCRIPTION_TOPIC(subscriptionModule, topicCode) \
-(uint32_t)\
-(((((uint32_t)(subscriptionModule)) << (DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET)) & (DJI_SUBSCRIPTION_MODULE_INDEX_MASK)) | \
-((((uint32_t)(topicCode)) << (DJI_SUBSCRIPTION_TOPIC_CODE_OFFSET)) & (DJI_SUBSCRIPTION_TOPIC_CODE_MASK)))
+    (uint32_t)\
+    (((((uint32_t)(subscriptionModule)) << (DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET)) & (DJI_SUBSCRIPTION_MODULE_INDEX_MASK)) | \
+    ((((uint32_t)(topicCode)) << (DJI_SUBSCRIPTION_TOPIC_CODE_OFFSET)) & (DJI_SUBSCRIPTION_TOPIC_CODE_MASK)))
 
 /**
  * @brief Type define double as dji_f64_t.
@@ -73,82 +73,101 @@ typedef float dji_f32_t;
 typedef uint64_t T_DjiReturnCode;
 
 typedef enum {
-    DJI_MOUNT_POSITION_TYPE_UNKNOWN = 0,
-    DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT = 1,
-    DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT = 2,
+    DJI_MOUNT_POSITION_TYPE_UNKNOWN             = 0,
+    DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT        = 1,
+    DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT      = 2,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3
 } E_DjiMountPositionType;
 
 typedef enum {
-    DJI_MOUNT_POSITION_UNKNOWN = 0,
-    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 = 1,
-    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 = 2,
-    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3 = 3,
-    DJI_MOUNT_POSITION_EXTENSION_PORT = 4,
-    DJI_MOUNT_POSITION_EXTENSION_LITE_PORT = 5,
+    DJI_MOUNT_POSITION_UNKNOWN                  = 0,
+    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1         = 1,
+    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2         = 2,
+    DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3         = 3,
+    DJI_MOUNT_POSITION_EXTENSION_PORT           = 4,
+    DJI_MOUNT_POSITION_EXTENSION_LITE_PORT      = 5,
 } E_DjiMountPosition;
 
 typedef enum {
-    DJI_AIRCRAFT_SERIES_UNKNOWN = 0,
-    DJI_AIRCRAFT_SERIES_M200_V2 = 1,
-    DJI_AIRCRAFT_SERIES_M300 = 2,
-    DJI_AIRCRAFT_SERIES_M30 = 3,
-    DJI_AIRCRAFT_SERIES_M3 = 4,
-    DJI_AIRCRAFT_SERIES_M350 = 5,
-    DJI_AIRCRAFT_SERIES_M3D = 6,
-    DJI_AIRCRAFT_SERIES_FC30 = 7,
+    DJI_AIRCRAFT_SERIES_UNKNOWN                 = 0,
+    DJI_AIRCRAFT_SERIES_M200_V2                 = 1,
+    DJI_AIRCRAFT_SERIES_M300                    = 2,
+    DJI_AIRCRAFT_SERIES_M30                     = 3,
+    DJI_AIRCRAFT_SERIES_M3                      = 4,
+    DJI_AIRCRAFT_SERIES_M350                    = 5,
+    DJI_AIRCRAFT_SERIES_M3D                     = 6,
+    DJI_AIRCRAFT_SERIES_FC30                    = 7,
 } E_DjiAircraftSeries;
 
 typedef enum {
-    DJI_AIRCRAFT_TYPE_UNKNOWN = 0, /*!< Aircraft type is unknown. */
-    DJI_AIRCRAFT_TYPE_M200_V2 = 44, /*!< Aircraft type is Matrice 200 V2. */
-    DJI_AIRCRAFT_TYPE_M210_V2 = 45, /*!< Aircraft type is Matrice 220 V2. */
-    DJI_AIRCRAFT_TYPE_M210RTK_V2 = 46, /*!< Aircraft type is Matrice 210 RTK V2. */
-    DJI_AIRCRAFT_TYPE_M300_RTK = 60, /*!< Aircraft type is Matrice 300 RTK. */
-    DJI_AIRCRAFT_TYPE_M30 = 67, /*!< Aircraft type is Matrice 30. */
-    DJI_AIRCRAFT_TYPE_M30T = 68, /*!< Aircraft type is Matrice 30T. */
-    DJI_AIRCRAFT_TYPE_M3E = 77, /*!< Aircraft type is Mavic 3E. */
-    DJI_AIRCRAFT_TYPE_FC30 = 78, /* !<Aircraft type is FlyCart 30> */
-    DJI_AIRCRAFT_TYPE_M3T = 79, /*!< Aircraft type is Mavic 3T. */
-    DJI_AIRCRAFT_TYPE_M350_RTK = 89, /*!< Aircraft type is Matrice 350 RTK. */
-    DJI_AIRCRAFT_TYPE_M3D = 91, /*!< Aircraft type is Matrice 3D. */
-    DJI_AIRCRAFT_TYPE_M3TD = 93, /*!< Aircraft type is Matrice 3TD. */
+    DJI_AIRCRAFT_TYPE_UNKNOWN                   = 0, /*!< Aircraft type is unknown. */
+    DJI_AIRCRAFT_TYPE_M200_V2                   = 44, /*!< Aircraft type is Matrice 200 V2. */
+    DJI_AIRCRAFT_TYPE_M210_V2                   = 45, /*!< Aircraft type is Matrice 220 V2. */
+    DJI_AIRCRAFT_TYPE_M210RTK_V2                = 46, /*!< Aircraft type is Matrice 210 RTK V2. */
+    DJI_AIRCRAFT_TYPE_M300_RTK                  = 60, /*!< Aircraft type is Matrice 300 RTK. */
+    DJI_AIRCRAFT_TYPE_M30                       = 67, /*!< Aircraft type is Matrice 30. */
+    DJI_AIRCRAFT_TYPE_M30T                      = 68, /*!< Aircraft type is Matrice 30T. */
+    DJI_AIRCRAFT_TYPE_M3E                       = 77, /*!< Aircraft type is Mavic 3E. */
+    DJI_AIRCRAFT_TYPE_FC30                      = 78, /* !<Aircraft type is FlyCart 30> */
+    DJI_AIRCRAFT_TYPE_M3T                       = 79, /*!< Aircraft type is Mavic 3T. */
+    DJI_AIRCRAFT_TYPE_M350_RTK                  = 89, /*!< Aircraft type is Matrice 350 RTK. */
+    DJI_AIRCRAFT_TYPE_M3D                       = 91, /*!< Aircraft type is Matrice 3D. */
+    DJI_AIRCRAFT_TYPE_M3TD                      = 93, /*!< Aircraft type is Matrice 3TD. */
 } E_DjiAircraftType;
 
 /**
  * @brief Camera type.
  */
 typedef enum {
-    DJI_CAMERA_TYPE_UNKNOWN = 0, /*!< Camera type is unknown. */
-    DJI_CAMERA_TYPE_Z30 = 20, /*!< Camera type is Z30. */
-    DJI_CAMERA_TYPE_XT2 = 26, /*!< Camera type is XT2. */
-    DJI_CAMERA_TYPE_PSDK = 31, /*!< Camera type is third party camera based on Payload SDK. */
-    DJI_CAMERA_TYPE_XTS = 41, /*!< Camera type is XT S. */
-    DJI_CAMERA_TYPE_H20 = 42, /*!< Camera type is H20. */
-    DJI_CAMERA_TYPE_H20T = 43, /*!< Camera type is H20T. */
-    DJI_CAMERA_TYPE_H20N = 61, /*!< Camera type is H20N. */
-    DJI_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
+    DJI_CAMERA_TYPE_UNKNOWN                     = 0, /*!< Camera type is unknown. */
+    DJI_CAMERA_TYPE_Z30                         = 20, /*!< Camera type is Z30. */
+    DJI_CAMERA_TYPE_XT2                         = 26, /*!< Camera type is XT2. */
+    DJI_CAMERA_TYPE_PSDK                        = 31, /*!< Camera type is third party camera based on Payload SDK. */
+    DJI_CAMERA_TYPE_XTS                         = 41, /*!< Camera type is XT S. */
+    DJI_CAMERA_TYPE_H20                         = 42, /*!< Camera type is H20. */
+    DJI_CAMERA_TYPE_H20T                        = 43, /*!< Camera type is H20T. */
+    DJI_CAMERA_TYPE_H20N                        = 61, /*!< Camera type is H20N. */
+    DJI_CAMERA_TYPE_P1                          = 50, /*!< Camera type is P1. */
     DJI_CAMERA_TYPE_L1, /*!< Camera type is L1. */
-    DJI_CAMERA_TYPE_L2, /*!< Camera type is L2. */
-    DJI_CAMERA_TYPE_M30, /*!< Camera type is M30. */
-    DJI_CAMERA_TYPE_M30T, /*!< Camera type is M30T. */
-    DJI_CAMERA_TYPE_M3E, /*!< Camera type is M3E. */
-    DJI_CAMERA_TYPE_M3T, /*!< Camera type is M3T. */
-    DJI_CAMERA_TYPE_M3D, /*!< Camera type is Matrice 3D. */
-    DJI_CAMERA_TYPE_M3TD, /*!< Camera type is Matrice 3TD. */
+    DJI_CAMERA_TYPE_L2                          = 84, /*!< Camera type is L2. */
+    DJI_CAMERA_TYPE_M30                         = 52, /*!< Camera type is M30. */
+    DJI_CAMERA_TYPE_M30T                        = 53, /*!< Camera type is M30T. */
+    DJI_CAMERA_TYPE_M3E                         = 66, /*!< Camera type is M3E. */
+    DJI_CAMERA_TYPE_M3T                         = 67, /*!< Camera type is M3T. */
+    DJI_CAMERA_TYPE_M3D                         = 80, /*!< Camera type is Matrice 3D. */
+    DJI_CAMERA_TYPE_M3TD                        = 81, /*!< Camera type is Matrice 3TD. */
 } E_DjiCameraType;
+
+/**
+ * @brief Camera supported media file subtype.
+ */
+typedef enum
+{
+    DJI_DOWNLOAD_FILE_ORG                       = 0, /*!< Media sub file origin data type. */
+    DJI_DOWNLOAD_FILE_LDR                       = 21, /*!< Media sub file cloud point raw data type. */
+    DJI_DOWNLOAD_FILE_SIG                       = 22, /*!< Media sub file point cloud signature type. */
+    DJI_DOWNLOAD_FILE_RTK                       = 23, /*!< Media sub file point cloud real-time kinematic type. */
+    DJI_DOWNLOAD_FILE_CLC                       = 25, /*!< Media sub file radar-camera external reference type. */
+    DJI_DOWNLOAD_FILE_CLI                       = 26, /*!< Media sub file radar-IMU external reference type. */
+    DJI_DOWNLOAD_FILE_IMU                       = 27, /*!< Media sub file IMU data type. */
+    DJI_DOWNLOAD_FILE_RTL                       = 28, /*!< Media sub file RTK boom data type. */
+    DJI_DOWNLOAD_FILE_RTB                       = 29, /*!< Media sub file RTK base station data type. */
+    DJI_DOWNLOAD_FILE_RTS                       = 30, /*!< Media sub file RTK secondary antenna data type. */
+    DJI_DOWNLOAD_FILE_RPOS                      = 31, /*!< Media sub file real-time fusion of attitude and position data type. */
+} E_DjiCameraMediaFileSubType;
 
 /**
  * @brief Camera supported media file type.
  */
 typedef enum {
-    DJI_CAMERA_FILE_TYPE_JPEG = 0, /*!< Media file JPEG type. */
-    DJI_CAMERA_FILE_TYPE_DNG = 1, /*!< Media file DNG type. */
-    DJI_CAMERA_FILE_TYPE_MOV = 2, /*!< Media file MOV type. */
-    DJI_CAMERA_FILE_TYPE_MP4 = 3, /*!< Media file MP4 type. */
-    DJI_CAMERA_FILE_TYPE_TIFF = 5, /*!< Media file TIFF type. */
-    DJI_CAMERA_FILE_TYPE_PCD = 24, /*!< Media file point cloud type. */
-    DJI_CAMERA_FILE_TYPE_UNKNOWN = 255, /*!< Media file unknown type. */
+    DJI_CAMERA_FILE_TYPE_JPEG                   = 0, /*!< Media file JPEG type. */
+    DJI_CAMERA_FILE_TYPE_DNG                    = 1, /*!< Media file DNG type. */
+    DJI_CAMERA_FILE_TYPE_MOV                    = 2, /*!< Media file MOV type. */
+    DJI_CAMERA_FILE_TYPE_MP4                    = 3, /*!< Media file MP4 type. */
+    DJI_CAMERA_FILE_TYPE_TIFF                   = 5, /*!< Media file TIFF type. */
+    DJI_CAMERA_FILE_TYPE_LDRT                   = 24, /*!< Media file LDRT type. */
+    DJI_CAMERA_FILE_TYPE_RPT                    = 25, /*!< Media file RPT type. */
+    DJI_CAMERA_FILE_TYPE_UNKNOWN                = 255, /*!< Media file unknown type. */
 } E_DjiCameraMediaFileType;
 
 /**
@@ -164,39 +183,39 @@ typedef struct {
  * @brief Gimbal work mode, specifies how gimbal follow aircraft movement.
  */
 typedef enum {
-    DJI_GIMBAL_MODE_FREE = 0, /*!< Free mode, fix gimbal attitude in the ground coordinate, ignoring movement of aircraft. */
-    DJI_GIMBAL_MODE_FPV = 1, /*!< FPV (First Person View) mode, only control roll and yaw angle of gimbal in the ground coordinate to follow aircraft. */
-    DJI_GIMBAL_MODE_YAW_FOLLOW = 2, /*!< Yaw follow mode, only control yaw angle of gimbal in the ground coordinate to follow aircraft. */
+    DJI_GIMBAL_MODE_FREE                        = 0, /*!< Free mode, fix gimbal attitude in the ground coordinate, ignoring movement of aircraft. */
+    DJI_GIMBAL_MODE_FPV                         = 1, /*!< FPV (First Person View) mode, only control roll and yaw angle of gimbal in the ground coordinate to follow aircraft. */
+    DJI_GIMBAL_MODE_YAW_FOLLOW                  = 2, /*!< Yaw follow mode, only control yaw angle of gimbal in the ground coordinate to follow aircraft. */
 } E_DjiGimbalMode;
 
 /**
  * @brief Gimbal rotation mode, specifies control style.
  */
 typedef enum {
-    DJI_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE = 0, /*!< Relative angle rotation mode, represents rotating gimbal specified angles based on current angles. */
-    DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE = 1, /*!< Absolute angle rotation mode, represents rotating gimbal to specified angles in the ground coordinate. */
-    DJI_GIMBAL_ROTATION_MODE_SPEED = 2, /*!< Speed rotation mode, specifies rotation speed of gimbal in the ground coordinate. */
+    DJI_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE     = 0, /*!< Relative angle rotation mode, represents rotating gimbal specified angles based on current angles. */
+    DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE     = 1, /*!< Absolute angle rotation mode, represents rotating gimbal to specified angles in the ground coordinate. */
+    DJI_GIMBAL_ROTATION_MODE_SPEED              = 2, /*!< Speed rotation mode, specifies rotation speed of gimbal in the ground coordinate. */
 } E_DjiGimbalRotationMode;
 
 /**
  * @brief Mobile APP system language.
  */
 typedef enum {
-    DJI_MOBILE_APP_LANGUAGE_UNKNOWN = 255, /*!< The system language of the mobile app is unknown */
-    DJI_MOBILE_APP_LANGUAGE_ENGLISH = 0, /*!< The system language of the mobile app is English */
-    DJI_MOBILE_APP_LANGUAGE_CHINESE = 1, /*!< The system language of the mobile app is Chinese */
-    DJI_MOBILE_APP_LANGUAGE_JAPANESE = 2, /*!< The system language of the mobile app is Japanese */
-    DJI_MOBILE_APP_LANGUAGE_FRENCH = 3, /*!< The system language of the mobile app is French */
+    DJI_MOBILE_APP_LANGUAGE_UNKNOWN             = 255, /*!< The system language of the mobile app is unknown */
+    DJI_MOBILE_APP_LANGUAGE_ENGLISH             = 0, /*!< The system language of the mobile app is English */
+    DJI_MOBILE_APP_LANGUAGE_CHINESE             = 1, /*!< The system language of the mobile app is Chinese */
+    DJI_MOBILE_APP_LANGUAGE_JAPANESE            = 2, /*!< The system language of the mobile app is Japanese */
+    DJI_MOBILE_APP_LANGUAGE_FRENCH              = 3, /*!< The system language of the mobile app is French */
 } E_DjiMobileAppLanguage;
 
 /**
  * @brief Mobile APP screen size type.
  */
 typedef enum {
-    DJI_MOBILE_APP_SCREEN_TYPE_UNKNOWN = 255, /*!< Mobile APP screen type is unknown. */
-    DJI_MOBILE_APP_SCREEN_TYPE_BIG_SCREEN = 0, /*!< The big screen of mobile device refers to a screen
+    DJI_MOBILE_APP_SCREEN_TYPE_UNKNOWN          = 255, /*!< Mobile APP screen type is unknown. */
+    DJI_MOBILE_APP_SCREEN_TYPE_BIG_SCREEN       = 0, /*!< The big screen of mobile device refers to a screen
                                                                 * size greater than or equal to 6 inches. */
-    DJI_MOBILE_APP_SCREEN_TYPE_LITTLE_SCREEN = 1, /*!< The little screen of mobile device refers to a
+    DJI_MOBILE_APP_SCREEN_TYPE_LITTLE_SCREEN    = 1, /*!< The little screen of mobile device refers to a
                                                                     * screen size less than 6 inches. */
 } E_DjiMobileAppScreenType;
 
@@ -204,20 +223,20 @@ typedef enum {
  * @brief Subscription frequency type.
  */
 typedef enum {
-    DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ = 1,
-    DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ = 5,
-    DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ = 10,
-    DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ = 50,
-    DJI_DATA_SUBSCRIPTION_TOPIC_100_HZ = 100,
-    DJI_DATA_SUBSCRIPTION_TOPIC_200_HZ = 200,
-    DJI_DATA_SUBSCRIPTION_TOPIC_400_HZ = 400,
+    DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ            = 1,
+    DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ            = 5,
+    DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ           = 10,
+    DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ           = 50,
+    DJI_DATA_SUBSCRIPTION_TOPIC_100_HZ          = 100,
+    DJI_DATA_SUBSCRIPTION_TOPIC_200_HZ          = 200,
+    DJI_DATA_SUBSCRIPTION_TOPIC_400_HZ          = 400,
 } E_DjiDataSubscriptionTopicFreq;
 
 /**
  * @brief DJI module enum for defining data subscription module.
  */
 typedef enum {
-    DJI_DATA_SUBSCRIPTION_MODULE_FC = 0,
+    DJI_DATA_SUBSCRIPTION_MODULE_FC             = 0,
     DJI_DATA_SUBSCRIPTION_MODULE_CAMERA,
     DJI_DATA_SUBSCRIPTION_MODULE_ERROR,
 } E_DjiDataSubscriptionModule;
@@ -226,14 +245,14 @@ typedef enum {
  * @brief SDK adapter type.
  */
 typedef enum {
-    DJI_SDK_ADAPTER_TYPE_UNKNOWN = 0, /*!< SDK adapter type is unknown. */
-    DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 = 1, /*!< SDK adapter type is Skyport V2. */
-    DJI_SDK_ADAPTER_TYPE_XPORT = 2, /*!< SDK adapter type is X-Port. */
-    DJI_SDK_ADAPTER_TYPE_NONE = 3, /*!< don't have any adapter outside */
+    DJI_SDK_ADAPTER_TYPE_UNKNOWN                = 0, /*!< SDK adapter type is unknown. */
+    DJI_SDK_ADAPTER_TYPE_SKYPORT_V2             = 1, /*!< SDK adapter type is Skyport V2. */
+    DJI_SDK_ADAPTER_TYPE_XPORT                  = 2, /*!< SDK adapter type is X-Port. */
+    DJI_SDK_ADAPTER_TYPE_NONE                   = 3, /*!< don't have any adapter outside */
 } E_DjiSdkAdapterType;
 
 typedef enum {
-    DJI_CHANNEL_ADDRESS_UNKNOWN = 0,
+    DJI_CHANNEL_ADDRESS_UNKNOWN                 = 0,
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO2,
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO3,
@@ -265,47 +284,47 @@ typedef struct {
  * @brief Camera zoom speed.
  */
 typedef enum {
-    DJI_CAMERA_ZOOM_SPEED_SLOWEST = 72, /*!< Lens zooms in slowest speed. */
-    DJI_CAMERA_ZOOM_SPEED_SLOW = 73, /*!< Lens zooms in slow speed. */
-    DJI_CAMERA_ZOOM_SPEED_MODERATELY_SLOW = 74, /*!< Lens zooms in speed slightly slower than normal speed. */
-    DJI_CAMERA_ZOOM_SPEED_NORMAL = 75, /*!< Lens zooms in normal speed. */
-    DJI_CAMERA_ZOOM_SPEED_MODERATELY_FAST = 76, /*!< Lens zooms very in speed slightly faster than normal speed. */
-    DJI_CAMERA_ZOOM_SPEED_FAST = 77, /*!< Lens zooms very in fast speed. */
-    DJI_CAMERA_ZOOM_SPEED_FASTEST = 78, /*!< Lens zooms very in fastest speed. */
+    DJI_CAMERA_ZOOM_SPEED_SLOWEST               = 72, /*!< Lens zooms in slowest speed. */
+    DJI_CAMERA_ZOOM_SPEED_SLOW                  = 73, /*!< Lens zooms in slow speed. */
+    DJI_CAMERA_ZOOM_SPEED_MODERATELY_SLOW       = 74, /*!< Lens zooms in speed slightly slower than normal speed. */
+    DJI_CAMERA_ZOOM_SPEED_NORMAL                = 75, /*!< Lens zooms in normal speed. */
+    DJI_CAMERA_ZOOM_SPEED_MODERATELY_FAST       = 76, /*!< Lens zooms very in speed slightly faster than normal speed. */
+    DJI_CAMERA_ZOOM_SPEED_FAST                  = 77, /*!< Lens zooms very in fast speed. */
+    DJI_CAMERA_ZOOM_SPEED_FASTEST               = 78, /*!< Lens zooms very in fastest speed. */
 } E_DjiCameraZoomSpeed;
 
 typedef enum {
     /*! The number of pictures to continuously take each time in BURST mode is 2
      */
-    DJI_CAMERA_BURST_COUNT_2 = 2,
+    DJI_CAMERA_BURST_COUNT_2                    = 2,
     /*! The number of pictures to continuously take each time in BURST mode is 3
      */
-    DJI_CAMERA_BURST_COUNT_3 = 3,
+    DJI_CAMERA_BURST_COUNT_3                    = 3,
     /*! The number of pictures to continuously take each time in BURST mode is 5
      */
-    DJI_CAMERA_BURST_COUNT_5 = 5,
+    DJI_CAMERA_BURST_COUNT_5                    = 5,
     /*! The number of pictures to continuously take each time in BURST mode is 7
      */
-    DJI_CAMERA_BURST_COUNT_7 = 7,
+    DJI_CAMERA_BURST_COUNT_7                    = 7,
     /*! The number of pictures to continuously take at one time in BURST mode is
      * 10, Only supported by X4S camera, X5S camera and Phantom 4 Pro camera.
      */
-    DJI_CAMERA_BURST_COUNT_10 = 10,
+    DJI_CAMERA_BURST_COUNT_10                   = 10,
     /*! The number of pictures to continuously take at one time in BURST mode is
      * 14, Only supported by X4S camera, X5S camera and Phantom 4 Pro camera.
      */
-    DJI_CAMERA_BURST_COUNT_14 = 14,
+    DJI_CAMERA_BURST_COUNT_14                   = 14,
     /*!	The camera burst shoot count value is unknown.
      */
-    DJI_CAMERA_BURST_COUNT_KNOWN = 0xFF,
+    DJI_CAMERA_BURST_COUNT_KNOWN                = 0xFF,
 } E_DjiCameraBurstCount;
 
 /**
  * @brief Camera zoom direction.
  */
 typedef enum {
-    DJI_CAMERA_ZOOM_DIRECTION_OUT = 0, /*!< The lens moves in the far direction, the zoom factor becomes smaller. */
-    DJI_CAMERA_ZOOM_DIRECTION_IN = 1, /*!< The lens moves in the near direction, the zoom factor becomes larger. */
+    DJI_CAMERA_ZOOM_DIRECTION_OUT               = 0, /*!< The lens moves in the far direction, the zoom factor becomes smaller. */
+    DJI_CAMERA_ZOOM_DIRECTION_IN                = 1, /*!< The lens moves in the near direction, the zoom factor becomes larger. */
 } E_DjiCameraZoomDirection;
 #pragma pack (1)
 

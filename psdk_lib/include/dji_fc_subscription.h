@@ -729,6 +729,64 @@ typedef enum {
     DJI_FC_SUBSCRIPTION_BATTERY_SOC_INVALID = 4, /*!< Battery SOC state is invalid. */
 } E_DJIFcSubscriptionBatterySocState;
 
+/**
+ * @brief Flight control mode.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_UNKNOWN = 0,
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_VEL_YAW_ANG = 1,   /*!< Horizontal mode is angle, vertical mode is velocity, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_VEL_YAW_RAT = 2,   /*!< Horizontal mode is angle, vertical mode is velocity, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_VEL_YAW_ANG = 3,   /*!< Horizontal mode is velocity, vertical mode is velocity, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_VEL_YAW_RAT = 4,   /*!< Horizontal mode is velocity, vertical mode is velocity, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_VEL_YAW_ANG = 5,   /*!< Horizontal mode is position, vertical mode is velocity, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_VEL_YAW_RAT = 6,   /*!< Horizontal mode is position, vertical mode is velocity, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_POS_YAW_ANG = 7,   /*!< Horizontal mode is angle, vertical mode is position, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_POS_YAW_RAT = 8,   /*!< Horizontal mode is angle, vertical mode is position, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_POS_YAW_ANG = 9,   /*!< Horizontal mode is velocity, vertical mode is position, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_POS_YAW_RAT = 10,  /*!< Horizontal mode is velocity, vertical mode is position, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_POS_YAW_ANG = 11,  /*!< Horizontal mode is position, vertical mode is position, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_POS_YAW_RAT = 12,  /*!< Horizontal mode is position, vertical mode is position, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_THR_YAW_ANG = 13,  /*!< Horizontal mode is angle, vertical mode is thrust, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_ANG_VER_THR_YAW_RAT = 14,  /*!< Horizontal mode is angle, vertical mode is thrust, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_THR_YAW_ANG = 15,  /*!< Horizontal mode is velocity, vertical mode is thrust, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_VEL_VER_THR_YAW_RAT = 16,  /*!< Horizontal mode is velocity, vertical mode is thrust, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_THR_YAW_ANG = 17,  /*!< Horizontal mode is position, vertical mode is thrust, yaw mode is angle. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_POS_VER_THR_YAW_RAT = 18,  /*!< Horizontal mode is position, vertical mode is thrust, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_AEL_VER_VEL_YAW_RAT = 19,  /*!< Horizontal mode is angle-rate, vertical mode is velocity, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_AEL_VER_POS_YAW_RAT = 20,  /*!< Horizontal mode is angle-rate, vertical mode is thrust, yaw mode is rate. */
+    DJI_FC_SUBSCRIPTION_CONTROL_MODE_HOR_AEL_VER_THR_YAW_RAT = 21,  /*!< Horizontal mode is angle-rate, vertical mode is velocity, yaw mode is rate. */
+} E_DJIFcSubscriptionControlMode;
+
+/**
+ * @brief Flight control authority.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_CONTROL_AUTHORITY_RC = 0, /*!< Authority is in remote control */
+    DJI_FC_SUBSCRIPTION_CONTROL_AUTHORITY_MSDK = 1, /*!< Authority is in MSDK */
+    DJI_FC_SUBSCRIPTION_CONTROL_AUTHORITY_PSDK = 4, /*!< Authority is in PSDK */
+    DJI_FC_SUBSCRIPTION_CONTROL_AUTHORITY_DOCK = 5, /*!< Authority is in dock */
+} E_DJIFcSubscriptionControlAuthority;
+
+/**
+ * @brief Flight control authority change reason.
+ */
+typedef enum {
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_UNKNOWN = 0, /*!< Reason unknown */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_MSDK_REQUEST = 1, /*!< Contro authority changed by MSDK request. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_USER_REQUEST = 2, /*!< Contro authority changed by user request. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_PSDK_REQUEST = 3, /*!< Contro authority changed by PSDK request. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_RC_LOST = 4, /*!< Contro authority changed for remote control lost. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_RC_NOT_P_MODE = 5, /*!< Contro authority changed for remote control not in P mode. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_RC_SWITCH = 6, /*!< Contro authority changed for remote control switching mode. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_RC_PAUSE_STOP = 7, /*!< Contro authority changed for remote control stop key paused. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_RC_ONE_KEY_GO_HOME = 8, /*!< Contro authority changed for remote control go-home key paused. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_BATTERY_LOW_GO_HOME = 9, /*!< Contro authority changed for remote control go-home key paused. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_BATTERY_SUPER_LOW_LANDING = 10, /*!< Contro authority changed for going home caused by low batter power. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_PSDK_LOST = 11, /*!< Contro authority changed for PSDK lost. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_NEAR_BOUNDARY = 13, /*!< Contro authority changed for nearing boundary. */
+    DJI_FC_SUBSCRIPTION_AUTHORITY_CHANGE_REASON_AIRPORT_REQUEST = 14, /*!< Contro authority changed by airport request. */
+} E_DJIFcSubscriptionAuthorityChangeReason;
+
 #pragma pack(1)
 
 /**
@@ -1000,11 +1058,22 @@ typedef struct BatterySingleInfo {
  * @brief struct for TOPIC_CONTROL_DEVICE and data broadcast, return SDK info
  */
 typedef struct SDKCtrlInfo {
-    uint8_t controlMode;      /*!< See CtlrMode in dji_status.hpp*/
-    uint8_t deviceStatus: 3; /*!< 0->rc  1->app  4->serial */
-    uint8_t flightStatus: 1; /*!< 1->opensd  0->close */
-    uint8_t vrcStatus: 1;
-    uint8_t reserved: 3;
+    union {
+        /* Used by M300 & M350 */
+        struct {
+            uint8_t controlMode;     /*!< enum-type: E_DJIFcSubscriptionControlMode. */
+            uint8_t deviceStatus: 3; /*!< 0->rc  1->app  4->psdk */
+            uint8_t flightStatus: 1; /*!< 1->open  0->closed */
+            uint8_t vrcStatus: 1;
+            uint8_t reserved: 3;
+        };
+
+        /* Used by other aircrafts */
+        struct {
+            uint8_t controlAuthority;      /*!< enum-type: E_DJIFcSubscriptionControlAuthority. */
+            uint8_t controlAuthorityChangeReason;     /*!< enum-type: E_DJIFcSubscriptionAuthorityChangeReason. */
+        };
+    };
 } T_DjiFcSubscriptionControlDevice; // pack(1)
 
 /*!

@@ -31,7 +31,6 @@
 #include <dji_aircraft_info.h>
 #include <csignal>
 #include "dji_sdk_config.h"
-#include "dji_config_manager.h"
 
 #include "../common/osal/osal.h"
 #include "../common/osal/osal_fs.h"
@@ -40,6 +39,7 @@
 #include "../manifold2/hal/hal_uart.h"
 #include "../manifold2/hal/hal_network.h"
 
+#include "utils/dji_config_manager.h"
 #include <gimbal_emu/test_payload_gimbal_emu.h>
 #include <camera_emu/test_payload_cam_emu_media.h>
 #include <camera_emu/test_payload_cam_emu_base.h>

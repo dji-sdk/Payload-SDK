@@ -30,7 +30,7 @@
 #include "stdio.h"
 #include "hal_network.h"
 #include "dji_logger.h"
-#include "dji_config_manager.h"
+#include "utils/dji_config_manager.h"
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -63,7 +63,7 @@ T_DjiReturnCode HalNetWork_Init(const char *ipAddr, const char *netMask, T_DjiNe
         strcpy(networkDeviceName, LINUX_NETWORK_DEV);
     }
 
-    snprintf(cmdStr, sizeof(cmdStr), "ifconfig %s up", LINUX_NETWORK_DEV);
+    snprintf(cmdStr, sizeof(cmdStr), "ifconfig %s up", networkDeviceName);
     ret = system(cmdStr);
     if (ret != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Can't open the network."
@@ -72,7 +72,7 @@ T_DjiReturnCode HalNetWork_Init(const char *ipAddr, const char *netMask, T_DjiNe
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    snprintf(cmdStr, sizeof(cmdStr), "ifconfig %s %s netmask %s", LINUX_NETWORK_DEV, ipAddr, netMask);
+    snprintf(cmdStr, sizeof(cmdStr), "ifconfig %s %s netmask %s", networkDeviceName, ipAddr, netMask);
     ret = system(cmdStr);
     if (ret != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Can't config the ip address of network."

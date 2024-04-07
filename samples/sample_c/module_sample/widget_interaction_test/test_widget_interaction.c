@@ -87,12 +87,11 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_CAMMGR_TAP_ZOOM = 20,
     E_DJI_SAMPLE_INDEX_CAMMGR_OPTICAL_ZOOM = 21,
     E_DJI_SAMPLE_INDEX_CAMMGR_SINGLE_PHOTO = 22,
-    E_DJI_SAMPLE_INDEX_CAMMGR_AEB_PHOTO = 23,
-    E_DJI_SAMPLE_INDEX_CAMMGR_BURST_PHOTO = 24,
-    E_DJI_SAMPLE_INDEX_CAMMGR_INTERVAL_PHOTO = 25,
-    E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO = 26,
-    E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD = 27,
-    E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY = 28,
+    E_DJI_SAMPLE_INDEX_CAMMGR_BURST_PHOTO = 23,
+    E_DJI_SAMPLE_INDEX_CAMMGR_INTERVAL_PHOTO = 24,
+    E_DJI_SAMPLE_INDEX_CAMMGR_RECORDER_VIDEO = 25,
+    E_DJI_SAMPLE_INDEX_CAMMGR_MEDIA_DOWNLOAD = 26,
+    E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY = 27,
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
 
@@ -582,10 +581,6 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 case E_DJI_SAMPLE_INDEX_CAMMGR_SINGLE_PHOTO:
                     DjiTest_CameraManagerRunSample(s_mountPosition,
                                                    E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_SINGLE_PHOTO);
-                    break;
-                case E_DJI_SAMPLE_INDEX_CAMMGR_AEB_PHOTO:
-                    DjiTest_CameraManagerRunSample(s_mountPosition,
-                                                   E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_AEB_PHOTO);
                     break;
                 case E_DJI_SAMPLE_INDEX_CAMMGR_BURST_PHOTO:
                     DjiTest_CameraManagerRunSample(s_mountPosition,

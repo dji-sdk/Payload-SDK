@@ -133,24 +133,6 @@ typedef enum {
     DJI_CAMERA_MANAGER_EXPOSURE_MODE_EXPOSURE_UNKNOWN = 0xFF /*!< The camera exposure mode is unknown. */
 } E_DjiCameraManagerExposureMode;
 
-/*! @brief the photo action of INTERVAL shooting photo mode
- */
-typedef enum {
-    /*! The number of pictures to continuously take at one time in AEB mode is 3
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_3 = 3,
-    /*! The number of pictures to continuously take at one time in AEB mode is 5
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_5 = 5,
-    /*! The number of pictures to continuously take at one time in AEB mode is 7
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_7 = 7,
-    /*! The number of pictures to continuously take at one time in AEB mode is
-     * unknown.
-     */
-    DJI_CAMERA_MANAGER_PHOTO_AEB_COUNT_KNOWN = 0xFF,
-} E_DjiCameraManagerPhotoAEBCount;
-
 /*! @breif CameraModule focus mode. If the physical AF switch on the camera is
  * set to auto.
  */
@@ -454,7 +436,7 @@ typedef enum {
     DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM = 0x2,
     DJI_CAMERA_MANAGER_SOURCE_IR_CAM = 0x3,
     DJI_CAMERA_MANAGER_SOURCE_VISIBLE_CAM = 0x7,
-} E_DjiCameraManagerStreamSource;
+} E_DjiCameraManagerStreamSource, E_DjiCameraManagerStreamStorage;
 
 typedef enum {
     DJI_CAMERA_MANAGER_NIGHT_SCENE_MODE_DISABLE = 0,
@@ -526,12 +508,23 @@ typedef struct {
 } T_DjiCameraManagerFileAttributeData;
 
 typedef struct {
-    char fileName[256];
+    char fileName[DJI_FILE_NAME_SIZE_MAX];
+    uint32_t fileSize;
+    uint32_t fileIndex;
+    T_DjiCameraManagerFileCreateTime createTime;
+    E_DjiCameraMediaFileSubType type;
+    T_DjiCameraManagerFileAttributeData attributeData;
+} T_DjiCameraManagerSubFileListInfo;
+
+typedef struct {
+    char fileName[DJI_FILE_NAME_SIZE_MAX];
     uint32_t fileSize;
     uint32_t fileIndex;
     T_DjiCameraManagerFileCreateTime createTime;
     E_DjiCameraMediaFileType type;
     T_DjiCameraManagerFileAttributeData attributeData;
+    uint8_t subFileListTotalNum;
+    T_DjiCameraManagerSubFileListInfo* subFileListInfo;
 } T_DjiCameraManagerFileListInfo;
 
 typedef struct {
@@ -548,6 +541,7 @@ typedef enum {
     DJI_DOWNLOAD_FILE_EVENT_START,
     DJI_DOWNLOAD_FILE_EVENT_TRANSFER,
     DJI_DOWNLOAD_FILE_EVENT_END,
+    DJI_DOWNLOAD_FILE_EVENT_START_TRANSFER_END,
 } E_DjiDownloadFileEvent;
 
 typedef enum {
@@ -608,9 +602,9 @@ typedef enum {
 
 typedef enum {
     DJI_CAMERA_MANAGER_RECORDING_STATE_IDLE = 0,
-    DJI_CAMERA_MANAGER_RECORDING_STATE_STARTING = 0,
-    DJI_CAMERA_MANAGER_RECORDING_STATE_RECORDING = 0,
-    DJI_CAMERA_MANAGER_RECORDING_STATE_STOPPING = 0,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_STARTING = 1,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_RECORDING = 2,
+    DJI_CAMERA_MANAGER_RECORDING_STATE_STOPPING = 3,
 } E_DjiCameraManagerRecordingState;
 
 /*!< Attention: when the remote control is in split-screen mode, the coordinate range of the x-axis is 0 ~ 0.5
@@ -651,6 +645,7 @@ typedef struct {
 
 typedef struct {
     E_DjiDownloadFileEvent downloadFileEvent;
+    uint8_t fileType;
     uint32_t fileIndex;
     uint32_t fileSize;
     dji_f32_t progressInPercent;
@@ -670,7 +665,7 @@ typedef struct {
 typedef struct {
     uint32_t size;
     E_DjiCameraManagerStreamSource streamSource[4];
-    E_DjiCameraManagerStreamSource streamStorage[4];
+    E_DjiCameraManagerStreamStorage streamStorage[4];
 } T_DjiCameraManagerStreamList;
 
 typedef struct {
@@ -685,7 +680,7 @@ typedef struct {
         E_DjiCameraManagerVideoStorageFormat videoStorageFormat[16];
         E_DjiCameraManagerPhotoRatio photoRatioFormat[16];
         E_DjiCameraManagerStreamSource streamSource[16];
-        E_DjiCameraManagerStreamSource streamStorage[16];
+        E_DjiCameraManagerStreamStorage streamStorage[16];
         E_DjiCameraManagerNightSceneMode nightSceneMode[16];
     };
     uint32_t minValue;
@@ -709,24 +704,24 @@ typedef struct {
     uint32_t seqNum;
     uint64_t timestamp;
     uint32_t dataByte; /* actual num of bytes used for points */
-} T_DjiCameraManagerPointCloudHeader;
+} __attribute__((packed)) T_DjiCameraManagerPointCloudHeader;
 
 typedef struct {
-    float x; /* the x-axis of NED coordinate system */
-    float y; /* the y-axis of NED coordinate system */
-    float z; /* the z-axis of NED coordinate system */
+    dji_f32_t x; /* the x-axis of NED coordinate system */
+    dji_f32_t y; /* the y-axis of NED coordinate system */
+    dji_f32_t z; /* the z-axis of NED coordinate system */
     uint8_t intensity;
     uint8_t r;
     uint8_t g;
     uint8_t b;
-} T_DjiCameraManagerPointXYZRGBInfo;
+}__attribute__((packed)) T_DjiCameraManagerPointXYZRGBInfo;
 
 typedef struct {
     T_DjiCameraManagerPointCloudHeader pointCloudHeader;
     uint32_t crc_header;
     uint32_t crc_rest;
     T_DjiCameraManagerPointXYZRGBInfo points[1];
-} T_DjiCameraManagerColorPointCloud;
+}__attribute__((packed)) T_DjiCameraManagerColorPointCloud;
 
 typedef T_DjiReturnCode (*DjiCameraManagerDownloadFileDataCallback)(T_DjiDownloadFilePacketInfo packetInfo,
                                                                     const uint8_t *data,
@@ -852,33 +847,6 @@ T_DjiReturnCode DjiCameraManager_GetCapturingState(E_DjiMountPosition position,
  */
 T_DjiReturnCode DjiCameraManager_SetPhotoBurstCount(E_DjiMountPosition position,
                                                     E_DjiCameraBurstCount count);
-
-/**
- * @brief Get the burst count in the burst take-photo mode.
- * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraBurstCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_GetPhotoBurstCount(E_DjiMountPosition position,
-                                                    E_DjiCameraBurstCount *count);
-
-/**
- * @brief Set the burst count in the AEB(Automatic Exposure Bracketing) take-photo mode.
- * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraManagerPhotoAEBCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_SetPhotoAEBCount(E_DjiMountPosition position,
-                                                  E_DjiCameraManagerPhotoAEBCount count);
-
-/**
- * @brief Get the burst count in the AEB(Automatic Exposure Bracketing) take-photo mode.
- * @param position: camera mounted position
- * @param count: see reference of E_DjiCameraManagerPhotoAEBCount.
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_GetPhotoAEBCount(E_DjiMountPosition position,
-                                                  E_DjiCameraManagerPhotoAEBCount *count);
 
 /**
  * @brief Set the parameters in the INTERVAL take-photo mode.
@@ -1009,15 +977,6 @@ T_DjiReturnCode DjiCameraManager_GetOpticalZoomParam(E_DjiMountPosition position
  */
 T_DjiReturnCode DjiCameraManager_SetInfraredZoomParam(E_DjiMountPosition position,
                                                       dji_f32_t factor);
-
-/**
- * @brief Stop camera optical zooming of the selected camera mounted position.
- * @note Called to stop focal length changing, when it currently is from
- * calling DjiCameraManager_StartContinuousOpticalZoom*.
- * @param position: camera mounted position
- * @return Execution result.
- */
-T_DjiReturnCode DjiCameraManager_StopContinuousOpticalZoom(E_DjiMountPosition position);
 
 /**
  * @brief Enable/Disable camera's tap-zoom function of the selected camera mounted position.
@@ -1293,7 +1252,7 @@ T_DjiReturnCode DjiCameraManager_SetStreamSource(E_DjiMountPosition position,
  * @param rangeList: range list returned value
  * @return Execution result.
  */
-T_DjiReturnCode DjiCameraManager_GetPhotoFormatStorageRange(E_DjiMountPosition position,
+T_DjiReturnCode DjiCameraManager_GetPhotoStorageFormatRange(E_DjiMountPosition position,
                                                      T_DjiCameraManagerRangeList *rangeList);
 
 /**
@@ -1517,6 +1476,18 @@ T_DjiReturnCode DjiCameraManager_RegDownloadFileDataCallback(E_DjiMountPosition 
  */
 T_DjiReturnCode DjiCameraManager_DownloadFileByIndex(E_DjiMountPosition position, uint32_t fileIndex);
 
+/**
+ * @brief Download selected camera media file by file index and file type.
+ * @note This API only supports L2 camera.
+ * Only support download one file at the same time, the new file download need wait for the previous file
+ * download finished.The interface is a synchronous interface, which occupies more CPU resources when using it.
+ * If the download file fails, the timeout time is 3S.
+ * @param position: the mount position of the camera
+ * @param fileIndex: the index of the camera media file
+ * @param fileType: the sub type of the camera media file
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_DownloadSubFileByIndexAndSubType(E_DjiMountPosition position, uint32_t index, E_DjiCameraMediaFileSubType fileType);
 /**
  * @brief Before downloading media file(s), downloader rights should be obtained.
  * @param position: the mount position of the camera

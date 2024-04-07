@@ -36,6 +36,10 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ * @brief Type define dji_f32_t as T_DjiWaypointV2GlobalCruiseSpeed.
+ * @details Type used for global cruise speed of waypoint mission, unit: m/s.
+ */
 typedef dji_f32_t T_DjiWaypointV2GlobalCruiseSpeed;
 
 /**
@@ -340,6 +344,8 @@ typedef struct {
     *  will fly backwards to previous waypoints. When it reaches the first waypoint, it
     *  will then hover in place until a positive speed is applied. "maxFlightSpeed" has
     *  a range of [2,15] m/s.
+    *
+    *  unit: m/s
     */
     dji_f32_t maxFlightSpeed;
 
@@ -355,6 +361,8 @@ typedef struct {
     *  joystick. In flight controller firmware 3.2.10.0 or above, different speeds
     *  between individual waypoints can also be set in waypoint objects which will
     *  overwrite "autoFlightSpeed".
+    *
+    *  unit: m/s.
     */
     dji_f32_t autoFlightSpeed;
 } T_DjiWaypointV2;
@@ -1089,6 +1097,7 @@ typedef struct {
      *  negative, then the aircraft will fly backwards to previous waypoints. When it
      *  reaches the  first waypoint, it will then hover in place until a positive speed
      *  is  applied. `maxFlightSpeed` has a range of [2,15] m/s.
+     *
      *  unit: m/s
      */
     dji_f32_t maxFlightSpeed;
@@ -1103,6 +1112,7 @@ typedef struct {
      *  `autoFlightSpeed` <0 and the  aircraft is at the first waypoint, the aircraft
      *  will hover in place until the speed is made positive by  the remote controller
      *  joystick.
+     *
      *  unit: m/s
      */
     dji_f32_t autoFlightSpeed;
