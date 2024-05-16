@@ -1,7 +1,7 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.8.1-purple.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-green.svg)
+![](https://img.shields.io/badge/version-V3.9.0-pink.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-cyan.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## What is the DJI Payload SDK?
@@ -23,22 +23,23 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.8.1. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.9.0. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* Removed the camera management module interface DjiCameraManager_GetPhotoBurstCount.
-* Removed the AEB photography function in the camera management module.
-* Fixed the issue where subscribing to real-time point cloud data was not byte-aligned on some platforms.
-* Fixed the discrepancy between flight speed units and annotations in the motion planning WP 2.0 feature.
-* Fixed issues with obtaining the camera shooting mode and zoom magnification on the Mavic 3 series drones.
-* Optimized the startup time for PSDK initialization.
-* Complemented the flight control topic CONTROL_DEVICE data structure definition and added related enumeration ranges.
-* Fixed the incorrect zoom multiplier retrieval for the H20N camera.
-* Fixed the issue where custom media file suffix names were not taking effect.
-* Fixed the occasional subscription errors for single battery data in the M300 RTK and M350 RTK.
-* Fixed anomalous Pilot widget values for the M30 series, M300 RTK, and M350 RTK remote controllers.
-* Note: Streamlined the toolchain for compiling PSDK, removing low-usage toolchain libraries.
-> We have stopped offering some toolchains on GitHub. If you have trouble building your project, reach out to the SDK Support Team for help.
+* Supports the payload camera Zenmuse H30 series.
+* FlyCart 30 aircraft supports the time synchronization function.
+* FlyCart 30 aircraft supports HMS functions.
+* FlyCart 30 aircraft supports the data subscription function.
+* Fixed the issue with inaccurate zoom multiplier retrieval for the Mavic 3 Enterprise series cameras.
+* Fixed data errors on the receiving end of small data transfers from MSDK to PSDK.
+* Fixed the inability of devices at payload ports 2 and 3 of the M300 RTK aircraft to perform small data transmission to devices connected to the OSDK port.
+* Fixed the issue where MSDK V5 and PSDK devices could not perform small data transmission when using M300 RTK and M350 RTK aircraft.
+* Fixed occasional payload negotiation failures between PSDK and the M350 RTK aircraft.
+* Fixed screen flickering and glitching issues with the H20T payload camera's video stream.
+* Fixed issues with retrieving the visible light camera video stream from the M3TD camera.
+* Optimized the C++ camera management sample.
+* Optimized memory usage strategy for STM32 platform sample by introducing CCMRAM.
+> Note: For M300 RTK and M350 RTK, the camera management module now checks the payload port device's status at startup. This may occasionally result in log errors. Normal function is not affected, and this will be optimized in a future release.
 
 ## License
 
