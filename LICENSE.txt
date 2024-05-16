@@ -19,6 +19,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       ├── M30T.stp
 │       ├── M3E.stp
 │       ├── PSDK Mounting Bracket(Payload).stp
+│       ├── Readme.txt
 │       ├── Skyport_Adapter_2.stp
 │       └── X-Port 80mm.stp
 ├── EULA.txt
@@ -670,6 +671,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               │   │   ├── STM32F407VGTX_FLASH.ld
 │   │               │   │   └── stm32f4discovery.cfg
 │   │               │   ├── mdk
+│   │               │   │   ├── mdk_app.sct
 │   │               │   │   └── mdk_app.uvprojx
 │   │               │   └── mdk_bootloader
 │   │               │       └── mdk_bootloader.uvprojx
