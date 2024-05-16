@@ -1,0 +1,14 @@
+LR_IROM1 0x08010000 0x00070000  {
+    ER_IROM1 0x08010000 0x00070000 {
+        *.o (RESET, +First)
+        *(InRoot$$Sections)
+        .ANY (+RO)
+        .ANY (+XO)
+    }
+    CCMRAM 0x10000000 0x00400000 {
+        .ANY (.ccmram)
+    }
+    RW_IRAM1 0x20000000 0x00020000 {
+        .ANY (+RW +ZI)
+    }
+}
