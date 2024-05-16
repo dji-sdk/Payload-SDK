@@ -56,27 +56,26 @@ typedef struct {
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialize the Payload SDK core in blocking mode.
- * @note The call location of this interface requires special attention, The call needs to be completed after the
- * registration of console/OSAL handler functions/HAL handler functions are completed. At the same time, it must be
- * initialized at the beginning of calling other functional module interfaces. You need to fill in the developer
- * information correctly to ensure the initialization is successful. For additional instructions, please refer to the
- * tutorial“PSDK Initialization”.
- * @note This function does not return until the correct aircraft type and PSDK adapter type is obtained. The logic ensures
+ * @note The order of calling this call is crucial. It must be done after registering console/OSAL/HAL handler functions
+ * It must be done after registering console/OSAL/HAL handler functions and before using other functional module
+ * interfaces. Correctly fill in the developer information to ensure successful initialization. See the
+ * See the "PSDK Initialization" tutorial for more.
+ * This function does not return until the correct aircraft type and PSDK adapter type is obtained. The logic ensures
  * that aircraft and PSDK adapter have been started up normally before PSDK functional module and user's program run.
- * General execution time of this function is 2~4 seconds.
+ * General execution time of this function is 2-4 seconds.
  * @param userInfo: pointer to the PSDK application information.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCore_Init(const T_DjiUserInfo *userInfo);
 
 /**
- * @brief Set an alias that satisfies the condition for DJI application or product.
- * @details Alias will display in DJI Pilot, if exist.
+ * @brief Sets an alias for a DJI application or product that meets the condition for DJI application or product.
+ * If an alias exists, it will be displayed in DJI Pilot.
  * @note Still need to pass in correct DJI APP name that is obtained from DJI SDK developer website to DjiCore_Init()
- * interface. The DJI APP name will be used to bind or verification.
- * @note Alias will be effective after a while, and the max value is 1s.
- * @param productAlias: pointer to product alias string, and alias end with '\0'. The max length of the string is 31. If
- * length of alias string is greater than 31, alias string will be truncated and passed in.
+ * interface. The DJI APP name will be used to bind and verification.
+ * The alias will take effect after a short delay, up to a maximum of 1 second.
+ * @param productAlias: A pointer to the product alias string, which must end with '\0'. The maximum length of the string is 31 characters.
+ * If the alias string exceeds 31 characters, it will be truncated before being passed in.
  * @return Execution result.
  */
 T_DjiReturnCode DjiCore_SetAlias(const char *productAlias);
@@ -99,7 +98,7 @@ T_DjiReturnCode DjiCore_SetSerialNumber(const char *productSerialNumber);
 
 /**
  * @brief Notify that the Payload SDK core application starts.
- * @note The call location of this interface requires special attention, The call needs to be completed after all the
+ * @note The order of calling this interface requires special attention, The call needs to be completed after all the
  * module initialize and register interfaces.
  * @return Execution result.
  */

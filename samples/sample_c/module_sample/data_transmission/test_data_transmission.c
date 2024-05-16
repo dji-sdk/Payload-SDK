@@ -45,6 +45,9 @@ static T_DjiReturnCode ReceiveDataFromMobile(const uint8_t *data, uint16_t len);
 static T_DjiReturnCode ReceiveDataFromCloud(const uint8_t *data, uint16_t len);
 static T_DjiReturnCode ReceiveDataFromExtensionPort(const uint8_t *data, uint16_t len);
 static T_DjiReturnCode ReceiveDataFromPayload(const uint8_t *data, uint16_t len);
+static T_DjiReturnCode ReceiveDataFromPayload1(const uint8_t *data, uint16_t len);
+static T_DjiReturnCode ReceiveDataFromPayload2(const uint8_t *data, uint16_t len);
+static T_DjiReturnCode ReceiveDataFromPayload3(const uint8_t *data, uint16_t len);
 
 /* Private variables ---------------------------------------------------------*/
 static T_DjiTaskHandle s_userDataTransmissionThread;
@@ -116,7 +119,21 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
     } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT
                 || DJI_MOUNT_POSITION_EXTENSION_LITE_PORT == s_aircraftInfoBaseInfo.mountPosition) {
         channelAddress = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1;
-        djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromPayload);
+        djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromPayload1);
+        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("register receive data from payload NO1 error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
+
+        channelAddress = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO2;
+        djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromPayload2);
+        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("register receive data from payload NO1 error.");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+        }
+
+        channelAddress = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO3;
+        djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromPayload3);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("register receive data from payload NO1 error.");
             return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
@@ -347,6 +364,24 @@ static T_DjiReturnCode ReceiveDataFromPayload(const uint8_t *data, uint16_t len)
     osalHandler->Free(printData);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode ReceiveDataFromPayload1(const uint8_t *data, uint16_t len)
+{
+    USER_LOG_INFO("Receive from payload on port 1");
+    return ReceiveDataFromPayload(data, len);
+}
+
+static T_DjiReturnCode ReceiveDataFromPayload2(const uint8_t *data, uint16_t len)
+{
+    USER_LOG_INFO("Receive from payload on port 2");
+    return ReceiveDataFromPayload(data, len);
+}
+
+static T_DjiReturnCode ReceiveDataFromPayload3(const uint8_t *data, uint16_t len)
+{
+    USER_LOG_INFO("Receive from payload on port 3");
+    return ReceiveDataFromPayload(data, len);
 }
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

@@ -136,6 +136,8 @@ typedef enum {
     DJI_CAMERA_TYPE_M3T                         = 67, /*!< Camera type is M3T. */
     DJI_CAMERA_TYPE_M3D                         = 80, /*!< Camera type is Matrice 3D. */
     DJI_CAMERA_TYPE_M3TD                        = 81, /*!< Camera type is Matrice 3TD. */
+    DJI_CAMERA_TYPE_H30                         = 82, /*!< Camera type is H30. */
+    DJI_CAMERA_TYPE_H30T                        = 83, /*!< Camera type is H30T. */
 } E_DjiCameraType;
 
 /**
