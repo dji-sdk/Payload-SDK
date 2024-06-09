@@ -21,6 +21,25 @@ section of the developer's website. Please visit
 the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/)
 to get the latest version information.
 
+## Use Docker & Nix to build
+
+
+
+```bash
+docker pull nixpkgs/nix-flakes:latest
+docker run --name payload -it -v {SOMEWHERE}/Payload-SDK:/workspace docker.io/nixpkgs/nix-flakes:latest bash
+```
+(inside docker)
+```bash
+cd /workspace
+nix develop
+mkdir build && cd build
+cmake ..
+make
+```
+
+then output will appears in `build/bin/dji_sdk_demo_linux` and `build/bin/dji_sdk_demo_linux_cxx`
+
 ## Latest Release
 
 The latest release version of PSDK is 3.9.0. This version of Payload SDK mainly add some new features support and fixed some
