@@ -51,17 +51,18 @@ start:
 
     std::cout
         << "\n"
-        << "| Available commands:                                                                              |\n"
-        << "| [0] Flight controller sample - control flying with keyboard                                      |\n"
-        << "| [1] Flight controller sample - take off landing                                                  |\n"
-        << "| [2] Flight controller sample - take off position ctrl landing                                    |\n"
-        << "| [3] Flight controller sample - take off go home force landing                                    |\n"
-        << "| [4] Flight controller sample - take off velocity ctrl landing                                    |\n"
-        << "| [5] Flight controller sample - arrest flying                                                     |\n"
-        << "| [6] Flight controller sample - set get parameters                                                |\n"
-        << "| [7] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)             |\n"
-        << "| [8] Waypoint 3.0 sample - run airline mission by kmz file (not support on M300 RTK)              |\n"
-        << "| [9] Interest point sample - run interest point mission by settings (only support on M3E/M3T)     |\n"
+        << "| Available commands:                                                                                            |\n"
+        << "| [0] Flight controller sample - control flying with keyboard                                                    |\n"
+        << "| [1] Flight controller sample - take off landing                                                                |\n"
+        << "| [2] Flight controller sample - take off position ctrl landing                                                  |\n"
+        << "| [3] Flight controller sample - take off go home force landing                                                  |\n"
+        << "| [4] Flight controller sample - take off velocity ctrl landing                                                  |\n"
+        << "| [5] Flight controller sample - arrest flying                                                                   |\n"
+        << "| [6] Flight controller sample - set get parameters                                                              |\n"
+        << "| [7] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)                           |\n"
+        << "| [8] Waypoint 3.0 sample - run airline mission by kmz file (not support on M300 RTK)                            |\n"
+        << "| [9] Interest point sample - run interest point mission by settings (only support on M3E/M3T)                   |\n"
+        << "| [a] EU-C6 FTS trigger sample - receive fts callback to trigger parachute function (only support on M3D/M3DT)   |\n"
         << std::endl;
 
     std::cin >> inputSelectSample;
@@ -95,6 +96,9 @@ start:
             break;
         case '9':
             DjiTest_InterestPointRunSample();
+            break;
+        case 'a':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_FTS_TRIGGER);
             break;
         case 'q':
             break;

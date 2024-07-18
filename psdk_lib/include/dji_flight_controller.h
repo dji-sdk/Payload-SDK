@@ -132,7 +132,13 @@ typedef T_DjiReturnCode (*JoystickCtrlAuthorityEventCbFunc)(
     T_DjiFlightControllerJoystickCtrlAuthorityEventInfo eventData);
 
 /**
- * @brief Horizon control mode enum in joystick mode
+ * @brief Prototype of callback function used to get the trigger FTS event.
+ * @return Execution result.
+ */
+typedef T_DjiReturnCode (*TriggerFtsEventCallback)(void);
+
+/**
+ * @brief Horizon control mode in joystick mode enum
  * @note Only when the GPS signal is good (health_flag >=3)，horizontal position control (DJI_FLIGHT_CONTROLLER_HORIZONTAL_POSITION_CONTROL_MODE)
  * related control modes can be used. Only when GPS signal is good (health_flag >=3)，or advanced sensing system is working properly with Autopilot，
  * horizontal velocity control（DJI_FLIGHT_CONTROLLER_HORIZONTAL_VELOCITY_CONTROL_MODE) related control modes can be used.
@@ -632,6 +638,16 @@ DjiFlightController_SetRCLostActionEnableStatus(E_DjiFlightControllerRCLostActio
  */
 T_DjiReturnCode
 DjiFlightController_GetEnableRCLostActionStatus(E_DjiFlightControllerRCLostActionEnableStatus *command);
+
+/**
+ * @brief Register callback function for the trigger FTS event.
+ * @note The timing of the trigger of the callback function of the FTS is determined by the aircraft, and the trigger
+ *       execution action of the FTS needs to be implemented in the callback function and the correct return value
+*        must be returned, otherwise the aircraft will always be triggered.
+ * @param callback: the callback for the trigger FTS event.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_RegTriggerFtsEventCallback(TriggerFtsEventCallback callback);
 
 #ifdef __cplusplus
 }
