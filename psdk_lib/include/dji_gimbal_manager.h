@@ -52,7 +52,7 @@ typedef struct {
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialize the gimbal manager module.
- * @note This interface must be initialized after DjiCore_Init..
+ * @note This interface must be initialized after DjiCore_Init.
  * @return Execution result.
  */
 T_DjiReturnCode DjiGimbalManager_Init(void);

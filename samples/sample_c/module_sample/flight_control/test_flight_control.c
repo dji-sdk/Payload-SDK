@@ -43,6 +43,8 @@ typedef struct {
 static T_DjiOsalHandler *s_osalHandler = NULL;
 static const double s_earthCenter = 6378137.0;
 static const double s_degToRad = 0.01745329252;
+static bool s_isFtsCallbackRegistered = false;
+static int32_t s_ftsTriggerCount = 0;
 
 static const T_DjiTestFlightControlDisplayModeStr s_flightControlDisplayModeStr[] = {
     {.displayMode = DJI_FC_SUBSCRIPTION_DISPLAY_MODE_ATTITUDE, .displayModeStr = "attitude mode"},
@@ -95,6 +97,9 @@ static void DjiTest_FlightControlPositionControlSample(void);
 static void DjiTest_FlightControlGoHomeForceLandingSample(void);
 static void DjiTest_FlightControlVelocityControlSample(void);
 static void DjiTest_FlightControlArrestFlyingSample(void);
+static void DjiTest_FlightControlSetGetParamSample(void);
+static void DjiTest_FlightControlPassiveTriggerFtsSample(void);
+static T_DjiReturnCode DjiTest_TriggerFtsEventCallback(void);
 static void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect);
 
 /* Exported functions definition ---------------------------------------------*/
@@ -883,6 +888,42 @@ out:
     DjiTest_WidgetLogAppend("Flight control set-get-param sample end");
 }
 
+T_DjiReturnCode DjiTest_TriggerFtsEventCallback(void)
+{
+    USER_LOG_INFO("Received FTS Trigger event, count = %d.", s_ftsTriggerCount);
+    if (s_ftsTriggerCount == 0) {
+        USER_LOG_WARN("Note: Simulate a trigger failure scenario and return an error value, this function will be invoked again.");
+        s_ftsTriggerCount++;
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    } else {
+        USER_LOG_WARN("Note: This is an empty implementation, and the FTS signal needs to be triggered by the PWM signal.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+}
+
+void DjiTest_FlightControlPassiveTriggerFtsSample(void)
+{
+    T_DjiReturnCode returnCode;
+
+    USER_LOG_INFO("Flight control passive trigger FTS sample start.");
+
+    if (s_isFtsCallbackRegistered == false) {
+        returnCode = DjiFlightController_RegTriggerFtsEventCallback(DjiTest_TriggerFtsEventCallback);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Register trigger FTS event callback failed.");
+            return;
+        } else {
+            s_isFtsCallbackRegistered = true;
+            USER_LOG_INFO("Register trigger FTS event callback successfully."
+                          "Please wait for the aircraft to trigger the payload to execute FTS action.");
+        }
+    } else {
+        USER_LOG_WARN("FTS trigger event callback has been registered, no need to register again.");
+    }
+}
+
 void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect)
 {
     switch (flightCtrlSampleSelect) {
@@ -908,6 +949,10 @@ void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampl
         }
         case E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_SET_GET_PARAM: {
             DjiTest_FlightControlSetGetParamSample();
+            break;
+        }
+        case E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_FTS_TRIGGER: {
+            DjiTest_FlightControlPassiveTriggerFtsSample();
             break;
         }
         default:

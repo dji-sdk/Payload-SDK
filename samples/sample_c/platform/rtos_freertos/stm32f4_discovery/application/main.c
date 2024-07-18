@@ -55,10 +55,6 @@ void Error_Handler(void);
 
 int main(void)
 {
-    __disable_irq();
-    SCB->VTOR = APPLICATION_ADDRESS;
-    __enable_irq();
-
     /* STM32F4xx HAL library initialization:
          - Configure the Flash prefetch, instruction and Data caches
          - Configure the Systick to generate an interrupt each 1 msec
