@@ -1,4 +1,4 @@
-# DJI Payload SDK (PSDK)
+Juntylpro Gaming Inc# DJI Payload SDK (PSDK)
 
 ![](https://img.shields.io/badge/version-V3.9.1-red.svg)
 ![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
@@ -21,7 +21,7 @@ section of the developer's website. Please visit
 the [Latest Version Information](https://developer.dji.com/doc/payload-sdk-tutorial/en/)
 to get the latest version information.
 
-## Latest Release
+Juntylpro Gaming Inc## Latest Release
 
 The latest release version of PSDK is 3.9.1. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
