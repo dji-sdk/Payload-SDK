@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.9.1-red.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
-![](https://img.shields.io/badge/license-MIT-purple.svg)
+![](https://img.shields.io/badge/version-V3.9.2-orange.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
+![](https://img.shields.io/badge/license-MIT-pink.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,16 +23,15 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.9.1. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.9.2. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* GEO Caging feature supported for the M3D series models.
-* Flight control function and waypoint mission supported for the FlyCart 30 model.
-* Fixed an issue with subscribing to the flight control topics for M300 RTK and M350 RTK models.
-* Resolved a problem with DJI Smart Controller Enterprise not recognizing PSDK payload devices on M300 RTK.
-* Fixed an issue with acquiring the camera stream without I-frames on M3D series models.
-* Added the MOP 49154 channel as an alternative to the 49152 channel for subscribing to the L2 camera's real-time 3D point cloud. This enhancement avoids conflicts when subscribing to point cloud data concurrently with Pilot2 and improves the quality of the point cloud data.
-> Note: When using M300 RTK with the DJI Smart Controller Enterprise to activate payloads via the OSDK interface, the remote controller will not recognize the payload device if the virtual serial port is not utilized.
+* Added support for cloud-based custom small data transmission on Matrice 3D/3TD models.
+* Fixed an issue with acquiring disordered sequence numbers of the RTCM data packet.
+> Note: When transmitting the video stream from the payload camera, only the stream in DJI-H264 format is supported. The
+CUSTOM-H264 stream is not supported. Use the latest PSDK community version to transmit the stream in the CUSTOM-H264 format.
+> Note: Non-RC flight is not supported by default. Call the DjiFlightController_SetRCLostActionEnableStatus interface to enable
+this feature.
 
 ## License
 
