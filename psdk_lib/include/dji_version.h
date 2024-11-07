@@ -35,9 +35,9 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 #define DJI_VERSION_MAJOR     3 /*!< DJI SDK major version num, when have incompatible API changes. Range from 0 to 99. */
 #define DJI_VERSION_MINOR     9 /*!< DJI SDK minor version num, when add functionality in a backwards compatible manner changes. Range from 0 to 99. */
-#define DJI_VERSION_MODIFY    1 /*!< DJI SDK modify version num, when have backwards compatible bug fixes changes. Range from 0 to 99. */
+#define DJI_VERSION_MODIFY    2 /*!< DJI SDK modify version num, when have backwards compatible bug fixes changes. Range from 0 to 99. */
 #define DJI_VERSION_BETA      0 /*!< DJI SDK version beta info, release version will be 0, when beta version release changes. Range from 0 to 255. */
-#define DJI_VERSION_BUILD     2090 /*!< DJI SDK version build info, when jenkins trigger build changes. Range from 0 to 65535. */
+#define DJI_VERSION_BUILD     2125 /*!< DJI SDK version build info, when jenkins trigger build changes. Range from 0 to 65535. */
 
 /* Exported types ------------------------------------------------------------*/
 
