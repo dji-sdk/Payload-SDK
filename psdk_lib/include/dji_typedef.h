@@ -45,7 +45,7 @@ extern "C" {
 #define DJI_PI                                  (3.14159265358979323846f)
 #define DJI_FILE_NAME_SIZE_MAX                  256
 #define DJI_FILE_PATH_SIZE_MAX                  (DJI_FILE_NAME_SIZE_MAX + 256)
-#define DJI_IP_ADDR_STR_SIZE_MAX                15
+#define DJI_IP_ADDR_STR_SIZE_MAX                16
 #define DJI_MD5_BUFFER_LEN                      16
 
 #define DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET    24u
@@ -76,7 +76,7 @@ typedef enum {
     DJI_MOUNT_POSITION_TYPE_UNKNOWN             = 0,
     DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT        = 1,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT      = 2,
-    DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3
+    DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3,
 } E_DjiMountPositionType;
 
 typedef enum {
@@ -97,6 +97,7 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_M350                    = 5,
     DJI_AIRCRAFT_SERIES_M3D                     = 6,
     DJI_AIRCRAFT_SERIES_FC30                    = 7,
+    DJI_AIRCRAFT_SERIES_M4                      = 8,
 } E_DjiAircraftSeries;
 
 typedef enum {
@@ -113,6 +114,8 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M350_RTK                  = 89, /*!< Aircraft type is Matrice 350 RTK. */
     DJI_AIRCRAFT_TYPE_M3D                       = 91, /*!< Aircraft type is Matrice 3D. */
     DJI_AIRCRAFT_TYPE_M3TD                      = 93, /*!< Aircraft type is Matrice 3TD. */
+    DJI_AIRCRAFT_TYPE_M4T                       = 99, /*!< Aircraft type is Mavic 4T. */
+    DJI_AIRCRAFT_TYPE_M4E                       = 990, /*!< Aircraft type is Mavic 4E. */
 } E_DjiAircraftType;
 
 /**
@@ -138,6 +141,8 @@ typedef enum {
     DJI_CAMERA_TYPE_M3TD                        = 81, /*!< Camera type is Matrice 3TD. */
     DJI_CAMERA_TYPE_H30                         = 82, /*!< Camera type is H30. */
     DJI_CAMERA_TYPE_H30T                        = 83, /*!< Camera type is H30T. */
+    DJI_CAMERA_TYPE_M4T                         = 89, /*!< Camera type is M4T. */
+    DJI_CAMERA_TYPE_M4E                         = 891, /*!< Camera type is M4E. */
 } E_DjiCameraType;
 
 /**
@@ -248,7 +253,7 @@ typedef enum {
     DJI_SDK_ADAPTER_TYPE_UNKNOWN                = 0, /*!< SDK adapter type is unknown. */
     DJI_SDK_ADAPTER_TYPE_SKYPORT_V2             = 1, /*!< SDK adapter type is Skyport V2. */
     DJI_SDK_ADAPTER_TYPE_XPORT                  = 2, /*!< SDK adapter type is X-Port. */
-    DJI_SDK_ADAPTER_TYPE_NONE                   = 3, /*!< No external adapter is connected. */
+    DJI_SDK_ADAPTER_TYPE_NONE                   = 3, /*!< don't have any adapter outside */
 } E_DjiSdkAdapterType;
 
 typedef enum {

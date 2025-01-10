@@ -907,15 +907,7 @@ static T_DjiReturnCode DjiTest_CameraRotationGimbal(T_TestCameraGimbalRotationAr
         return returnCode;
     }
 
-    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-        aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
-        returnCode = DjiTest_GimbalRotate(gimbalRotationArgument.rotationMode, gimbalRotationArgument.rotationProperty,
-                                          gimbalRotationArgument.rotationValue);
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("rotate gimbal error: 0x%08llX.", returnCode);
-            return returnCode;
-        }
-    } else if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
+    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
         returnCode = DjiXPort_RotateSync(gimbalRotationArgument.rotationMode, gimbalRotationArgument.rotationProperty,
                                          gimbalRotationArgument.rotationValue);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

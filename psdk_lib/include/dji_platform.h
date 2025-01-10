@@ -53,6 +53,11 @@ typedef void *T_DjiUsbBulkHandle;
 typedef void *T_DjiNetworkHandle;
 
 /**
+* @brief Platform handle of i2c device operation.
+*/
+typedef void *T_DjiI2cHandle;
+
+/**
 * @brief Platform handle of thread task operation.
 */
 typedef void *T_DjiTaskHandle;
@@ -173,6 +178,11 @@ typedef struct {
 } T_DjiHalNetworkDeviceInfo;
 
 typedef struct {
+    uint32_t i2cSpeed;
+    uint16_t devAddress;
+} T_DjiHalI2cConfig;
+
+typedef struct {
     T_DjiReturnCode (*UsbBulkInit)(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHandle *usbBulkHandle);
 
     T_DjiReturnCode (*UsbBulkDeInit)(T_DjiUsbBulkHandle usbBulkHandle);
@@ -193,6 +203,18 @@ typedef struct {
 
     T_DjiReturnCode (*NetworkGetDeviceInfo)(T_DjiHalNetworkDeviceInfo *deviceInfo);
 } T_DjiHalNetworkHandler;
+
+typedef struct {
+    T_DjiReturnCode (*I2cInit)(T_DjiHalI2cConfig i2cConfig, T_DjiI2cHandle *i2cHandle);
+
+    T_DjiReturnCode (*I2cDeInit)(T_DjiI2cHandle i2cHandle);
+
+    T_DjiReturnCode (*I2cWriteData)(T_DjiI2cHandle i2cHandle, uint16_t devAddress, const uint8_t *buf,
+                                    uint32_t len, uint32_t *realLen);
+
+    T_DjiReturnCode (*I2cReadData)(T_DjiI2cHandle i2cHandle, uint16_t devAddress, uint8_t *buf,
+                                   uint32_t len, uint32_t *realLen);
+} T_DjiHalI2cHandler;
 
 typedef struct {
     T_DjiReturnCode (*TaskCreate)(const char *name, void *(*taskFunc)(void *),
@@ -314,10 +336,23 @@ T_DjiReturnCode DjiPlatform_RegHalUsbBulkHandler(const T_DjiHalUsbBulkHandler *h
  * sure that the feature is available after a successful registration.
  * @attention The interface needs to be called at the beginning of the application for registration, otherwise, the
  * subsequent functions will not work properly.
- * @param osalHandler: pointer to the handler for network handler interfaces by your platform.
+ * @param halNetworkHandler: pointer to the handler for network handler interfaces by your platform.
  * @return Execution result.
  */
 T_DjiReturnCode DjiPlatform_RegHalNetworkHandler(const T_DjiHalNetworkHandler *halNetworkHandler);
+
+/**
+ * @brief Register the handler for hal i2c master mode interfaces by your platform.
+ * @note It should be noted that the interface in hal is written and tested well. Users need to implement all the
+ * interfaces. Otherwise, the user interface cannot be successfully registered, and then the user interface is registered
+ * through the interface. If the registration fails, it needs to be based on the return code. To judge the problem. Make
+ * sure that the feature is available after a successful registration.
+ * @attention The interface needs to be called at the beginning of the application for registration, otherwise, the
+ * subsequent functions will not work properly.
+ * @param halI2cHandler: pointer to the handler for hal i2c handler interfaces by your platform.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiPlatform_RegHalI2cHandler(const T_DjiHalI2cHandler *halI2cHandler);
 
 /**
  * @brief Register the handler for osal interfaces by your platform.
@@ -362,6 +397,12 @@ T_DjiHalUsbBulkHandler *DjiPlatform_GetHalUsbBulkHandler(void);
  * @return Pointer to network handler.
  */
 T_DjiHalNetworkHandler *DjiPlatform_GetHalNetworkHandler(void);
+
+/**
+ * @brief Get the handler of i2c interfaces.
+ * @return Pointer to i2c handler.
+ */
+T_DjiHalI2cHandler *DjiPlatform_GetHalI2cHandler(void);
 
 /**
  * @brief Get the handler of file-system interfaces.

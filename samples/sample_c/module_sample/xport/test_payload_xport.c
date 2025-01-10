@@ -88,6 +88,7 @@ T_DjiReturnCode DjiTest_XPortStartService(void)
 
     limitAngle.upperLimit = 300;
     limitAngle.lowerLimit = -1000;
+    USER_LOG_INFO("Set joint angle limit of pitch axis, upperLimit %d, lowerLimit %d", limitAngle.upperLimit, limitAngle.lowerLimit);
     djiStat = DjiXPort_SetLimitAngleSync(DJI_XPORT_LIMIT_ANGLE_CATEGORY_PITCH_JOINT_ANGLE, limitAngle);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set pitch joint angle limit angle for XPort error: 0x%08llX.", djiStat);
@@ -96,6 +97,7 @@ T_DjiReturnCode DjiTest_XPortStartService(void)
 
     limitAngle.upperLimit = 300;
     limitAngle.lowerLimit = -800;
+    USER_LOG_INFO("Set euler angle limit of pitch axis, upperLimit %d, lowerLimit %d", limitAngle.upperLimit, limitAngle.lowerLimit);
     djiStat = DjiXPort_SetLimitAngleSync(DJI_XPORT_LIMIT_ANGLE_CATEGORY_PITCH_EULER_ANGLE, limitAngle);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set pitch euler angle limit angle for XPort error: 0x%08llX.", djiStat);
@@ -104,6 +106,7 @@ T_DjiReturnCode DjiTest_XPortStartService(void)
 
     limitAngle.upperLimit = 300;
     limitAngle.lowerLimit = -1000;
+    USER_LOG_INFO("Set extended euler angle limit of pitch axis, upperLimit %d, lowerLimit %d", limitAngle.upperLimit, limitAngle.lowerLimit);
     djiStat = DjiXPort_SetLimitAngleSync(DJI_XPORT_LIMIT_ANGLE_CATEGORY_PITCH_EULER_ANGLE_EXTENSION, limitAngle);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set pitch extension euler angle limit angle for XPort error: 0x%08llX.", djiStat);
@@ -126,10 +129,12 @@ T_DjiReturnCode DjiTest_XPortStartService(void)
         limitAngle.upperLimit = 1500;
         limitAngle.lowerLimit = -1500;
     } else {
-        USER_LOG_WARN("payload mount position is unknown.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        USER_LOG_WARN("unknown mounposition.");
+        limitAngle.upperLimit = 300;
+        limitAngle.lowerLimit = -1500;
     }
 
+    USER_LOG_INFO("Set joint angle limit of yaw axis, upperLimit %d, lowerLimit %d", limitAngle.upperLimit, limitAngle.lowerLimit);
     djiStat = DjiXPort_SetLimitAngleSync(DJI_XPORT_LIMIT_ANGLE_CATEGORY_YAW_JOINT_ANGLE, limitAngle);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set yaw joint angle limit angle for XPort error: 0x%08llX.", djiStat);

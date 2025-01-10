@@ -47,6 +47,7 @@
 #include "../hal/hal_uart.h"
 #include "../hal/hal_network.h"
 #include "../hal/hal_usb_bulk.h"
+#include "../hal/hal_i2c.h"
 #include "dji_sdk_app_info.h"
 #include "dji_aircraft_info.h"
 #include "widget/test_widget.h"
@@ -128,6 +129,7 @@ int main(int argc, char **argv)
     returnCode = DjiCore_Init(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Core init error");
+        sleep(1);
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
@@ -185,12 +187,13 @@ int main(int argc, char **argv)
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
     returnCode = DjiTest_DataTransmissionStartService();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("widget sample init error");
+        USER_LOG_ERROR("data tramsmission sample init error");
     }
 #endif
 
     if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK) {
+        (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)) {
         returnCode = DjiTest_WidgetInteractionStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("widget interaction sample init error");
@@ -415,15 +418,22 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         .TcpRecvData = Osal_TcpRecvData,
     };
 
+    T_DjiHalI2cHandler i2CHandler = {
+        .I2cInit = HalI2c_Init,
+        .I2cDeInit = HalI2c_DeInit,
+        .I2cWriteData = HalI2c_WriteData,
+        .I2cReadData = HalI2c_ReadData,
+    };
+
     returnCode = DjiPlatform_RegOsalHandler(&osalHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("register osal handler error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    returnCode = DjiPlatform_RegHalUartHandler(&uartHandler);
+    returnCode = DjiPlatform_RegHalI2cHandler(&i2CHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        printf("register hal uart handler error");
+        printf("register hal i2c handler error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
@@ -445,12 +455,24 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
     }
 
 #if (CONFIG_HARDWARE_CONNECTION == DJI_USE_UART_AND_USB_BULK_DEVICE)
+    returnCode = DjiPlatform_RegHalUartHandler(&uartHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal uart handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
     returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("register hal usb bulk handler error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 #elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_UART_AND_NETWORK_DEVICE)
+    returnCode = DjiPlatform_RegHalUartHandler(&uartHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal uart handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
     returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("register hal network handler error");
@@ -464,8 +486,12 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 #elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_UART)
-    /*!< Attention: Only use uart hardware connection.
-     */
+    returnCode = DjiPlatform_RegHalUartHandler(&uartHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal uart handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
 #endif
 
     returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);

@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.9.2-orange.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
-![](https://img.shields.io/badge/license-MIT-pink.svg)
+![](https://img.shields.io/badge/version-V3.10.0-red.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
+![](https://img.shields.io/badge/license-MIT-purple.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,15 +23,11 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.9.2. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.10.0. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* Added support for cloud-based custom small data transmission on Matrice 3D/3TD models.
-* Fixed an issue with acquiring disordered sequence numbers of the RTCM data packet.
-> Note: When transmitting the video stream from the payload camera, only the stream in DJI-H264 format is supported. The
-CUSTOM-H264 stream is not supported. Use the latest PSDK community version to transmit the stream in the CUSTOM-H264 format.
-> Note: Non-RC flight is not supported by default. Call the DjiFlightController_SetRCLostActionEnableStatus interface to enable
-this feature.
+* Supports Matrice 4T/4E models
+* Supports DJI SDK Certified Chip (DJI SDK CC).
 
 ## License
 

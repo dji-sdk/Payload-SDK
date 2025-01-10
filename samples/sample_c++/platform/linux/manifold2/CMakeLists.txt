@@ -46,7 +46,7 @@ if (DEVICE_SYSTEM_ID MATCHES x86_64)
     add_definitions(-DPLATFORM_ARCH_x86_64=1)
 elseif (DEVICE_SYSTEM_ID MATCHES aarch64)
     set(TOOLCHAIN_NAME aarch64-linux-gnu-gcc)
-    add_definitions(-DPLATFORM_ARCH_aarch64=1)
+    add_definitions(-DPLATFORM_ARCH_AARCH64=1)
 else ()
     message(FATAL_ERROR "FATAL: Please confirm your platform.")
 endif ()
@@ -132,10 +132,6 @@ if (NOT EXECUTABLE_OUTPUT_PATH)
 endif ()
 
 target_link_libraries(${PROJECT_NAME} m)
-
-add_custom_command(TARGET ${PROJECT_NAME}
-        PRE_LINK COMMAND cmake ..
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
 if (OpenCV_FOUND)

@@ -211,10 +211,11 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
         return djiStat;
     }
 
-#ifdef SYSTEM_ARCH_LINUX_DISABLEED
+#ifdef SYSTEM_ARCH_LINUX_DISABLE
     //Step 2 : Set UI Config (Linux environment)
     char curFileDirPath[WIDGET_DIR_PATH_LEN_MAX];
     char tempPath[WIDGET_DIR_PATH_LEN_MAX];
+
     djiStat = DjiUserUtil_GetCurrentFileDirPath(__FILE__, WIDGET_DIR_PATH_LEN_MAX, curFileDirPath);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", djiStat);
@@ -461,8 +462,8 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
         USER_LOG_INFO("--------------------------------------------------------------------------------------------->");
         DjiTest_WidgetLogAppend("-> Sample Start");
 
-        if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT
-            || DJI_MOUNT_POSITION_EXTENSION_LITE_PORT == s_aircraftInfoBaseInfo.mountPosition) {
+        if (s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT ||
+            s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT) {
             switch (s_extensionPortSampleIndex) {
                 case E_DJI_SAMPLE_INDEX_WAYPOINT_V2:
                     if (s_isallowRunFlightControlSample == true) {

@@ -173,8 +173,8 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
             USER_LOG_INFO("gps position: x = %d y = %d z = %d.", gpsPosition.x, gpsPosition.y, gpsPosition.z);
         }
 
-        //Attention: if you want to subscribe the single battery info on M300 RTK, you need connect USB cable to
-        //OSDK device or use topic DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO instead.
+        // Attention: if you want to subscribe the single battery info on M300 RTK, you need connect USB cable to
+        // OSDK device or use topic DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO instead.
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX1,
                                                           (uint8_t *) &singleBatteryInfo,
                                                           sizeof(T_DjiFcSubscriptionSingleBatteryInfo),

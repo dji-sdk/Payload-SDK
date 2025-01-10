@@ -88,7 +88,7 @@ T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
     /*! Attention: suggest use the exported kmz file by DJI pilot. If use this test file, you need set the longitude as
      * 113.94255, latitude as 22.57765 on DJI Assistant 2 simulator */
     snprintf(tempPath, DJI_TEST_WAYPOINT_V3_KMZ_FILE_PATH_LEN_MAX, "%s/waypoint_file/waypoint_v3_test_file.kmz",
-             curFileDirPath);
+            curFileDirPath);
 
     kmzFile = fopen(tempPath, "r");
     if (kmzFile == NULL) {

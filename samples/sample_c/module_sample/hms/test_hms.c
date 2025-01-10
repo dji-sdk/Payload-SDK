@@ -51,11 +51,14 @@
 static const char *oldReplaceAlarmIdStr = "%alarmid";
 static const char *oldReplaceIndexStr = "%index";
 static const char *oldReplaceComponentIndexStr = "%component_index";
+static bool isHmsManagerInit = false;
 static T_DjiHmsFileBinaryArray s_EnHmsTextConfigFileBinaryArrayList[] = {
     {hms_text_config_json_fileName, hms_text_config_json_fileSize, hms_text_config_json_fileBinaryArray},
 };
 static uint8_t *s_hmsJsonData = NULL;
 static E_DjiMobileAppLanguage s_hmsLanguage = DJI_MOBILE_APP_LANGUAGE_ENGLISH;
+static bool s_isHmsConfigFileDirPathConfigured = false;
+static char s_hmsConfigFileDirPath[DJI_FILE_PATH_SIZE_MAX] = {0};
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode DjiTest_HmsManagerInit(void);
@@ -132,7 +135,11 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
         return returnCode;
     }
 
-    snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/en", curFileDirPath);
+    if (s_isHmsConfigFileDirPathConfigured == true) {
+        snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/en", s_hmsConfigFileDirPath);
+    } else {
+        snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/en", curFileDirPath);
+    }
 
     //set default hms text config path
     returnCode = DjiHmsCustomization_RegDefaultHmsTextConfigByDirPath(tempPath);
@@ -150,7 +157,12 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
     }
 
     //set hms text config for Chinese language
-    snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/cn", curFileDirPath);
+    if (s_isHmsConfigFileDirPathConfigured == true) {
+        snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/cn", s_hmsConfigFileDirPath);
+    } else {
+        snprintf(tempPath, HMS_DIR_PATH_LEN_MAX, "%shms_text/cn", curFileDirPath);
+    }
+
     returnCode = DjiHmsCustomization_RegHmsTextConfigByDirPath(DJI_MOBILE_APP_LANGUAGE_CHINESE,
                                                                tempPath);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -174,11 +186,22 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
 
 #if DJI_CUSTOM_HMS_CODE_INJECT_ON
     DjiHmsCustomization_InjectHmsErrorCode(0x1E020000, DJI_HMS_ERROR_LEVEL_FATAL);
+    DjiHmsCustomization_InjectHmsErrorCode(0x1E020001, DJI_HMS_ERROR_LEVEL_CRITICAL);
+    DjiHmsCustomization_InjectHmsErrorCode(0x1E020002, DJI_HMS_ERROR_LEVEL_WARN);
+    DjiHmsCustomization_InjectHmsErrorCode(0x1E020003, DJI_HMS_ERROR_LEVEL_HINT);
 #endif
 
     return returnCode;
 }
 
+T_DjiReturnCode DjiTest_HmsCustomizationSetConfigFilePath(const char *path)
+{
+    memset(s_hmsConfigFileDirPath, 0, sizeof(s_hmsConfigFileDirPath));
+    memcpy(s_hmsConfigFileDirPath, path, USER_UTIL_MIN(strlen(path), sizeof(s_hmsConfigFileDirPath) - 1));
+    s_isHmsConfigFileDirPathConfigured = true;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
 /* Private functions definition-----------------------------------------------*/
 static T_DjiReturnCode DjiTest_HmsManagerInit(void)
 {
@@ -199,13 +222,13 @@ static T_DjiReturnCode DjiTest_HmsManagerInit(void)
     returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
                                                   DJI_DATA_SUBSCRIPTION_TOPIC_10_HZ,
                                                   NULL);
-
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("HMS sample subscribe topic flight status error, error code:0x%08llX", returnCode);
         return returnCode;
     }
 
 #ifdef SYSTEM_ARCH_LINUX
+
     returnCode = DjiUserUtil_GetCurrentFileDirPath(__FILE__, HMS_DIR_PATH_LEN_MAX, curFileDirPath);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
@@ -230,6 +253,8 @@ static T_DjiReturnCode DjiTest_HmsManagerInit(void)
     UtilFile_GetFileDataByPath(tempFileDirPath, 0, fileSize, s_hmsJsonData, &readRealSize);
 #endif
 
+    isHmsManagerInit = true;
+
     return DjiHmsManager_Init();
 }
 
@@ -249,6 +274,8 @@ static T_DjiReturnCode DjiTest_HmsManagerDeInit(void)
     osalHandler->Free(s_hmsJsonData);
 #endif
 
+    isHmsManagerInit = false;
+
     return DjiHmsManager_DeInit();
 }
 
@@ -257,6 +284,10 @@ static T_DjiFcSubscriptionFlightStatus DjiTest_GetValueOfFlightStatus(void)
     T_DjiReturnCode returnCode;
     T_DjiFcSubscriptionFlightStatus flightStatus;
     T_DjiDataTimestamp flightStatusTimestamp = {0};
+
+    if (isHmsManagerInit == false) {
+        return DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_ON_GROUND;
+    }
 
     returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_STATUS_FLIGHT,
                                                          (uint8_t *) &flightStatus,

@@ -262,8 +262,7 @@ static void *UserDataTransmission_Task(void *arg)
                 }
 #endif
             }
-        } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT
-                    || DJI_MOUNT_POSITION_EXTENSION_LITE_PORT == s_aircraftInfoBaseInfo.mountPosition) {
+        } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT) {
             channelAddress = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1;
             djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
             if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
