@@ -41,6 +41,7 @@ extern "C" {
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_HmsManagerRunSample(E_DjiMobileAppLanguage language);
 T_DjiReturnCode DjiTest_HmsCustomizationStartService(void);
+T_DjiReturnCode DjiTest_HmsCustomizationSetConfigFilePath(const char *path);
 
 #ifdef __cplusplus
 }

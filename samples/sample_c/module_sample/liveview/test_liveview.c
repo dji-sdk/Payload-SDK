@@ -146,8 +146,10 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     USER_LOG_INFO("Fpv stream is saved to file: %s", s_fpvCameraStreamFilePath);
     USER_LOG_INFO("Payload%d stream is saved to file: %s\r\n", mountPosition, s_payloadCameraStreamFilePath);
 
-    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
+    if (DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
+    ) {
         USER_LOG_INFO("--> Start h264 stream of the fpv and selected payload\r\n");
 
         localTime = localtime(&currentTime);

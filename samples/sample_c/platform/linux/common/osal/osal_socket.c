@@ -176,8 +176,6 @@ T_DjiReturnCode Osal_UdpRecvData(T_DjiSocketHandle socketHandle, char *ipAddr, u
     ret = recvfrom(socketHandleStruct->socketFd, buf, len, 0, (struct sockaddr *) &addr, &addrLen);
     if (ret >= 0) {
         *realLen = ret;
-        strcpy(ipAddr, inet_ntoa(addr.sin_addr));
-        *port = ntohs(addr.sin_port);
     } else {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }

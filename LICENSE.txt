@@ -310,19 +310,36 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       │   │       ├── hal_uart.h
 │   │       │   │       ├── hal_usb_bulk.c
 │   │       │   │       └── hal_usb_bulk.h
-│   │       │   └── nvidia_jetson
-│   │       │       ├── application
-│   │       │       │   ├── dji_sdk_app_info.h
-│   │       │       │   ├── dji_sdk_config.h
-│   │       │       │   └── main.c
-│   │       │       ├── CMakeLists.txt
-│   │       │       └── hal
-│   │       │           ├── hal_network.c
-│   │       │           ├── hal_network.h
-│   │       │           ├── hal_uart.c
-│   │       │           ├── hal_uart.h
-│   │       │           ├── hal_usb_bulk.c
-│   │       │           └── hal_usb_bulk.h
+│   │       │   ├── nvidia_jetson
+│   │       │   │   ├── application
+│   │       │   │   │   ├── dji_sdk_app_info.h
+│   │       │   │   │   ├── dji_sdk_config.h
+│   │       │   │   │   └── main.c
+│   │       │   │   ├── CMakeLists.txt
+│   │       │   │   └── hal
+│   │       │   │       ├── hal_i2c.c
+│   │       │   │       ├── hal_i2c.h
+│   │       │   │       ├── hal_network.c
+│   │       │   │       ├── hal_network.h
+│   │       │   │       ├── hal_uart.c
+│   │       │   │       ├── hal_uart.h
+│   │       │   │       ├── hal_usb_bulk.c
+│   │       │   │       └── hal_usb_bulk.h
+│   │       │   ├── raspberry_pi
+│   │       │   │   ├── application
+│   │       │   │   │   ├── dji_sdk_app_info.h
+│   │       │   │   │   ├── dji_sdk_config.h
+│   │       │   │   │   └── main.c
+│   │       │   │   ├── CMakeLists.txt
+│   │       │   │   └── hal
+│   │       │   │       ├── hal_i2c.c
+│   │       │   │       ├── hal_i2c.h
+│   │       │   │       ├── hal_network.c
+│   │       │   │       ├── hal_network.h
+│   │       │   │       ├── hal_uart.c
+│   │       │   │       ├── hal_uart.h
+│   │       │   │       ├── hal_usb_bulk.c
+│   │       │   │       └── hal_usb_bulk.h
 │   │       └── rtos_freertos
 │   │           ├── common
 │   │           │   └── osal

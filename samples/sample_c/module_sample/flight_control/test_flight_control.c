@@ -899,8 +899,6 @@ T_DjiReturnCode DjiTest_TriggerFtsEventCallback(void)
         USER_LOG_WARN("Note: This is an empty implementation, and the FTS signal needs to be triggered by the PWM signal.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
-
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
 }
 
 void DjiTest_FlightControlPassiveTriggerFtsSample(void)
@@ -1304,10 +1302,11 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
                DjiTest_FlightControlGetValueOfFlightStatus() == DJI_FC_SUBSCRIPTION_FLIGHT_STATUS_IN_AIR) {
             T_DjiFcSubscriptionHeightFusion heightFusion = DjiTest_FlightControlGetValueOfHeightFusion();
             s_osalHandler->TaskSleepMs(1000);
-            if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3E ||
-                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3T ||
-                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D ||
-                aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
+            if (DJI_AIRCRAFT_TYPE_M3E == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M3D == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M4E == aircraftInfoBaseInfo.aircraftType
+            ) {
                 if ((dji_f64_t) 0.45 < heightFusion && heightFusion < (dji_f64_t) 0.55) {
                     break;
                 }

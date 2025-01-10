@@ -62,9 +62,17 @@ T_DjiReturnCode DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea(void)
 T_DjiReturnCode DjiUpgradePlatformLinux_ReplaceOldProgram(void)
 {
     char cmdBuffer[DJI_TEST_CMD_CALL_MAX_LEN];
+    T_DjiReturnCode returnCode;
 
     snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "cp -f %s*_V*.*.*.bin %s", DJI_TEST_UPGRADE_FILE_DIR,
              DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH);
+    returnCode = DjiTest_RunSystemCmd(cmdBuffer);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Replace old program file error");
+        return returnCode;
+    }
+
+    snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "chmod 777 %s", DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH);
 
     return DjiTest_RunSystemCmd(cmdBuffer);
 }
@@ -132,7 +140,7 @@ T_DjiReturnCode DjiUpgradePlatformLinux_CreateUpgradeProgramFile(const T_DjiUpgr
     snprintf(filePath, DJI_FILE_PATH_SIZE_MAX, "%s%s", DJI_TEST_UPGRADE_FILE_DIR, fileInfo->fileName);
     s_upgradeProgramFile = fopen(filePath, "w+");
     if (s_upgradeProgramFile == NULL) {
-        USER_LOG_ERROR("Upgrade program file can't create");
+        USER_LOG_ERROR("Upgrade program file can't create: %s", filePath);
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 

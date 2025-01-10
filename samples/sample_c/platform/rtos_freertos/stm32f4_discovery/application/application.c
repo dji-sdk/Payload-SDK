@@ -38,6 +38,7 @@
 
 #include "application.h"
 #include "hal_uart.h"
+#include "hal_i2c.h"
 #include "osal.h"
 #include "dji_sdk_app_info.h"
 #include "dji_sdk_config.h"
@@ -111,6 +112,12 @@ void DjiUser_StartTask(void const *argument)
         .UartReadData = HalUart_ReadData,
         .UartGetStatus = HalUart_GetStatus,
     };
+    T_DjiHalI2cHandler i2CHandler = {
+        .I2cInit = HalI2c_Init,
+        .I2cDeInit = HalI2c_DeInit,
+        .I2cWriteData = HalI2c_WriteData,
+        .I2cReadData = HalI2c_ReadData,
+    };
     T_DjiFirmwareVersion firmwareVersion = {
         .majorVersion = USER_FIRMWARE_MAJOR_VERSION,
         .minorVersion = USER_FIRMWARE_MINOR_VERSION,
@@ -139,6 +146,12 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
+    returnCode = DjiPlatform_RegHalI2cHandler(&i2CHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal i2c handler error");
+        goto out;
+    }
+
     returnCode = DjiLogger_AddConsole(&printConsole);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("add printf console error");
@@ -148,6 +161,18 @@ void DjiUser_StartTask(void const *argument)
     returnCode = DjiUser_FillInUserInfo(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("fill user info error, please check user info config");
+        goto out;
+    }
+
+    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set firmware version error");
+        goto out;
+    }
+
+    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set serial number error");
         goto out;
     }
 
@@ -166,18 +191,6 @@ void DjiUser_StartTask(void const *argument)
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set alias error");
-        goto out;
-    }
-
-    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("set firmware version error");
-        goto out;
-    }
-
-    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("set serial number error");
         goto out;
     }
 
@@ -294,9 +307,12 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_POSITIONING_ON
-    if ((aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
+    if (((aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
          aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)
-        && aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT) {
+        && aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT)
+        || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4E == aircraftInfoBaseInfo.aircraftType
+    ) {
         if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk positioning init error");
         }

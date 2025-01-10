@@ -212,27 +212,27 @@ void DjiUser_RunStereoVisionViewSample(void)
         switch (inputChar) {
             case 'd':
                 USER_LOG_INFO("Subscribe down stereo camera pair images.");
-                perceptionSample->SubscribeDownImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeDownImage(DjiTest_PerceptionImageCallback);
                 break;
             case 'f':
                 USER_LOG_INFO("Subscribe front stereo camera pair images.");
-                perceptionSample->SubscribeFrontImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeFrontImage(DjiTest_PerceptionImageCallback);
                 break;
             case 'r':
                 USER_LOG_INFO("Subscribe rear stereo camera pair images.");
-                perceptionSample->SubscribeRearImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeRearImage(DjiTest_PerceptionImageCallback);
                 break;
             case 'u':
                 USER_LOG_INFO("Subscribe up stereo camera pair images.");
-                perceptionSample->SubscribeUpImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeUpImage(DjiTest_PerceptionImageCallback);
                 break;
             case 'l':
                 USER_LOG_INFO("Subscribe left stereo camera pair images.");
-                perceptionSample->SubscribeLeftImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeLeftImage(DjiTest_PerceptionImageCallback);
                 break;
             case 't':
                 USER_LOG_INFO("Subscribe right stereo camera pair images.");
-                perceptionSample->SubscribeRightImage(DjiTest_PerceptionImageCallback);
+                returnCode = perceptionSample->SubscribeRightImage(DjiTest_PerceptionImageCallback);
                 break;
             case 'g':
                 USER_LOG_INFO("Do stereo camera parameters subscription");
@@ -241,6 +241,11 @@ void DjiUser_RunStereoVisionViewSample(void)
                 goto DestroyTask;
             default:
                 break;
+        }
+
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_INFO("Failed to subscribe perception image.");
+            goto DestroyTask;
         }
 
         while (true) {

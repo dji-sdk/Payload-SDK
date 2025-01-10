@@ -180,7 +180,7 @@ REWAIT:
         }
 
         sendDataCount++;
-        memset(sendBuf, sendDataCount, TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER);
+        memset(sendBuf, 'A' - 1 + (sendDataCount % 26), TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER);
         returnCode = DjiMopChannel_SendData(s_testMopChannelNormalOutHandle, sendBuf,
                                             TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER, &realLen);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
