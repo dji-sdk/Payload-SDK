@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.10.0-red.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
-![](https://img.shields.io/badge/license-MIT-purple.svg)
+![](https://img.shields.io/badge/version-V3.11.0-orange.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
+![](https://img.shields.io/badge/license-MIT-pink.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,11 +23,10 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.10.0. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.11.0. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* Supports Matrice 4T/4E models
-* Supports DJI SDK Certified Chip (DJI SDK CC).
+* Supports Matrice 4TD/4D models
 
 ## License
 

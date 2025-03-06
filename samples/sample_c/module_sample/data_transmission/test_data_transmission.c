@@ -86,7 +86,9 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
-            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
+			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D ||
+			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD) {
         channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromCloud);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -211,7 +213,9 @@ static void *UserDataTransmission_Task(void *arg)
         if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
-            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD) {
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD ) {
             channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
             djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
             if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)

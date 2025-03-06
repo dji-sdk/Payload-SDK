@@ -149,6 +149,7 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     if (DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
     ) {
         USER_LOG_INFO("--> Start h264 stream of the fpv and selected payload\r\n");
 

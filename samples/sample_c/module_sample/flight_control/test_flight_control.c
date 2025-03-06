@@ -1306,6 +1306,8 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
                 || DJI_AIRCRAFT_TYPE_M3D == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M4E == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType
             ) {
                 if ((dji_f64_t) 0.45 < heightFusion && heightFusion < (dji_f64_t) 0.55) {
                     break;
