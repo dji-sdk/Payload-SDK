@@ -144,6 +144,7 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_AIRCRAFT_SERIES_M3 == aircraftSeries
 	            || DJI_AIRCRAFT_SERIES_M3D == aircraftSeries
                 || DJI_AIRCRAFT_SERIES_M4 == aircraftSeries
+                || DJI_AIRCRAFT_SERIES_M4D == aircraftSeries
             ) {
                 if (s_rotationActionList[i].rotation.rotationMode == DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE) {
                     T_DjiFcSubscriptionGimbalAngles gimbalAngles = {0};
