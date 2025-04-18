@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.11.0-orange.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
-![](https://img.shields.io/badge/license-MIT-pink.svg)
+![](https://img.shields.io/badge/version-V3.11.1-yellow.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-pink.svg)
+![](https://img.shields.io/badge/license-MIT-red.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,10 +23,12 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.11.0. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.11.1. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-* Supports Matrice 4TD/4D models
+* Fixed the issue where the Matrice 4D or Matrice 4TD E-Port Lite interface was not recognized on FlightHub 2.
+* Fixed the crash issue when using the DjiCore_Delnit interface.
+* Fixed the occasional crash issue when transmitting video streams through the USB bulk channel on Matrice 350 RTK.
 
 ## License
 

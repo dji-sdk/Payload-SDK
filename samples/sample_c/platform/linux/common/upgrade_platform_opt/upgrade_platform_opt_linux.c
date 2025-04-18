@@ -47,6 +47,9 @@ static T_DjiReturnCode DjiTest_RunSystemCmd(char *systemCmdStr);
 T_DjiReturnCode DjiUpgradePlatformLinux_RebootSystem(void)
 {
     // attention: you need su permission to reboot system
+
+    USER_LOG_INFO("reboot -h now");
+
     return DjiTest_RunSystemCmd("reboot -h now");
 }
 
@@ -55,6 +58,8 @@ T_DjiReturnCode DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea(void)
     char cmdBuffer[DJI_TEST_CMD_CALL_MAX_LEN];
 
     snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "rm -rf %s*", DJI_TEST_UPGRADE_FILE_DIR);
+
+    USER_LOG_INFO("%s", cmdBuffer);
 
     return DjiTest_RunSystemCmd(cmdBuffer);
 }
@@ -66,6 +71,9 @@ T_DjiReturnCode DjiUpgradePlatformLinux_ReplaceOldProgram(void)
 
     snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "cp -f %s*_V*.*.*.bin %s", DJI_TEST_UPGRADE_FILE_DIR,
              DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH);
+
+    USER_LOG_INFO("%s", cmdBuffer);
+
     returnCode = DjiTest_RunSystemCmd(cmdBuffer);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Replace old program file error");
@@ -73,6 +81,8 @@ T_DjiReturnCode DjiUpgradePlatformLinux_ReplaceOldProgram(void)
     }
 
     snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "chmod 777 %s", DJI_TEST_UPGRADE_OLD_FIRMWARE_PATH);
+
+    USER_LOG_INFO("%s", cmdBuffer);
 
     return DjiTest_RunSystemCmd(cmdBuffer);
 }
@@ -88,6 +98,8 @@ T_DjiReturnCode DjiUpgradePlatformLinux_SetUpgradeRebootState(const T_DjiUpgrade
         USER_LOG_ERROR("Create reboot state file error");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
+
+    USER_LOG_INFO("set upgrade reboot state to %s, state %d", DJI_REBOOT_STATE_FILE_NAME, upgradeEndInfo->upgradeEndState);
 
     res = fwrite((uint8_t *) upgradeEndInfo, 1, sizeof(T_DjiUpgradeEndInfo), rebootStateFile);
     if (res != sizeof(T_DjiUpgradeEndInfo)) {
@@ -111,6 +123,7 @@ T_DjiReturnCode DjiUpgradePlatformLinux_GetUpgradeRebootState(bool *isUpgradeReb
     rebootStateFile = fopen(DJI_REBOOT_STATE_FILE_NAME, "r");
     if (rebootStateFile == NULL) {
         *isUpgradeReboot = false;
+        USER_LOG_INFO("isUpgradeReboot false");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
 
@@ -120,7 +133,11 @@ T_DjiReturnCode DjiUpgradePlatformLinux_GetUpgradeRebootState(bool *isUpgradeReb
         *isUpgradeReboot = false;
         goto out;
     }
+
+    USER_LOG_INFO("isUpgradeReboot true");
     *isUpgradeReboot = true;
+
+    USER_LOG_INFO("upgrade end state is %d", upgradeEndInfo->upgradeEndState);
 
 out:
     fclose(rebootStateFile);
@@ -129,12 +146,23 @@ out:
 
 T_DjiReturnCode DjiUpgradePlatformLinux_CleanUpgradeRebootState(void)
 {
+    USER_LOG_INFO("rm -f %s", DJI_REBOOT_STATE_FILE_NAME);
+
     return DjiTest_RunSystemCmd("rm -f "DJI_REBOOT_STATE_FILE_NAME);
 }
 
 T_DjiReturnCode DjiUpgradePlatformLinux_CreateUpgradeProgramFile(const T_DjiUpgradeFileInfo *fileInfo)
 {
     char filePath[DJI_FILE_PATH_SIZE_MAX];
+    char cmdBuffer[DJI_TEST_CMD_CALL_MAX_LEN];
+
+    snprintf(cmdBuffer, DJI_TEST_CMD_CALL_MAX_LEN, "mkdir -p %s", DJI_TEST_UPGRADE_FILE_DIR);
+
+    USER_LOG_INFO("%s", cmdBuffer);
+
+    DjiTest_RunSystemCmd(cmdBuffer);
+
+    USER_LOG_INFO("create %s%s", DJI_TEST_UPGRADE_FILE_DIR, fileInfo->fileName);
 
     s_upgradeProgramFile = NULL;
     snprintf(filePath, DJI_FILE_PATH_SIZE_MAX, "%s%s", DJI_TEST_UPGRADE_FILE_DIR, fileInfo->fileName);
@@ -198,6 +226,8 @@ T_DjiReturnCode DjiUpgradePlatformLinux_CloseUpgradeProgramFile(void)
         USER_LOG_ERROR("upgrade program file can't be NULL");
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
+
+    USER_LOG_INFO("close upgrade program file");
 
     fclose(s_upgradeProgramFile);
     s_upgradeProgramFile = NULL;
