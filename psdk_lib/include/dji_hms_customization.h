@@ -44,6 +44,18 @@ typedef enum {
     DJI_HMS_ERROR_LEVEL_FATAL,
 } E_DjiHmsErrorLevel;
 
+typedef enum {
+    DJI_HMS_ALARM_ENHANCED_TYPE_SHAKE_MOTOR = 1, /*!< Alarm triggered by shaking the motor on the pilot; alerts the user with vibrations indicating a warning or fault. */
+    DJI_HMS_ALARM_ENHANCED_PLAY_SOUND = 2, /*!< Alarm triggered by playing sound */
+    DJI_HMS_ALARM_ENHANCED_PLAY_SOUND_AND_SHAKE_MOTOR =3, /*!< Alarm that alerts the user on the PILOT app with both sound and vibrations */
+} E_DjiHmsAlarmEnhancedType;
+
+typedef enum {
+    DJI_HMS_ALARM_ENHANCED_ACTION_STOP = 0, /*!< Action to stop a specific enhanced alarm, shake motor or play sound */
+    DJI_HMS_ALARM_ENHANCED_ACTION_START = 1, /*!< Action to stop a specific enhanced alarm */
+    DJI_HMS_ALARM_ENHANCED_ACTION_EXIT_ALL =2,/*!< Action to exit all enhanced alarms, both shake motor and play sound; */
+} E_DjiHmsAlarmEnhancedAction;
+
 typedef struct {
     char *fileName; /*!< The file name of the hms text config file */
     uint32_t fileSize; /*!< The file size of the hms text config file, uint : byte */
@@ -54,6 +66,12 @@ typedef struct {
     uint16_t binaryArrayCount; /*!< Binary array count. */
     T_DjiHmsFileBinaryArray *fileBinaryArrayList; /*!< Pointer to binary array list */
 } T_DjiHmsBinaryArrayConfig;
+
+typedef struct {
+    E_DjiHmsAlarmEnhancedType type; /*!< The type is used to specify which enhanced alarm to ACTION_STOP or ACTION_START. It is ignored when EXIT_ALL alarms.*/
+    int8_t times; /* !< Specifies the number of consecutive times the alarm is to be activated.*/
+    int16_t interval; /* !< Indicates the interval (in milliseconds) between consecutive activations of the alarm.*/
+} T_DjiHmsAlarmEnhancedSetting;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -123,6 +141,15 @@ T_DjiReturnCode DjiHmsCustomization_RegDefaultHmsTextConfigByBinaryArray(const T
  */
 T_DjiReturnCode DjiHmsCustomization_RegHmsTextConfigByBinaryArray(E_DjiMobileAppLanguage appLanguage,
                                                                   const T_DjiHmsBinaryArrayConfig *binaryArrayConfig);
+
+/**
+ * @brief Contrl the app alram.
+ * @note This interface support on DJI manifold3.
+ * @param action: The action to start or stop alarm.
+ * @param setting: The alarm information.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiHmsCustomization_AlarmEnhancedCtrl(E_DjiHmsAlarmEnhancedAction action, T_DjiHmsAlarmEnhancedSetting setting);
 
 #ifdef __cplusplus
 }

@@ -33,6 +33,7 @@
 #include "dji_gimbal.h"
 #include "dji_xport.h"
 #include "gimbal_emu/test_payload_gimbal_emu.h"
+#include <widget_interaction_test/test_widget_interaction.h>
 
 /* Private constants ---------------------------------------------------------*/
 #define PAYLOAD_CAMERA_EMU_TASK_FREQ            (100)
@@ -118,6 +119,7 @@ static T_TestCameraGimbalRotationArgument s_tapZoomNewestGimbalRotationArgument 
 static uint32_t s_tapZoomNewestTargetHybridFocalLength = 0; // unit: 0.1mm
 static T_DjiMutexHandle s_tapZoomMutex = NULL;
 static E_DjiCameraVideoStreamType s_cameraVideoStreamType;
+static uint32_t s_currentVideoRecordTimeInSeconds = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static T_DjiReturnCode GetSystemState(T_DjiCameraSystemState *systemState);
@@ -205,6 +207,7 @@ static T_DjiReturnCode SetMode(E_DjiCameraMode mode)
 
     s_cameraState.cameraMode = mode;
     USER_LOG_INFO("set camera mode:%d", mode);
+    DjiTest_WidgetLogAppend("set cam mode %d", mode);
 
     returnCode = osalHandler->MutexUnlock(s_commonMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -235,6 +238,7 @@ static T_DjiReturnCode StartRecordVideo(void)
 
     s_cameraState.isRecording = true;
     USER_LOG_INFO("start record video");
+    DjiTest_WidgetLogAppend("start record video");
 
 out:
     djiStat = osalHandler->MutexUnlock(s_commonMutex);
@@ -267,6 +271,7 @@ static T_DjiReturnCode StopRecordVideo(void)
     s_cameraState.isRecording = false;
     s_cameraState.currentVideoRecordingTimeInSeconds = 0;
     USER_LOG_INFO("stop record video");
+    DjiTest_WidgetLogAppend("stop record video");
 
 out:
     djiStat = osalHandler->MutexUnlock(s_commonMutex);
@@ -290,6 +295,7 @@ static T_DjiReturnCode StartShootPhoto(void)
     }
 
     USER_LOG_INFO("start shoot photo");
+    DjiTest_WidgetLogAppend("start shoot photo");
     s_cameraState.isStoring = true;
 
     if (s_cameraShootPhotoMode == DJI_CAMERA_SHOOT_PHOTO_MODE_SINGLE) {
@@ -300,6 +306,7 @@ static T_DjiReturnCode StartShootPhoto(void)
         s_cameraState.shootingState = DJI_CAMERA_SHOOTING_INTERVAL_PHOTO;
         s_cameraState.isShootingIntervalStart = true;
         s_cameraState.currentPhotoShootingIntervalTimeInSeconds = s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds;
+        s_cameraState.currentPhotoShootingIntervalTimeInMs = s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds;
     }
 
     returnCode = osalHandler->MutexUnlock(s_commonMutex);
@@ -323,6 +330,7 @@ static T_DjiReturnCode StopShootPhoto(void)
     }
 
     USER_LOG_INFO("stop shoot photo");
+    DjiTest_WidgetLogAppend("stop shoot photo");
     s_cameraState.shootingState = DJI_CAMERA_SHOOTING_PHOTO_IDLE;
     s_cameraState.isStoring = false;
     s_cameraState.isShootingIntervalStart = false;
@@ -439,8 +447,9 @@ static T_DjiReturnCode SetPhotoTimeIntervalSettings(T_DjiCameraPhotoTimeInterval
 
     s_cameraPhotoTimeIntervalSettings.captureCount = settings.captureCount;
     s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds = settings.timeIntervalSeconds;
-    USER_LOG_INFO("set photo interval settings count:%d seconds:%d", settings.captureCount,
-                  settings.timeIntervalSeconds);
+    s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds = settings.timeIntervalMilliseconds;
+    USER_LOG_INFO("set photo interval settings count:%d seconds:%d.%d", settings.captureCount,
+                  settings.timeIntervalSeconds, settings.timeIntervalMilliseconds / 100);
     s_cameraState.currentPhotoShootingIntervalCount = settings.captureCount;
 
     returnCode = osalHandler->MutexUnlock(s_commonMutex);
@@ -907,7 +916,17 @@ static T_DjiReturnCode DjiTest_CameraRotationGimbal(T_TestCameraGimbalRotationAr
         return returnCode;
     }
 
-    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
+    if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+        aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
+        aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE ||
+        aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
+        returnCode = DjiTest_GimbalRotate(gimbalRotationArgument.rotationMode, gimbalRotationArgument.rotationProperty,
+                                          gimbalRotationArgument.rotationValue);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("rotate gimbal error: 0x%08llX.", returnCode);
+            return returnCode;
+        }
+    } else if (aircraftBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
         returnCode = DjiXPort_RotateSync(gimbalRotationArgument.rotationMode, gimbalRotationArgument.rotationProperty,
                                          gimbalRotationArgument.rotationValue);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -938,6 +957,7 @@ static void *UserCamera_Task(void *arg)
     uint32_t currentTime = 0;
     bool isStartIntervalPhotoAction = false;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    uint32_t intervalFreq = 10;
 
     USER_UTIL_UNUSED(arg);
 
@@ -1130,8 +1150,7 @@ out:
             }
         }
 
-        // 1Hz
-        if (USER_UTIL_IS_WORK_TURN(step, 1, PAYLOAD_CAMERA_EMU_TASK_FREQ)) {
+        if (USER_UTIL_IS_WORK_TURN(step, intervalFreq, PAYLOAD_CAMERA_EMU_TASK_FREQ)) {
             returnCode = osalHandler->MutexLock(s_commonMutex);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("lock mutex error: 0x%08llX.", returnCode);
@@ -1139,13 +1158,21 @@ out:
             }
 
             if (s_cameraState.isRecording) {
-                s_cameraState.currentVideoRecordingTimeInSeconds++;
-                s_cameraSDCardState.remainSpaceInMB =
-                    s_cameraSDCardState.remainSpaceInMB - SDCARD_PER_SECONDS_RECORD_SPACE_IN_MB;
-                if (s_cameraSDCardState.remainSpaceInMB > SDCARD_TOTAL_SPACE_IN_MB) {
-                    s_cameraSDCardState.remainSpaceInMB = 0;
-                    s_cameraSDCardState.isFull = true;
+                uint16_t preTimeInSeconds = s_cameraState.currentVideoRecordingTimeInSeconds;
+
+                s_currentVideoRecordTimeInSeconds++;
+
+                s_cameraState.currentVideoRecordingTimeInSeconds = s_currentVideoRecordTimeInSeconds / intervalFreq;
+                if (s_cameraState.currentVideoRecordingTimeInSeconds > preTimeInSeconds) {
+                    s_cameraSDCardState.remainSpaceInMB =
+                        s_cameraSDCardState.remainSpaceInMB - SDCARD_PER_SECONDS_RECORD_SPACE_IN_MB;
+                    if (s_cameraSDCardState.remainSpaceInMB > SDCARD_TOTAL_SPACE_IN_MB) {
+                        s_cameraSDCardState.remainSpaceInMB = 0;
+                        s_cameraSDCardState.isFull = true;
+                    }
                 }
+            } else {
+                s_currentVideoRecordTimeInSeconds = 0;
             }
 
             if (s_cameraState.isShootingIntervalStart == false) {
@@ -1154,10 +1181,16 @@ out:
 
             if (s_cameraShootPhotoMode == DJI_CAMERA_SHOOT_PHOTO_MODE_INTERVAL
                 && s_cameraState.isShootingIntervalStart == true && s_cameraPhotoTimeIntervalSettings.captureCount > 0
-                && s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds > 0) {
-                s_cameraState.currentPhotoShootingIntervalTimeInSeconds--;
+                && (s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds > 0 || s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds > 0)) {
+                uint16_t currentPhotoShootingIntervalTimeInMs = s_cameraState.currentPhotoShootingIntervalTimeInSeconds * 1000 +
+                                                                s_cameraState.currentPhotoShootingIntervalTimeInMs;
 
-                if ((s_cameraState.currentPhotoShootingIntervalTimeInSeconds == 0 &&
+                currentPhotoShootingIntervalTimeInMs -= 1000 / intervalFreq;
+
+                s_cameraState.currentPhotoShootingIntervalTimeInSeconds = currentPhotoShootingIntervalTimeInMs / 1000;
+                s_cameraState.currentPhotoShootingIntervalTimeInMs = currentPhotoShootingIntervalTimeInMs % 1000;
+
+                if ((currentPhotoShootingIntervalTimeInMs == 0 &&
                      s_cameraState.currentPhotoShootingIntervalCount > 0) ||
                     (s_cameraState.isShootingIntervalStart == true && isStartIntervalPhotoAction == false)) {
 
@@ -1165,13 +1198,14 @@ out:
 
                     s_cameraState.shootingState = DJI_CAMERA_SHOOTING_INTERVAL_PHOTO;
                     s_cameraState.isStoring = true;
-                    s_cameraState.currentPhotoShootingIntervalTimeInSeconds
-                        = s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds;
+                    s_cameraState.currentPhotoShootingIntervalTimeInSeconds = s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds;
+                    s_cameraState.currentPhotoShootingIntervalTimeInMs = s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds;
                     if (s_cameraState.currentPhotoShootingIntervalCount < INTERVAL_PHOTOGRAPH_ALWAYS_COUNT) {
-                        USER_LOG_INFO("interval taking photograph count:%d interval_time:%ds",
+                        USER_LOG_INFO("interval taking photograph count:%d interval_time:%d.%ds",
                                       (s_cameraPhotoTimeIntervalSettings.captureCount -
                                        s_cameraState.currentPhotoShootingIntervalCount + 1),
-                                      s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds);
+                                      s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds,
+                                      s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds / 100);
                         s_cameraState.currentPhotoShootingIntervalCount--;
                         if (s_cameraState.currentPhotoShootingIntervalCount == 0) {
                             s_cameraState.shootingState = DJI_CAMERA_SHOOTING_PHOTO_IDLE;
@@ -1179,8 +1213,9 @@ out:
                             s_cameraState.isShootingIntervalStart = false;
                         }
                     } else {
-                        USER_LOG_INFO("interval taking photograph always, interval_time:%ds",
-                                      s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds);
+                        USER_LOG_INFO("interval taking photograph always, interval_time:%d.%ds",
+                                      s_cameraPhotoTimeIntervalSettings.timeIntervalSeconds,
+                                      s_cameraPhotoTimeIntervalSettings.timeIntervalMilliseconds / 100);
                         s_cameraState.currentPhotoShootingIntervalCount--;
                     }
                 }

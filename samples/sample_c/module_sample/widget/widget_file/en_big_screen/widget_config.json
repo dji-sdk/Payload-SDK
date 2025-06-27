@@ -3,6 +3,470 @@
     "major": 1,
     "minor": 0
   },
+  "ar_config": {
+      "circleStyleList": [
+          {
+              "face": {
+                  "bottom": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "distAlpha": {
+                      "maxAlpha": 0.4,
+                      "maxDist": 100,
+                      "minAlpha": 0,
+                      "minDist": 50
+                  },
+                  "side": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "top": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  }
+              },
+              "stroke": {
+                  "bottom": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "side": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "top": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  }
+              },
+              "styleId": 10
+          },
+          {
+              "face": {
+                  "bottom": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "distAlpha": {
+                      "maxAlpha": 0.4,
+                      "maxDist": 100,
+                      "minAlpha": 0,
+                      "minDist": 50
+                  },
+                  "side": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "top": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  }
+              },
+              "stroke": {
+                  "bottom": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "side": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "top": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  }
+              },
+              "styleId": 11
+          }
+      ],
+      "commonPointStyleList": [
+          {
+              "alwaysInEdge": false,
+              "arTextAttribute": {
+                  "color": -65536
+              },
+              "isIgnoreBorder": true,
+              "styleId": 10
+          },
+          {
+              "alwaysInEdge": false,
+              "arTextAttribute": {
+                  "color": -65536
+              },
+              "isIgnoreBorder": true,
+              "styleId": 11
+          }
+      ],
+      "lineStyleList": [
+          {
+              "color": -256,
+              "stokeInfo": {
+                  "color": -65536,
+                  "dash": false,
+                  "width": {
+                      "maxStrokeWidth": 2,
+                      "maxWidthDist": 2,
+                      "minStrokeWidth": 2,
+                      "minWidthDist": 2
+                  }
+              },
+              "styleId": 10,
+              "useDepth": false
+          },
+          {
+              "color": -256,
+              "stokeInfo": {
+                  "color": -65536,
+                  "dash": false,
+                  "width": {
+                      "maxStrokeWidth": 2,
+                      "maxWidthDist": 2,
+                      "minStrokeWidth": 2,
+                      "minWidthDist": 2
+                  }
+              },
+              "styleId": 11,
+              "useDepth": false
+          }
+      ],
+      "pointStyleList": [
+          {
+              "keyName": 0,
+              "pointConfig": {
+                  "arrowConfig": {
+                      "customIcon": false,
+                      "defaultDeg": 0,
+                      "img": "",
+                      "imgHeight": 0,
+                      "imgWidth": 0,
+                      "showMode": 0,
+                      "translate": 0,
+                      "type": 0
+                  },
+                  "needFont": true,
+                  "needOrthographic": true,
+                  "needPerspective": false,
+                  "oConfig": {
+                      "displayHeight": 20.0,
+                      "displayWidth": 20.0,
+                      "img": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" fill=\"none\"\n    version=\"1.1\" width=\"8\" height=\"8\" viewBox=\"0 0 8 8\">\n    <g>\n        <ellipse id=\"point_normal_bg\"\n            cx=\"4\" cy=\"4\" rx=\"2\" ry=\"2\"\n            fill=\"#FFFFFF\" fill-opacity=\"1\" />\n    </g>\n\n</svg>",
+                      "imgHeight": 20.0,
+                      "imgWidth": 20.0
+                  },
+                  "pConfig": {
+                      "maxSVG": "",
+                      "maxSize": 0,
+                      "minSVG": "",
+                      "minSize": 0,
+                      "realSize": 0,
+                      "strokeWidthRadio": 0
+                  },
+                  "textConfig": {
+                      "backgroundColor": 1427379220,
+                      "cornerRadius": 5,
+                      "paddingB": 5,
+                      "paddingL": 10,
+                      "paddingR": 10,
+                      "paddingT": 5,
+                      "shadow": false,
+                      "textGravity": 1,
+                      "textSize": 20
+                  }
+              }
+          },
+          {
+              "keyName": 1,
+              "pointConfig": {
+                  "arrowConfig": {
+                      "customIcon": false,
+                      "defaultDeg": 0,
+                      "img": "",
+                      "imgHeight": 0,
+                      "imgWidth": 0,
+                      "showMode": 0,
+                      "translate": 0,
+                      "type": 0
+                  },
+                  "needFont": true,
+                  "needOrthographic": true,
+                  "needPerspective": false,
+                  "oConfig": {
+                      "displayHeight": 20.0,
+                      "displayWidth": 20.0,
+                      "img": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" fill=\"none\"\n    version=\"1.1\" width=\"8\" height=\"8\" viewBox=\"0 0 8 8\">\n    <g>\n        <ellipse id=\"point_normal_bg\"\n            cx=\"4\" cy=\"4\" rx=\"2\" ry=\"2\"\n            fill=\"#FFFFFF\" fill-opacity=\"1\" />\n    </g>\n\n</svg>",
+                      "imgHeight": 20.0,
+                      "imgWidth": 20.0
+                  },
+                  "pConfig": {
+                      "maxSVG": "",
+                      "maxSize": 0,
+                      "minSVG": "",
+                      "minSize": 0,
+                      "realSize": 0,
+                      "strokeWidthRadio": 0
+                  },
+                  "textConfig": {
+                      "backgroundColor": 1427379220,
+                      "cornerRadius": 5,
+                      "paddingB": 5,
+                      "paddingL": 10,
+                      "paddingR": 10,
+                      "paddingT": 5,
+                      "shadow": false,
+                      "textGravity": 1,
+                      "textSize": 20
+                  }
+              }
+          }
+      ],
+      "polygonStyleList": [
+          {
+              "face": {
+                  "bottom": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "distAlpha": {
+                      "maxAlpha": 0.4,
+                      "maxDist": 100,
+                      "minAlpha": 0,
+                      "minDist": 50
+                  },
+                  "side": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "top": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  }
+              },
+              "is3DMesh": false,
+              "stroke": {
+                  "bottom": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "side": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "top": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  }
+              },
+              "styleId": 10
+          },
+          {
+              "face": {
+                  "bottom": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "distAlpha": {
+                      "maxAlpha": 0.4,
+                      "maxDist": 100,
+                      "minAlpha": 0,
+                      "minDist": 50
+                  },
+                  "side": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  },
+                  "top": {
+                      "backColor": -256,
+                      "faceColor": -65536
+                  }
+              },
+              "is3DMesh": false,
+              "stroke": {
+                  "bottom": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "side": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  },
+                  "top": {
+                      "distAlpha": {
+                          "maxAlpha": 0.6,
+                          "maxDist": 100,
+                          "minAlpha": 1,
+                          "minDist": 50
+                      },
+                      "strokeInfo": {
+                          "color": -65536,
+                          "dash": true,
+                          "width": {
+                              "maxStrokeWidth": 20,
+                              "maxWidthDist": 20,
+                              "minStrokeWidth": 2.5,
+                              "minWidthDist": 100
+                          }
+                      }
+                  }
+              },
+              "styleId": 11
+          }
+      ]
+  },
   "main_interface": {
     "floating_window": {
       "is_enable": true

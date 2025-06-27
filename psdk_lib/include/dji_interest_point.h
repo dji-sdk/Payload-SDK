@@ -39,16 +39,23 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
+typedef enum {
+    DJI_INTEREST_POINT_MISSION_ACTION_STATE_NOT_STARTED = 0,
+    DJI_INTEREST_POINT_MISSION_ACTION_STATE_PAUSE = 1,
+    DJI_INTEREST_POINT_MISSION_ACTION_STATE_RUNNING = 2,
+} E_DjiInterestPointActionState;
+
 typedef struct {
     dji_f32_t curSpeed;
     dji_f32_t radius;
-    uint8_t state;
+    uint8_t state;            /*!< Refer to E_DjiInterestPointActionState.*/
 } T_DjiInterestPointMissionState;
 
 typedef struct {
     dji_f64_t latitude;
     dji_f64_t longitude;
     dji_f32_t speed;
+    int8_t payloadCameraIndex; /*!< Used by which aircraft that can mount payload cameras. Range starts from 1.*/
 } T_DjiInterestPointSettings;
 
 typedef T_DjiReturnCode (*InterestPointMissionStateCallback)(T_DjiInterestPointMissionState missionState);

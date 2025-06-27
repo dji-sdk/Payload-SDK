@@ -44,6 +44,7 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 #define DJI_PI                                  (3.14159265358979323846f)
 #define DJI_FILE_NAME_SIZE_MAX                  256
+#define DJI_FILE_MD5_LENGTH                     16
 #define DJI_FILE_PATH_SIZE_MAX                  (DJI_FILE_NAME_SIZE_MAX + 256)
 #define DJI_IP_ADDR_STR_SIZE_MAX                16
 #define DJI_MD5_BUFFER_LEN                      16
@@ -57,6 +58,12 @@ extern "C" {
     (uint32_t)\
     (((((uint32_t)(subscriptionModule)) << (DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET)) & (DJI_SUBSCRIPTION_MODULE_INDEX_MASK)) | \
     ((((uint32_t)(topicCode)) << (DJI_SUBSCRIPTION_TOPIC_CODE_OFFSET)) & (DJI_SUBSCRIPTION_TOPIC_CODE_MASK)))
+
+#define DJI_DATA_SUBSCRIPTION_TOPIC_GET_MODULE(topic) \
+    ((uint32_t)((topic & DJI_SUBSCRIPTION_MODULE_INDEX_MASK) >> DJI_SUBSCRIPTION_MODULE_INDEX_OFFSET))
+
+#define DJI_DATA_SUBSCRIPTION_TOPIC_GET_CODE(topic) \
+    ((uint32_t)((topic & DJI_SUBSCRIPTION_TOPIC_CODE_MASK) >> DJI_SUBSCRIPTION_TOPIC_CODE_OFFSET))
 
 /**
  * @brief Type define double as dji_f64_t.
@@ -77,6 +84,8 @@ typedef enum {
     DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT        = 1,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT      = 2,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3,
+    DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT_V2   = 4,
+    DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD   = 5,
 } E_DjiMountPositionType;
 
 typedef enum {
@@ -84,8 +93,15 @@ typedef enum {
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1         = 1,
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2         = 2,
     DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3         = 3,
-    DJI_MOUNT_POSITION_EXTENSION_PORT           = 4,
-    DJI_MOUNT_POSITION_EXTENSION_LITE_PORT      = 5,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO1    = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO2    = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO3    = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO4    = 4,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO5    = 5,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO6    = 6,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO7    = 7,
+    DJI_MOUNT_POSITION_EXTENSION_PORT,
+    DJI_MOUNT_POSITION_EXTENSION_LITE_PORT,
 } E_DjiMountPosition;
 
 typedef enum {
@@ -98,7 +114,8 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_M3D                     = 6,
     DJI_AIRCRAFT_SERIES_FC30                    = 7,
     DJI_AIRCRAFT_SERIES_M4                      = 8,
-	DJI_AIRCRAFT_SERIES_M4D                     = 9,
+    DJI_AIRCRAFT_SERIES_M4D                     = 9,
+    DJI_AIRCRAFT_SERIES_M400                    = 10,
 } E_DjiAircraftSeries;
 
 typedef enum {
@@ -115,10 +132,11 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M350_RTK                  = 89, /*!< Aircraft type is Matrice 350 RTK. */
     DJI_AIRCRAFT_TYPE_M3D                       = 91, /*!< Aircraft type is Matrice 3D. */
     DJI_AIRCRAFT_TYPE_M3TD                      = 93, /*!< Aircraft type is Matrice 3TD. */
-    DJI_AIRCRAFT_TYPE_M4T                       = 99, /*!< Aircraft type is Mavic 4T. */
-    DJI_AIRCRAFT_TYPE_M4E                       = 990, /*!< Aircraft type is Mavic 4E. */
+    DJI_AIRCRAFT_TYPE_M4T                       = 99, /*!< Aircraft type is Matrice 4T. */
+    DJI_AIRCRAFT_TYPE_M4E                       = 990, /*!< Aircraft type is Matrice 4E. */
     DJI_AIRCRAFT_TYPE_M4TD                      = 100, /*!< Aircraft type is Matrice 4TD. */
     DJI_AIRCRAFT_TYPE_M4D                       = 1000, /*!< Aircraft type is Matrice 4D. */
+    DJI_AIRCRAFT_TYPE_M400                      = 103, /*!< Aircraft type is Matrice 400. */
 } E_DjiAircraftType;
 
 /**
@@ -259,6 +277,8 @@ typedef enum {
     DJI_SDK_ADAPTER_TYPE_SKYPORT_V2             = 1, /*!< SDK adapter type is Skyport V2. */
     DJI_SDK_ADAPTER_TYPE_XPORT                  = 2, /*!< SDK adapter type is X-Port. */
     DJI_SDK_ADAPTER_TYPE_NONE                   = 3, /*!< don't have any adapter outside */
+    DJI_SDK_ADAPTER_TYPE_SKYPORT_V3             = 4, /*!< SDK adapter type is Skyport V3 */
+    DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE  = 5, /*!< SDK adapter type is Eport V2 ribbon cable */
 } E_DjiSdkAdapterType;
 
 typedef enum {
@@ -266,6 +286,13 @@ typedef enum {
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO2,
     DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO3,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO1 = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO2 = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO2,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO3 = DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO3,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO4,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO5,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO6,
+    DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO7,
     DJI_CHANNEL_ADDRESS_EXTENSION_PORT,
     DJI_CHANNEL_ADDRESS_MASTER_RC_APP,
     DJI_CHANNEL_ADDRESS_SLAVE_RC_APP,
@@ -288,6 +315,7 @@ typedef struct {
     uint8_t captureCount; /*!< Specifies the total capture count of interval settings.
  *                             0: reserved, 1-254: specific number, 255: continuous capture until stopped. */
     uint16_t timeIntervalSeconds; /*!< Specifies the interval time between two captures, unit: s*/
+    uint16_t timeIntervalMilliseconds; /*!< Specifies the interval time between two captures, unit: ms*/
 } T_DjiCameraPhotoTimeIntervalSettings;
 
 /**

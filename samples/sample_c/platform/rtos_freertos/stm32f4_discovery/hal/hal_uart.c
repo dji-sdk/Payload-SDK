@@ -38,6 +38,18 @@
 /* Private constants ---------------------------------------------------------*/
 #define COMMUNICATION_UART_NUM          UART_NUM_3
 
+#define HAL_UART_USB_UART_FT232_VID     (0x0403)
+#define HAL_UART_USB_UART_FT232_PID     (0x6001)
+
+#define HAL_UART_USB_UART_CP2102_VID    (0x10C4)
+#define HAL_UART_USB_UART_CP2102_PID    (0xEA60)
+
+#define HAL_UART_USB_UART_VCOM_VID      (0x2CA3)
+#define HAL_UART_USB_UART_VCOM_PID      (0xF002)
+
+#define HAL_UART_USB_UART_VID           HAL_UART_USB_UART_FT232_VID
+#define HAL_UART_USB_UART_PID           HAL_UART_USB_UART_FT232_PID
+
 /* Private types -------------------------------------------------------------*/
 typedef enum {
     USER_UART_NUM0 = 0,
@@ -119,6 +131,20 @@ T_DjiReturnCode HalUart_GetStatus(E_DjiHalUartNum uartNum, T_DjiUartStatus *stat
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+
+T_DjiReturnCode HalUart_GetDeviceInfo(T_DjiHalUartDeviceInfo *deviceInfo)
+{
+
+    if (deviceInfo == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    deviceInfo->vid = HAL_UART_USB_UART_VID;
+    deviceInfo->pid = HAL_UART_USB_UART_PID;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 
 /* Private functions definition-----------------------------------------------*/
 

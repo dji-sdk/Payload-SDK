@@ -109,6 +109,7 @@ typedef enum {
 typedef enum {
     DJI_HAL_USB_BULK_NUM_0 = 0,
     DJI_HAL_USB_BULK_NUM_1,
+    DJI_HAL_USB_BULK_NUM_2,
     DJI_HAL_USB_BULK_NUM_MAX,
 } E_DjiHalUsbBulkNum;
 
@@ -139,6 +140,11 @@ typedef struct {
 } T_DjiFileInfo;
 
 typedef struct {
+    uint16_t pid;
+    uint16_t vid;
+} T_DjiHalUartDeviceInfo;
+
+typedef struct {
     T_DjiReturnCode (*UartInit)(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUartHandle *uartHandle);
 
     T_DjiReturnCode (*UartDeInit)(T_DjiUartHandle uartHandle);
@@ -148,6 +154,13 @@ typedef struct {
     T_DjiReturnCode (*UartReadData)(T_DjiUartHandle uartHandle, uint8_t *buf, uint32_t len, uint32_t *realLen);
 
     T_DjiReturnCode (*UartGetStatus)(E_DjiHalUartNum uartNum, T_DjiUartStatus *status);
+
+    /**
+     * Get the device info of USB uart (virtual com or TTL-To-USB) which directly connected to UAV.
+     * Use for SDK adapter type Eport V2 ribbon cable.
+     * When using other types of interface, it is not necessary to implement this member function.
+     */
+    T_DjiReturnCode (*UartGetDeviceInfo)(T_DjiHalUartDeviceInfo *deviceInfo);
 } T_DjiHalUartHandler;
 
 typedef struct {

@@ -32,6 +32,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define SOCKET_RECV_BUF_MAX_SIZE    (1000 * 1000 * 10)
+#define MAX_UDP_PAYLOAD_SIZE        65507
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -141,6 +142,7 @@ T_DjiReturnCode Osal_UdpSendData(T_DjiSocketHandle socketHandle, const char *ipA
     struct sockaddr_in addr;
     T_SocketHandleStruct *socketHandleStruct = (T_SocketHandleStruct *) socketHandle;
     int32_t ret;
+    ssize_t total_sent = 0;
 
     if (socketHandle <= 0 || ipAddr == NULL || port == 0 || buf == NULL || len == 0 || realLen == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
@@ -151,12 +153,20 @@ T_DjiReturnCode Osal_UdpSendData(T_DjiSocketHandle socketHandle, const char *ipA
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(ipAddr);
 
-    ret = sendto(socketHandleStruct->socketFd, buf, len, 0, (struct sockaddr *) &addr, sizeof(struct sockaddr_in));
-    if (ret >= 0) {
-        *realLen = ret;
-    } else {
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    while (len > 0) {
+        size_t chunk_size = (len > MAX_UDP_PAYLOAD_SIZE) ? MAX_UDP_PAYLOAD_SIZE : len;
+        ssize_t sent = sendto(socketHandleStruct->socketFd, buf, chunk_size, 0, (struct sockaddr *) &addr,  sizeof(struct sockaddr_in));
+
+        if (sent < 0) {
+            perror("sendto failed");
+            return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        }
+
+        buf += sent;
+        len -= sent;
+        total_sent += sent;
     }
+
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

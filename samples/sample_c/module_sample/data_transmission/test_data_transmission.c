@@ -87,7 +87,7 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
-			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D ||
+			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
 			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD) {
         channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromCloud);
@@ -97,7 +97,10 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         }
     }
 
-    if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
+    if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+        USER_LOG_INFO("M400 is not support to use data transmition between PSDK device.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3) {
         channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT;

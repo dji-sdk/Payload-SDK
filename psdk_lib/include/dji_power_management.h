@@ -45,6 +45,12 @@ typedef enum {
     DJI_POWER_MANAGEMENT_PIN_STATE_SET = 1, /*!< Specifies pin is in high level state. */
 } E_DjiPowerManagementPinState;
 
+typedef enum {
+    E_DJI_HIGH_POWER_VOLTAGE_13V6 = 0, /*!< Specifies pin is in 13.6V of voltage */
+    E_DJI_HIGH_POWER_VOLTAGE_17V = 1,  /*!< Specifies pin is in 17V of voltage */
+    E_DJI_HIGH_POWER_VOLTAGE_24V = 2,  /*!< Specifies pin is in 24V of voltage */
+} E_DjiHighPowerVoltage;
+
 /**
  * @brief Prototype of callback function used to set level of high power application pin.
  * @param pinState: level state of pin to be set.
@@ -88,6 +94,17 @@ T_DjiReturnCode DjiPowerManagement_DeInit(void);
 T_DjiReturnCode DjiPowerManagement_ApplyHighPowerSync(void);
 
 /**
+ * @brief Apply high power from aircraft in blocking mode.
+ * @details Before applying, user should register callback function used to set level state of high power application
+ * pin using DjiPowerManagement_RegWriteHighPowerApplyPinCallback() function. After applying high power, power pin of
+ * DJI adapter will output high power based predetermined specification.
+ * @note Max execution time of this function is slightly larger than 600ms.
+ * @param voltage: The voltage value will be applied to the VCC pin.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiPowerManagement_ApplyHighPowerSyncV2(E_DjiHighPowerVoltage voltage);
+
+/**
  * @brief Register callback function used to set level state of high power application pin. Must be called before
  * applying high power.
  * @param callback: pointer to the callback function.
@@ -107,6 +124,15 @@ T_DjiReturnCode DjiPowerManagement_RegWriteHighPowerApplyPinCallback(DjiWriteHig
  * @return Execution result.
  */
 T_DjiReturnCode DjiPowerManagement_RegPowerOffNotificationCallback(DjiPowerOffNotificationCallback callback);
+
+/**
+ * @brief manifold3 outputs high voltage to external devices
+ * @param stat: true: output high voltage, false: output low voltage
+ * @return Execution result.
+ * @note The gpio12 of manifold3 should be pulled down before requesting a high voltage output.
+ * @note This interface support on DJI manifold3.
+ */
+T_DjiReturnCode DjiPowerManagement_OutputHighPower(bool stat);
 
 #ifdef __cplusplus
 }

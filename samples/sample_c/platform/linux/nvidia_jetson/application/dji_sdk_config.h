@@ -37,10 +37,12 @@ extern "C" {
 #define DJI_USE_ONLY_UART                  (0)
 #define DJI_USE_UART_AND_USB_BULK_DEVICE   (1)
 #define DJI_USE_UART_AND_NETWORK_DEVICE    (2)
+#define DJI_USE_ONLY_USB_BULK_DEVICE       (3)
+#define DJI_USE_ONLY_NETWORK_DEVICE        (4)
 
 /*!< Attention: Select your hardware connection mode here.
 * */
-#define CONFIG_HARDWARE_CONNECTION         DJI_USE_UART_AND_NETWORK_DEVICE
+#define CONFIG_HARDWARE_CONNECTION         DJI_USE_ONLY_USB_BULK_DEVICE
 
 /*!< Attention: Select the sample you want to run here.
 * */

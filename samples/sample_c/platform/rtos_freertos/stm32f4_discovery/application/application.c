@@ -111,6 +111,7 @@ void DjiUser_StartTask(void const *argument)
         .UartWriteData = HalUart_WriteData,
         .UartReadData = HalUart_ReadData,
         .UartGetStatus = HalUart_GetStatus,
+        .UartGetDeviceInfo = HalUart_GetDeviceInfo,
     };
     T_DjiHalI2cHandler i2CHandler = {
         .I2cInit = HalI2c_Init,
@@ -311,7 +312,8 @@ void DjiUser_StartTask(void const *argument)
          aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)
         && aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT)
         || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
-        || DJI_AIRCRAFT_TYPE_M4E == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType
     ) {
         if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk positioning init error");

@@ -109,18 +109,10 @@ void DjiUser_RunCameraManagerSample(void)
             << "| Available position:                                                                              |"
             <<
             endl;
-        cout
-            << "| [1] Select gimbal mount position at NO.1 payload port                                            |"
-            <<
-            endl;
-        cout
-            << "| [2] Select gimbal mount position at NO.2 payload port                                            |"
-            <<
-            endl;
-        cout
-            << "| [3] Select gimbal mount position at NO.3 payload port                                            |"
-            <<
-            endl;
+        std::cout
+        << "| [1 ~ 4] Select camera mount position at NO.1~NO.4                                                    |"
+        <<
+        std::endl;
         cout
             << "| [q] Quit                                                                                         |"
             <<
@@ -134,7 +126,7 @@ void DjiUser_RunCameraManagerSample(void)
 
         posNum = atoi(mountPositionStr.c_str());
 
-        if (posNum > 3 || posNum < 1) {
+        if (posNum > 4 || posNum < 1) {
             USER_LOG_ERROR("Input mount position is invalid");
             continue;
         } else {

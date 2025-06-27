@@ -48,15 +48,10 @@ T_DjiReturnCode Osal_FileOpen(const char *fileName, const char *fileMode, T_DjiF
 
     *fileObj = fopen(fileName, fileMode);
     if (*fileObj == NULL) {
-        goto out;
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
-
-out:
-    free(*fileObj);
-
-    return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
 }
 
 T_DjiReturnCode Osal_FileClose(T_DjiFileHandle fileObj)

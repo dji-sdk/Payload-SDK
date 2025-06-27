@@ -102,14 +102,24 @@ T_DjiReturnCode DjiLogger_RemoveConsole(T_DjiLoggerConsole *console);
 void DjiLogger_UserLogOutput(E_DjiLoggerConsoleLogLevel level, const char *fmt, ...);
 
 /* Exported constants --------------------------------------------------------*/
+#define __FILENAME__                    (strrchr("/" __FILE__, '/') + 1)
+
+#define USER_LOG_PREFIX_FMT             "%25s:%-4d "
+
+#ifndef SYSTEM_ARCH_RTOS
+#define USER_LOG_PREFIX_ARG             __FILENAME__, __LINE__
+#else
+#define  USER_LOG_PREFIX_ARG            __FUNCTION__, __LINE__
+#endif
+
 #define USER_LOG_DEBUG(fmt, ...)    \
-        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_DEBUG, "[%s:%d) " fmt, __FUNCTION__, __LINE__ , ##__VA_ARGS__)
+        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_DEBUG, USER_LOG_PREFIX_FMT fmt, USER_LOG_PREFIX_ARG, ##__VA_ARGS__)
 #define USER_LOG_INFO(fmt, ...)     \
-        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_INFO, "[%s:%d) " fmt, __FUNCTION__, __LINE__ , ##__VA_ARGS__)
+        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_INFO, USER_LOG_PREFIX_FMT fmt, USER_LOG_PREFIX_ARG, ##__VA_ARGS__)
 #define USER_LOG_WARN(fmt, ...)     \
-        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_WARN, "[%s:%d) " fmt, __FUNCTION__, __LINE__ , ##__VA_ARGS__)
+        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_WARN, USER_LOG_PREFIX_FMT fmt, USER_LOG_PREFIX_ARG, ##__VA_ARGS__)
 #define USER_LOG_ERROR(fmt, ...)    \
-        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_ERROR, "[%s:%d) " fmt, __FUNCTION__, __LINE__ , ##__VA_ARGS__)
+        DjiLogger_UserLogOutput(DJI_LOGGER_CONSOLE_LOG_LEVEL_ERROR, USER_LOG_PREFIX_FMT fmt, USER_LOG_PREFIX_ARG, ##__VA_ARGS__)
 
 #ifdef __cplusplus
 }

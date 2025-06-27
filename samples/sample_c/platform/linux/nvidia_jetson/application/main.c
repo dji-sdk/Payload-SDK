@@ -227,6 +227,8 @@ int main(int argc, char **argv)
 
 #ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
         if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
             aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
             if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("psdk gimbal init error");
@@ -373,6 +375,7 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         .UartWriteData = HalUart_WriteData,
         .UartReadData = HalUart_ReadData,
         .UartGetStatus = HalUart_GetStatus,
+        .UartGetDeviceInfo = HalUart_GetDeviceInfo,
     };
 
     T_DjiHalNetworkHandler networkHandler = {
@@ -492,6 +495,26 @@ static T_DjiReturnCode DjiUser_PrepareSystemEnvironment(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_USB_BULK_DEVICE)
+    returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal usb bulk handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_NETWORK_DEVICE)
+    returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal network handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    //Attention: if you want to use camera stream view function, please uncomment it.
+    returnCode = DjiPlatform_RegSocketHandler(&socketHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register osal socket handler error");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
 #endif
 
     returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);

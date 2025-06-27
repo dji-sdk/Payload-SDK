@@ -104,6 +104,7 @@ T_DjiReturnCode DjiTest_WidgetStartService(void)
     }
 
     //set default ui config path
+    USER_LOG_INFO("widget file: %s", tempPath);
     djiStat = DjiWidget_RegDefaultUiConfigByDirPath(tempPath);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Add default widget ui config error, stat = 0x%08llX", djiStat);

@@ -66,8 +66,15 @@ extern "C" {
 #define LINUX_USB_BULK2_END_POINT_IN            (0x82)
 #define LINUX_USB_BULK2_END_POINT_OUT           (0x02)
 
-#define LINUX_USB_VID                           (0x0955)
-#define LINUX_USB_PID                           (0x7020)
+#define LINUX_USB_BULK3_EP_IN_FD                "/dev/usb-ffs/bulk3/ep1"
+#define LINUX_USB_BULK3_EP_OUT_FD               "/dev/usb-ffs/bulk3/ep2"
+
+#define LINUX_USB_BULK3_INTERFACE_NUM           (2)
+#define LINUX_USB_BULK3_END_POINT_IN            (0x83)
+#define LINUX_USB_BULK3_END_POINT_OUT           (0x03)
+
+#define LINUX_USB_VID                         (0x2CA3)
+#define LINUX_USB_PID                         (0xF001)
 
 /* Exported types ------------------------------------------------------------*/
 

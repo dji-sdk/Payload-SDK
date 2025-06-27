@@ -25,6 +25,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <liveview/test_liveview_entry.hpp>
 #include <perception/test_perception_entry.hpp>
+#include <perception/test_lidar_entry.hpp>
+#include <perception/test_radar_entry.hpp>
 #include <flight_control/test_flight_control.h>
 #include <gimbal/test_gimbal_entry.hpp>
 #include "application.hpp"
@@ -71,6 +73,8 @@ start:
         << "| [d] Stereo vision view sample - display the stereo image                                         |\n"
         << "| [e] Run camera manager sample - you can test camera's functions interactively                    |\n"
         << "| [f] Start rtk positioning sample - you can receive rtk rtcm data when rtk signal is ok           |\n"
+        << "| [g] Request Lidar data sample - Request Lidar data and store the point cloud data as pcd files   |\n"
+        << "| [h] Request Radar data sample - Request radar data                                               |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -104,6 +108,12 @@ start:
             }
 
             USER_LOG_INFO("Start rtk positioning sample successfully");
+            break;
+        case 'g':
+            DjiUser_RunLidarDataSubscriptionSample();
+            break;
+        case 'h':
+            DjiUser_RunRadarDataSubscriptionSample();
             break;
         default:
             break;

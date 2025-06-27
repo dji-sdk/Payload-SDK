@@ -40,6 +40,7 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 void DjiUser_RunHmsManagerSample(void);
+void DjiUser_RunHmsEnhanceSample(void);
 
 #ifdef __cplusplus
 }

@@ -48,79 +48,80 @@ add_executable(${PROJECT_NAME}
         ${MODULE_COMMON_SRC}
         ${MODULE_HAL_SRC})
 
-# Try to see if user has OpenCV installed
-# if yes, default callback will display the image
-find_package(OpenCV QUIET)
-if (OpenCV_FOUND)
-    message("\n${PROJECT_NAME}...")
-    message(STATUS "Found OpenCV installed in the system, will use it to display image in AdvancedSensing APIs")
-    message(STATUS " - Includes: ${OpenCV_INCLUDE_DIRS}")
-    message(STATUS " - Libraries: ${OpenCV_LIBRARIES}")
-    # add_definitions(-DOPEN_CV_INSTALLED)
-    # target_include_directories(${PROJECT_NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
-    # target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-else ()
-    message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
-endif ()
-
-find_package(FFMPEG REQUIRED)
-if (FFMPEG_FOUND)
-    message(STATUS "Found FFMPEG installed in the system")
-    message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
-    message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
-
-    EXECUTE_PROCESS(COMMAND ffmpeg -version
-            OUTPUT_VARIABLE ffmpeg_version_output
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
-    string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
-    string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
-
-    if (HEAD${ffmpeg_major_version} STREQUAL "HEAD")
-        message(STATUS " - Version: ${ffmpeg_version}")
-    else ()
-        message(FATAL_ERROR " - Not support FFMPEG version: ${ffmpeg_major_version}, please install 4.x.x instead.")
-    endif ()
-
-    # target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
-    # include_directories(${FFMPEG_INCLUDE_DIR})
-    # add_definitions(-DFFMPEG_INSTALLED)
-else ()
-    message(STATUS "Cannot Find FFMPEG")
-endif (FFMPEG_FOUND)
-
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../psdk_lib/include)
 
+if (BUILD_CROSS_COMPILE MATCHES TRUE)
+    # Try to see if user has OpenCV installed
+    # if yes, default callback will display the image
+    find_package(OpenCV QUIET)
+    if (OpenCV_FOUND)
+        message("\n${PROJECT_NAME}...")
+        message(STATUS "Found OpenCV installed in the system, will use it to display image in AdvancedSensing APIs")
+        message(STATUS " - Includes: ${OpenCV_INCLUDE_DIRS}")
+        message(STATUS " - Libraries: ${OpenCV_LIBRARIES}")
+        add_definitions(-DOPEN_CV_INSTALLED)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
+        target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+    else ()
+        message(STATUS "Did not find OpenCV in the system, image data is inside RecvContainer as raw data")
+    endif ()
 
-find_package(OPUS REQUIRED)
-if (OPUS_FOUND)
-    message(STATUS "Found OPUS installed in the system")
-    message(STATUS " - Includes: ${OPUS_INCLUDE_DIR}")
-    message(STATUS " - Libraries: ${OPUS_LIBRARY}")
+    find_package(FFMPEG REQUIRED)
+    if (FFMPEG_FOUND)
+        message(STATUS "Found FFMPEG installed in the system")
+        message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
+        message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
 
-    # add_definitions(-DOPUS_INSTALLED)
-    # target_link_libraries(${PROJECT_NAME} /usr/local/lib/libopus.a)
-else ()
-    message(STATUS "Cannot Find OPUS")
-endif (OPUS_FOUND)
+        EXECUTE_PROCESS(COMMAND ffmpeg -version
+                OUTPUT_VARIABLE ffmpeg_version_output
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+        string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
+        string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
+        string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
 
-find_package(LIBUSB REQUIRED)
-if (LIBUSB_FOUND)
-    message(STATUS "Found LIBUSB installed in the system")
-    message(STATUS " - Includes: ${LIBUSB_INCLUDE_DIR}")
-    message(STATUS " - Libraries: ${LIBUSB_LIBRARY}")
+        if (HEAD${ffmpeg_major_version} STREQUAL "HEAD")
+            message(STATUS " - Version: ${ffmpeg_version}")
+        else ()
+            message(FATAL_ERROR " - Not support FFMPEG version: ${ffmpeg_major_version}, please install 4.x.x instead.")
+        endif ()
 
-    # add_definitions(-DLIBUSB_INSTALLED)
-    # target_link_libraries(${PROJECT_NAME} usb-1.0)
-else ()
-    message(STATUS "Cannot Find LIBUSB")
-endif (LIBUSB_FOUND)
+        target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
+        include_directories(${FFMPEG_INCLUDE_DIR})
+        add_definitions(-DFFMPEG_INSTALLED)
+    else ()
+        message(STATUS "Cannot Find FFMPEG")
+    endif (FFMPEG_FOUND)
+
+    find_package(OPUS REQUIRED)
+    if (OPUS_FOUND)
+        message(STATUS "Found OPUS installed in the system")
+        message(STATUS " - Includes: ${OPUS_INCLUDE_DIR}")
+        message(STATUS " - Libraries: ${OPUS_LIBRARY}")
+
+        add_definitions(-DOPUS_INSTALLED)
+        target_link_libraries(${PROJECT_NAME} /usr/local/lib/libopus.a)
+    else ()
+        message(STATUS "Cannot Find OPUS")
+    endif (OPUS_FOUND)
+
+    find_package(LIBUSB REQUIRED)
+    if (LIBUSB_FOUND)
+        message(STATUS "Found LIBUSB installed in the system")
+        message(STATUS " - Includes: ${LIBUSB_INCLUDE_DIR}")
+        message(STATUS " - Libraries: ${LIBUSB_LIBRARY}")
+
+        add_definitions(-DLIBUSB_INSTALLED)
+        target_link_libraries(${PROJECT_NAME} usb-1.0)
+    else ()
+        message(STATUS "Cannot Find LIBUSB")
+    endif (LIBUSB_FOUND)
+endif ()
 
 if (NOT EXECUTABLE_OUTPUT_PATH)
     set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 endif ()
 
 target_link_libraries(${PROJECT_NAME} m)
+target_link_libraries(${PROJECT_NAME} dl)
 
-add_dependencies(${PROJECT_NAME} djisdk)

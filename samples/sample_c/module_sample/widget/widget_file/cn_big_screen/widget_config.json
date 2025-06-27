@@ -1,148 +1,612 @@
 {
-  "version": {
-    "major": 1,
-    "minor": 0
-  },
-  "main_interface": {
-    "floating_window": {
-      "is_enable": true
+    "version": {
+        "major": 1,
+        "minor": 0
     },
-    "speaker": {
-      "is_enable_tts": true,
-      "is_enable_voice": true
-    },
-    "widget_list": [
-      {
-        "widget_index": 0,
-        "widget_type": "button",
-        "widget_name": "按钮",
-        "icon_file_set": {
-          "icon_file_name_selected": "icon_button1.png",
-          "icon_file_name_unselected": "icon_button1.png"
-        },
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 0
-        }
-      },
-      {
-        "widget_index": 1,
-        "widget_type": "list",
-        "widget_name": "列表",
-        "list_item": [
-          {
-            "item_name": "选项_1",
-            "icon_file_set": {
-              "icon_file_name_selected": "icon_list_item1.png",
-              "icon_file_name_unselected": "icon_list_item1.png"
+    "ar_config": {
+        "circleStyleList": [
+            {
+                "face": {
+                    "bottom": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "distAlpha": {
+                        "maxAlpha": 0.4,
+                        "maxDist": 100,
+                        "minAlpha": 0,
+                        "minDist": 50
+                    },
+                    "side": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "top": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    }
+                },
+                "stroke": {
+                    "bottom": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "side": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "top": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    }
+                },
+                "styleId": 10
+            },
+            {
+                "face": {
+                    "bottom": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "distAlpha": {
+                        "maxAlpha": 0.4,
+                        "maxDist": 100,
+                        "minAlpha": 0,
+                        "minDist": 50
+                    },
+                    "side": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "top": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    }
+                },
+                "stroke": {
+                    "bottom": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "side": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "top": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    }
+                },
+                "styleId": 11
             }
-          },
-          {
-            "item_name": "选项_2",
-            "icon_file_set": {
-              "icon_file_name_selected": "icon_list_item2.png",
-              "icon_file_name_unselected": "icon_list_item2.png"
+        ],
+        "commonPointStyleList": [
+            {
+                "alwaysInEdge": false,
+                "arTextAttribute": {
+                    "color": -65536
+                },
+                "isIgnoreBorder": true,
+                "styleId": 10
+            },
+            {
+                "alwaysInEdge": false,
+                "arTextAttribute": {
+                    "color": -65536
+                },
+                "isIgnoreBorder": true,
+                "styleId": 11
             }
-          }
         ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 1
-        }
-      },
-      {
-        "widget_index": 2,
-        "widget_type": "switch",
-        "widget_name": "开关",
-        "icon_file_set": {
-          "icon_file_name_selected": "icon_switch_select.png",
-          "icon_file_name_unselected": "icon_switch_unselect.png"
-        },
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 2
-        }
-      },
-      {
-        "widget_index": 3,
-        "widget_type": "scale",
-        "widget_name": "范围条",
-        "icon_file_set": {
-          "icon_file_name_selected": "icon_scale.png",
-          "icon_file_name_unselected": "icon_scale.png"
-        },
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 3,
-          "button_value_step_length": 5
-        }
-      }
-    ]
-  },
-  "config_interface": {
-    "text_input_box": {
-      "widget_name": "文本输入框",
-      "placeholder_text": "请输入消息",
-      "is_enable": true
+        "lineStyleList": [
+            {
+                "color": -256,
+                "stokeInfo": {
+                    "color": -65536,
+                    "dash": false,
+                    "width": {
+                        "maxStrokeWidth": 2,
+                        "maxWidthDist": 2,
+                        "minStrokeWidth": 2,
+                        "minWidthDist": 2
+                    }
+                },
+                "styleId": 10,
+                "useDepth": false
+            },
+            {
+                "color": -256,
+                "stokeInfo": {
+                    "color": -65536,
+                    "dash": false,
+                    "width": {
+                        "maxStrokeWidth": 2,
+                        "maxWidthDist": 2,
+                        "minStrokeWidth": 2,
+                        "minWidthDist": 2
+                    }
+                },
+                "styleId": 11,
+                "useDepth": false
+            }
+        ],
+        "pointStyleList": [
+            {
+                "keyName": 0,
+                "pointConfig": {
+                    "arrowConfig": {
+                        "customIcon": false,
+                        "defaultDeg": 0,
+                        "img": "",
+                        "imgHeight": 0,
+                        "imgWidth": 0,
+                        "showMode": 0,
+                        "translate": 0,
+                        "type": 0
+                    },
+                    "needFont": true,
+                    "needOrthographic": true,
+                    "needPerspective": false,
+                    "oConfig": {
+                        "displayHeight": 20.0,
+                        "displayWidth": 20.0,
+                        "img": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" fill=\"none\"\n    version=\"1.1\" width=\"8\" height=\"8\" viewBox=\"0 0 8 8\">\n    <g>\n        <ellipse id=\"point_normal_bg\"\n            cx=\"4\" cy=\"4\" rx=\"2\" ry=\"2\"\n            fill=\"#FFFFFF\" fill-opacity=\"1\" />\n    </g>\n\n</svg>",
+                        "imgHeight": 20.0,
+                        "imgWidth": 20.0
+                    },
+                    "pConfig": {
+                        "maxSVG": "",
+                        "maxSize": 0,
+                        "minSVG": "",
+                        "minSize": 0,
+                        "realSize": 0,
+                        "strokeWidthRadio": 0
+                    },
+                    "textConfig": {
+                        "backgroundColor": 1427379220,
+                        "cornerRadius": 5,
+                        "paddingB": 5,
+                        "paddingL": 10,
+                        "paddingR": 10,
+                        "paddingT": 5,
+                        "shadow": false,
+                        "textGravity": 1,
+                        "textSize": 20
+                    }
+                }
+            },
+            {
+                "keyName": 1,
+                "pointConfig": {
+                    "arrowConfig": {
+                        "customIcon": false,
+                        "defaultDeg": 0,
+                        "img": "",
+                        "imgHeight": 0,
+                        "imgWidth": 0,
+                        "showMode": 0,
+                        "translate": 0,
+                        "type": 0
+                    },
+                    "needFont": true,
+                    "needOrthographic": true,
+                    "needPerspective": false,
+                    "oConfig": {
+                        "displayHeight": 20.0,
+                        "displayWidth": 20.0,
+                        "img": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" fill=\"none\"\n    version=\"1.1\" width=\"8\" height=\"8\" viewBox=\"0 0 8 8\">\n    <g>\n        <ellipse id=\"point_normal_bg\"\n            cx=\"4\" cy=\"4\" rx=\"2\" ry=\"2\"\n            fill=\"#FFFFFF\" fill-opacity=\"1\" />\n    </g>\n\n</svg>",
+                        "imgHeight": 20.0,
+                        "imgWidth": 20.0
+                    },
+                    "pConfig": {
+                        "maxSVG": "",
+                        "maxSize": 0,
+                        "minSVG": "",
+                        "minSize": 0,
+                        "realSize": 0,
+                        "strokeWidthRadio": 0
+                    },
+                    "textConfig": {
+                        "backgroundColor": 1427379220,
+                        "cornerRadius": 5,
+                        "paddingB": 5,
+                        "paddingL": 10,
+                        "paddingR": 10,
+                        "paddingT": 5,
+                        "shadow": false,
+                        "textGravity": 1,
+                        "textSize": 20
+                    }
+                }
+            }
+        ],
+        "polygonStyleList": [
+            {
+                "face": {
+                    "bottom": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "distAlpha": {
+                        "maxAlpha": 0.4,
+                        "maxDist": 100,
+                        "minAlpha": 0,
+                        "minDist": 50
+                    },
+                    "side": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "top": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    }
+                },
+                "is3DMesh": false,
+                "stroke": {
+                    "bottom": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "side": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "top": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    }
+                },
+                "styleId": 10
+            },
+            {
+                "face": {
+                    "bottom": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "distAlpha": {
+                        "maxAlpha": 0.4,
+                        "maxDist": 100,
+                        "minAlpha": 0,
+                        "minDist": 50
+                    },
+                    "side": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    },
+                    "top": {
+                        "backColor": -256,
+                        "faceColor": -65536
+                    }
+                },
+                "is3DMesh": false,
+                "stroke": {
+                    "bottom": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "side": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    },
+                    "top": {
+                        "distAlpha": {
+                            "maxAlpha": 0.6,
+                            "maxDist": 100,
+                            "minAlpha": 1,
+                            "minDist": 50
+                        },
+                        "strokeInfo": {
+                            "color": -65536,
+                            "dash": true,
+                            "width": {
+                                "maxStrokeWidth": 20,
+                                "maxWidthDist": 20,
+                                "minStrokeWidth": 2.5,
+                                "minWidthDist": 100
+                            }
+                        }
+                    }
+                },
+                "styleId": 11
+            }
+        ]
     },
-    "widget_list": [
-      {
-        "widget_index": 4,
-        "widget_type": "button",
-        "widget_name": "按钮 4",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 4
-        }
-      },
-      {
-        "widget_index": 5,
-        "widget_type": "scale",
-        "widget_name": "范围条 5",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 5,
-          "button_value_step_length": 5
-        }
-      },
-      {
-        "widget_index": 6,
-        "widget_type": "int_input_box",
-        "widget_name": "整形值输入框 6",
-        "int_input_box_hint": "unit:s"
-      },
-      {
-        "widget_index": 7,
-        "widget_type": "switch",
-        "widget_name": "开关 7",
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 7
-        }
-      },
-      {
-        "widget_index": 8,
-        "widget_type": "list",
-        "widget_name": "列表 8",
-        "list_item": [
-          {
-            "item_name": "选项 1"
-          },
-          {
-            "item_name": "选项 2"
-          },
-          {
-            "item_name": "选项 3"
-          },
-          {
-            "item_name": "选项 4"
-          }
-        ],
-        "customize_rc_buttons_config": {
-          "is_enable": true,
-          "mapping_config_display_order": 8
-        }
-      }
-    ]
-  }
+    "main_interface": {
+        "floating_window": {
+            "is_enable": true
+        },
+        "speaker": {
+            "is_enable_tts": true,
+            "is_enable_voice": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 0,
+                "widget_type": "button",
+                "widget_name": "按钮",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_button1.png",
+                    "icon_file_name_unselected": "icon_button1.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 0
+                }
+            },
+            {
+                "widget_index": 1,
+                "widget_type": "list",
+                "widget_name": "列表",
+                "list_item": [
+                    {
+                        "item_name": "选项_1",
+                        "icon_file_set": {
+                            "icon_file_name_selected": "icon_list_item1.png",
+                            "icon_file_name_unselected": "icon_list_item1.png"
+                        }
+                    },
+                    {
+                        "item_name": "选项_2",
+                        "icon_file_set": {
+                            "icon_file_name_selected": "icon_list_item2.png",
+                            "icon_file_name_unselected": "icon_list_item2.png"
+                        }
+                    }
+                ],
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 1
+                }
+            },
+            {
+                "widget_index": 2,
+                "widget_type": "switch",
+                "widget_name": "开关",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_switch_select.png",
+                    "icon_file_name_unselected": "icon_switch_unselect.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 2
+                }
+            },
+            {
+                "widget_index": 3,
+                "widget_type": "scale",
+                "widget_name": "范围条",
+                "icon_file_set": {
+                    "icon_file_name_selected": "icon_scale.png",
+                    "icon_file_name_unselected": "icon_scale.png"
+                },
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 3,
+                    "button_value_step_length": 5
+                }
+            }
+        ]
+    },
+    "config_interface": {
+        "text_input_box": {
+            "widget_name": "文本输入框",
+            "placeholder_text": "请输入消息",
+            "is_enable": true
+        },
+        "widget_list": [
+            {
+                "widget_index": 4,
+                "widget_type": "button",
+                "widget_name": "按钮 4",
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 4
+                }
+            },
+            {
+                "widget_index": 5,
+                "widget_type": "scale",
+                "widget_name": "范围条 5",
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 5,
+                    "button_value_step_length": 5
+                }
+            },
+            {
+                "widget_index": 6,
+                "widget_type": "int_input_box",
+                "widget_name": "整形值输入框 6",
+                "int_input_box_hint": "unit:s"
+            },
+            {
+                "widget_index": 7,
+                "widget_type": "switch",
+                "widget_name": "开关 7",
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 7
+                }
+            },
+            {
+                "widget_index": 8,
+                "widget_type": "list",
+                "widget_name": "列表 8",
+                "list_item": [
+                    {
+                        "item_name": "选项 1"
+                    },
+                    {
+                        "item_name": "选项 2"
+                    },
+                    {
+                        "item_name": "选项 3"
+                    },
+                    {
+                        "item_name": "选项 4"
+                    }
+                ],
+                "customize_rc_buttons_config": {
+                    "is_enable": true,
+                    "mapping_config_display_order": 8
+                }
+            }
+        ]
+    }
 }

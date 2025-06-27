@@ -28,6 +28,7 @@
 #include <iostream>
 #include "dji_logger.h"
 #include "hms/test_hms.h"
+#include "dji_hms_customization.h"
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -75,6 +76,38 @@ start:
             USER_LOG_ERROR("Input command is invalid");
             goto start;
     }
+}
+
+void DjiUser_RunHmsEnhanceSample(void)
+{
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    T_DjiHmsAlarmEnhancedSetting setting;
+
+    USER_LOG_INFO("shake motor times 3, interval 500ms...");
+    setting.type = DJI_HMS_ALARM_ENHANCED_TYPE_SHAKE_MOTOR;
+    setting.times = 3;
+    setting.interval = 500;
+    DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
+    osalHandler->TaskSleepMs(4000);
+
+    USER_LOG_INFO("play sound times 3, interval 500ms...");
+    setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND;
+    DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
+    osalHandler->TaskSleepMs(4000);
+
+    USER_LOG_INFO("shake motor and play sound times 3, interval 500ms...");
+    setting.times = 3;
+    setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND_AND_SHAKE_MOTOR;
+    DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
+    osalHandler->TaskSleepMs(4000);
+
+    USER_LOG_INFO("shake motor and play sound times 20, interval 500ms, interrupt 3s exit...");
+    setting.times = 20;
+    setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND_AND_SHAKE_MOTOR;
+    DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
+    osalHandler->TaskSleepMs(4000);
+    DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_EXIT_ALL, setting);
+    USER_LOG_INFO("AlarmEnhaned exit.");
 }
 
 /* Private functions definition-----------------------------------------------*/

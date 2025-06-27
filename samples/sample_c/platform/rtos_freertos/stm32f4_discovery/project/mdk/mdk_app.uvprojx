@@ -935,6 +935,11 @@
 </File>
 <File>
 <FileType>5</FileType>
+<FileName>dji_cloud_api_by_websockt.h</FileName>
+<FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_cloud_api_by_websockt.h</FilePath>
+</File>
+<File>
+<FileType>5</FileType>
 <FileName>dji_core.h</FileName>
 <FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_core.h</FilePath>
 </File>
@@ -1007,6 +1012,11 @@
 <FileType>5</FileType>
 <FileName>dji_mop_channel.h</FileName>
 <FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_mop_channel.h</FilePath>
+</File>
+<File>
+<FileType>5</FileType>
+<FileName>dji_open_ar.h</FileName>
+<FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_open_ar.h</FilePath>
 </File>
 <File>
 <FileType>5</FileType>

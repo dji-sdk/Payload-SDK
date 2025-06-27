@@ -107,6 +107,16 @@ T_DjiReturnCode HalUsbBulk_Init(T_DjiHalUsbBulkInfo usbBulkInfo, T_DjiUsbBulkHan
             if (((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 < 0) {
                 return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
             }
+        } else if (usbBulkInfo.channelInfo.interfaceNum == LINUX_USB_BULK3_INTERFACE_NUM) {
+            ((T_HalUsbBulkObj *) *usbBulkHandle)->ep1 = open(LINUX_USB_BULK3_EP_IN_FD, O_RDWR);
+            if (((T_HalUsbBulkObj *) *usbBulkHandle)->ep1 < 0) {
+                return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+            }
+
+            ((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 = open(LINUX_USB_BULK3_EP_OUT_FD, O_RDWR);
+            if (((T_HalUsbBulkObj *) *usbBulkHandle)->ep2 < 0) {
+                return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+            }
         }
     }
 
@@ -229,6 +239,10 @@ T_DjiReturnCode HalUsbBulk_GetDeviceInfo(T_DjiHalUsbBulkDeviceInfo *deviceInfo)
     deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_1].interfaceNum = LINUX_USB_BULK2_INTERFACE_NUM;
     deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_1].endPointIn = LINUX_USB_BULK2_END_POINT_IN;
     deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_1].endPointOut = LINUX_USB_BULK2_END_POINT_OUT;
+
+    deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_2].interfaceNum = LINUX_USB_BULK3_INTERFACE_NUM;
+    deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_2].endPointIn = LINUX_USB_BULK3_END_POINT_IN;
+    deviceInfo->channelInfo[DJI_HAL_USB_BULK_NUM_2].endPointOut = LINUX_USB_BULK3_END_POINT_OUT;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

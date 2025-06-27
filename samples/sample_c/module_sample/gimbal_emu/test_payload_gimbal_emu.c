@@ -30,6 +30,7 @@
 #include "dji_logger.h"
 #include "dji_platform.h"
 #include "utils/util_misc.h"
+#include "widget_interaction_test/test_widget_interaction.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define PAYLOAD_GIMBAL_EMU_TASK_STACK_SIZE  (2048)
@@ -277,6 +278,7 @@ T_DjiReturnCode DjiTest_GimbalRotate(E_DjiGimbalRotationMode rotationMode,
 
             break;
         case DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE:
+            DjiTest_WidgetLogAppend("abs mode (%d  %d %d)", rotationValue.pitch, rotationValue.roll, rotationValue.yaw);
             USER_LOG_INFO("gimbal absolute rotate angle: pitch %d, roll %d, yaw %d.", rotationValue.pitch,
                           rotationValue.roll, rotationValue.yaw);
             USER_LOG_DEBUG("gimbal absolute rotate action time: %d.",
@@ -325,6 +327,7 @@ T_DjiReturnCode DjiTest_GimbalRotate(E_DjiGimbalRotationMode rotationMode,
 
             break;
         case DJI_GIMBAL_ROTATION_MODE_SPEED:
+            DjiTest_WidgetLogAppend("speed mode (%d  %d %d)", rotationValue.pitch, rotationValue.roll, rotationValue.yaw);
             USER_LOG_INFO("gimbal rotate speed: pitch %d, roll %d, yaw %d.", rotationValue.pitch,
                           rotationValue.roll, rotationValue.yaw);
 

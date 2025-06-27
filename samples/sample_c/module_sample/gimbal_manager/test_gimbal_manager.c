@@ -77,6 +77,7 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
     T_DjiGimbalManagerRotation rotation;
     T_DjiAircraftInfoBaseInfo baseInfo;
     E_DjiAircraftSeries aircraftSeries;
+    bool gimbalAnglesSubscribedFlag = false;
 
     returnCode = DjiAircraftInfo_GetBaseInfo(&baseInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -89,10 +90,17 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
     USER_LOG_INFO("Gimbal manager sample start");
     DjiTest_WidgetLogAppend("Gimbal manager sample start");
 
-    returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Failed to subscribe topic %d, 0x%08X", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
-        goto out;
+    if (DJI_AIRCRAFT_SERIES_M30 == aircraftSeries ||
+        DJI_AIRCRAFT_SERIES_M3 == aircraftSeries ||
+	    DJI_AIRCRAFT_SERIES_M3D == aircraftSeries ||
+        DJI_AIRCRAFT_SERIES_M4 == aircraftSeries ||
+        DJI_AIRCRAFT_SERIES_M4D == aircraftSeries) {
+        returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Failed to subscribe topic %d, 0x%08X", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
+            goto out;
+        }
+        gimbalAnglesSubscribedFlag = true;
     }
 
     USER_LOG_INFO("--> Step 1: Init gimbal manager module");
@@ -170,9 +178,12 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         }
     }
 
-    returnCode = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Failed to unsubscribe topic %d, 0x%08X", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
+    if (gimbalAnglesSubscribedFlag) {
+        returnCode = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Failed to unsubscribe topic %d, 0x%08X", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
+        }
+        gimbalAnglesSubscribedFlag = false;
     }
 
     USER_LOG_INFO("--> Step 5: Deinit gimbal manager module");

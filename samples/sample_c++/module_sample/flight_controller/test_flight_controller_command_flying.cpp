@@ -84,6 +84,7 @@ static T_DjiFcSubscriptionControlDevice DjiUser_FlightControlGetValueOfControlDe
 static T_DjiFcSubscriptionSingleBatteryInfo DjiUser_FlightControlGetValueOfBattery1(void);
 static T_DjiFcSubscriptionSingleBatteryInfo DjiUser_FlightControlGetValueOfBattery2(void);
 static T_DjiReturnCode DjiUser_FlightControlUpdateConfig(void);
+static T_DjiReturnCode DjiUser_ShowCommandFlyingMenu(void);
 
 /* Exported functions definition ---------------------------------------------*/
 void DjiUser_RunFlightControllerCommandFlyingSample(void)
@@ -107,7 +108,9 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
         return;
     }
 
-    osalHandler->TaskSleepMs(1000);
+    osalHandler->TaskSleepMs(3000);
+
+    DjiUser_ShowCommandFlyingMenu();
 
     while (1) {
         osalHandler->TaskSleepMs(1);
@@ -119,7 +122,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Front\r\n");
                 break;
             case 'S':
             case 's':
@@ -128,7 +130,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Near\r\n");
                 break;
             case 'A':
             case 'a':
@@ -137,7 +138,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Left\r\n");
                 break;
             case 'D':
             case 'd':
@@ -146,7 +146,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Right\r\n");
                 break;
             case 'Q':
             case 'q':
@@ -155,7 +154,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = s_flyingSpeed;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Up\r\n");
                 break;
             case 'E':
             case 'e':
@@ -164,7 +162,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = -s_flyingSpeed;
                 s_flyingCommand.yaw = 0;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Down\r\n");
                 break;
             case 'Z':
             case 'z':
@@ -173,7 +170,6 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = -30;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Yaw--\r\n");
                 break;
             case 'C':
             case 'c':
@@ -182,96 +178,112 @@ void DjiUser_RunFlightControllerCommandFlyingSample(void)
                 s_flyingCommand.z = 0;
                 s_flyingCommand.yaw = 30;
                 s_inputFlag = 0;
-                USER_LOG_INFO(" - Yaw++\r\n");
                 break;
             case 'R':
             case 'r':
                 DjiFlightController_ObtainJoystickCtrlAuthority();
                 DjiFlightController_StartTakeoff();
                 USER_LOG_INFO(" - Take off\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'F':
             case 'f':
                 DjiFlightController_StartForceLanding();
                 USER_LOG_INFO(" - Force landing\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'H':
             case 'h':
                 DjiFlightController_StartGoHome();
                 USER_LOG_INFO(" - Start go home\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'Y':
             case 'y':
                 DjiFlightController_CancelGoHome();
                 USER_LOG_INFO(" - Cancel go home\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'G':
             case 'g':
                 DjiFlightController_StartLanding();
                 USER_LOG_INFO(" - Start landing\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'T':
             case 't':
                 DjiFlightController_CancelLanding();
                 USER_LOG_INFO(" - Cancel landing\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'V':
             case 'v':
                 DjiFlightController_StartConfirmLanding();
                 USER_LOG_INFO(" - Confirm landing\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'X':
             case 'x':
                 s_homeLocation.longitude = (dji_f64_t) s_gpsPosition.x / 10000000;
                 s_homeLocation.latitude = (dji_f64_t) s_gpsPosition.y / 10000000;
                 DjiFlightController_SetHomeLocationUsingCurrentAircraftLocation();
-                USER_LOG_INFO(" - Set home location\r\n");
+                USER_LOG_INFO(" - Set home location (%.4f, %.4f)\r\n", s_homeLocation.longitude, s_homeLocation.latitude);
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'P':
             case 'p':
                 DjiFlightController_EmergencyStopMotor(DJI_FLIGHT_CONTROLLER_ENABLE_EMERGENCY_STOP_MOTOR,
                                                        (char *) "Test is ok");
                 USER_LOG_INFO(" - Emergency stop motor\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'B':
             case 'b':
                 DjiFlightController_TurnOnMotors();
                 USER_LOG_INFO(" - Turn on motors\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'N':
             case 'n':
                 DjiFlightController_TurnOffMotors();
                 USER_LOG_INFO(" - Turn off motors\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'J':
             case 'j':
                 DjiUser_FlightControlUpdateConfig();
                 USER_LOG_INFO(" - Update config\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'I':
             case 'i':
                 DjiFlightController_ArrestFlying();
                 USER_LOG_INFO(" - Enable arrest flying\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'O':
             case 'o':
                 DjiFlightController_CancelArrestFlying();
                 USER_LOG_INFO(" - Disable arrest flying\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'K':
             case 'k':
                 DjiFlightController_ExecuteEmergencyBrakeAction();
                 USER_LOG_INFO(" - Brake\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'L':
             case 'l':
                 DjiFlightController_CancelEmergencyBrakeAction();
                 USER_LOG_INFO(" - Disable Brake\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
             case 'M':
             case 'm':
                 DjiFlightController_ObtainJoystickCtrlAuthority();
                 USER_LOG_INFO(" - Obtain joystick ctrl authority\r\n");
+                DjiUser_ShowCommandFlyingMenu();
                 break;
         }
     }
@@ -1086,5 +1098,22 @@ static T_DjiReturnCode DjiUser_FlightControlUpdateConfig(void)
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 #endif
 }
+static T_DjiReturnCode DjiUser_ShowCommandFlyingMenu(void)
+{
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+
+    osalHandler->TaskSleepMs(2);
+    USER_LOG_INFO("Usage: [W] Front                    [A]-Left,                    [S]-Rear,                [D]-Right");
+    USER_LOG_INFO("Usage: [Q]-Up                       [E]-Down,                    [Z]-Yaw--,               [C]-Yaw++");
+    USER_LOG_INFO("Usage: [R]-Take off                 [F]-Force landing,           [H]-Start go home,       [Y]-Cancel go home");
+    USER_LOG_INFO("Usage: [G]-Start landing            [T]-Cancel landing,          [V]-Confirm landing,     [X]-Set home location");
+    USER_LOG_INFO("Usage: [P]-Emergency stop motor,    [B]-Turn on motors,          [N]-Turn off motors,     [J]-Update config");
+    USER_LOG_INFO("Usage: [I]-Enable arrest flying,    [O]-Disable arrest flying,   [K]-Emergency brake,     [L]-Diasble Brake");
+    USER_LOG_INFO("Usage: [M]-Obtain joystick ctrl authority");
+    osalHandler->TaskSleepMs(2);
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

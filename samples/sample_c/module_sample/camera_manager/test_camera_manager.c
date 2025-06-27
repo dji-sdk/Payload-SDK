@@ -855,6 +855,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_CAMERA_TYPE_M30 == cameraType || DJI_CAMERA_TYPE_M30T == cameraType
                 || DJI_CAMERA_TYPE_M3E == cameraType || DJI_CAMERA_TYPE_M3T == cameraType
                 || DJI_CAMERA_TYPE_M3D == cameraType || DJI_CAMERA_TYPE_M3TD == cameraType
+                || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4TD == cameraType
+                || DJI_CAMERA_TYPE_H30 == cameraType ||  DJI_CAMERA_TYPE_H30T == cameraType
                 || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4E == cameraType
                 || DJI_CAMERA_TYPE_H30 == cameraType || DJI_CAMERA_TYPE_H30T == cameraType
 				|| DJI_CAMERA_TYPE_M4TD == cameraType || DJI_CAMERA_TYPE_M4D == cameraType
@@ -899,9 +901,10 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_CAMERA_TYPE_M30 == cameraType || DJI_CAMERA_TYPE_M30T == cameraType
                 || DJI_CAMERA_TYPE_M3E == cameraType || DJI_CAMERA_TYPE_M3T == cameraType
                 || DJI_CAMERA_TYPE_M3D == cameraType || DJI_CAMERA_TYPE_M3TD == cameraType
-                || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4E == cameraType
-                || DJI_CAMERA_TYPE_H30 == cameraType || DJI_CAMERA_TYPE_H30T == cameraType
-				|| DJI_CAMERA_TYPE_M4TD == cameraType || DJI_CAMERA_TYPE_M4D == cameraType
+                || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4TD == cameraType
+                || DJI_CAMERA_TYPE_M4E == cameraType || DJI_CAMERA_TYPE_H30 == cameraType
+                || DJI_CAMERA_TYPE_H30T == cameraType|| DJI_CAMERA_TYPE_M4TD == cameraType
+                || DJI_CAMERA_TYPE_M4D == cameraType
             ) {
                 USER_LOG_INFO("Set mounted position %d camera's exposure mode to manual mode.",
                               mountPosition);
@@ -1938,7 +1941,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3D ||
                 cameraType == DJI_CAMERA_TYPE_L2 || cameraType == DJI_CAMERA_TYPE_H30 ||
-                cameraType == DJI_CAMERA_TYPE_M4T || cameraType == DJI_CAMERA_TYPE_M4TD) {
+                cameraType == DJI_CAMERA_TYPE_M4TD || cameraType == DJI_CAMERA_TYPE_M4D ||
+                cameraType == DJI_CAMERA_TYPE_M4T) {
                 USER_LOG_WARN("Camera type %s don't support FFC function.",
                               s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
@@ -1985,7 +1989,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 cameraType == DJI_CAMERA_TYPE_L1 || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M3E || cameraType == DJI_CAMERA_TYPE_M3D ||
                 cameraType == DJI_CAMERA_TYPE_L2 || cameraType == DJI_CAMERA_TYPE_H30 ||
-                cameraType == DJI_CAMERA_TYPE_M4T || cameraType == DJI_CAMERA_TYPE_M4TD) {
+                cameraType == DJI_CAMERA_TYPE_M4TD || cameraType == DJI_CAMERA_TYPE_M4D ||
+                cameraType == DJI_CAMERA_TYPE_M4T) {
                 USER_LOG_WARN("Camera type %s don't support infrared function.",
                               s_cameraTypeStrList[DjiTest_CameraManagerGetCameraTypeIndex(cameraType)].cameraTypeStr);
                 goto exitCameraModule;
@@ -2133,6 +2138,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         return returnCode;
     }
 
+    USER_LOG_INFO("obtain downloader rights of pos %d", position);
     returnCode = DjiCameraManager_ObtainDownloaderRights(position);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Obtain downloader rights failed, error code: 0x%08X.", returnCode);
@@ -2215,10 +2221,10 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         }
 
         if (s_meidaFileList.fileListInfo[0].type == DJI_CAMERA_FILE_TYPE_JPEG) {
+            USER_LOG_INFO("delete camera file of index %d", s_meidaFileList.fileListInfo[0].fileIndex);
             returnCode = DjiCameraManager_DeleteFileByIndex(position, s_meidaFileList.fileListInfo[0].fileIndex);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Delete media file by index failed, error code: 0x%08X.", returnCode);
-                return returnCode;
             }
         }
 
@@ -2227,6 +2233,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
         USER_LOG_WARN("Media file is not existed in sdcard.\r\n");
     }
 
+ReleaseDownloaderRights:
     returnCode = DjiCameraManager_ReleaseDownloaderRights(position);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Release downloader rights failed, error code: 0x%08X.", returnCode);
@@ -2575,6 +2582,7 @@ T_DjiReturnCode DjiTest_CameraManagerSubscribePointCloud(E_DjiMountPosition posi
     uint32_t colorPointCloudDataByte = 0;
     uint32_t colorPointsNum = 0;
     static bool isMopInit = false;
+    E_DjiChannelAddress mopChannelAddress = 0;
 
     returnCode = DjiCameraManager_StartRecordPointCloud(position);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -2613,7 +2621,10 @@ T_DjiReturnCode DjiTest_CameraManagerSubscribePointCloud(E_DjiMountPosition posi
 
 RECONNECT:
     osalHandler->TaskSleepMs(TEST_CAMERA_MOP_CHANNEL_WAIT_TIME_MS);
-    returnCode = DjiMopChannel_Connect(s_mopChannelHandle, DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
+    mopChannelAddress = position - DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 + DJI_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1;
+    USER_LOG_INFO("connect to mop channel addr %d, channel id %d",
+        mopChannelAddress, TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_CHANNEL_ID);
+    returnCode = DjiMopChannel_Connect(s_mopChannelHandle, mopChannelAddress,
                                        TEST_CAMERA_MOP_CHANNEL_SUBSCRIBE_POINT_CLOUD_CHANNEL_ID);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Connect point cloud mop channel error, stat:0x%08llX.", returnCode);
