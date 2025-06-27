@@ -25,6 +25,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <liveview/test_liveview_entry.hpp>
 #include <perception/test_perception_entry.hpp>
+#include <perception/test_lidar_entry.hpp>
+#include <perception/test_radar_entry.hpp>
 #include <flight_control/test_flight_control.h>
 #include <gimbal/test_gimbal_entry.hpp>
 #include "application.hpp"
@@ -42,8 +44,6 @@
 #include <hms_manager/hms_manager_entry.h>
 #include "camera_manager/test_camera_manager_entry.h"
 #include <hms_manager/hms_manager_entry.h>
-#include "waypoint_v2/test_waypoint_v2.h"
-#include "waypoint_v3/test_waypoint_v3.h"
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -74,6 +74,8 @@ start:
         << "| [d] Stereo vision view sample - display the stereo image                                         |\n"
         << "| [e] Run camera manager sample - you can test camera's functions interactively                    |\n"
         << "| [f] Start rtk positioning sample - you can receive rtk rtcm data when rtk signal is ok           |\n"
+        << "| [g] Request Lidar data sample - Request Lidar data and store the point cloud data as pcd files   |\n"
+        << "| [h] Request Radar data sample - Request radar data                                               |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -103,10 +105,10 @@ start:
             DjiUser_RunHmsManagerSample();
             break;
         case '8':
-            DjiTest_WaypointV2RunSample();
+            // DjiTest_WaypointV2RunSample();
             break;
         case '9':
-            DjiTest_WaypointV3RunSample();
+            // DjiTest_WaypointV3RunSample();
             break;
         case 'a':
             DjiUser_RunGimbalManagerSample();
@@ -128,6 +130,12 @@ start:
             }
 
             USER_LOG_INFO("Start rtk positioning sample successfully");
+            break;
+        case 'g':
+            DjiUser_RunLidarDataSubscriptionSample();
+            break;
+        case 'h':
+            DjiUser_RunRadarDataSubscriptionSample();
             break;
         default:
             break;

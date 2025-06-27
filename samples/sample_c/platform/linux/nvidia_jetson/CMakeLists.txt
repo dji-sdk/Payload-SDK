@@ -82,7 +82,7 @@ else ()
     message(STATUS "Cannot Find LIBUSB")
 endif (LIBUSB_FOUND)
 
-target_link_libraries(${PROJECT_NAME} m)
+target_link_libraries(${PROJECT_NAME} m dl)
 
 add_custom_command(TARGET ${PROJECT_NAME}
         PRE_LINK COMMAND cmake ..

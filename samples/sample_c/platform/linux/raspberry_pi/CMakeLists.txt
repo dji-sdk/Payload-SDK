@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(dji_sdk_demo_linux C)
+project(dji_sdk_demo_on_rpi C)
 
 set(CMAKE_C_FLAGS "-pthread -std=gnu99")
 set(CMAKE_CXX_FLAGS "-std=c++11 -pthread")
@@ -82,7 +82,7 @@ else ()
     message(STATUS "Cannot Find LIBUSB")
 endif (LIBUSB_FOUND)
 
-target_link_libraries(${PROJECT_NAME} m)
+target_link_libraries(${PROJECT_NAME} m dl)
 
 add_custom_command(TARGET ${PROJECT_NAME}
         PRE_LINK COMMAND cmake ..

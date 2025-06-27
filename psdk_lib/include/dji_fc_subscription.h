@@ -526,6 +526,153 @@ typedef enum {
      */
     DJI_FC_SUBSCRIPTION_TOPIC_IMU_ATTI_NAVI_DATA_WITH_TIMESTAMP = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 48),
 
+    /*!
+     * @brief Provides postion NO.1 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO1 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 48),
+
+    /*!
+     * @brief Provides postion NO.2 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO2 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 49),
+
+    /*!
+     * @brief Provides postion NO.3 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO3 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 50),
+
+    /*!
+     * @brief Provides postion NO.4 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO4 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 51),
+
+    /*!
+     * @brief Provides postion NO.5 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO5 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 52),
+
+    /*!
+     * @brief Provides postion NO.6 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO6 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 53),
+
+    /*!
+     * @brief Provides postion NO.7 gimbal pitch, roll, yaw @ up to 50Hz
+     * @details
+     * The reference frame for gimbal angles is a NED frame attached to the gimbal.
+     * This topic uses a data structure, Vector3f, that is too generic for the topic. The order of angles is :
+     * |Data Structure Element| Meaning|
+     * |----------------------|--------|
+     * |Vector3f.x            |pitch   |
+     * |Vector3f.y            |roll    |
+     * |Vector3f.z            |yaw     |
+     *
+     * @perf
+     * 0.1 deg accuracy in all axes
+     *
+     * @sensors Gimbal Encoder, IMU, Magnetometer
+     * @units deg
+     * @datastruct \ref T_DjiFcSubscriptionGimbalAngles
+     * @also \ref TOPIC_GIMBAL_STATUS, \ref TOPIC_GIMBAL_CONTROL_MODE
+     */
+    DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO7 = DJI_DATA_SUBSCRIPTION_TOPIC(DJI_DATA_SUBSCRIPTION_MODULE_FC, 54),
+
     /*! Total number of topics that can be subscribed. */
     DJI_FC_SUBSCRIPTION_TOPIC_TOTAL_NUMBER,
 } E_DjiFcSubscriptionTopic;

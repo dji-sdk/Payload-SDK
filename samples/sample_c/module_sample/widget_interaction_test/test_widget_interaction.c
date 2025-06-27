@@ -228,7 +228,9 @@ T_DjiReturnCode DjiTest_WidgetInteractionStartService(void)
         snprintf(tempPath, WIDGET_DIR_PATH_LEN_MAX, "%swidget_file/en_big_screen", curFileDirPath);
     }
 
+    USER_LOG_ERROR("Dji test widget set path");
     //set default ui config path
+    USER_LOG_INFO("widget file: %s", tempPath);
     djiStat = DjiWidget_RegDefaultUiConfigByDirPath(tempPath);
     if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Add default widget ui config error, stat = 0x%08llX", djiStat);
@@ -463,7 +465,9 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
         DjiTest_WidgetLogAppend("-> Sample Start");
 
         if (s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT ||
-            s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT) {
+            s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT ||
+            s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD ||
+            s_aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT_V2) {
             switch (s_extensionPortSampleIndex) {
                 case E_DJI_SAMPLE_INDEX_WAYPOINT_V2:
                     if (s_isallowRunFlightControlSample == true) {

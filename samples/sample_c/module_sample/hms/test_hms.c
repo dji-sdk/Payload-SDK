@@ -43,7 +43,11 @@
 #define MAX_HMS_ERROR_LEVEL              (6)
 #define HMS_DIR_PATH_LEN_MAX             (256)
 
+#ifdef SYSTEM_ARCH_LINUX
 #define DJI_CUSTOM_HMS_CODE_INJECT_ON    (0)
+#else
+#define DJI_CUSTOM_HMS_CODE_INJECT_ON    (1)
+#endif
 
 /* Private types -------------------------------------------------------------*/
 

@@ -37,6 +37,8 @@ extern "C" {
 #define DJI_USE_ONLY_UART                  (0)
 #define DJI_USE_UART_AND_USB_BULK_DEVICE   (1)
 #define DJI_USE_UART_AND_NETWORK_DEVICE    (2)
+#define DJI_USE_ONLY_USB_BULK_DEVICE       (3)
+#define DJI_USE_ONLY_NETWORK_DEVICE        (4)
 
 /*!< Attention: Select your hardware connection mode here.
 * */
@@ -58,11 +60,11 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON                true
 
-#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON             false
+#define CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON             true
 
 #define CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON                  true
 
-#define CONFIG_MODULE_SAMPLE_XPORT_ON                       false
+#define CONFIG_MODULE_SAMPLE_XPORT_ON                       true
 
 #define CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON       false
 
@@ -71,6 +73,8 @@ extern "C" {
 /*!< Attention: This function needs to be used together with mobile sdk mop sample.
 * */
 #define CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON                 false
+
+#define CONFIG_MODULE_SAMPLE_TETHERED_BATTERY_ON            true
 
 /* Exported types ------------------------------------------------------------*/
 

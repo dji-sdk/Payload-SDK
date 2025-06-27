@@ -255,6 +255,18 @@ T_DjiReturnCode HalUart_GetStatus(E_DjiHalUartNum uartNum, T_DjiUartStatus *stat
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+T_DjiReturnCode HalUart_GetDeviceInfo(T_DjiHalUartDeviceInfo *deviceInfo)
+{
+    if (deviceInfo == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    deviceInfo->vid = USB_UART_CONNECTED_TO_UAV_VID;
+    deviceInfo->pid = USB_UART_CONNECTED_TO_UAV_PID;
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 /* Private functions definition-----------------------------------------------*/
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

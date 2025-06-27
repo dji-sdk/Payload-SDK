@@ -132,6 +132,7 @@ void Application::DjiUser_SetupEnvironment()
     uartHandler.UartWriteData = HalUart_WriteData;
     uartHandler.UartReadData = HalUart_ReadData;
     uartHandler.UartGetStatus = HalUart_GetStatus;
+    uartHandler.UartGetDeviceInfo = HalUart_GetDeviceInfo;
 
     usbBulkHandler.UsbBulkInit = HalUsbBulk_Init;
     usbBulkHandler.UsbBulkDeInit = HalUsbBulk_DeInit;
@@ -184,6 +185,23 @@ void Application::DjiUser_SetupEnvironment()
         throw std::runtime_error("Register hal network handler error");
     }
 
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_USB_BULK_DEVICE)
+    returnCode = DjiPlatform_RegHalUsbBulkHandler(&usbBulkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("Register hal network handler error");
+    }
+
+#elif (CONFIG_HARDWARE_CONNECTION == DJI_USE_ONLY_NETWORK_DEVICE)
+    returnCode = DjiPlatform_RegHalNetworkHandler(&networkHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("Register hal network handler error");
+    }
+
+    //Attention: if you want to use camera stream view function, please uncomment it.
+    returnCode = DjiPlatform_RegSocketHandler(&socketHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        throw std::runtime_error("register osal socket handler error");
+    }
 #endif
 
     returnCode = DjiPlatform_RegFileSystemHandler(&fileSystemHandler);
@@ -236,8 +254,10 @@ void Application::DjiUser_ApplicationStart()
         throw std::runtime_error("Get aircraft base info error.");
     }
 
-    if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT) {
-        throw std::runtime_error("Please run this sample on extension port.");
+    if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT &&
+        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE &&
+        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_SKYPORT_V3) {
+        throw std::runtime_error("Please run this sample on extension port or skyport v3.");
     }
 
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");
@@ -313,7 +333,7 @@ T_DjiReturnCode Application::DjiUser_FillInUserInfo(T_DjiUserInfo *userInfo)
         !strcmp(USER_DEVELOPER_ACCOUNT, "your_developer_account") ||
         !strcmp(USER_BAUD_RATE, "your_baud_rate")) {
         USER_LOG_ERROR(
-            "Please fill in correct user information to 'samples/sample_c++/platform/linux/manifold2/application/dji_sdk_app_info.h' file.");
+            "Please fill in correct user information to 'samples/sample_c++/platform/linux/nvidia_jetson/application/dji_sdk_app_info.h' file.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 

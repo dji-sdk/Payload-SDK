@@ -160,9 +160,16 @@ static void *DjiTest_TimeSyncTask(void *arg)
             continue;
         }
 
-        USER_LOG_DEBUG("current aircraft time is %04d-%02d-%02d %02d:%02d:%02d %d.",
-                       aircraftTime.year, aircraftTime.month, aircraftTime.day,
-                       aircraftTime.hour, aircraftTime.minute, aircraftTime.second, aircraftTime.microsecond);
+        if ((aircraftTime.second % 30) == 0) {
+            USER_LOG_INFO("current aircraft time is %04d-%02d-%02d %02d:%02d:%02d %d.",
+                        aircraftTime.year, aircraftTime.month, aircraftTime.day,
+                        aircraftTime.hour, aircraftTime.minute, aircraftTime.second, aircraftTime.microsecond);
+        } else {
+            USER_LOG_DEBUG("current aircraft time is %04d-%02d-%02d %02d:%02d:%02d %d.",
+                        aircraftTime.year, aircraftTime.month, aircraftTime.day,
+                        aircraftTime.hour, aircraftTime.minute, aircraftTime.second, aircraftTime.microsecond);
+        }
+
     }
 }
 

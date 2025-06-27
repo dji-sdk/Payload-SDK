@@ -1,0 +1,44 @@
+{
+    "user_app_id": "226",
+    "firmware_version": "01.00.00.00",
+    "is_ai_rendering": "false",
+    "platform": "manifold3",
+    "name":{
+        "name_cn": "测试demo",
+        "name_en": "psdk-demo",
+        "name_jp": "テストデモ",
+        "name_fr": "Démo de test"
+    },
+    "description": {
+        "description_cn": [
+            "这是第一行",
+            "这是第二行",
+            "这是第三行",
+            "这是第四行"
+        ],
+        "description_en": [
+            "This is the first line",
+            "This is the second line",
+            "This is the third line"
+        ],
+        "description_jp": [
+            "これは一行目です",
+            "これは二行目です"
+        ],
+        "description_fr": [
+            "Ceci est la première ligne"
+        ]
+    },
+    "maintainer": {
+        "maintainer_cn": "大疆创新科技有限公司",
+        "maintainer_en": "DJI Innovation Technology Co., Ltd.",
+        "maintainer_jp": "大疆イノベーションテクノロジー有限会社",
+        "maintainer_fr": "Société à Responsabilité Limitée DJI Innovation Technology"
+    },
+    "ver_min": "00.00.00.00",
+    "ver_max": "99.99.99.99",
+    "bin": "../../../../../../build/bin/dji_sdk_demo_on_manifold3",
+    "userconfig": [
+        "../../../../../../samples"
+    ]
+}

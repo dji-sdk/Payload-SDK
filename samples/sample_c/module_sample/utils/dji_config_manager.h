@@ -43,6 +43,8 @@ typedef enum {
     DJI_USER_LINK_CONFIG_USE_ONLY_UART,
     DJI_USER_LINK_CONFIG_USE_UART_AND_NETWORK_DEVICE,
     DJI_USER_LINK_CONFIG_USE_UART_AND_USB_BULK_DEVICE,
+    DJI_USER_LINK_CONFIG_USE_ONLY_USB_BULK_DEVICE,
+    DJI_USER_LINK_CONFIG_USE_ONLY_NETWORK_DEVICE,
 } E_DjiUserLinkConfigType;
 
 typedef struct {
@@ -72,6 +74,10 @@ typedef struct {
         uint8_t usbBulk2EndpointIn;
         uint8_t usbBulk2EndpointOut;
 
+        char usbBulk3DeviceName[USER_DEVICE_NAME_STR_MAX_SIZE];
+        uint8_t usbBulk3InterfaceNum;
+        uint8_t usbBulk3EndpointIn;
+        uint8_t usbBulk3EndpointOut;
     } usbBulkConfig;
 } T_DjiUserLinkConfig;
 

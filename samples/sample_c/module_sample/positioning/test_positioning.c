@@ -39,11 +39,11 @@
 #endif
 
 /* Private constants ---------------------------------------------------------*/
-#define POSITIONING_TASK_FREQ                     (1)
-#define POSITIONING_TASK_STACK_SIZE               (2048)
+#define POSITIONING_TASK_FREQ                     (0.1)
+#define POSITIONING_TASK_STACK_SIZE               (3 * 1024)
 #define TEST_RTCM_FILE_PATH_STR_MAX_SIZE          (64)
 
-#define DJI_TEST_POSITIONING_EVENT_COUNT          (2)
+#define DJI_TEST_POSITIONING_EVENT_COUNT          (1)
 #define DJI_TEST_TIME_INTERVAL_AMONG_EVENTS_US    (200000)
 
 /* Private types -------------------------------------------------------------*/
@@ -168,22 +168,22 @@ static void *DjiTest_PositioningTask(void *arg)
             continue;
         }
 
-        USER_LOG_DEBUG("request position of target points success.");
-        USER_LOG_DEBUG("detail position information:");
+        USER_LOG_INFO("request position of target points success.");
+        USER_LOG_INFO("detail position information:");
         for (i = 0; i < DJI_TEST_POSITIONING_EVENT_COUNT; ++i) {
-            USER_LOG_DEBUG("position solution property: %d.", positionInfo[i].positionSolutionProperty);
-            USER_LOG_DEBUG("pitchAttitudeAngle: %d\trollAttitudeAngle: %d\tyawAttitudeAngle: %d",
+            USER_LOG_INFO("position solution property: %d.", positionInfo[i].positionSolutionProperty);
+            USER_LOG_INFO("pitchAttitudeAngle: %d\trollAttitudeAngle: %d\tyawAttitudeAngle: %d",
                            positionInfo[i].uavAttitude.pitch, positionInfo[i].uavAttitude.roll,
                            positionInfo[i].uavAttitude.yaw);
-            USER_LOG_DEBUG("northPositionOffset: %d\tearthPositionOffset: %d\tdownPositionOffset: %d",
+            USER_LOG_INFO("northPositionOffset: %d\tearthPositionOffset: %d\tdownPositionOffset: %d",
                            positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.x,
                            positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.y,
                            positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.z);
-            USER_LOG_DEBUG("longitude: %.8f\tlatitude: %.8f\theight: %.8f",
+            USER_LOG_INFO("longitude: %.8f\tlatitude: %.8f\theight: %.8f",
                            positionInfo[i].targetPointPosition.longitude,
                            positionInfo[i].targetPointPosition.latitude,
                            positionInfo[i].targetPointPosition.height);
-            USER_LOG_DEBUG(
+            USER_LOG_INFO(
                 "longStandardDeviation: %.8f\tlatStandardDeviation: %.8f\thgtStandardDeviation: %.8f",
                 positionInfo[i].targetPointPositionStandardDeviation.longitude,
                 positionInfo[i].targetPointPositionStandardDeviation.latitude,

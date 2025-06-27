@@ -89,15 +89,7 @@ start:
         <<
         std::endl;
     std::cout
-        << "| [1] Select gimbal mount position at NO.1 payload port                                            |"
-        <<
-        std::endl;
-    std::cout
-        << "| [2] Select gimbal mount position at NO.2 payload port                                            |"
-        <<
-        std::endl;
-    std::cout
-        << "| [3] Select gimbal mount position at NO.3 payload port                                            |"
+        << "| [1 ~ 4] Select gimbal mount position at NO.1~NO.4                                                |"
         <<
         std::endl;
     std::cout
@@ -110,7 +102,7 @@ start:
         return;
     }
 
-    if (mountPosition > '3' || mountPosition < '1') {
+    if (mountPosition > '4' || mountPosition < '1') {
         USER_LOG_ERROR("Input mount position is invalid");
         goto start;
     }
@@ -247,6 +239,7 @@ start:
             T_DjiGimbalManagerRotation rotation;
             T_DjiAircraftInfoBaseInfo baseInfo;
             E_DjiAircraftSeries aircraftSeries;
+            E_DjiFcSubscriptionTopic topicOfPayloadGimablAngle;
 
             returnCode = DjiGimbalManager_Init();
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -288,12 +281,24 @@ start:
             }
             else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3 ||
                      aircraftSeries == DJI_AIRCRAFT_SERIES_M3D) {
+                topicOfPayloadGimablAngle = DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES;
                 returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                     USER_LOG_ERROR("DjiFcSubscription_SubscribeTopic %d return %d", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
                     goto end;
                 }
                 USER_LOG_INFO("Subscribe topic DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES succefully.");
+            } else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M400) {
+                topicOfPayloadGimablAngle = gimbalMountPosition == 1 ? DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO1 :
+                                            gimbalMountPosition == 2 ? DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO2 :
+                                            gimbalMountPosition == 3 ? DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO3 :
+                                            gimbalMountPosition == 4 ? DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO4 : DJI_FC_SUBSCRIPTION_TOPIC_TOTAL_NUMBER;
+                returnCode = DjiFcSubscription_SubscribeTopic(topicOfPayloadGimablAngle, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("DjiFcSubscription_SubscribeTopic %d return %d", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
+                    goto end;
+                }
+                USER_LOG_INFO("Subscribe topic DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES_ON_POS_NO%d succefully.", gimbalMountPosition);
             }
 
 
@@ -403,8 +408,8 @@ start:
                                   threeGimbalData.anglesData[gimbalMountPosition - 1].yaw);
                 }
                 else if (aircraftSeries == DJI_AIRCRAFT_SERIES_M30 || aircraftSeries == DJI_AIRCRAFT_SERIES_M3 ||
-                         aircraftSeries == DJI_AIRCRAFT_SERIES_M3D) {
-                    returnCode = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES,
+                         aircraftSeries == DJI_AIRCRAFT_SERIES_M3D || aircraftSeries == DJI_AIRCRAFT_SERIES_M400) {
+                    returnCode = DjiFcSubscription_GetLatestValueOfTopic(topicOfPayloadGimablAngle,
                                                                         (uint8_t *) &gimbalAngles,
                                                                         sizeof(T_DjiFcSubscriptionGimbalAngles),
                                                                         &timestamp);

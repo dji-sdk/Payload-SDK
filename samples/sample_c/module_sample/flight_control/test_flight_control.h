@@ -43,6 +43,7 @@ typedef enum {
     E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_ARREST_FLYING,
     E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_SET_GET_PARAM,
     E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_FTS_TRIGGER,
+    E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_SLOW_ROTATE_BLADE,
 } E_DjiTestFlightCtrlSampleSelect;
 
 #pragma pack(1)
@@ -59,6 +60,7 @@ typedef struct {
 T_DjiReturnCode DjiTest_FlightControlRunSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect);
 void DjiTest_FlightControlVelocityAndYawRateCtrl(const T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
                                                  uint32_t timeMs);
+T_DjiReturnCode DjiTest_FlightControlFtsPwmTriggerSample(void);
 
 #ifdef __cplusplus
 }

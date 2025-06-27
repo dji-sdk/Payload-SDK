@@ -173,6 +173,8 @@ typedef struct {
     bool isShootingIntervalStart; /*!< Specifies if the camera is in interval shooting start status. This parameter is boolean type. */
     uint16_t currentPhotoShootingIntervalTimeInSeconds; /*!< Specifies the current interval shoot countdown time, the value is decreasing,
                                                          * when the value equals to zero trigger the interval take photo, uint:s. */
+    uint16_t currentPhotoShootingIntervalTimeInMs; /*!< Specifies the current interval shoot countdown time of millisecond part, the value is decreasing,
+                                                         * when the value equals to zero trigger the interval take photo, uint:ms. */
     uint16_t currentPhotoShootingIntervalCount; /*!< Specifies the current interval photo count, the value is decreasing step by one from
                                                  * the setted count when interval taking photo */
     bool isRecording; /*!< Specifies if the camera is in recording status. This parameter is boolean type. */
@@ -841,7 +843,7 @@ T_DjiReturnCode DjiPayloadCamera_RegMediaDownloadPlaybackHandler(const T_DjiCame
  * @param len: length of data to be sent via data stream, and it must be less than or equal to 65000, unit: byte.
  * @return Execution result.
  */
-T_DjiReturnCode DjiPayloadCamera_SendVideoStream(const uint8_t *data, uint16_t len);
+T_DjiReturnCode DjiPayloadCamera_SendVideoStream(const uint8_t *data, uint32_t len);
 
 /**
  * @brief Get data transmission state of "videoStream" channel. User can use the state as base for controlling data

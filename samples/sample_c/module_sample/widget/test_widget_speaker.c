@@ -324,6 +324,8 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
     if (DJI_AIRCRAFT_TYPE_M3E == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M3D == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4E == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType

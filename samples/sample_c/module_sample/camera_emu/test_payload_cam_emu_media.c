@@ -194,7 +194,8 @@ T_DjiReturnCode DjiTest_CameraEmuMediaStartService(void)
     UtilBuffer_Init(&s_mediaPlayCommandBufferHandler, s_mediaPlayCommandBuffer, sizeof(s_mediaPlayCommandBuffer));
 
     if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
-        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK) {
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK ||
+        aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
         returnCode = DjiPayloadCamera_RegMediaDownloadPlaybackHandler(&s_psdkCameraMedia);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk camera media function init error.");

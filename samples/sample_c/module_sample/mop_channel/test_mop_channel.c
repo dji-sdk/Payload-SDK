@@ -723,6 +723,8 @@ static void *DjiTest_MopChannelFileServiceRecvTask(void *arg)
                             s_fileServiceContent[clientNum].uploadState = MOP_FILE_SERVICE_UPLOAD_DATA_SENDING;
                             s_fileServiceContent[clientNum].uploadSeqNum = fileTransfor->seqNum;
 
+                            USER_LOG_INFO("fileTransfor->seqNum  %d", fileTransfor->seqNum);
+
                             uploadWriteLen = fwrite(&recvBuf[UTIL_OFFSETOF(T_DjiMopChannel_FileTransfor, data)], 1,
                                                     fileTransfor->dataLen, uploadFile);
                             if (uploadWriteLen < 0) {

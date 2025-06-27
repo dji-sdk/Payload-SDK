@@ -89,7 +89,9 @@ T_DjiReturnCode DjiTest_PowerManagementStartService(void)
 
     if (baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
         baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT ||
-        baseInfo.aircraftType == DJI_AIRCRAFT_TYPE_FC30) {
+        baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
+        baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE ||
+     		baseInfo.aircraftType == DJI_AIRCRAFT_TYPE_FC30) {
         // apply high power
         if (s_applyHighPowerHandler.pinInit == NULL) {
             USER_LOG_ERROR("apply high power pin init interface is NULL error");
@@ -113,15 +115,31 @@ T_DjiReturnCode DjiTest_PowerManagementStartService(void)
             return returnCode;
         }
 
+        if (baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
+            baseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE) {
+            E_DjiHighPowerVoltage voltage = E_DJI_HIGH_POWER_VOLTAGE_17V;
 
-        USER_LOG_INFO("Start to apply high power.");
+            USER_LOG_INFO("Start to apply high power.");
 
-        returnCode = DjiPowerManagement_ApplyHighPowerSync();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("apply high power error");
-            return returnCode;
+            returnCode = DjiPowerManagement_ApplyHighPowerSyncV2(voltage);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("apply high power error");
+                return returnCode;
+            }
+            USER_LOG_INFO("Success to apply high power %s.",
+                voltage == E_DJI_HIGH_POWER_VOLTAGE_13V6 ? "13V6" :
+                voltage == E_DJI_HIGH_POWER_VOLTAGE_17V ? "17V" :
+                voltage == E_DJI_HIGH_POWER_VOLTAGE_24V ? "24V" : "???");
+        } else {
+            USER_LOG_INFO("Start to apply high power.");
+
+            returnCode = DjiPowerManagement_ApplyHighPowerSync();
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("apply high power error");
+                return returnCode;
+            }
+            USER_LOG_INFO("Success to apply high power.");
         }
-        USER_LOG_INFO("Success to apply high power.");
     }
 
     // register power off notification callback function
