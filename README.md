@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.12.0-green.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
-![](https://img.shields.io/badge/license-MIT-orange.svg)
+![](https://img.shields.io/badge/version-V3.12.1-cyan.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
+![](https://img.shields.io/badge/license-MIT-yellow.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,48 +23,13 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.12.0. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.12.1. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-### 1. Matrice 400 Feature Support
-- **Added point cloud data subscription for LiDAR/millimeter-wave radar on aircraft.**
-- **Added custom widget management.**
-- **Added Expanded payload device support.**
-   Supports up to 7 payload devices simultaneously, compatible with:
-   - Skyport-V2
-   - XPort
-
-### 2. Manifold 3 Now Supports:
-- **Added AR image drawing function.**
-- **Added Enhanced warning functionality.**
-- **Added H30 camera image processing capabilities.**
-  - Together with Matrice 400, Manifold 3 can:
-  - Obtain decoded images from the H30 camera.
-  - Encode using a hardware encoder.
-  - Display AI recognition results in real time.
-- **Added PSDK application development**
-  - Supports developing and packaging applications based on PSDK.
-  - Supports installing and running applications on Manifold 3.
-
-### 3. Matrice 4TD/4D Series Feature Optimization
-- **Added cloud API firmware upgrade**
-
-### 4. E-PORT V2 Hardware Port Support
-- **Adapter compatibility:**
-  - E-Port V2 coaxial cable
-  - Skyport V3
-- **Power management:**
-  - Supports voltage requests for 13.6V, 17V, and 24V.
-- **Link models:**
-  - Added: ONLY_USB_BULK, ONLY_NETWORK.
-  - Not supported: UART_AND_NETWORK, UART_AND_USB_BULK.
-- **Development support:**
-  - Released DJI E-Port V2 development kit.
-  - Documentation: Refer to the Quick Start > E-Port Quick Start section.
-
-###  5. Upgrade and Compatibility
-#### SkyPort V2 and X-Port Software Upgrade
-The software versions of Skyport V2 and X-Port have been upgraded. Devices need to be mounted on the Matrice 300 or Matrice 350 to be upgraded to the latest software version before they can be used on the Matrice 400 model. Subsequent software upgrades can be performed on the Matrice 400.
+* Fixed an issue where the Matrice 400 could not use precise positioning.
+* Fixed an issue where the Matrice 400 gimbal payload experienced a timeout when relinquishing control while using absolute angles.
+* Fixed an issue where the Matrice 400 could not enable the FTS PWM trigger via the `DjiFlightController_SelectFtsPwmTrigger` API.
+* Fixed an issue where the Matrice 400 and Manifold 3 models were unable to perform PSDK-to-MSDK small-data transmission.
 
 ## License
 

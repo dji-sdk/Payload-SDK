@@ -98,8 +98,7 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
     }
 
     if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
-        USER_LOG_INFO("M400 is not support to use data transmition between PSDK device.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+        USER_LOG_INFO("Only supports small data transmission between PSDK and MSDK.");
     } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3) {

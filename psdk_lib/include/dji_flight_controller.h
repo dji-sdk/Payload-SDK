@@ -292,7 +292,7 @@ typedef struct {
 } T_DjiFtsPwmTriggerStatus;
 
 typedef struct {
-    T_DjiFtsPwmTriggerStatus ESC[2]; /* trigger status of the two ESCs */
+    T_DjiFtsPwmTriggerStatus ESC[4]; /* trigger tatus of the two ESCs, M4/M4D only ESC[0] and ESC[1], M400 for alls */
 } T_DjiFtsPwmEscTriggerStatus;
 
 /* Exported functions --------------------------------------------------------*/
@@ -691,13 +691,24 @@ T_DjiReturnCode DjiFlightController_GetElectronicSpeedControllerStatus(E_DjiFlig
 
 /**
  * @brief Select Fts pwm trigger.
- * @param position: Pwm trigger source position.
- * @return Execution result.
+ * - Notes:Timing requirement: This API must be called while the aircraft is on the ground (not airborne). Calls made during flight will fail or be rejected.
+ * - Function: This call only selects/enables the PWM trigger port on the flight controller side.
+ *   It does NOT emit PWM signals nor perform the motor-stop action itself. The actual motor-stop must be triggered by sending PWM signals via external PWM hardware pins.
+ * - Recommended flow:
+ *   1) Call DjiFlightController_SelectFtsPwmTrigger(position) on ground to enable the port;
+ *   2) Send the motor-stop PWM from an external PWM controller to that port;
+ * @param position
+ * - Supported models/ports:
+ *   - M400: only support DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO4.
+ * @return Possible failure reasons include invalid param, aircraft not on ground, hardware unsupported, or module not initialized.
  */
 T_DjiReturnCode DjiFlightController_SelectFtsPwmTrigger(E_DjiMountPosition position);
 
 /**
  * @brief Get Fts pwm trigger status.
+ * Notes:This API is deprecated and will be removed in a future release. It is NOT recommended for use. Supported models only: M4 serials.
+ * Recommended alternative: To confirm motor-stop (FTS) effects, use DJI_FC_SUBSCRIPTION_TOPIC_ESC_DATA fc subscription
+ * @param trigger_status
  * @return Execution result.
  */
 T_DjiReturnCode DjiFlightController_GetFtsPwmTriggerStatus(T_DjiFtsPwmEscTriggerStatus* trigger_status);

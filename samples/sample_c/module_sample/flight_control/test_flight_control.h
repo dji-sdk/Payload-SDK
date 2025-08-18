@@ -60,7 +60,7 @@ typedef struct {
 T_DjiReturnCode DjiTest_FlightControlRunSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect);
 void DjiTest_FlightControlVelocityAndYawRateCtrl(const T_DjiTestFlightControlVector3f offsetDesired, float yawRate,
                                                  uint32_t timeMs);
-T_DjiReturnCode DjiTest_FlightControlFtsPwmTriggerSample(void);
+T_DjiReturnCode DjiTest_FlightControlFtsPwmTriggerSample(E_DjiMountPosition position, const char* port_name);
 
 #ifdef __cplusplus
 }
