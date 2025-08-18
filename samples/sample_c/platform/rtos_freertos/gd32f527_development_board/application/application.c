@@ -286,12 +286,9 @@ void DjiUser_StartTask(void const *argument)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_POSITIONING_ON
-    if (aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT ||
-        aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT_V2) {
         if (DjiTest_PositioningStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("psdk positioning init error");
         }
-    }
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
