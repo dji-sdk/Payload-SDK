@@ -59,7 +59,9 @@ static bool isHmsManagerInit = false;
 static T_DjiHmsFileBinaryArray s_EnHmsTextConfigFileBinaryArrayList[] = {
     {hms_text_config_json_fileName, hms_text_config_json_fileSize, hms_text_config_json_fileBinaryArray},
 };
+#ifdef SYSTEM_ARCH_LINUX
 static uint8_t *s_hmsJsonData = NULL;
+#endif
 static E_DjiMobileAppLanguage s_hmsLanguage = DJI_MOBILE_APP_LANGUAGE_ENGLISH;
 static bool s_isHmsConfigFileDirPathConfigured = false;
 static char s_hmsConfigFileDirPath[DJI_FILE_PATH_SIZE_MAX] = {0};
@@ -70,7 +72,9 @@ static T_DjiReturnCode DjiTest_HmsManagerDeInit(void);
 static T_DjiFcSubscriptionFlightStatus DjiTest_GetValueOfFlightStatus(void);
 static bool DjiTest_ReplaceStr(char *buffer, uint32_t bufferMaxLen, const char *target, const char *dest);
 static bool DjiTest_MarchErrCodeInfoTable(T_DjiHmsInfoTable hmsInfoTable);
+#ifdef SYSTEM_ARCH_LINUX
 static bool DjiTest_MarchErrCodeInfoTableByJson(T_DjiHmsInfoTable hmsInfoTable);
+#endif
 static T_DjiReturnCode DjiTest_HmsInfoCallback(T_DjiHmsInfoTable hmsInfoTable);
 
 /* Exported functions definition ---------------------------------------------*/
@@ -210,11 +214,13 @@ T_DjiReturnCode DjiTest_HmsCustomizationSetConfigFilePath(const char *path)
 static T_DjiReturnCode DjiTest_HmsManagerInit(void)
 {
     T_DjiReturnCode returnCode;
+#ifdef SYSTEM_ARCH_LINUX
     char curFileDirPath[HMS_DIR_PATH_LEN_MAX];
     char tempFileDirPath[HMS_DIR_PATH_LEN_MAX];
     uint32_t fileSize = 0;
     uint32_t readRealSize = 0;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+#endif
 
     returnCode = DjiFcSubscription_Init();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -265,7 +271,9 @@ static T_DjiReturnCode DjiTest_HmsManagerInit(void)
 static T_DjiReturnCode DjiTest_HmsManagerDeInit(void)
 {
     T_DjiReturnCode returnCode;
+#ifdef SYSTEM_ARCH_LINUX
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+#endif
 
     returnCode = DjiFcSubscription_DeInit();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -392,6 +400,7 @@ static bool DjiTest_MarchErrCodeInfoTable(T_DjiHmsInfoTable hmsInfoTable)
     return true;
 }
 
+#ifdef SYSTEM_ARCH_LINUX
 static bool DjiTest_MarchErrCodeInfoTableByJson(T_DjiHmsInfoTable hmsInfoTable)
 {
     cJSON *hmsJsonRoot = NULL;
@@ -444,6 +453,7 @@ static bool DjiTest_MarchErrCodeInfoTableByJson(T_DjiHmsInfoTable hmsInfoTable)
 
     cJSON_Delete(hmsJsonRoot);
 }
+#endif
 
 static T_DjiReturnCode DjiTest_HmsInfoCallback(T_DjiHmsInfoTable hmsInfoTable)
 {

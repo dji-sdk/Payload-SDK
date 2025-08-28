@@ -522,7 +522,7 @@ fmc_state_enum fmc_bank0_erase(void);
 /* FMC erase whole bank1(include bank1_ex) */
 fmc_state_enum fmc_bank1_erase(void);
 /* FMC program a double word at the corresponding address */
-fmc_state_enum fmc_doubleword_program(uint32_t address, uint64_t data);
+fmc_state_enum fmc_doubleword_program(uint32_t address, uint32_t *data);
 /* FMC program a word at the corresponding address */
 fmc_state_enum fmc_word_program(uint32_t address, uint32_t data);
 /* FMC program a half word at the corresponding address */

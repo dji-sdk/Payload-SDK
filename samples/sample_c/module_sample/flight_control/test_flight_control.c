@@ -1366,6 +1366,7 @@ bool DjiTest_FlightControlGoHomeAndConfirmLanding(void)
             s_osalHandler->TaskSleepMs(1000);
             if (DJI_AIRCRAFT_TYPE_M3E == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M3D == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
+                || DJI_AIRCRAFT_TYPE_M3TA == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
                 || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType

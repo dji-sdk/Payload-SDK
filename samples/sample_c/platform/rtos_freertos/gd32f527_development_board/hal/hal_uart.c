@@ -35,6 +35,9 @@
 #define COMMUNICATION_UART_NUM          UART_NUM_1
 #define USE_NATIVE_UART_ON_EPORT_V2     (0)
 
+#define USB_UART_FT232_VID              (0x0403)
+#define USB_UART_FT232_PID              (0x6001)
+
 /* Private types -------------------------------------------------------------*/
 typedef enum {
     USER_UART_NUM0 = 0,
@@ -52,7 +55,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
 {
     T_UartHandleStruct *uartHandleStruct;
 
-    uartHandleStruct = pvPortMalloc(sizeof(T_UartHandleStruct));
+    uartHandleStruct = DjiPlatform_GetOsalHandler()->Malloc(sizeof(T_UartHandleStruct));
     if (uartHandleStruct == NULL) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
     }
@@ -73,7 +76,7 @@ T_DjiReturnCode HalUart_Init(E_DjiHalUartNum uartNum, uint32_t baudRate, T_DjiUa
 
 T_DjiReturnCode HalUart_DeInit(T_DjiUartHandle uartHandle)
 {
-    vPortFree(uartHandle);
+    DjiPlatform_GetOsalHandler()->Free(uartHandle);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
@@ -81,7 +84,6 @@ T_DjiReturnCode HalUart_DeInit(T_DjiUartHandle uartHandle)
 T_DjiReturnCode HalUart_WriteData(T_DjiUartHandle uartHandle, const uint8_t *buf, uint32_t len, uint32_t *realLen)
 {
     T_UartHandleStruct *uartHandleStruct = (T_UartHandleStruct *) uartHandle;
-    int32_t ret;
 
     if (uartHandleStruct->uartNum == USER_UART_NUM0) {
 #if USE_NATIVE_UART_ON_EPORT_V2
@@ -99,7 +101,6 @@ T_DjiReturnCode HalUart_WriteData(T_DjiUartHandle uartHandle, const uint8_t *buf
 T_DjiReturnCode HalUart_ReadData(T_DjiUartHandle uartHandle, uint8_t *buf, uint32_t len, uint32_t *realLen)
 {
     T_UartHandleStruct *uartHandleStruct = (T_UartHandleStruct *) uartHandle;
-    int32_t ret;
 
     if (uartHandleStruct->uartNum == USER_UART_NUM0) {
 #if USE_NATIVE_UART_ON_EPORT_V2
@@ -134,8 +135,13 @@ T_DjiReturnCode HalUart_GetDeviceInfo(T_DjiHalUartDeviceInfo *deviceInfo)
         return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 
+#if USE_NATIVE_UART_ON_EPORT_V2
+    deviceInfo->vid = USB_UART_FT232_VID;
+    deviceInfo->pid = USB_UART_FT232_PID;
+#else
     deviceInfo->vid = ((usb_desc_dev *)(cdc_desc.dev_desc))->idVendor;
     deviceInfo->pid = ((usb_desc_dev *)(cdc_desc.dev_desc))->idProduct;
+#endif
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

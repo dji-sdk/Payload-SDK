@@ -64,7 +64,6 @@ static T_DjiMutexHandle s_can0Mutex;
 static T_RingBuffer s_can1ReadRingBuffer;
 static T_CanBufferState s_can1ReadBufferState;
 static T_RingBuffer s_can1WriteRingBuffer;
-static T_CanBufferState s_can1WriteBufferState;
 static uint8_t s_can1ReadBuf[CAN1_READ_BUF_SIZE];
 static uint8_t s_can1WriteBuf[CAN1_WRITE_BUF_SIZE];
 static T_DjiMutexHandle s_can1Mutex;
@@ -229,14 +228,12 @@ int CAN_Read(E_CanNum canNum, uint8_t *buf, uint16_t readSize)
  */
 int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
 {
-    int writeRealLen;
-    uint16_t usedCapacityOfBuffer = 0;
+    int writeRealLen = 0;
     can_trasnmit_message_struct transmit_message;
     int32_t i = 0;
     int32_t j = 0;
     uint32_t packageCnt = 0;
     uint32_t LastpackageSize = 0;
-    uint8_t mailBoxNum = 0;
 
     switch (canNum)
     {
@@ -244,6 +241,8 @@ int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
 #ifdef USING_CAN0
     case UART_NUM_1:
     {
+        uint16_t usedCapacityOfBuffer = 0;
+
         Osal_MutexLock(s_uart1Mutex);
         writeRealLen = RingBuf_Put(&s_uart1WriteRingBuffer, buf, writeSize);
 
@@ -262,8 +261,6 @@ int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
 #ifdef USING_CAN1
     case CAN_NUM_1:
     {
-        // Osal_MutexLock(s_can1Mutex);
-
         can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
         transmit_message.tx_efid = 0x00;
         transmit_message.tx_ft = CAN_FT_DATA;
@@ -280,7 +277,7 @@ int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
             }
             transmit_message.tx_sfid = 0x21;
             transmit_message.tx_dlen = 8;
-            mailBoxNum = can_message_transmit(CAN1, &transmit_message);
+            can_message_transmit(CAN1, &transmit_message);
             Osal_TaskSleepMs(1);
         }
 
@@ -293,21 +290,9 @@ int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
 
             transmit_message.tx_sfid = 0x21;
             transmit_message.tx_dlen = LastpackageSize;
-            mailBoxNum = can_message_transmit(CAN1, &transmit_message);
+            can_message_transmit(CAN1, &transmit_message);
             Osal_TaskSleepMs(1);
         }
-
-        // Osal_MutexUnlock(s_can1Mutex);
-
-        //    writeRealLen = RingBuf_Put(&s_can1WriteRingBuffer, buf, writeSize);
-
-        //    usedCapacityOfBuffer = CAN1_WRITE_BUF_SIZE - RingBuf_GetUnusedSize(&s_can1WriteRingBuffer);
-        //    s_can1WriteBufferState.maxUsedCapacityOfBuffer =
-        //        usedCapacityOfBuffer > s_can1WriteBufferState.maxUsedCapacityOfBuffer ? usedCapacityOfBuffer
-        //                                                                               : s_can1WriteBufferState.maxUsedCapacityOfBuffer;
-        //    s_can1WriteBufferState.countOfLostData += writeSize - writeRealLen;
-        //    printf("Enable tmeie interrupt");
-        //    can_interrupt_enable(CAN1, CAN_INTEN_TMEIE);
     }
     break;
 #endif
@@ -318,32 +303,6 @@ int CAN_Write(E_CanNum canNum, const uint8_t *buf, uint16_t writeSize)
 
     return writeRealLen;
 }
-
-// void UART_GetBufferState(E_UartNum uartNum, T_CanBufferState *readBufferState, T_CanBufferState *writeBufferState)
-// {
-//     switch (uartNum) {
-// #ifdef USING_UART_PORT_1
-//         case UART_NUM_1:
-//             memcpy(readBufferState, &s_uart1ReadBufferState, sizeof(T_CanBufferState));
-//             memcpy(writeBufferState, &s_uart1WriteBufferState, sizeof(T_CanBufferState));
-//             break;
-// #endif
-// #ifdef USING_UART_PORT_2
-//         case UART_NUM_2:
-//             memcpy(readBufferState, &s_can1ReadBufferState, sizeof(T_CanBufferState));
-//             memcpy(writeBufferState, &s_can1WriteBufferState, sizeof(T_CanBufferState));
-//             break;
-// #endif
-// #ifdef USING_UART_PORT_3
-//         case UART_NUM_3:
-//             memcpy(readBufferState, &s_uart3ReadBufferState, sizeof(T_CanBufferState));
-//             memcpy(writeBufferState, &s_uart3WriteBufferState, sizeof(T_CanBufferState));
-//             break;
-// #endif
-//         default:
-//             break;
-//     }
-// }
 
 /**
  * @brief UART1 interrupt request handler fucntion.
@@ -426,7 +385,7 @@ void CAN1_TX_IRQHandler(void)
     // {
     //     can_interrupt_flag_clear(CAN1, CAN_INT_FLAG_MTF2);
     //     // printf("\r\nMTF2 data transmmit success\r\n");
-    // }  
+    // }
 
     // Osal_SemaphorePost(s_can1Sema);
 
@@ -466,18 +425,12 @@ void CAN1_RX0_IRQHandler(void)
     /* check the receive message */
     can_message_receive(CAN1, CAN_FIFO0, &receive_message);
 
-    realCountPutBuffer = RingBuf_Put(&s_can1ReadRingBuffer, &receive_message.rx_data, receive_message.rx_dlen);
+    realCountPutBuffer = RingBuf_Put(&s_can1ReadRingBuffer, (const uint8_t *)receive_message.rx_data, receive_message.rx_dlen);
     usedCapacityOfBuffer = CAN1_READ_BUF_SIZE - RingBuf_GetUnusedSize(&s_can1ReadRingBuffer);
     s_can1ReadBufferState.maxUsedCapacityOfBuffer =
         usedCapacityOfBuffer > s_can1ReadBufferState.maxUsedCapacityOfBuffer ? usedCapacityOfBuffer
                                                                              : s_can1ReadBufferState.maxUsedCapacityOfBuffer;
     s_can1ReadBufferState.countOfLostData += 1 - realCountPutBuffer;
-
-    // int i = 0 ;
-    // printf("\r\n can1 receive data:");
-    // for(i = 0; i < receive_message.rx_dlen; i++) {
-    //     printf(" %02x", receive_message.rx_data[i]);
-    // }
 }
 
 #endif

@@ -303,7 +303,7 @@ uint8_t cdc_acm_check_ready(usb_dev *udev)
     \param[out] none
     \retval     USB device operation status
 */
-void cdc_acm_data_send(usb_dev *udev, uint8_t *buf, uint8_t len, uint32_t *readLen)
+void cdc_acm_data_send(usb_dev *udev, const uint8_t *buf, uint8_t len, uint32_t *readLen)
 {
     usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
     uint32_t cnt = 0;
@@ -312,15 +312,12 @@ void cdc_acm_data_send(usb_dev *udev, uint8_t *buf, uint8_t len, uint32_t *readL
 
     usbd_ep_send (udev, CDC_DATA_IN_EP, buf, len);
     while(1) {
-        Osal_TaskSleepMs(1);
         if (cdc->packet_sent == 1)   {
             *readLen = len;
             break;
         }
-
-        if (cnt++ >= 100)
+        if (cnt++ >= 10000)
         {
-            cnt = 0;
             *readLen = 0;
             break;
         }
@@ -334,7 +331,7 @@ void cdc_acm_data_send(usb_dev *udev, uint8_t *buf, uint8_t len, uint32_t *readL
     \param[out] none
     \retval     USB device operation status
 */
-void cdc_acm_data_receive(usb_dev *udev, uint8_t *buf, uint8_t len, uint32_t *readLen)
+void cdc_acm_data_receive(usb_dev *udev, uint8_t *buf, uint32_t len, uint32_t *readLen)
 {
     usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
 
@@ -342,7 +339,6 @@ void cdc_acm_data_receive(usb_dev *udev, uint8_t *buf, uint8_t len, uint32_t *re
 
     usbd_ep_recev(udev, CDC_DATA_OUT_EP, (uint8_t*)(cdc->data), USB_CDC_DATA_PACKET_SIZE);
     while(1) {
-        Osal_TaskSleepMs(1);
         if (cdc->packet_receive == 1)   {
             memcpy(buf, cdc->data, cdc->receive_length);
             *readLen =  cdc->receive_length;

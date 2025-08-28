@@ -90,6 +90,7 @@ bool DjiUserConfigManager_IsEnable(void)
 /* Private functions definition-----------------------------------------------*/
 static T_DjiReturnCode DjiUserConfigManager_GetAppInfoInner(const char *path, T_DjiUserInfo *userInfo)
 {
+#ifdef SYSTEM_ARCH_LINUX
     T_DjiReturnCode returnCode;
     uint32_t fileSize = 0;
     uint32_t readRealSize = 0;
@@ -99,7 +100,6 @@ static T_DjiReturnCode DjiUserConfigManager_GetAppInfoInner(const char *path, T_
     cJSON *jsonItem = NULL;
     cJSON *jsonValue = NULL;
 
-#ifdef SYSTEM_ARCH_LINUX
     returnCode = UtilFile_GetFileSizeByPath(path, &fileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Get file size by path failed, stat = 0x%08llX", returnCode);
@@ -191,6 +191,7 @@ jsonDataFree:
 
 static T_DjiReturnCode DjiUserConfigManager_GetLinkConfigInner(const char *path, T_DjiUserLinkConfig *linkConfig)
 {
+#ifdef SYSTEM_ARCH_LINUX
     T_DjiReturnCode returnCode;
     uint32_t fileSize = 0;
     uint32_t readRealSize = 0;
@@ -201,8 +202,6 @@ static T_DjiReturnCode DjiUserConfigManager_GetLinkConfigInner(const char *path,
     cJSON *jsonValue = NULL;
     cJSON *jsonConfig = NULL;
     int32_t configValue;
-
-#ifdef SYSTEM_ARCH_LINUX
 
     returnCode = UtilFile_GetFileSizeByPath(path, &fileSize);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

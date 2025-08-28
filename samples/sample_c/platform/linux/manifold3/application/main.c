@@ -97,9 +97,9 @@ int main(int argc, char **argv)
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
     T_DjiAircraftVersion aircraftInfoVersion;
     T_DjiFirmwareVersion firmwareVersion = {
-        .majorVersion = 1,
+        .majorVersion = 0,
         .minorVersion = 0,
-        .modifyVersion = 0,
+        .modifyVersion = 7,
         .debugVersion = 0,
     };
 
@@ -203,25 +203,14 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
-    returnCode = DjiTest_DataTransmissionStartService();
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("data tramsmission sample init error");
+    if(aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+        returnCode = DjiTest_DataTransmissionStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("data tramsmission sample init error");
+        }
     }
 #endif
 
-    if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
-        (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
-         aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)) {
-        returnCode = DjiTest_WidgetInteractionStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget interaction sample init error");
-        }
-
-        returnCode = DjiTest_WidgetSpeakerStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget speaker test init error");
-        }
-    } else {
 #ifdef CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
         returnCode = DjiTest_CameraEmuBaseStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -243,64 +232,13 @@ int main(int argc, char **argv)
         }
 #endif
 
-#ifdef CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
-            if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("psdk gimbal init error");
-            }
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_XPORT_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
-            if (DjiTest_XPortStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("psdk xport init error");
-            }
-        }
-#endif
-
 #ifdef CONFIG_MODULE_SAMPLE_CLOUD_API_ON
+    if(aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
         returnCode = DjiTest_CloudApiByWebSocketStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("CloudApiByWebSocket send data sample start error");
         }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON
-        if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
-            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
-            returnCode = DjiTest_PayloadCollaborationStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Payload collaboration sample init error\n");
-            }
-        }
-#endif
-
-#ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
-        T_DjiTestUpgradePlatformOpt linuxUpgradePlatformOpt = {
-            .rebootSystem = DjiUpgradePlatformLinux_RebootSystem,
-            .cleanUpgradeProgramFileStoreArea = DjiUpgradePlatformLinux_CleanUpgradeProgramFileStoreArea,
-            .createUpgradeProgramFile = DjiUpgradePlatformLinux_CreateUpgradeProgramFile,
-            .writeUpgradeProgramFile = DjiUpgradePlatformLinux_WriteUpgradeProgramFile,
-            .readUpgradeProgramFile = DjiUpgradePlatformLinux_ReadUpgradeProgramFile,
-            .closeUpgradeProgramFile = DjiUpgradePlatformLinux_CloseUpgradeProgramFile,
-            .replaceOldProgram = DjiUpgradePlatformLinux_ReplaceOldProgram,
-            .setUpgradeRebootState = DjiUpgradePlatformLinux_SetUpgradeRebootState,
-            .getUpgradeRebootState = DjiUpgradePlatformLinux_GetUpgradeRebootState,
-            .cleanUpgradeRebootState = DjiUpgradePlatformLinux_CleanUpgradeRebootState,
-        };
-        T_DjiTestUpgradeConfig testUpgradeConfig = {
-            .firmwareVersion = firmwareVersion,
-            .transferType = DJI_FIRMWARE_TRANSFER_TYPE_DCFTP,
-            .needReplaceProgramBeforeReboot = true
-        };
-        if (DjiTest_UpgradeStartService(&linuxUpgradePlatformOpt, testUpgradeConfig) !=
-            DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("psdk upgrade init error");
-        }
+    }
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_HMS_CUSTOMIZATION_ON
@@ -309,7 +247,16 @@ int main(int argc, char **argv)
             USER_LOG_ERROR("hms test init error");
         }
 #endif
+
+#ifdef CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
+    if(aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+        USER_LOG_INFO("DjiTest_MopChannelStartService();");
+        returnCode = DjiTest_MopChannelStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("mop channel sample init error");
+        }
     }
+#endif
 
     if (pthread_create(&s_monitorThread, NULL, DjiUser_MonitorTask, NULL) != 0) {
         USER_LOG_ERROR("create monitor task fail.");

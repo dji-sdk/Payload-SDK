@@ -46,6 +46,7 @@
 #include "camera_manager/test_camera_manager_entry.h"
 #include <hms_manager/hms_manager_entry.h>
 #include <liveview/dji_liveview_object_detection.hpp>
+#include "liveview/test_liveview.h"
 #include <signal.h>
 /* Private constants ---------------------------------------------------------*/
 
@@ -63,6 +64,7 @@ int main(int argc, char **argv)
     char inputChar;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiReturnCode returnCode;
+    E_DjiMountPosition mountPosition = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1;
 
 start:
     std::cout
@@ -80,7 +82,8 @@ start:
         << "| [i] Run manifold3 AI sample - request h.264 bitstream data, codec it and display it on pilot     |\n"
         << "| [j] Run Hms Enhance sample - shake motor and play sound on pilot                                 |\n"
         << "| [l] Run widget states manager sample, control widget states on other payload                     |\n"
-        << "| [m] Run Open Ar sample - draw ar gragh\n"
+        << "| [m] Run Open Ar sample - draw ar gragh                                                           |\n"
+        << "| [n] Run H.264 liveview sample - save H.264 files in the current directory                        |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -128,6 +131,9 @@ start:
             break;
         case 'm':
             DjiUser_RunOpenArSample();
+            break;
+        case 'n':
+            DjiTest_LiveviewRunSample(mountPosition);
             break;
         case 'q':
             break;

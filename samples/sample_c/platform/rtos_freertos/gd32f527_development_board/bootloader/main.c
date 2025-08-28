@@ -65,6 +65,9 @@
 #define USER_LED_TASK_STACK_SIZE            1024
 #define USER_LED_TASK_PRIORITY              0
 
+#define SRAM_START_ADDR                     ((uint32_t)0x20000000)
+#define SRAM_SIZE                           ((uint32_t)0x100000)
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 extern pFunction JumpToApplication;
@@ -109,6 +112,8 @@ static void PsdkUser_StartTask(void const *argument)
     bool isUpgradeReboot;
     T_DjiUpgradeEndInfo upgradeEndInfo;
     T_DjiReturnCode returnCode;
+    extern uint32_t __RAM_START;
+    extern uint32_t __RAM_SIZE;
 
     /* attention : Delay for power on button state check mistake */
     Osal_TaskSleepMs(50);
@@ -121,6 +126,9 @@ static void PsdkUser_StartTask(void const *argument)
 
     IAP_Init();
 
+    printf("RAM Start: 0x%08lX\r\n", SRAM_START_ADDR);
+    printf("RAM Size: 0x%08lX\r\n", SRAM_SIZE);
+
    /* Test if Key push-button1 is pressed */
    if (Button_GetState(BUTTON_KEY1) == 1) {
        /* Execute the IAP driver in order to reprogram the Flash */
@@ -128,7 +136,7 @@ static void PsdkUser_StartTask(void const *argument)
        Main_Menu();
    } else {
        returnCode = DjiUpgradePlatformGd32_GetUpgradeRebootState(&isUpgradeReboot, &upgradeEndInfo);
-       printf("Reboot from upgrade flag is %d.\r\n", isUpgradeReboot);
+       printf("Reboot from upgrade flag is %d, upgrade end state is 0x%x.\r\n", isUpgradeReboot, upgradeEndInfo.upgradeEndState);
        Osal_TaskSleepMs(5);
 
        if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS && isUpgradeReboot == true &&
@@ -144,13 +152,13 @@ static void PsdkUser_StartTask(void const *argument)
            }
        }
 
-       uint32_t addr =  ((*(__IO uint32_t *) APPLICATION_ADDRESS) & 0x2FFE0000);
+       uint32_t spValue =  (*(__IO uint32_t *) APPLICATION_ADDRESS);
        /* Test if user code is programmed starting from address "APPLICATION_ADDRESS" */
-       printf("the initial SP of app is %08X\r\n", (*(__IO uint32_t *) APPLICATION_ADDRESS));
+       printf("The initial sp of app is 0x%08X\r\n", spValue);
        Osal_TaskSleepMs(5);
 
-       if (((*(__IO uint32_t *) APPLICATION_ADDRESS) & 0x2FFE0000) == 0x20020000) {
-           printf("jump to app at 0x%08X\r\n", APPLICATION_ADDRESS);
+       if (spValue >= SRAM_START_ADDR && (spValue < SRAM_START_ADDR + SRAM_SIZE)) {
+           printf("Jump to app at 0x%08X\r\n", APPLICATION_ADDRESS);
            Osal_TaskSleepMs(5);
            __disable_irq();
            __disable_fiq();
@@ -160,6 +168,8 @@ static void PsdkUser_StartTask(void const *argument)
            /* Initialize user application's Stack Pointer */
            __set_MSP(*(__IO uint32_t *) APPLICATION_ADDRESS);
            JumpToApplication();
+       } else {
+           printf("Invalid initial sp value\r\n");
        }
    }
 

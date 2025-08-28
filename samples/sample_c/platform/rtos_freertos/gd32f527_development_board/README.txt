@@ -10,8 +10,8 @@ Library Manager:        ArmAr.exe V5.06 update 6 (build 750)
 Hex Converter:          FromElf.exe V5.06 update 6 (build 750)
 
 Pin Definition:
-Console UART:           PA9(TX), PA10(RX)
-Communication UART:     PA2(TX), PA3(RX)
+Console UART:           PC10(TX), PC11(RX)
+Communication UART:     PA9(TX), PA10(RX)
 Interactive UART:       PD8(TX), PD9(RX)
 PPS PIN:                PD2
 

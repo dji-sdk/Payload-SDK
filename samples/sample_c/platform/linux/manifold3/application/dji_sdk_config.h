@@ -71,6 +71,8 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_CLOUD_API_ON
 
+#define CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON                 true
+
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/

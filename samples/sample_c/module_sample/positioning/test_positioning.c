@@ -58,8 +58,10 @@ static T_DjiReturnCode DjiTest_ReceiveRtkBaseStationRtcmDataCallback(uint8_t ind
 /* Private variables ---------------------------------------------------------*/
 static T_DjiTaskHandle s_userPositioningThread;
 static int32_t s_eventIndex = 0;
+#ifdef SYSTEM_ARCH_LINUX
 static char s_rtkOnAircraftRtcmFilePath[TEST_RTCM_FILE_PATH_STR_MAX_SIZE];
 static char s_rtkBaseStationRtcmFilePath[TEST_RTCM_FILE_PATH_STR_MAX_SIZE];
+#endif
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_PositioningStartService(void)
@@ -198,9 +200,9 @@ static void *DjiTest_PositioningTask(void *arg)
 #pragma GCC diagnostic pop
 #endif
 
+#ifdef SYSTEM_ARCH_LINUX
 static int32_t DjiTest_SaveRtcmData(char *filePath, const uint8_t *data, uint32_t len)
 {
-#ifdef SYSTEM_ARCH_LINUX
     FILE *fp = NULL;
     size_t size;
 
@@ -218,9 +220,9 @@ static int32_t DjiTest_SaveRtcmData(char *filePath, const uint8_t *data, uint32_
 
     fflush(fp);
     fclose(fp);
-#endif
     return 0;
 }
+#endif
 
 static T_DjiReturnCode DjiTest_ReceiveRtkOnAircraftRtcmDataCallback(uint8_t index, const uint8_t *data,
                                                                     uint16_t dataLen)

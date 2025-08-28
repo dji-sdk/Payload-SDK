@@ -68,7 +68,6 @@ T_DjiReturnCode DjiTest_TetheredBatteryStartService(void)
 
 static void *DjiTest_TetheredBatteryTask(void *arg)
 {
-    uint32_t sysTimeMs = 0;
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiTetherLineStatus tetherLineStatus = {0};
@@ -103,6 +102,8 @@ static void *DjiTest_TetheredBatteryTask(void *arg)
 
         osalHandler->TaskSleepMs(100);
     }
+
+    return NULL;
 }
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/
