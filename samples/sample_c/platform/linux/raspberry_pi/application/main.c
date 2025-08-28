@@ -208,7 +208,7 @@ int main(int argc, char **argv)
     if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
         (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
          aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)) {
-        // TODO: something is no support on E-Port of M300/M350 ???
+
     } else {
         #if CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
             returnCode = DjiTest_CameraEmuBaseStartService();

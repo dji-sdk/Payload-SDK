@@ -129,6 +129,7 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M3E                       = 77, /*!< Aircraft type is Mavic 3E. */
     DJI_AIRCRAFT_TYPE_FC30                      = 78, /* !<Aircraft type is FlyCart 30> */
     DJI_AIRCRAFT_TYPE_M3T                       = 79, /*!< Aircraft type is Mavic 3T. */
+    DJI_AIRCRAFT_TYPE_M3TA                      = 80, /*!< Aircraft type is Mavic 3TA. */
     DJI_AIRCRAFT_TYPE_M350_RTK                  = 89, /*!< Aircraft type is Matrice 350 RTK. */
     DJI_AIRCRAFT_TYPE_M3D                       = 91, /*!< Aircraft type is Matrice 3D. */
     DJI_AIRCRAFT_TYPE_M3TD                      = 93, /*!< Aircraft type is Matrice 3TD. */
@@ -158,6 +159,7 @@ typedef enum {
     DJI_CAMERA_TYPE_M30T                        = 53, /*!< Camera type is M30T. */
     DJI_CAMERA_TYPE_M3E                         = 66, /*!< Camera type is M3E. */
     DJI_CAMERA_TYPE_M3T                         = 67, /*!< Camera type is M3T. */
+    DJI_CAMERA_TYPE_M3TA                        = 68, /*!< Camera type is M3T. */
     DJI_CAMERA_TYPE_M3D                         = 80, /*!< Camera type is Matrice 3D. */
     DJI_CAMERA_TYPE_M3TD                        = 81, /*!< Camera type is Matrice 3TD. */
     DJI_CAMERA_TYPE_H30                         = 82, /*!< Camera type is H30. */

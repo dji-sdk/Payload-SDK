@@ -70,6 +70,7 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_M30T,    "M30T Camera"},
     {DJI_CAMERA_TYPE_M3E,     "M3E Camera"},
     {DJI_CAMERA_TYPE_M3T,     "M3T Camera"},
+    {DJI_CAMERA_TYPE_M3TA,    "M3TA Camera"},
     {DJI_CAMERA_TYPE_M3D,     "M3D Camera"},
     {DJI_CAMERA_TYPE_M3TD,    "M3TD Camera"},
     {DJI_CAMERA_TYPE_H30,     "H30 Camera"},
@@ -80,6 +81,7 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_M4D,     "M4D Camera"},
 };
 
+#ifndef SYSTEM_ARCH_RTOS
 static FILE *s_downloadMediaFile = NULL;
 static T_DjiCameraManagerFileList s_meidaFileList;
 static uint32_t downloadStartMs = 0;
@@ -88,18 +90,23 @@ static char downloadFileName[TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE] = {0}
 static uint32_t s_nextDownloadFileIndex = 0;
 static T_DjiMopChannelHandle s_mopChannelHandle;
 static char s_pointCloudFilePath[TEST_CAMEAR_POINT_CLOUD_FILE_PATH_STR_MAX_SIZE];
+#endif
 
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraType);
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_DjiMountPosition position);
 static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadFileListBySlices(E_DjiMountPosition position);
 static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownloadFilePacketInfo packetInfo,
                                                                      const uint8_t *data, uint16_t len);
+#endif
 static T_DjiReturnCode DjiTest_CameraManagerGetAreaThermometryData(E_DjiMountPosition position);
 static T_DjiReturnCode DjiTest_CameraManagerGetPointThermometryData(E_DjiMountPosition position);
 
 static T_DjiReturnCode DjiTest_CameraManagerGetLidarRangingInfo(E_DjiMountPosition position);
+#ifndef SYSTEM_ARCH_RTOS
 T_DjiReturnCode DjiTest_CameraManagerSubscribePointCloud(E_DjiMountPosition position);
+#endif
 
 /* Exported functions definition ---------------------------------------------*/
 /*! @brief Sample to set EV for camera, using async api
@@ -854,6 +861,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_CAMERA_TYPE_H20N == cameraType
                 || DJI_CAMERA_TYPE_M30 == cameraType || DJI_CAMERA_TYPE_M30T == cameraType
                 || DJI_CAMERA_TYPE_M3E == cameraType || DJI_CAMERA_TYPE_M3T == cameraType
+                || DJI_CAMERA_TYPE_M3TA == cameraType
                 || DJI_CAMERA_TYPE_M3D == cameraType || DJI_CAMERA_TYPE_M3TD == cameraType
                 || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4TD == cameraType
                 || DJI_CAMERA_TYPE_H30 == cameraType ||  DJI_CAMERA_TYPE_H30T == cameraType
@@ -900,6 +908,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_CAMERA_TYPE_H20N == cameraType
                 || DJI_CAMERA_TYPE_M30 == cameraType || DJI_CAMERA_TYPE_M30T == cameraType
                 || DJI_CAMERA_TYPE_M3E == cameraType || DJI_CAMERA_TYPE_M3T == cameraType
+                || DJI_CAMERA_TYPE_M3TA == cameraType
                 || DJI_CAMERA_TYPE_M3D == cameraType || DJI_CAMERA_TYPE_M3TD == cameraType
                 || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4TD == cameraType
                 || DJI_CAMERA_TYPE_M4E == cameraType || DJI_CAMERA_TYPE_H30 == cameraType
@@ -1094,9 +1103,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_INTERVAL_PHOTO: {
             USER_LOG_INFO("--> Function k: Shoot Interval photo with 3s intervals in 15s");
             DjiTest_WidgetLogAppend("--> Function k: Shoot Interval photo with 3s intervals in 15s");
-            T_DjiCameraPhotoTimeIntervalSettings intervalData;
-            intervalData.captureCount = 255;
-            intervalData.timeIntervalSeconds = 3;
+            T_DjiCameraPhotoTimeIntervalSettings intervalData = {.captureCount = 255, .timeIntervalSeconds = 3, .timeIntervalMilliseconds = 0};
 
             returnCode = DjiTest_CameraManagerStartShootIntervalPhoto(mountPosition, intervalData);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1203,6 +1210,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 || DJI_CAMERA_TYPE_P1 == cameraType
                 || DJI_CAMERA_TYPE_L1 == cameraType || DJI_CAMERA_TYPE_L2 == cameraType
                 || DJI_CAMERA_TYPE_M3E == cameraType || DJI_CAMERA_TYPE_M3T == cameraType
+                || DJI_CAMERA_TYPE_M3TA == cameraType
                 || DJI_CAMERA_TYPE_M3D == cameraType || DJI_CAMERA_TYPE_M3TD == cameraType
                 || DJI_CAMERA_TYPE_M4T == cameraType || DJI_CAMERA_TYPE_M4E == cameraType
 				|| DJI_CAMERA_TYPE_M4TD == cameraType || DJI_CAMERA_TYPE_M4D == cameraType
@@ -1551,6 +1559,7 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 cameraType == DJI_CAMERA_TYPE_H20N || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
                 cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_H30 ||
+                cameraType == DJI_CAMERA_TYPE_M3TA ||
                 cameraType == DJI_CAMERA_TYPE_H30T) {
                 returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1612,7 +1621,9 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
                 cameraType == DJI_CAMERA_TYPE_H20T || cameraType == DJI_CAMERA_TYPE_M30 ||
                 cameraType == DJI_CAMERA_TYPE_M30T || cameraType == DJI_CAMERA_TYPE_M3E ||
                 cameraType == DJI_CAMERA_TYPE_M3T || cameraType == DJI_CAMERA_TYPE_H30 ||
-                cameraType == DJI_CAMERA_TYPE_H30T) {
+                cameraType == DJI_CAMERA_TYPE_M3TA ||
+                cameraType == DJI_CAMERA_TYPE_H30T)
+            {
                 USER_LOG_INFO("Set camera stream source to zoom camera.");
                 returnCode = DjiCameraManager_SetStreamSource(mountPosition, DJI_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
                 if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1834,60 +1845,51 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
         }
         case E_DJI_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_METERING_MODE: {
             E_DjiCameraManagerMeteringMode meteringMode;
+            T_DjiCameraManagerRangeList rangeList = {0};
 
-            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
-            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+            returnCode = DjiCameraManager_GetMeteringModeRange(mountPosition, &rangeList);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+                USER_LOG_ERROR("Failed to get metering mode range of camera on position %d, return code 0x%08X",
+                    mountPosition, returnCode);
                 goto exitCameraModule;
             }
 
-            osalHandler->TaskSleepMs(200);
+            USER_LOG_INFO("Avaliable metering mode num is %d", rangeList.size);
 
-            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Get camera metering mode failed.");
-                goto exitCameraModule;
+            for (uint8_t i = 0; i < rangeList.size; i++) {
+                USER_LOG_INFO("[%d] Set metering mode as %d (%s)",
+                    i,
+                    rangeList.meteringMode[i],
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL ? "centeral" :
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE ? "average" :
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_SPOT ? "spot" :
+                    "error mode"
+                );
+
+                returnCode = DjiCameraManager_SetMeteringMode(mountPosition, rangeList.meteringMode[i]);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE);
+                    goto exitCameraModule;
+                }
+
+                osalHandler->TaskSleepMs(200);
+
+                returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("Get camera metering mode failed.");
+                    goto exitCameraModule;
+                }
+                USER_LOG_INFO("[%d] Current mode is %d (%s)",
+                    i,
+                    rangeList.meteringMode[i],
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL ? "centeral" :
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_AVERAGE ? "average" :
+                    rangeList.meteringMode[i] == DJI_CAMERA_MANAGER_METERING_MODE_SPOT ? "spot" :
+                    "error mode"
+                );
+
+                osalHandler->TaskSleepMs(2000);
             }
-            USER_LOG_INFO("Current metering mode is %d", meteringMode);
-
-            USER_LOG_INFO("Sleep 2s...");
-            osalHandler->TaskSleepMs(2000);
-
-            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
-            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_SPOT);
-                goto exitCameraModule;
-            }
-
-            osalHandler->TaskSleepMs(200);
-
-            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Get camera metering mode failed.");
-                goto exitCameraModule;
-            }
-            USER_LOG_INFO("Current metering mode is %d", meteringMode);
-
-            USER_LOG_INFO("Sleep 2s...");
-            osalHandler->TaskSleepMs(2000);
-
-            USER_LOG_INFO("Set metering mode as %d", DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
-            returnCode = DjiCameraManager_SetMeteringMode(mountPosition, DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Set camera metering mode %d failed", DJI_CAMERA_MANAGER_METERING_MODE_CENTRAL);
-                goto exitCameraModule;
-            }
-
-            osalHandler->TaskSleepMs(200);
-
-            returnCode = DjiCameraManager_GetMeteringMode(mountPosition, &meteringMode);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Get camera metering mode failed.");
-                goto exitCameraModule;
-            }
-            USER_LOG_INFO("Current metering mode is %d", meteringMode);
 
             break;
         }
@@ -1903,7 +1905,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             }
 
             returnCode = DjiCameraManager_GetMeteringPointRegionRange(mountPosition, &horizonRegionNum, &viticalRegionNum);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
                 USER_LOG_ERROR("Get metering point region range failed!");
                 goto exitCameraModule;
             }
@@ -1916,7 +1919,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
 
             USER_LOG_INFO("Try to set metering point as (%d, %d)", (uint8_t)x, (uint8_t)y);
             returnCode = DjiCameraManager_SetMeteringPoint(mountPosition, x, y);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
                 USER_LOG_ERROR("Set metering point failed");
                 goto exitCameraModule;
             }
@@ -1924,7 +1928,8 @@ T_DjiReturnCode DjiTest_CameraManagerRunSample(E_DjiMountPosition mountPosition,
             osalHandler->TaskSleepMs(500);
 
             returnCode = DjiCameraManager_GetMeteringPoint(mountPosition, &getX, &getY);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+            {
                 USER_LOG_ERROR("Get metering point failed");
                 goto exitCameraModule;
             }
@@ -2123,6 +2128,7 @@ static uint8_t DjiTest_CameraManagerGetCameraTypeIndex(E_DjiCameraType cameraTyp
     return 0;
 }
 
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_DjiMountPosition position)
 {
     T_DjiReturnCode returnCode;
@@ -2142,6 +2148,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
     returnCode = DjiCameraManager_ObtainDownloaderRights(position);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Obtain downloader rights failed, error code: 0x%08X.", returnCode);
+        return returnCode;
     }
 
     returnCode = DjiCameraManager_DownloadFileList(position, &s_meidaFileList);
@@ -2202,7 +2209,7 @@ static T_DjiReturnCode DjiTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_Dj
             returnCode = DjiCameraManager_DownloadFileByIndex(position, s_meidaFileList.fileListInfo[i].fileIndex);
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Download media file by index failed, error code: 0x%08X.", returnCode);
-                s_nextDownloadFileIndex--;
+                if(s_nextDownloadFileIndex > 0)s_nextDownloadFileIndex--;
                 goto redownload;
             }
             if (s_meidaFileList.fileListInfo[i].type == DJI_CAMERA_FILE_TYPE_LDRT) {
@@ -2450,6 +2457,7 @@ static T_DjiReturnCode DjiTest_CameraManagerDownloadFileDataCallback(T_DjiDownlo
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+#endif
 
 static T_DjiReturnCode DjiTest_CameraManagerGetPointThermometryData(E_DjiMountPosition position)
 {

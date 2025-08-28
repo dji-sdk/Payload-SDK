@@ -71,10 +71,13 @@
 static T_DjiWidgetSpeakerHandler s_speakerHandler = {0};
 static T_DjiMutexHandle s_speakerMutex = {0};
 static T_DjiWidgetSpeakerState s_speakerState = {0};
+
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiTaskHandle s_widgetSpeakerTestThread;
+static FILE *s_ttsFile = NULL;
+#endif
 
 static FILE *s_audioFile = NULL;
-static FILE *s_ttsFile = NULL;
 static bool s_isDecodeFinished = true;
 static uint16_t s_decodeBitrate = 0;
 
@@ -323,6 +326,7 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
 
     if (DJI_AIRCRAFT_TYPE_M3E == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M3D == aircraftInfoBaseInfo.aircraftType || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M3TA == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4D == aircraftInfoBaseInfo.aircraftType
@@ -517,7 +521,9 @@ static T_DjiReturnCode SetPlayMode(E_DjiWidgetSpeakerPlayMode playMode)
 
 static T_DjiReturnCode StartPlay(void)
 {
+#ifdef SYSTEM_ARCH_LINUX
     uint32_t pid;
+#endif
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
 #ifdef SYSTEM_ARCH_LINUX
@@ -538,7 +544,9 @@ static T_DjiReturnCode StopPlay(void)
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+#ifdef SYSTEM_ARCH_LINUX
     uint32_t pid;
+#endif
 
     returnCode = osalHandler->MutexLock(s_speakerMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -569,9 +577,11 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-    char cmdStr[128];
-    int32_t ret = 0;
+#ifdef PLATFORM_ARCH_x86_64
     float realVolume;
+    int32_t ret = 0;
+    char cmdStr[128];
+#endif
 
     returnCode = osalHandler->MutexLock(s_speakerMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -579,7 +589,6 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
         return returnCode;
     }
 
-    realVolume = 1.5f * (float) volume;
     s_speakerState.volume = volume;
 
     USER_LOG_INFO("Set widget speaker volume: %d", volume);
@@ -589,6 +598,7 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
     ret = system(cmdStr);
     if (ret == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         memset(cmdStr, 0, sizeof(cmdStr));
+        realVolume = 1.5f * (float) volume;
         snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
                  (int32_t) realVolume);
 
@@ -615,8 +625,10 @@ static T_DjiReturnCode SetVolume(uint8_t volume)
 static T_DjiReturnCode ReceiveTtsData(E_DjiWidgetTransmitDataEvent event,
                                       uint32_t offset, uint8_t *buf, uint16_t size)
 {
+#ifdef SYSTEM_ARCH_LINUX
     uint16_t writeLen;
     T_DjiReturnCode returnCode;
+#endif
 
     if (event == DJI_WIDGET_TRANSMIT_DATA_EVENT_START) {
         USER_LOG_INFO("Create tts file.");
@@ -667,8 +679,11 @@ static T_DjiReturnCode ReceiveTtsData(E_DjiWidgetTransmitDataEvent event,
 static T_DjiReturnCode ReceiveAudioData(E_DjiWidgetTransmitDataEvent event,
                                         uint32_t offset, uint8_t *buf, uint16_t size)
 {
+#ifdef SYSTEM_ARCH_LINUX
     uint16_t writeLen;
     T_DjiReturnCode returnCode;
+#endif
+
     T_DjiWidgetTransDataContent transDataContent = {0};
 
     if (event == DJI_WIDGET_TRANSMIT_DATA_EVENT_START) {

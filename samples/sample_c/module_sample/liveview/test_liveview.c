@@ -98,6 +98,21 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
         }
     }
 
+    if (aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M400 
+        && aircraftInfoBaseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD)
+    {
+        // XXX:  On MANIFOLD3, FPV and MAIN CAMERA SOURCE_DEFAULT streams cannot be subscribed to at the same time.
+        for (int i = 0; i < TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS; ++i) {
+            USER_LOG_INFO("Storing camera h264 stream, second: %d.", i + 1);
+            osalHandler->TaskSleepMs(1000);
+        }
+        returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Request to stop h264 of fpv failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+    }
+
     localTime = localtime(&currentTime);
     sprintf(s_payloadCameraStreamFilePath, "payload%d_default_stream_%04d%02d%02d_%02d-%02d-%02d.h264",
             mountPosition, localTime->tm_year + 1900, localTime->tm_mon + 1, localTime->tm_mday,
@@ -113,12 +128,17 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     for (int i = 0; i < TEST_LIVEVIEW_STREAM_STROING_TIME_IN_SECONDS; ++i) {
         USER_LOG_INFO("Storing camera h264 stream, second: %d.", i + 1);
 #if TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_ON
-        if (i % TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_TICK_IN_SECONDS == 0) {
-            returnCode = DjiLiveview_RequestIntraframeFrameData((E_DjiLiveViewCameraPosition) mountPosition,
-                                                                DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("Request stream I frame of payload %d failed, error code: 0x%08X", mountPosition,
-                               returnCode);
+        if (aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD)
+        {
+            if (i % TEST_LIVEVIEW_STREAM_REQUEST_I_FRAME_TICK_IN_SECONDS == 0)
+            {
+                returnCode = DjiLiveview_RequestIntraframeFrameData((E_DjiLiveViewCameraPosition)mountPosition,
+                                                                    DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+                {
+                    USER_LOG_ERROR("Request stream I frame of payload %d failed, error code: 0x%08X", mountPosition,
+                                   returnCode);
+                }
             }
         }
 #endif
@@ -130,7 +150,8 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     if (aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M300 ||
         aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M350 ||
         aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M30 ||
-        aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M400) {
+        (aircraftInfoBaseInfo.aircraftSeries == DJI_AIRCRAFT_SERIES_M400
+         && aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD)) {
         returnCode = DjiLiveview_StopH264Stream(DJI_LIVEVIEW_CAMERA_POSITION_FPV, DJI_LIVEVIEW_CAMERA_SOURCE_DEFAULT);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Request to stop h264 of fpv failed, error code: 0x%08X", returnCode);
@@ -146,6 +167,7 @@ T_DjiReturnCode DjiTest_LiveviewRunSample(E_DjiMountPosition mountPosition)
     }
 
     if (DJI_AIRCRAFT_TYPE_M3T == aircraftInfoBaseInfo.aircraftType
+        || DJI_AIRCRAFT_TYPE_M3TA == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M3TD == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4T == aircraftInfoBaseInfo.aircraftType
         || DJI_AIRCRAFT_TYPE_M4TD == aircraftInfoBaseInfo.aircraftType

@@ -145,18 +145,6 @@ void UART_Init(E_UartNum uartNum, uint32_t baudRate)
         case UART_NUM_2: {
             RingBuf_Init(&s_uart2ReadRingBuffer, s_uart2ReadBuf, UART2_READ_BUF_SIZE);
             RingBuf_Init(&s_uart2WriteRingBuffer, s_uart2WriteBuf, UART2_WRITE_BUF_SIZE);
-
-//            s_uart2Handle.Instance = USART2;
-//            s_uart2Handle.Init.BaudRate = baudRate;
-//            s_uart2Handle.Init.WordLength = UART_WORDLENGTH_8B;
-//            s_uart2Handle.Init.StopBits = UART_STOPBITS_1;
-//            s_uart2Handle.Init.Parity = UART_PARITY_NONE;
-//            s_uart2Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-//            s_uart2Handle.Init.Mode = UART_MODE_TX_RX;
-//            s_uart2Handle.Init.OverSampling = UART_OVERSAMPLING_16;
-//            HAL_UART_Init(&s_uart2Handle);
-//            __HAL_UART_ENABLE_IT(&s_uart2Handle, UART_IT_RXNE);
-
             Osal_MutexCreate(&s_uart2Mutex);
         }
             break;
@@ -266,7 +254,7 @@ int UART_Write(E_UartNum uartNum, const uint8_t *buf, uint16_t writeSize)
         case UART_NUM_1: {
            Osal_MutexLock(s_uart1Mutex);
            writeRealLen = RingBuf_Put(&s_uart1WriteRingBuffer, buf, writeSize);
-           
+
            /* enable USART TBE interrupt */
            usart_interrupt_enable(USART0, USART_INT_TBE);
            usedCapacityOfBuffer = UART1_WRITE_BUF_SIZE - RingBuf_GetUnusedSize(&s_uart1WriteRingBuffer);
@@ -298,7 +286,7 @@ int UART_Write(E_UartNum uartNum, const uint8_t *buf, uint16_t writeSize)
         case UART_NUM_3: {
            Osal_MutexLock(s_uart3Mutex);
            writeRealLen = RingBuf_Put(&s_uart3WriteRingBuffer, buf, writeSize);
-           
+
            /* enable USART TBE interrupt */
            usart_interrupt_enable(UART3, USART_INT_TBE);
            usedCapacityOfBuffer = UART3_WRITE_BUF_SIZE - RingBuf_GetUnusedSize(&s_uart3WriteRingBuffer);
@@ -374,27 +362,6 @@ void USART0_IRQHandler(void)
             usart_interrupt_disable(USART0, USART_INT_TBE);
        }
     }
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart1Handle, USART_IT_RXNE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart1Handle, USART_FLAG_RXNE) != RESET) {
-//        data = (uint8_t) ((uint16_t) (s_uart1Handle.Instance->DR & (uint16_t) 0x01FF) & (uint16_t) 0x00FF);
-//        realCountPutBuffer = RingBuf_Put(&s_uart1ReadRingBuffer, &data, 1);
-//        usedCapacityOfBuffer = UART1_READ_BUF_SIZE - RingBuf_GetUnusedSize(&s_uart1ReadRingBuffer);
-//        s_uart1ReadBufferState.maxUsedCapacityOfBuffer =
-//            usedCapacityOfBuffer > s_uart1ReadBufferState.maxUsedCapacityOfBuffer ? usedCapacityOfBuffer
-//                                                                                  : s_uart1ReadBufferState.maxUsedCapacityOfBuffer;
-//        s_uart1ReadBufferState.countOfLostData += 1 - realCountPutBuffer;
-//    }
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart1Handle, USART_IT_TXE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart1Handle, USART_FLAG_TXE) != RESET) {
-//        if (RingBuf_Get(&s_uart1WriteRingBuffer, &data, 1)) {
-//            /* Transmit Data */
-//            s_uart1Handle.Instance->DR = ((uint16_t) data & (uint16_t) 0x01FF);
-//        } else {
-//            __HAL_USART_DISABLE_IT(&s_uart1Handle, USART_IT_TXE);
-//        }
-//    }
 }
 
 #endif
@@ -409,27 +376,6 @@ void USART2_IRQHandler(void)
     uint8_t data;
     uint16_t usedCapacityOfBuffer = 0;
     uint16_t realCountPutBuffer = 0;
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart2Handle, USART_IT_RXNE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart2Handle, USART_FLAG_RXNE) != RESET) {
-//        data = (uint8_t) ((uint16_t) (s_uart2Handle.Instance->DR & (uint16_t) 0x01FF) & (uint16_t) 0x00FF);
-//        realCountPutBuffer = RingBuf_Put(&s_uart2ReadRingBuffer, &data, 1);
-//        usedCapacityOfBuffer = UART2_READ_BUF_SIZE - RingBuf_GetUnusedSize(&s_uart2ReadRingBuffer);
-//        s_uart2ReadBufferState.maxUsedCapacityOfBuffer =
-//            usedCapacityOfBuffer > s_uart2ReadBufferState.maxUsedCapacityOfBuffer ? usedCapacityOfBuffer
-//                                                                                  : s_uart2ReadBufferState.maxUsedCapacityOfBuffer;
-//        s_uart2ReadBufferState.countOfLostData += 1 - realCountPutBuffer;
-//    }
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart2Handle, USART_IT_TXE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart2Handle, USART_FLAG_TXE) != RESET) {
-//        if (RingBuf_Get(&s_uart2WriteRingBuffer, &data, 1)) {
-//            /* Transmit Data */
-//            s_uart2Handle.Instance->DR = ((uint16_t) data & (uint16_t) 0x01FF);
-//        } else {
-//            __HAL_USART_DISABLE_IT(&s_uart2Handle, USART_IT_TXE);
-//        }
-//    }
 }
 
 #endif
@@ -464,27 +410,6 @@ void UART3_IRQHandler(void)
             usart_interrupt_disable(UART3, USART_INT_TBE);
        }
     }
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart3Handle, USART_IT_RXNE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart3Handle, USART_FLAG_RXNE) != RESET) {
-//        data = (uint8_t) ((uint16_t) (s_uart3Handle.Instance->DR & (uint16_t) 0x01FF) & (uint16_t) 0x00FF);
-//        realCountPutBuffer = RingBuf_Put(&s_uart3ReadRingBuffer, &data, 1);
-//        usedCapacityOfBuffer = UART3_READ_BUF_SIZE - RingBuf_GetUnusedSize(&s_uart3ReadRingBuffer);
-//        s_uart3ReadBufferState.maxUsedCapacityOfBuffer =
-//            usedCapacityOfBuffer > s_uart3ReadBufferState.maxUsedCapacityOfBuffer ? usedCapacityOfBuffer
-//                                                                                  : s_uart3ReadBufferState.maxUsedCapacityOfBuffer;
-//        s_uart3ReadBufferState.countOfLostData += 1 - realCountPutBuffer;
-//    }
-
-//    if (__HAL_USART_GET_IT_SOURCE(&s_uart3Handle, USART_IT_TXE) != RESET &&
-//        __HAL_USART_GET_FLAG(&s_uart3Handle, USART_FLAG_TXE) != RESET) {
-//        if (RingBuf_Get(&s_uart3WriteRingBuffer, &data, 1)) {
-//            /* Transmit Data */
-//            s_uart3Handle.Instance->DR = ((uint16_t) data & (uint16_t) 0x01FF);
-//        } else {
-//            __HAL_USART_DISABLE_IT(&s_uart3Handle, USART_IT_TXE);
-//        }
-//    }
 }
 
 #endif

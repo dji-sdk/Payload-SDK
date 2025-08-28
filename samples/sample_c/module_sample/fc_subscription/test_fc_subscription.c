@@ -32,7 +32,7 @@
 
 /* Private constants ---------------------------------------------------------*/
 #define FC_SUBSCRIPTION_TASK_FREQ         (1)
-#define FC_SUBSCRIPTION_TASK_STACK_SIZE   (1024)
+#define FC_SUBSCRIPTION_TASK_STACK_SIZE   (2048)
 
 /* Private types -------------------------------------------------------------*/
 

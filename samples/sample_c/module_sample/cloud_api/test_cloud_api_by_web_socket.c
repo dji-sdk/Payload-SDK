@@ -82,10 +82,9 @@ static void *DjiTest_CloudApiByWebSocketSendTask(void *arg)
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_CloudApiByWebSocketStartService(void)
 {
-    T_DjiReturnCode returnCode;
+    T_DjiReturnCode returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
-    USER_LOG_INFO("cloud_api over mop send task create error, stat:0x%08llX.", returnCode);
     returnCode = osalHandler->TaskCreate("CloudApiByWebSocket", DjiTest_CloudApiByWebSocketSendTask,
                                          2048, NULL, &s_testCloudApiByWebSocketSendTask);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

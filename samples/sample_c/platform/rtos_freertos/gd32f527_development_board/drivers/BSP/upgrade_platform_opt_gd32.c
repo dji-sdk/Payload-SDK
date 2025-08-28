@@ -130,7 +130,7 @@ T_DjiReturnCode DjiUpgradePlatformGd32_ReplaceOldProgram(void)
 T_DjiReturnCode DjiUpgradePlatformGd32_SetUpgradeRebootState(const T_DjiUpgradeEndInfo *upgradeEndInfo)
 {
     uint32_t result;
-    T_DjiTestUpgradeRebootParam upgradeRebootParam;
+    T_DjiTestUpgradeRebootParam upgradeRebootParam = {0};
 
     upgradeRebootParam.upgradeRebootKey = DJI_TEST_UPGRADE_REBOOT_KEY;
     upgradeRebootParam.upgradeEndInfo = *upgradeEndInfo;

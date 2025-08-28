@@ -83,12 +83,13 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-        if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30  ||
+        if ((s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30T ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
-			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
-			s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD) {
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD) &&
+            s_aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD) {
         channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromCloud);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -99,6 +100,7 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
 
     if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
         USER_LOG_INFO("Only supports small data transmission between PSDK and MSDK.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3) {

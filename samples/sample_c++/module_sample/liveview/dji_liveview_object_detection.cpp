@@ -23,10 +23,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include <iostream>
 #include <dji_logger.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "test_liveview_entry.hpp"
 #include "dji_liveview_object_detection.hpp"
 #include "dji_payload_camera.h"
 #include "dji_high_speed_data_channel.h"
+#include "dji_aircraft_info.h"
 #include <string>
 #include <vector>
 #include "dji_typedef.h"
@@ -79,6 +82,7 @@ static const char* s_invalidLables[] = {
 static std::ofstream outFileH264;
 static std::ofstream outFileYUV;
 static std::string getCurrentTimestamp();
+static T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo;
 static void outH264Tofile(const uint8_t *buf, int32_t len);
 static void outYUVTofile(const uint8_t *buf, int32_t len);
 static void DjiLiveview_RcvImageCallback(E_DjiLiveViewCameraPosition position, const uint8_t *buf, uint32_t len ,T_DjiLiveviewImageInfo imageInfo);
@@ -377,7 +381,9 @@ void DjiUser_RunCameraAiDetectionSample()
 
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
-    if (pos < 1 || pos > 3 || (mediaSource != 0 &&mediaSource != 1 && mediaSource != 7))
+    USER_LOG_INFO("Input cammera sourece(1:1080p, 3:M4 serials 4K, 7:H30 serials 4K): ");
+    std::cin >> mediaSource;
+    if (pos < 1 || pos > 3 || mediaSource > 7)
     {
         USER_LOG_ERROR("invalid param");
         return;
@@ -385,7 +391,9 @@ void DjiUser_RunCameraAiDetectionSample()
 
     std::string timestamp = getCurrentTimestamp();
 
-    std::string h264FileName = "output_" + timestamp + ".h264";
+    // avoid miss dir error
+    mkdir ("data", 0755);
+    std::string h264FileName = "data/output_" + timestamp + ".h264";
     outFileH264.open(h264FileName, std::ios::out | std::ios::binary | std::ios::app);
     if (!outFileH264) {
         std::cerr << "cant open " << h264FileName << std::endl;
@@ -420,6 +428,12 @@ void DjiUser_RunCameraAiDetectionSample()
     {
         USER_LOG_ERROR("Liveview init faild, ret: 0x%08llX", returnCode);
         goto init_failed;
+    }
+
+    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return;
     }
 
 #ifdef OPEN_CV_INSTALLED
@@ -597,10 +611,13 @@ static void DjiLiveview_EncoderUseCallback(const uint8_t *buf, uint32_t len)
 {
     T_DjiReturnCode returnCode;
     outH264Tofile(buf, len);
-    returnCode = DjiPayloadCamera_SendVideoStream(buf, len);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+    if (aircraftInfoBaseInfo.aircraftSeries != DJI_AIRCRAFT_SERIES_M4D)
     {
-        USER_LOG_ERROR("failed to send video to pilot, ret: 0x%08llX", returnCode);
+        returnCode = DjiPayloadCamera_SendVideoStream(buf, len);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+        {
+            USER_LOG_ERROR("failed to send video to pilot, ret: 0x%08llX", returnCode);
+        }
     }
 }
 

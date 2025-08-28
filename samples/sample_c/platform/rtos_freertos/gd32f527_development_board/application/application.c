@@ -37,6 +37,7 @@
 
 #include "application.h"
 #include "hal_uart.h"
+#include "hal_i2c.h"
 #include "osal.h"
 #include "dji_sdk_app_info.h"
 #include "dji_sdk_config.h"
@@ -112,6 +113,12 @@ void DjiUser_StartTask(void const *argument)
         .UartGetStatus = HalUart_GetStatus,
         .UartGetDeviceInfo = HalUart_GetDeviceInfo,
     };
+    T_DjiHalI2cHandler i2CHandler = {
+        .I2cInit = HalI2c_Init,
+        .I2cDeInit = HalI2c_DeInit,
+        .I2cWriteData = HalI2c_WriteData,
+        .I2cReadData = HalI2c_ReadData,
+    };
     T_DjiFirmwareVersion firmwareVersion = {
         .majorVersion = USER_FIRMWARE_MAJOR_VERSION,
         .minorVersion = USER_FIRMWARE_MINOR_VERSION,
@@ -131,6 +138,13 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
+    USER_LOG_INFO("Register hal i2c handler.");
+    returnCode = DjiPlatform_RegHalI2cHandler(&i2CHandler);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        printf("register hal i2c handler error");
+        goto out;
+    }
+
     returnCode = DjiLogger_AddConsole(&printConsole);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         printf("add printf console error");
@@ -143,8 +157,22 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
+
+    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set firmware version error");
+        goto out;
+    }
+
+    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("set serial number error");
+        goto out;
+    }
+
     returnCode = DjiCore_Init(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        osalHandler.TaskSleepMs(200);
         USER_LOG_ERROR("core init error");
         goto out;
     }
@@ -161,17 +189,6 @@ void DjiUser_StartTask(void const *argument)
         goto out;
     }
 
-    returnCode = DjiCore_SetFirmwareVersion(firmwareVersion);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("set firmware version error");
-        goto out;
-    }
-
-    returnCode = DjiCore_SetSerialNumber("PSDK12345678XX");
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("set serial number error");
-        goto out;
-    }
 
 #ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
     T_DjiTestApplyHighPowerHandler applyHighPowerHandler = {
@@ -244,6 +261,8 @@ void DjiUser_StartTask(void const *argument)
         USER_LOG_WARN("Not support gimbal emu sample.");
     } else {
         if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE ||
+            aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 ||
             aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_NONE) {
             if (DjiTest_GimbalStartService() != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("psdk gimbal init error");
@@ -334,6 +353,13 @@ void DjiUser_StartTask(void const *argument)
     }
 
     s_isApplicationStart = true;
+
+#ifdef CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
+    returnCode = DjiTest_FcSubscriptionRunSample();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Fc subcription run sample failed, 0x%08X", returnCode);
+    }
+#endif
 
     while (1) {
         Osal_TaskSleepMs(500);

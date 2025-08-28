@@ -301,7 +301,7 @@ fmc_state_enum fmc_bank1_erase(void)
       \arg        FMC_LDECCDET: two bits ECC error when load code from flash/OTP1/bootloader
       \arg        FMC_TOERR: timeout error
 */
-fmc_state_enum fmc_doubleword_program(uint32_t address, uint64_t data)
+fmc_state_enum fmc_doubleword_program(uint32_t address, uint32_t *data)
 {
     fmc_state_enum fmc_state = FMC_READY;
 
@@ -314,8 +314,8 @@ fmc_state_enum fmc_doubleword_program(uint32_t address, uint64_t data)
         /* set the PG bit to start program */
         FMC_CTL |= FMC_CTL_PG;
 
-        REG32(address) = (uint32_t)(data & 0xFFFFFFFFU);
-        REG32(address + 4U) = (uint32_t)((data >> 32U) & 0xFFFFFFFFU);
+        REG32(address) = data[0];
+        REG32(address + 4U) = data[1];
 
         /* wait for the FMC ready */
         fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
@@ -1578,7 +1578,7 @@ efuse_state_enum efuse_ready_wait(uint32_t efuse_flag, uint32_t timeout)
         } else if(EFUSE_CS & EFUSE_CS_OVBERIF) {
             efuse_state = EFUSE_OBER;
         } else {
-        
+
         }
         timeout--;
     } while((EFUSE_BUSY == efuse_state) && (0U != timeout));

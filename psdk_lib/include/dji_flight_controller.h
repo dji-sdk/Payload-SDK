@@ -292,7 +292,7 @@ typedef struct {
 } T_DjiFtsPwmTriggerStatus;
 
 typedef struct {
-    T_DjiFtsPwmTriggerStatus ESC[4]; /* trigger tatus of the two ESCs, M4/M4D only ESC[0] and ESC[1], M400 for alls */
+    T_DjiFtsPwmTriggerStatus ESC[4]; /* trigger status of the two ESCs */
 } T_DjiFtsPwmEscTriggerStatus;
 
 /* Exported functions --------------------------------------------------------*/

@@ -682,6 +682,7 @@ typedef struct {
         E_DjiCameraManagerStreamSource streamSource[16];
         E_DjiCameraManagerStreamStorage streamStorage[16];
         E_DjiCameraManagerNightSceneMode nightSceneMode[16];
+        E_DjiCameraManagerMeteringMode meteringMode[16];
     };
     uint32_t minValue;
     uint32_t maxValue;
@@ -850,7 +851,7 @@ T_DjiReturnCode DjiCameraManager_SetPhotoBurstCount(E_DjiMountPosition position,
 /**
  * @brief Set the parameters for INTERVAL shooting mode.
  * @note In this mode, the camera captures a photo, waits a specified interval
- * of time, then captures another photo, continuing until the set number of 
+ * of time, then captures another photo, continuing until the set number of
  * photos is reached. Supported by thermal imaging cameras, too.
  * @param position: camera mounted position
  * @param intervalSetting: refer to T_DjiCameraPhotoTimeIntervalSettings.
@@ -991,7 +992,7 @@ T_DjiReturnCode DjiCameraManager_GetTapZoomEnabled(E_DjiMountPosition position, 
 
 /**
  * @brief Set camera's tap-zoom multiplier of the selected camera mounted position.
- * @note The final zoom scale during a tap-zoom action will be: 
+ * @note The final zoom scale during a tap-zoom action will be:
  * Current Zoom Scale x Multiplier.
  * @param position: camera mounted position
  * @param tapZoomMultiplier: The multiplier range is [1,5]. A multiplier of 1 will not change the zoom.
@@ -1604,6 +1605,15 @@ T_DjiReturnCode DjiCameraManager_GetInfraredCameraGainModeTemperatureRange(E_Dji
                                                                T_DjiCameraManagerIrTempMeterRange *tempRange);
 
 /**
+ * @brief Get metergin mode range of infrared camera.
+ * @param position: camera mounted position.
+ * @param tempRange: returned value of metering range.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringModeRange(E_DjiMountPosition position,
+                                                      T_DjiCameraManagerRangeList *rangeList);
+
+/**
  * @brief Set camera metering mode.
  * @param position: camera mounted position
  * @param meteringMode: metering mode
@@ -1641,6 +1651,16 @@ T_DjiReturnCode DjiCameraManager_SetMeteringPoint(E_DjiMountPosition position,
                                                   uint8_t x, uint8_t y);
 
 /**
+ * @brief Set metering point normalize.
+ * @param position: camera mounted position
+ * @param x: Normalized horizontal coordinate, value ranges in 0 ~ 1.
+ * @param y: Normalized Vertical coordinate, value ranges in 0 ~ 1.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_SetMeteringPointNormalized(E_DjiMountPosition position,
+                                                           dji_f32_t x, dji_f32_t y);
+
+/**
  * @brief Get camera metering mode.
  * @param position: camera mounted position
  * @param x: returned valued, current metering point in horizontal coordinate.
@@ -1650,6 +1670,18 @@ T_DjiReturnCode DjiCameraManager_SetMeteringPoint(E_DjiMountPosition position,
 T_DjiReturnCode DjiCameraManager_GetMeteringPoint(E_DjiMountPosition position,
                                                   uint8_t *x, uint8_t *y);
 
+
+/**
+ * @brief Get camera metering mode.
+ * @param position: camera mounted position
+ * @param x: a pointer to a float (dji_f32_t) that will receive the normalized x-coordinate of the
+ * metering point.
+ * @param y: a pointer to a float (dji_f32_t) that will receive the normalized y-coordinate of the
+ * metering point.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiCameraManager_GetMeteringPointNormalized(E_DjiMountPosition position,
+                                                           dji_f32_t *x, dji_f32_t *y);
 
 /**
  * @brief Start to record point cloud of the selected camera mounted position.

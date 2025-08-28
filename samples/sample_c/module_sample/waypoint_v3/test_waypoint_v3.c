@@ -37,22 +37,26 @@
 /* Private types -------------------------------------------------------------*/
 
 /* Private values -------------------------------------------------------------*/
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiWaypointV3MissionState s_lastWaypointV3MissionState = {0};
+#endif
 
 /* Private functions declaration ---------------------------------------------*/
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiReturnCode DjiTest_WaypointV3MissionStateCallback(T_DjiWaypointV3MissionState missionState);
 static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3ActionState actionState);
+#endif
 static T_DjiReturnCode DjiTest_WaypointV3WaitEndFlightStatus(T_DjiFcSubscriptionFlightStatus status);
 
 /* Exported functions definition ---------------------------------------------*/
 T_DjiReturnCode DjiTest_WaypointV3RunSample(void)
 {
     T_DjiReturnCode returnCode;
-    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiFcSubscriptionFlightStatus flightStatus = 0;
     T_DjiDataTimestamp flightStatusTimestamp = {0};
 
 #ifdef SYSTEM_ARCH_LINUX
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     FILE *kmzFile = NULL;
     uint32_t kmzFileSize = 0;
     uint8_t *kmzFileBuf;
@@ -209,6 +213,7 @@ out:
 }
 
 /* Private functions definition-----------------------------------------------*/
+#ifdef SYSTEM_ARCH_LINUX
 static T_DjiReturnCode DjiTest_WaypointV3MissionStateCallback(T_DjiWaypointV3MissionState missionState)
 {
     if (s_lastWaypointV3MissionState.state == missionState.state
@@ -235,6 +240,7 @@ static T_DjiReturnCode DjiTest_WaypointV3ActionStateCallback(T_DjiWaypointV3Acti
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+#endif
 
 static T_DjiReturnCode DjiTest_WaypointV3WaitEndFlightStatus(T_DjiFcSubscriptionFlightStatus status) {
     T_DjiReturnCode returnCode;

@@ -45,9 +45,7 @@
 
 /* Private values -------------------------------------------------------------*/
 static T_RingBuffer s_usbDeviceReadRingBuffer;
-static T_UsbDeviceBufferState s_usbDeviceReadBufferState;
 static T_RingBuffer s_usbDeviceWriteRingBuffer;
-static T_UsbDeviceBufferState s_usbDeviceWriteBufferState;
 static uint8_t s_usbDeviceReadBuf[USB_DEVICE_READ_BUF_SIZE];
 static uint8_t s_usbDeviceWriteBuf[USB_DEVICE_WRITE_BUF_SIZE];
 static T_DjiMutexHandle s_usbDeviceMutex;
@@ -119,7 +117,6 @@ T_DjiReturnCode USBD_CDC_WriteData(const uint8_t *buf, uint32_t len, uint32_t *r
 
 void USBD_CDC_Handle(void)
 {
-    uint16_t usedCapacityOfBuffer = 0;
     uint16_t realCountPutBuffer = 0;
     uint32_t readRealLen = 0;
     uint8_t readBuf[USB_DEVICE_READ_DATA_SIZE] = {0};
@@ -132,7 +129,11 @@ void USBD_CDC_Handle(void)
     if (readRealLen > 0) {
         Osal_MutexLock(s_usbDeviceMutex);
         realCountPutBuffer = RingBuf_Put(&s_usbDeviceReadRingBuffer, readBuf, readRealLen);
+
         Osal_MutexUnlock(s_usbDeviceMutex);
+        if (realCountPutBuffer < readRealLen) {
+            USER_LOG_ERROR("failed to put data, %u/%u", realCountPutBuffer, readRealLen);
+        }
         USER_LOG_DEBUG("Rececive cdc data finished, dataLen: %d", readRealLen);
     }
 

@@ -38,6 +38,7 @@
 #include "task.h"
 #include "usb_device.h"
 #include "osal.h"
+#include "flash_if.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define BSP_INIT_TASK_STACK_SIZE                512
@@ -52,7 +53,6 @@
 /* Private values -------------------------------------------------------------*/
 static TaskHandle_t bspInitTask;
 static TaskHandle_t startTask;
-static TaskHandle_t runIndicateTask;
 
 /* Private functions declaration ---------------------------------------------*/
 static void DjiUser_BspInitTask(void const *argument);
@@ -72,10 +72,6 @@ int main(void)
     xTaskCreate((TaskFunction_t)DjiUser_StartTask, "start_task", USER_START_TASK_STACK_SIZE,
                 NULL, USER_START_TASK_PRIORITY, (TaskHandle_t *)startTask);
 
-    /* Create runIndicate task */
-    // xTaskCreate((TaskFunction_t)DjiUser_MonitorTask, "monitor_task", USER_RUN_INDICATE_TASK_STACK_SIZE,
-    //             NULL, USER_RUN_INDICATE_TASK_PRIORITY, (TaskHandle_t *)runIndicateTask);
-
     /* start scheduler */
     vTaskStartScheduler();
 
@@ -86,8 +82,6 @@ int main(void)
 
 void DjiUser_BspInitTask(void const *argument)
 {
-    uint32_t cnt = 0;
-
     // LED Init
     Led_Init(LED_RED);
     Led_Init(LED_GREEN);
@@ -95,6 +89,8 @@ void DjiUser_BspInitTask(void const *argument)
 
     // Debug UART Init
     UART_Init(DJI_CONSOLE_UART_NUM, DJI_CONSOLE_UART_BAUD);
+
+    printf("\r\n========Payload sdk app firmware start!========\r\n");
 
     // Force Loader button Init
     Button_Init(BUTTON_KEY1, BUTTON_MODE_GPIO);
@@ -125,4 +121,16 @@ int fputc(int ch, FILE *f)
     while (RESET == usart_flag_get(UART3, USART_FLAG_TBE));
 
     return ch;
+}
+
+int __io_putchar(int ch)
+{
+    usart_data_transmit(UART3, (uint8_t)ch);
+    while (RESET == usart_flag_get(UART3, USART_FLAG_TBE));
+    return 1;
+}
+
+int __io_getchar(void)
+{
+    return 0;
 }

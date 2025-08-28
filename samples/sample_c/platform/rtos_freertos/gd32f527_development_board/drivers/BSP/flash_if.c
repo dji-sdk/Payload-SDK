@@ -187,7 +187,6 @@ static int32_t Flash_If_GetSectorNum(uint32_t address)
 uint32_t FLASH_If_Init(void)
 {
     int32_t result = 0;
-    uint32_t borValue = 0;
 
 #if ENABLE_BOR
     fmc_unlock();
@@ -216,7 +215,6 @@ uint32_t FLASH_If_Init(void)
   */
 uint32_t FLASH_If_Erase(uint32_t startAddress, uint32_t endAddress)
 {
-  uint32_t sectorNum = 0;
   uint8_t isNeedErase[FLASH_SECTOR_NUM] = {0};
   int32_t startSectorNum = 0;
   int32_t endSectorNum = 0;
@@ -308,7 +306,7 @@ uint32_t FLASH_If_Write(uint32_t FlashAddress, const uint8_t *Data, uint32_t Dat
 
     dataLenDoubleWord = DataLength / 8;
     for(i = 0; (i < dataLenDoubleWord) && (writeAddress <= (FLASH_END_ADDRESS - 8)); i++) {
-        if(FMC_READY == fmc_doubleword_program(writeAddress, *(uint64_t *)(Data + i * 8))) {
+        if(FMC_READY == fmc_doubleword_program(writeAddress, (uint32_t *)(Data + i * 8))) {
             writeAddress += 8;
         } else {
             ret = FLASHIF_WRITING_ERROR;
@@ -369,7 +367,6 @@ uint16_t FLASH_If_GetWriteProtectionStatus(void)
   */
 int32_t FLASH_If_WriteProtectionConfig(bool enableWriteProtection)
 {
-    uint32_t ProtectedSECTOR = 0xFFF;
     int32_t result;
 
     fmc_unlock();
