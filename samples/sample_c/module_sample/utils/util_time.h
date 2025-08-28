@@ -49,10 +49,10 @@ typedef struct {
 /* Exported functions --------------------------------------------------------*/
 T_DjiRunTimeStamps DjiUtilTime_GetRunTimeStamps(void);
 
-#ifdef __cplusplus
-}
 #endif
 
+#ifdef __cplusplus
+}
 #endif
 
 #endif // DJI_DP_UTILS_H
