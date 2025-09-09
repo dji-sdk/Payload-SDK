@@ -78,7 +78,6 @@ private:
     AVFrame *pFrameYUV;
     AVFrame *pFrameRGB;
 #endif
-    uint8_t *rgbBuf;
     size_t bufSize;
 };
 
@@ -90,12 +89,3 @@ private:
 
 #endif // DJI_CAMERA_STREAM_DECCODER_H
 /************************ (C) COPYRIGHT DJI Innovations *******END OF FILE******/
-
-
-
-
-
-
-
-
-

@@ -81,20 +81,6 @@ if (FFMPEG_FOUND)
     message(STATUS " - Includes: ${FFMPEG_INCLUDE_DIR}")
     message(STATUS " - Libraries: ${FFMPEG_LIBRARIES}")
 
-    EXECUTE_PROCESS(COMMAND ffmpeg -version
-            OUTPUT_VARIABLE ffmpeg_version_output
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
-    string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
-    string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
-
-    if (HEAD${ffmpeg_major_version} STREQUAL "HEAD")
-        message(STATUS " - Version: ${ffmpeg_version}")
-    else ()
-        message(FATAL_ERROR " - Not support FFMPEG version: ${ffmpeg_major_version}, please install 4.x.x instead.")
-    endif ()
-
     target_link_libraries(${PROJECT_NAME} ${FFMPEG_LIBRARIES})
     include_directories(${FFMPEG_INCLUDE_DIR})
     add_definitions(-DFFMPEG_INSTALLED)
