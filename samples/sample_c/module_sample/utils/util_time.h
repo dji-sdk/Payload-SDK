@@ -27,11 +27,12 @@
 #ifndef DJI_UTIL_TIME_H
 #define DJI_UTIL_TIME_H
 
+#ifdef SYSTEM_ARCH_LINUX
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef SYSTEM_ARCH_LINUX
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
