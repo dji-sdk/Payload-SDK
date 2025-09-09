@@ -27,11 +27,11 @@
 #ifndef UTIL_FILE_H
 #define UTIL_FILE_H
 
+#ifdef SYSTEM_ARCH_LINUX
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifdef SYSTEM_ARCH_LINUX
 
 /* Includes ------------------------------------------------------------------*/
 #include <dji_typedef.h>
