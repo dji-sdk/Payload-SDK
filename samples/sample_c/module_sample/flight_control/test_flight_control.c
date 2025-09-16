@@ -100,6 +100,7 @@ static void DjiTest_FlightControlArrestFlyingSample(void);
 static void DjiTest_FlightControlSetGetParamSample(void);
 static void DjiTest_FlightControlPassiveTriggerFtsSample(void);
 static void DjiTest_FlightControlSlowRotateMotorSample(void);
+static void DjiTest_FlightControlRCLostActionEnableSample(void);
 static T_DjiReturnCode DjiTest_TriggerFtsEventCallback(void);
 static void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect);
 
@@ -115,6 +116,11 @@ T_DjiReturnCode DjiTest_FlightControlRunSample(E_DjiTestFlightCtrlSampleSelect f
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Init flight Control sample failed,error code:0x%08llX", returnCode);
         return returnCode;
+    }
+    returnCode = DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_WARN("Set RC lost action status disable failed,error code:0x%08llX, That means the aircraft will execute the RC lost Action when RC is lost — RC-less flight not supported.", returnCode);
+        // go through
     }
 
     DjiTest_FlightControlSample(flightCtrlSampleSelect);
@@ -980,6 +986,71 @@ static void DjiTest_FlightControlSlowRotateMotorSample(void)
         escStatus == DJI_FLIGHT_CONTROLLER_ALL_MOTOR_IN_SLOW_ROTATE_MODE ? "all" : "(error)");
 }
 
+void DjiTest_FlightControlRCLostActionEnableSample()
+{
+    T_DjiReturnCode returnCode;
+
+    USER_LOG_INFO("Flight control RC-lost-action-enable sample start");
+    DjiTest_WidgetLogAppend("Flight control RC-lost-action-enable sample start");
+
+    USER_LOG_INFO("--> Prepare: Set RC Lost action enable, set RC lost action landing");
+    returnCode = DjiFlightController_SetRCLostAction(DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_LANDING);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Set RC Lost action failed, error code: 0x%08X", returnCode);
+        goto out;
+    }
+
+    returnCode = DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_ENABLE_RC_LOST_ACTION);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Set RC Lost action status enable failed, error code: 0x%08X", returnCode);
+        goto out;
+    }
+
+    USER_LOG_INFO("--> Step 1: Obtain joystick control authority");
+    DjiTest_WidgetLogAppend("--> Step 1: Obtain joystick control authority");
+    returnCode = DjiFlightController_ObtainJoystickCtrlAuthority();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Obtain joystick authority failed, error code: 0x%08X", returnCode);
+        goto out;
+    }
+    s_osalHandler->TaskSleepMs(1000);
+
+    USER_LOG_INFO("--> Step 2: Take off\r\n");
+    DjiTest_WidgetLogAppend("--> Step 2: Take off\r\n");
+    if (!DjiTest_FlightControlMonitoredTakeoff()) {
+        USER_LOG_ERROR("Take off failed");
+        goto out;
+    }
+    USER_LOG_INFO("Successful take off\r\n");
+    DjiTest_WidgetLogAppend("Successful take off\r\n");
+
+    USER_LOG_INFO("--> Step 3: Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point");
+    DjiTest_WidgetLogAppend("--> Step 3: Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point");
+    if (!DjiTest_FlightControlMoveByPositionOffset((T_DjiTestFlightControlVector3f) {0, 0, 30}, 0, 0.8, 1)) {
+        USER_LOG_ERROR("Move to north:0(m), east:0(m), up:30(m) , yaw:0(degree) from current point failed");
+        goto out;
+    }
+
+    USER_LOG_INFO("--> Step 4: Turn off the RC and check if it RTHs and lands...");
+    s_osalHandler->TaskSleepMs(1000);
+    USER_LOG_INFO("--> Please Turn off the RC and check if it RTHs and lands...");
+    s_osalHandler->TaskSleepMs(1000);
+    USER_LOG_INFO("--> Please Turn off the RC and check if it RTHs and lands...");
+    s_osalHandler->TaskSleepMs(1000);
+
+    USER_LOG_INFO("-> Step 5: Release joystick authority");
+    DjiTest_WidgetLogAppend("-> Step 5: Release joystick authority");
+    returnCode = DjiFlightController_ReleaseJoystickCtrlAuthority();
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Release joystick authority failed, error code: 0x%08X", returnCode);
+        goto out;
+    }
+
+out:
+    USER_LOG_INFO("Flight control RC-lost-action-enable sample end");
+    DjiTest_WidgetLogAppend("Flight control RC-lost-action-enable sample end");
+}
+
 void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampleSelect)
 {
     switch (flightCtrlSampleSelect) {
@@ -1013,6 +1084,10 @@ void DjiTest_FlightControlSample(E_DjiTestFlightCtrlSampleSelect flightCtrlSampl
         }
         case E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_SLOW_ROTATE_BLADE: {
             DjiTest_FlightControlSlowRotateMotorSample();
+            break;
+        }
+        case E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_RC_LOST_ACTION_STATUS_ENBALE: {
+            DjiTest_FlightControlRCLostActionEnableSample();
             break;
         }
         default:

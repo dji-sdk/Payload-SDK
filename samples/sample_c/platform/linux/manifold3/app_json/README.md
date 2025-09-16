@@ -63,6 +63,7 @@ Description of the tags in the app.json configuration file：
         Indicates the English name of the application, which can be customized. The filling rules are as follows:
             * Maximum length limit is 32 bytes.
             * Only allow letters(a-zA-Z), numbers(0-9), hyphens(-), and dots(.), no other characters are permitted, and it must begin with a letter or number.
+            * It cannot be "null".
         It is recommended that the application name has a connection to its functionality, and you should try to avoid duplication with other application names.
         It is advisable to avoid changing the application name afterward. 
         This field can be used to display application information, such as in the application management interface, when the PILOT language is set to English, or other languages that are not Chinese, Japanese, or French.
@@ -104,7 +105,7 @@ Description of the tags in the app.json configuration file：
 
 ## description_en
     * Description:
-        Indicates the English description of the application, which should be a string not exceeding 367 bytes in length, containing a detailed custom description of the application.
+        Indicates the English description of the application, which should be a string not exceeding 367 bytes in length, containing a detailed custom description of the application, and it cannot be "null".
         The specific filling rules are as follows:
             * Each item within the brackets [] represents the content of each line, with the next item representing the content of the next line. If a line break is needed, multiple items can be filled in within the brackets [].
         This field can be used to display application information, such as in the application management interface, when the PILOT language is set to English, or other languages that are not Chinese, Japanese, or French, this field will display the application description.
@@ -146,7 +147,7 @@ Description of the tags in the app.json configuration file：
 
 ## maintainer_en
     * Description:
-        Indicates the developer information of the application in English, which should be a string not exceeding 127 bytes in length.
+        Indicates the developer information of the application in English, which should be a string not exceeding 127 bytes in length, and it cannot be "null".
         This field can be used to display application information, such as in the application management interface, when the PILOT language is set to English, or other languages that are not Chinese, Japanese, or French, this field will display the developer information of the application.
     * Data type:
         string

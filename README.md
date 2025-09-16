@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.13.0-blue.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-pink.svg)
-![](https://img.shields.io/badge/license-MIT-green.svg)
+![](https://img.shields.io/badge/version-V3.13.1-purple.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-red.svg)
+![](https://img.shields.io/badge/license-MIT-cyan.svg)
 
 ## What is the DJI Payload SDK?
 
@@ -23,20 +23,20 @@ to get the latest version information.
 
 ## Latest Release
 
-The latest release version of PSDK is 3.13.0. This version of Payload SDK mainly add some new features support and fixed some
+The latest release version of PSDK is 3.13.1. This version of Payload SDK mainly add some new features support and fixed some
 bugs. Please refer to the release notes for detailed changes list.
 
-### Manifold 3 Support
-- **Supports M4D series drone dock versions (DJI Pilot app temporarily unsupported)**
-- **Enables PSDK advanced features for M4D**
-- **Enables MOP function for M400**
-- **Supports installation/uninstallation of Manifold 3 apps via DJI FlightHub**
-- **Enables rendering of Manifold 3 AI app recognition results in DJI FlightHub**
+### Released Feature List
 
-### Fixes and Optimizations
-- **Fixed M300 PSDK low-speed data transmission failure from payload port to onboard port**
-- **Fixed M350 drone's inability to acquire real-time streams from Zenmuse P1 and Zenmuse L1**
+* Supports Mavic 3TA  model
 
+### Bug Fixes and Performance Improvements
+* Fixed an issue where the `DjiCore_Init` API failed on the Matrice 300.
+* Fixed an issue where quaternion data subscription failed for the Matrice 350 RTK.
+* Fixed occasional failures in the `DjiCore_Deinit` API.
+* Fixed occasional crashes caused by custom HMS modules.
+* Changed the default to not support RC-less flight. and exposed the `DjiFlightController_SetRCLostActionEnableStatus` API to disable or enable actions when the RC is lost.
+Note If you need to use RC-less flight, you must call this interface to disable RC-lost actions after `DjiFlightController_Init`. See the interface header file documentation for details.  
 ## License
 
 Payload SDK codebase is MIT-licensed. Please refer to the LICENSE file for detailed information.
