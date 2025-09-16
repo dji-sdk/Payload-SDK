@@ -298,6 +298,9 @@ typedef struct {
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialise flight controller module
+ * @note  If flight without RC is required, call DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION) after initialization.
+ *        Otherwise, when the remote controller goes offline, the configured RC-lost action
+ *        (e.g., return-to-home, auto-landing, hover, etc.) will be executed.
  * @param ridInfo: Must report the correct RID information before using PSDK to control the aircraft.
  * @return Execution result.
  */
@@ -647,6 +650,10 @@ T_DjiReturnCode DjiFlightController_GetGeneralInfo(T_DjiFlightControllerGeneralI
   *         if the command is disable, the aircraft will execute RC lost action when RC is lost but PSDK is running
   *         the aircraft will execute RC lost action when RC is lost and PSDK is lost whatever the command is.
   *         default command is disable.
+  *          If flight without RC is required, set DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION.
+  *          Otherwise, when the remote controller goes offline, the configured RC-lost action
+  *          (e.g., return-to-home, auto-landing, hover, etc.) will be executed.
+  *
   * @param executeRCLostActionOrNotWhenOnboardOn  enable:1;disable:0
   * @return T_DjiReturnCode error code
    */

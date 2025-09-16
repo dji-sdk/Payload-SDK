@@ -66,6 +66,7 @@ start:
         << "| [b] Slow rotate blade sample, only support on M400                                                             |\n"
         << "| [c] Select FTS pwm trigger position, support on M4/M4T/M4D/M4TD                                                |\n"
         << "| [d] Select FTS pwm trigger position, support on M400                                                           |\n"
+        << "| [f] Flight controller sample - Set the RC lost action enable, execute the RC lost action when RC is lost       |\n"
         << std::endl;
 
     std::cin >> inputSelectSample;
@@ -113,6 +114,9 @@ start:
             break;
         case 'd': // for m400
             DjiTest_FlightControlFtsPwmTriggerSample(DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO4, "DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO4");
+            break;
+        case 'f':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_RC_LOST_ACTION_STATUS_ENBALE);
             break;
         case 'q':
             break;
