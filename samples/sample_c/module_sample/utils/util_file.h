@@ -59,10 +59,10 @@ T_DjiReturnCode DjiFile_Delete(const char *filePath);
 T_DjiReturnCode UtilFile_GetFileSize(FILE *file, uint32_t *fileSize);
 T_DjiReturnCode UtilFile_GetFileData(FILE *file, uint32_t offset, uint16_t len, uint8_t *data, uint16_t *realLen);
 
-#ifdef __cplusplus
-}
 #endif
 
+#ifdef __cplusplus
+}
 #endif
 
 #endif // UTIL_FILE_H
