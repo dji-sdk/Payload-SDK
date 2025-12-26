@@ -1099,6 +1099,9 @@ static T_DjiReturnCode DjiUser_FlightControlUpdateConfig(void)
     osalHandler->Free(jsonData);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+#else
+    USER_LOG_ERROR("SYSTEM_ARCH_LINUX is not defined, this function is not supported on this platform.");
+    return DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT;
 #endif
 }
 static T_DjiReturnCode DjiUser_ShowCommandFlyingMenu(void)
