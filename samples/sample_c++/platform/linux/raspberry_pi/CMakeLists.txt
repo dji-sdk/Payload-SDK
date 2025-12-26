@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
-project(dji_sdk_demo_on_rpi_cxx CXX)
+project(dji_sdk_demo_on_rpi_cxx C CXX)
 
 set(CMAKE_C_FLAGS "-pthread -std=gnu99")
 set(CMAKE_CXX_FLAGS "-std=c++11 -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_C_COMPILER "aarch64-linux-gnu-gcc")
 set(CMAKE_CXX_COMPILER "aarch64-linux-gnu-g++")
-add_definitions(-D_GNU_SOURCE)
+add_definitions(-D_GNU_SOURCE -DSYSTEM_ARCH_LINUX)
 
 if (MEMORY_LEAK_CHECK_ON MATCHES TRUE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
@@ -36,8 +36,14 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../../sample_c/module_sample/*.c
         ../../../module_sample/widget_manager/*.c*
         )
-file(GLOB_RECURSE MODULE_COMMON_SRC ../common/*.c*)
-file(GLOB_RECURSE MODULE_HAL_SRC hal/*.c*)
+file(GLOB_RECURSE MODULE_COMMON_SRC 
+        ../common/*.c
+        ../common/*.cpp
+        )
+file(GLOB_RECURSE MODULE_HAL_SRC 
+        hal/*.c
+        hal/*.cpp
+        )
 file(GLOB_RECURSE MODULE_APP_SRC application/*.c*)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../common/3rdparty)
