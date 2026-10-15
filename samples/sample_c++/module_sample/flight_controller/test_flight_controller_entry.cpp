@@ -71,6 +71,10 @@ start:
         << "| [g] Flight controller sample - get battery capacity gohome                                                     |\n"
         << "| [h] Flight controller sample - register osd info, get relative high                                            |\n"
         << "| [i] Flight controller sample - stealth mode control                                                            |\n"
+        << "| [j] Flight controller sample - spz approach control                                                            |\n"
+        << "| [k] Flight controller sample - no gnss mode, heading go home, support on M4D                                   |\n"
+        << "| [l] Flight controller sample - flight control no gps mode and function                                         |\n"
+        << "| [m] Flight controller sample - extreme battery endurance mode control                                           |\n"
         << std::endl;
 
     std::cin >> inputSelectSample;
@@ -133,6 +137,28 @@ start:
             goto start;
         case 'i':
             DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_STEALTH_MODE);
+            goto start;
+        case 'j': {
+            uint16_t cx, cy, w, h;
+            float speed, angle;
+            std::cout << "Enter SPZ box params (cx cy w h, range 0~10000): ";
+            std::cin >> cx >> cy >> w >> h;
+            std::cout << "Enter approach params (speed_ms angle_deg): ";
+            std::cin >> speed >> angle;
+            DjiTest_SpzSetBoxParam(cx, cy, w, h);
+            DjiTest_SpzSetApproachParam(speed, angle);
+            DjiTest_SpzApproachRunSample();
+            goto start;
+        }
+        case 'k':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_NO_GNSS_MODE);
+            goto start;
+        case 'l':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_NO_GPS_MODE);
+            goto start;
+        case 'm':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_EXTREME_BATTERY_ENDURANCE_MODE);
+            goto start;
         case 'q':
             break;
         default:

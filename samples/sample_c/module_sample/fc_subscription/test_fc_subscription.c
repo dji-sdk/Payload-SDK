@@ -196,9 +196,9 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         // Attention: if you want to subscribe the single battery info on M300 RTK, you need connect USB cable to
         // OSDK device or use topic DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO instead.
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX1,
-                                                          (uint8_t *) &singleBatteryInfo,
-                                                          sizeof(T_DjiFcSubscriptionSingleBatteryInfo),
-                                                          &timestamp);
+                                                        (uint8_t *) &singleBatteryInfo,
+                                                        sizeof(T_DjiFcSubscriptionSingleBatteryInfo),
+                                                        &timestamp);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get value of topic battery single info index1 error.");
         } else {

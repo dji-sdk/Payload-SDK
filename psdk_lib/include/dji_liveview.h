@@ -29,6 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "dji_typedef.h"
+#include "dji_sei_parser.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -205,6 +206,27 @@ typedef void (*DjiLiveview_ImageCallback)(E_DjiLiveViewCameraPosition position, 
  * @brief Callback for handling encoded output data
  */
 typedef void (*DjiLiveview_EncoderCallback)(const uint8_t *buf, uint32_t len);
+
+/**
+ * @brief Liveview camera h264 stream callback with parsed SEI data.
+ * @param position: Camera mount position.
+ * @param buf: H264 frame data buffer.
+ * @param len: H264 frame data length.
+ * @param seiInfo: Parsed SEI info container. NULL if no SEI in this frame.
+ *                 Use seiInfo->hasAi / seiInfo->hasAr to check available data.
+ *                 Valid only during the callback scope, do not cache the pointer.
+ */
+typedef void (*DjiLiveview_H264WithSeiCallback)(E_DjiLiveViewCameraPosition position,
+                                                 const uint8_t *buf, uint32_t len,
+                                                 const T_DjiSeiInfo *seiInfo);
+
+/**
+ * @brief Liveview camera stream callback with parsed SEI data.
+ * @note Same signature as DjiLiveview_H264WithSeiCallback, used by DjiLiveview_StartStreamWithSei.
+ */
+typedef void (*DjiLiveview_StreamWithSeiCallback)(E_DjiLiveViewCameraPosition position,
+                                                   const uint8_t *buf, uint32_t len,
+                                                   const T_DjiSeiInfo *seiInfo);
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialize the liveview module.
@@ -254,6 +276,69 @@ T_DjiReturnCode DjiLiveview_StartH264Stream(E_DjiLiveViewCameraPosition position
  * @return Execution result.
  */
 T_DjiReturnCode DjiLiveview_StopH264Stream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the FPV or camera stream from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @param callback: Callback function in a callback thread when a new frame is received
+ * @note This interface is compatible with the original DjiLiveview_StartH264Stream interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartStream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source,
+                                            DjiLiveview_H264Callback callback);
+
+/**
+ * @brief Stop the FPV or Camera Stream from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @note This interface is compatible with the original DjiLiveview_StopH264Stream interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopStream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the camera H264 stream with AI SEI parsing from the specified position.
+ * @param position: Camera position for the H264 stream output.
+ * @param source: sub-camera source for the H264 stream output.
+ * @param callback: Callback function with AI SEI data when a new h264 frame is received.
+ *                  The aiInfo parameter will be NULL when the frame has no AI SEI data.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartH264StreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                    E_DjiLiveViewCameraSource source,
+                                                    DjiLiveview_H264WithSeiCallback callback);
+
+/**
+ * @brief Stop the camera H264 stream with SEI from the specified position.
+ * @param position: Camera position for the H264 stream output.
+ * @param source: sub-camera source for the H264 stream output.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopH264StreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                   E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the camera stream with AI SEI parsing from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @param callback: Callback function with AI SEI data when a new frame is received.
+ * @note This interface is compatible with the original DjiLiveview_StartH264StreamWithSei interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartStreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                E_DjiLiveViewCameraSource source,
+                                                DjiLiveview_StreamWithSeiCallback callback);
+
+/**
+ * @brief Stop the camera stream with SEI from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @note This interface is compatible with the original DjiLiveview_StopH264StreamWithSei interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopStreamWithSei(E_DjiLiveViewCameraPosition position,
+                                               E_DjiLiveViewCameraSource source);
 
 /**
  * @brief Request the intraframe Frame of camera H264 stream from the specified position.

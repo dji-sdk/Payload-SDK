@@ -38,6 +38,10 @@
 #include <dji_perception.h>
 #include "liveview/test_liveview.h"
 #include "perception/test_perception.h"
+#ifdef SYSTEM_ARCH_LINUX
+#include "interest_point/test_interest_point.h"
+#include "liveview/test_ar_pixel_to_gps.h"
+#endif
 #include "file_binary_array_list_en.h"
 #include <stdarg.h>
 #include "dji_aircraft_info.h"
@@ -92,6 +96,10 @@ typedef enum {
     E_DJI_SAMPLE_INDEX_CAMMGR_THERMOMETRY = 27,
     E_DJI_SAMPLE_INDEX_ON_BOARD_NETWORK_RTK_START = 28,
     E_DJI_SAMPLE_INDEX_ON_BOARD_NETWORK_RTK_STOP = 29,
+    E_DJI_SAMPLE_INDEX_SPZ_APPROACH = 30,
+    E_DJI_SAMPLE_INDEX_SPZ_STOP     = 31,
+    E_DJI_SAMPLE_INDEX_AR_PIXEL_GPS_START = 32,
+    E_DJI_SAMPLE_INDEX_AR_PIXEL_GPS_STOP  = 33,
     E_DJI_SAMPLE_INDEX_UNKNOWN = 0xFF,
 } E_DjiExtensionPortSampleIndex;
 
@@ -132,6 +140,20 @@ static bool s_isSampleStart = false;
 static E_DjiMountPosition s_mountPosition = DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1;
 static T_DjiAircraftInfoBaseInfo s_aircraftInfoBaseInfo = {0};
 static bool s_isAliasChanged = false;
+
+#ifdef SYSTEM_ARCH_LINUX
+/* SPZ dedicated thread: keeps the main widget loop unblocked */
+static T_DjiTaskHandle s_spzTaskHandle = NULL;
+
+/* AR Pixel-to-GPS dedicated thread */
+static T_DjiTaskHandle s_arPixelGpsTaskHandle = NULL;
+
+/* SPZ approach parameters, input sequentially via index=6:
+ * 1st→speed(m/s)  2nd→angle(deg) */
+static float s_spzSpeedMs  = 5.0f;
+static float s_spzAngleDeg = 60.0f;
+static int   s_spzParamInputIdx = 0;  /* 0=speed 1=angle */
+#endif
 
 static const T_DjiWidgetHandlerListItem s_widgetHandlerList[] = {
     {0,  DJI_WIDGET_TYPE_BUTTON,        DjiTestWidget_SetWidgetValue, DjiTestWidget_GetWidgetValue, NULL},
@@ -292,6 +314,40 @@ T_DjiReturnCode DjiTest_WidgetInteractionSetConfigFilePath(const char *path)
 #pragma GCC diagnostic ignored "-Wreturn-type"
 #pragma GCC diagnostic ignored "-Wformat"
 #endif
+
+#ifdef SYSTEM_ARCH_LINUX
+static void *DjiUser_SpzTask(void *arg)
+{
+    USER_UTIL_UNUSED(arg);
+    USER_LOG_INFO("[SPZ] Task started");
+    DjiTest_SpzApproachRunSample();
+    USER_LOG_INFO("[SPZ] Task finished");
+    s_spzTaskHandle = NULL;
+    return NULL;
+}
+
+/* Pre-initialize SPZ modules in the main thread (large stack) before
+ * the first task creation, to avoid stack overflow in the task thread. */
+static void DjiUser_SpzPreInit(void)
+{
+    static bool s_preInitDone = false;
+    if (s_preInitDone) return;
+    USER_LOG_INFO("[SPZ] Pre-initializing modules in main thread...");
+    DjiTest_SpzRunPreInit();
+    s_preInitDone = true;
+    USER_LOG_INFO("[SPZ] Pre-init done");
+}
+
+static void *DjiUser_ArPixelGpsTask(void *arg)
+{
+    USER_UTIL_UNUSED(arg);
+    USER_LOG_INFO("[ArPixelGPS] Task started");
+    DjiUser_RunArPixelToGpsSample();
+    USER_LOG_INFO("[ArPixelGPS] Task finished");
+    s_arPixelGpsTaskHandle = NULL;
+    return NULL;
+}
+#endif /* SYSTEM_ARCH_LINUX */
 
 static void *DjiTest_WidgetInteractionTask(void *arg)
 {
@@ -546,6 +602,79 @@ static void *DjiTest_WidgetInteractionTask(void *arg)
                 case E_DJI_SAMPLE_INDEX_ON_BOARD_NETWORK_RTK_STOP:
                     DjiTest_NetworkRtkOnBoardService(DJI_TEST_NETWORK_RTK_STOP);
                     break;
+#ifdef SYSTEM_ARCH_LINUX
+                case E_DJI_SAMPLE_INDEX_SPZ_APPROACH: {
+                    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+                    if (osalHandler == NULL) {
+                        USER_LOG_ERROR("Get osal handler failed");
+                        break;
+                    }
+                    DjiUser_SpzPreInit();  /* run heavy init in main thread before task */
+                    s_spzParamInputIdx = 0;
+                    if (s_spzTaskHandle != NULL) {
+                        USER_LOG_INFO("[SPZ] Previous run still active, requesting stop...");
+                        DjiTest_SpzRequestStop();
+                        /* Poll until task self-clears s_spzTaskHandle (max 3s) */
+                        for (int i = 0; i < 30 && s_spzTaskHandle != NULL; i++) {
+                            osalHandler->TaskSleepMs(100);
+                        }
+                        if (s_spzTaskHandle != NULL) {
+                            USER_LOG_WARN("[SPZ] Old task did not exit in 3s, skip new trigger");
+                            break;
+                        }
+                    }
+                    if (osalHandler->TaskCreate("spz_task", DjiUser_SpzTask,
+                                                32768, NULL, &s_spzTaskHandle)
+                        != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                        USER_LOG_ERROR("[SPZ] Failed to create SPZ task");
+                        s_spzTaskHandle = NULL;
+                    }
+                    break;
+                }
+                case E_DJI_SAMPLE_INDEX_SPZ_STOP: {
+                    if (s_spzTaskHandle != NULL) {
+                        USER_LOG_INFO("[SPZ] Stop requested via widget");
+                        DjiTest_SpzRequestStop();
+                    } else {
+                        USER_LOG_WARN("[SPZ] No active SPZ task to stop");
+                    }
+                    break;
+                }
+                case E_DJI_SAMPLE_INDEX_AR_PIXEL_GPS_START: {
+                    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+                    if (osalHandler == NULL) {
+                        USER_LOG_ERROR("Get osal handler failed");
+                        break;
+                    }
+                    if (s_arPixelGpsTaskHandle != NULL) {
+                        USER_LOG_INFO("[ArPixelGPS] Previous run still active, requesting stop...");
+                        DjiUser_ArPixelGpsRequestStop();
+                        for (int i = 0; i < 30 && s_arPixelGpsTaskHandle != NULL; i++) {
+                            osalHandler->TaskSleepMs(100);
+                        }
+                        if (s_arPixelGpsTaskHandle != NULL) {
+                            USER_LOG_WARN("[ArPixelGPS] Old task did not exit in 3s, skip new trigger");
+                            break;
+                        }
+                    }
+                    if (osalHandler->TaskCreate("ar_gps_task", DjiUser_ArPixelGpsTask,
+                                                 32768, NULL, &s_arPixelGpsTaskHandle)
+                        != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                        USER_LOG_ERROR("[ArPixelGPS] Failed to create task");
+                        s_arPixelGpsTaskHandle = NULL;
+                    }
+                    break;
+                }
+                case E_DJI_SAMPLE_INDEX_AR_PIXEL_GPS_STOP: {
+                    if (s_arPixelGpsTaskHandle != NULL) {
+                        USER_LOG_INFO("[ArPixelGPS] Stop requested via widget");
+                        DjiUser_ArPixelGpsRequestStop();
+                    } else {
+                        USER_LOG_WARN("[ArPixelGPS] No active task to stop");
+                    }
+                    break;
+                }
+#endif /* SYSTEM_ARCH_LINUX */
                 default:
                     break;
             }
@@ -584,6 +713,30 @@ static T_DjiReturnCode DjiTestWidget_SetWidgetValue(E_DjiWidgetType widgetType, 
     if (widgetType == DJI_WIDGET_TYPE_LIST && index == 9) {
         s_extensionPortSampleIndex = value;
     }
+
+    /* SPZ approach param input via index=6 (INT_INPUT_BOX):
+     * 1st input → speed(m/s),  2nd → angle(deg),  then cycles.
+     * Can be set anytime before triggering. */
+#ifdef SYSTEM_ARCH_LINUX
+    if (widgetType == DJI_WIDGET_TYPE_INT_INPUT_BOX && index == 6) {
+        const char *names[] = {"speed(m/s)", "angle(deg)"};
+        int prevIdx = s_spzParamInputIdx;
+        if (prevIdx == 0) {
+            s_spzSpeedMs = (float)value;
+        } else {
+            s_spzAngleDeg = (float)value;
+        }
+        s_spzParamInputIdx = (prevIdx + 1) % 2;
+        if (s_spzTaskHandle != NULL) {
+            /* Only log SPZ content when SPZ is active */
+            USER_LOG_INFO("[SPZ] %s = %d  next: %s",
+                          names[prevIdx], value, names[s_spzParamInputIdx]);
+            DjiTest_WidgetLogAppend("[SPZ] %s = %d  next: %s",
+                          names[prevIdx], value, names[s_spzParamInputIdx]);
+        }
+        DjiTest_SpzSetApproachParam(s_spzSpeedMs, s_spzAngleDeg);
+    }
+#endif /* SYSTEM_ARCH_LINUX */
 
     if (widgetType == DJI_WIDGET_TYPE_BUTTON && index == 10) {
         if (value == 1) {

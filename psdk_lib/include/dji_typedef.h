@@ -86,6 +86,7 @@ typedef enum {
     DJI_MOUNT_POSITION_TYPE_EXTENSION_LITE_PORT = 3,
     DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT_V2   = 4,
     DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD   = 5,
+    DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT_V3   = 6,
 } E_DjiMountPositionType;
 
 typedef enum {
@@ -103,6 +104,10 @@ typedef enum {
     DJI_MOUNT_POSITION_EXTENSION_PORT,
     DJI_MOUNT_POSITION_EXTENSION_PORT_V2_NO8    = 8, /*!< Payload on Port: usb hub port4*/
     DJI_MOUNT_POSITION_EXTENSION_LITE_PORT,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V3_NO1    = 10,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V3_NO2    = 11,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V3_NO3    = 12,
+    DJI_MOUNT_POSITION_EXTENSION_PORT_V2_AGRAS  = 13,
 } E_DjiMountPosition;
 
 typedef enum {
@@ -118,6 +123,8 @@ typedef enum {
     DJI_AIRCRAFT_SERIES_M4D                     = 9,
     DJI_AIRCRAFT_SERIES_M400                    = 10,
     DJI_AIRCRAFT_SERIES_FC100                   = 11,
+    DJI_AIRCRAFT_SERIES_M5TD                     = 11,
+    DJI_AIRCRAFT_SERIES_FC200                   = 12,
 } E_DjiAircraftSeries;
 
 typedef enum {
@@ -135,12 +142,14 @@ typedef enum {
     DJI_AIRCRAFT_TYPE_M350_RTK                  = 89, /*!< Aircraft type is Matrice 350 RTK. */
     DJI_AIRCRAFT_TYPE_M3D                       = 91, /*!< Aircraft type is Matrice 3D. */
     DJI_AIRCRAFT_TYPE_M3TD                      = 93, /*!< Aircraft type is Matrice 3TD. */
+    DJI_AIRCRAFT_TYPE_M5TD                       = 130,/*!< Aircraft type is Matrice 5TD. */
     DJI_AIRCRAFT_TYPE_M4T                       = 99, /*!< Aircraft type is Matrice 4T. */
     DJI_AIRCRAFT_TYPE_M4E                       = 990, /*!< Aircraft type is Matrice 4E. */
     DJI_AIRCRAFT_TYPE_M4TD                      = 100, /*!< Aircraft type is Matrice 4TD. */
     DJI_AIRCRAFT_TYPE_M4D                       = 1000, /*!< Aircraft type is Matrice 4D. */
     DJI_AIRCRAFT_TYPE_M400                      = 103, /*!< Aircraft type is Matrice 400. */
     DJI_AIRCRAFT_TYPE_FC100                     = 122, /* !<Aircraft type is FlyCart 100> */
+    DJI_AIRCRAFT_TYPE_FC200                     = 167, /* !<Aircraft type is FlyCart 200> */
 } E_DjiAircraftType;
 
 /**
@@ -172,6 +181,7 @@ typedef enum {
     DJI_CAMERA_TYPE_M4E                         = 891, /*!< Camera type is M4E. */
     DJI_CAMERA_TYPE_M4TD                        = 90, /*!< Camera type is M4TD. */
     DJI_CAMERA_TYPE_M4D                         = 91, /*!< Camera type is M4D. */
+    DJI_CAMERA_TYPE_M5TD                        = 99, /*!< Camera type is M5D. */
 } E_DjiCameraType;
 
 /**
@@ -285,6 +295,7 @@ typedef enum {
     DJI_SDK_ADAPTER_TYPE_NONE                   = 3, /*!< don't have any adapter outside */
     DJI_SDK_ADAPTER_TYPE_SKYPORT_V3             = 4, /*!< SDK adapter type is Skyport V3 */
     DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE  = 5, /*!< SDK adapter type is Eport V2 ribbon cable */
+    DJI_SDK_ADAPTER_TYPE_EPORT_V3_RIBBON_CABLE  = 6,
 } E_DjiSdkAdapterType;
 
 typedef enum {

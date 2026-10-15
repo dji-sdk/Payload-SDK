@@ -438,6 +438,35 @@ extern "C" {
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND, "Execute waypoint v3 failed due to actuator not found. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_NOT_FOUND, "Execute waypoint v3 failed due to trigger not found. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL, "Execute waypoint v3 failed due to single time check failed. ", NULL},    \
+\
+/* spotlight zoom module error message */ \
+{DJI_ERROR_SPZ_MODULE_CODE_OK,                          "SpotlightZoom status normal.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_TAR_TOO_NEAR,                "SpotlightZoom: target too near.", "Please increase distance to target."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_TAR_TOO_FAR,                 "SpotlightZoom: target too far.", "Please decrease distance to target."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_LOW_LIMIT,                   "SpotlightZoom: reached lower altitude limit.", "Please fly higher."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_HEIGHT_LIMIT,                "SpotlightZoom: reached upper altitude limit.", "Please fly lower."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_RADIUS_LIMIT,                "SpotlightZoom: reached radius limit.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_BOUNDARY_LIMIT,              "SpotlightZoom: approaching flight restriction zone.", "Please steer away from restricted area."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_GIMBAL_LIMITED,              "SpotlightZoom: gimbal reached tracking composition limit.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_YAW_LIMITED,                 "SpotlightZoom: yaw reached surround mode max limit (±80°).", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_TOO_CLOSE_TO_OBSTACLE,       "SpotlightZoom: too close to obstacle.", "Please fly away from the obstacle."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_GPS_TO_RTK,                  "SpotlightZoom: positioning switched GPS->RTK, surround paused.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_RTK_TO_GPS,                  "SpotlightZoom: positioning switched RTK->GPS.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_OBSTACLE_AVOID_INVALID,      "SpotlightZoom: obstacle avoidance invalid.", "Please check obstacle avoidance sensors."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_ZOOM_TRACKING_LIMITED,       "SpotlightZoom: reached zoom range limit.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_TARGET_LOST,                 "SpotlightZoom: tracking target lost.", "Please reselect the target."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_GPS_WEAK,                    "SpotlightZoom: GPS signal weak.", "Please fly to an area with better GPS signal."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_NO_ERROR,               "SpotlightZoom exited normally.", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_PAYLOAD,    "SpotlightZoom exit: unsupported payload type.", "Please check payload compatibility."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_CAMERA_MODE,"SpotlightZoom exit: unsupported camera mode.", "Please switch to a compatible camera mode."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_INVALID_CMD,            "SpotlightZoom exit: invalid command.", "Please check command validity."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_GPS_INVALID,            "SpotlightZoom exit: positioning invalid.", "Please wait for GPS to be ready."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_NO_IN_AIR,              "SpotlightZoom exit: aircraft not airborne.", "Please take off first."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_CTRL_MODE,  "SpotlightZoom exit: wrong flight control mode.", "Please switch to the correct flight mode."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_FLIGHT_MODE,"SpotlightZoom exit: unavailable in current flight mode (RTH/landing).", NULL}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_RC_LOST,                "SpotlightZoom exit: RC or video link lost.", "Please check RC and video link connection."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_STATUS_ERR,             "SpotlightZoom exit: internal error (dbus/IMU/gimbal/camera data abnormal).", "Please contact DJI for help."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_INNER_UNKNOW_ERROR,     "SpotlightZoom exit: unknown internal error.", "Please contact DJI for help."}, \
 
 #define DJI_RETURN_CODE_OK                 DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS             /*!< Payload SDK return code represents as status is ok. */
 #define DJI_RETURN_CODE_ERR_ALLOC          DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED /*!< Payload SDK return code represents as status alloc error. */
@@ -493,6 +522,7 @@ typedef enum {
     DJI_ERROR_MODULE_WAYPOINT_V2,
     DJI_ERROR_MODULE_WAYPOINT_V3,
     DJI_ERROR_MODULE_ERROR,
+    DJI_ERROR_MODULE_SPZ, /*!< Spotlight zoom module */
 } E_DjiErrorModule;
 
 /**
@@ -713,6 +743,40 @@ typedef enum {
     DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE = 0xFE, /*!< Cannot upgrade in current status (Please reboot or contact with DJI support */
     DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR = 0xFF, /*!< Undefined error */
 } E_DjiErrorGimbalManagerModuleRawCode;
+
+/**
+ * @brief Raw error code of spotlight zoom (SPZ) module.
+ * Corresponds to E_DjiSpotlightZoomStatusMessage defined in dji_fc_define.h.
+ */
+typedef enum {
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_OK                       = 0,   /*!< Normal status */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_TAR_TOO_NEAR             = 1,   /*!< Target too near */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_TAR_TOO_FAR              = 2,   /*!< Target too far */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_LOW_LIMIT                = 3,   /*!< Reached lower altitude limit */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_HEIGHT_LIMIT             = 4,   /*!< Reached upper altitude limit */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_RADIUS_LIMIT             = 5,   /*!< Reached radius limit */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_BOUNDARY_LIMIT           = 6,   /*!< Approaching flight restriction zone */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_GIMBAL_LIMITED           = 7,   /*!< Gimbal reached tracking composition limit */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_YAW_LIMITED              = 8,   /*!< Yaw reached surround mode max limit (±80°) */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_TOO_CLOSE_TO_OBSTACLE    = 9,   /*!< Too close to obstacle */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_GPS_TO_RTK               = 10,  /*!< Positioning switched GPS->RTK, surround paused */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_RTK_TO_GPS               = 11,  /*!< Positioning switched RTK->GPS */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_OBSTACLE_AVOID_INVALID   = 12,  /*!< Obstacle avoidance invalid */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_ZOOM_TRACKING_LIMITED    = 13,  /*!< Reached zoom range limit */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_TARGET_LOST              = 14,  /*!< Tracking target lost */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_GPS_WEAK                 = 15,  /*!< GPS signal weak */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_NO_ERROR            = 160, /*!< Exited normally */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_PAYLOAD = 161, /*!< Unsupported payload type */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_CAMERA_MODE = 162, /*!< Unsupported camera mode */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INVALID_CMD         = 163, /*!< Invalid command */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_GPS_INVALID         = 164, /*!< Positioning invalid */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_NO_IN_AIR           = 165, /*!< Aircraft not airborne */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_CTRL_MODE = 166, /*!< Wrong flight control mode */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_FLIGHT_MODE = 167, /*!< Unavailable in current flight mode */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_RC_LOST             = 168, /*!< RC or video link lost */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_STATUS_ERR          = 254, /*!< Internal error (dbus/IMU/gimbal/camera) */
+    DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INNER_UNKNOW_ERROR  = 255, /*!< Unknown internal error */
+} E_DjiErrorSpzModuleRawCode;
 
 /**
  * @brief Waypoint v2 total error raw code.
@@ -1361,6 +1425,35 @@ enum DjiErrorCode {
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND),
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_NOT_FOUND),
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL),
+
+    /* Spotlight zoom (SPZ) module errors */
+    DJI_ERROR_SPZ_MODULE_CODE_OK                            = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_OK),
+    DJI_ERROR_SPZ_MODULE_CODE_TAR_TOO_NEAR                  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_TAR_TOO_NEAR),
+    DJI_ERROR_SPZ_MODULE_CODE_TAR_TOO_FAR                   = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_TAR_TOO_FAR),
+    DJI_ERROR_SPZ_MODULE_CODE_LOW_LIMIT                     = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_LOW_LIMIT),
+    DJI_ERROR_SPZ_MODULE_CODE_HEIGHT_LIMIT                  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_HEIGHT_LIMIT),
+    DJI_ERROR_SPZ_MODULE_CODE_RADIUS_LIMIT                  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_RADIUS_LIMIT),
+    DJI_ERROR_SPZ_MODULE_CODE_BOUNDARY_LIMIT                = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_BOUNDARY_LIMIT),
+    DJI_ERROR_SPZ_MODULE_CODE_GIMBAL_LIMITED                = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_GIMBAL_LIMITED),
+    DJI_ERROR_SPZ_MODULE_CODE_YAW_LIMITED                   = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_YAW_LIMITED),
+    DJI_ERROR_SPZ_MODULE_CODE_TOO_CLOSE_TO_OBSTACLE         = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_TOO_CLOSE_TO_OBSTACLE),
+    DJI_ERROR_SPZ_MODULE_CODE_GPS_TO_RTK                    = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_GPS_TO_RTK),
+    DJI_ERROR_SPZ_MODULE_CODE_RTK_TO_GPS                    = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_RTK_TO_GPS),
+    DJI_ERROR_SPZ_MODULE_CODE_OBSTACLE_AVOID_INVALID        = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_OBSTACLE_AVOID_INVALID),
+    DJI_ERROR_SPZ_MODULE_CODE_ZOOM_TRACKING_LIMITED         = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_ZOOM_TRACKING_LIMITED),
+    DJI_ERROR_SPZ_MODULE_CODE_TARGET_LOST                   = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_TARGET_LOST),
+    DJI_ERROR_SPZ_MODULE_CODE_GPS_WEAK                      = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_GPS_WEAK),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_NO_ERROR                 = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_NO_ERROR),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_PAYLOAD      = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_PAYLOAD),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_CAMERA_MODE  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_CAMERA_MODE),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_INVALID_CMD              = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INVALID_CMD),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_GPS_INVALID              = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_GPS_INVALID),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_NO_IN_AIR                = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_NO_IN_AIR),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_CTRL_MODE    = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_CTRL_MODE),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_FLIGHT_MODE  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_UNSUPPORTED_FLIGHT_MODE),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_RC_LOST                  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_RC_LOST),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_STATUS_ERR               = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_STATUS_ERR),
+    DJI_ERROR_SPZ_MODULE_CODE_EXIT_INNER_UNKNOW_ERROR       = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INNER_UNKNOW_ERROR),
 };
 //@formatter:on
 

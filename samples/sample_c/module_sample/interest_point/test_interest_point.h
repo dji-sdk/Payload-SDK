@@ -40,7 +40,11 @@ extern "C" {
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_InterestPointRunSample(void);
-
+T_DjiReturnCode DjiTest_SpzApproachRunSample(void);
+void DjiTest_SpzRequestStop(void);
+void DjiTest_SpzRunPreInit(void);
+void DjiTest_SpzSetBoxParam(uint16_t cx, uint16_t cy, uint16_t w, uint16_t h);
+void DjiTest_SpzSetApproachParam(float speedMs, float angleDeg);
 #ifdef __cplusplus
 }
 #endif

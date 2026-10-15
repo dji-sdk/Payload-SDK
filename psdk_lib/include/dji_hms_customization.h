@@ -82,6 +82,12 @@ typedef struct {
 T_DjiReturnCode DjiHmsCustomization_Init(void);
 
 /**
+ * @brief Check whether the HMS customization module has been initialized.
+ * @return true if initialized, false otherwise.
+ */
+bool DjiHmsCustomization_IsInited(void);
+
+/**
  * @brief DeInitialize hms customization module.
  * @return Execution result.
  */

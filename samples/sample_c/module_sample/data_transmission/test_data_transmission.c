@@ -132,7 +132,8 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         USER_LOG_INFO("Only supports small data transmission between PSDK and MSDK.");
     } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 ||
-        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3) {
+        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3 ||
+        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT_V2_AGRAS) {
         channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromExtensionPort);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {

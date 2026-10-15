@@ -90,6 +90,34 @@ typedef struct {
 } T_DjiWaypointV3ActionState;
 
 /**
+ * @brief External localization data for ADN mode positioning.
+ * @note  The timestamp should be aligned with the 6-DOF data timestamp received by the payload.
+ */
+typedef struct {
+    uint32_t version;       /*!< Protocol version. */
+    double   longitude;     /*!< Longitude in radians. */
+    double   latitude;      /*!< Latitude in radians. */
+    float    altitude;      /*!< Ellipsoidal height in meters. */
+    float    heading;       /*!< Heading in degrees. NED frame: north=0°, east=90°, south=180°. */
+    float    horizError;    /*!< Horizontal position accuracy in meters. */
+    float    vertError;     /*!< Vertical position accuracy in meters. */
+    float    headingError;  /*!< Heading accuracy in degrees. */
+    uint32_t timestamp;     /*!< Timestamp in milliseconds, aligned with the 6-DOF data timestamp. */
+} T_DjiWaypointV3ExternalLocalizationInfo;
+
+/**
+ * @brief ADN assist positioning mode status pushed by the flight controller.
+ */
+typedef struct {
+    uint32_t version;       /*!< Protocol version. */
+    float    gpsError;      /*!< Deviation between GPS and positioning estimate, in meters. */
+    float    sdkError;      /*!< Deviation between SDK and positioning estimate, in meters. */
+    float    gpsSdkError;   /*!< Deviation between SDK and GPS, in meters. */
+    float    divergeError;  /*!< Divergence reference error, in meters. */
+    uint32_t isGnssValid;   /*!< GPS availability: 1 = available, 0 = unavailable. */
+} T_DjiWaypointV3AssistPosModeInfo;
+
+/**
  * @brief Prototype of callback function used to receive the waypoint v3 mission state.
  * @warning User can not execute blocking style operations or functions in callback function, because that will block
  * root thread, causing problems such as slow system response, payload disconnection or infinite loop.
@@ -106,6 +134,15 @@ typedef T_DjiReturnCode (*WaypointV3MissionStateCallback)(T_DjiWaypointV3Mission
  * @return Execution result.
  */
 typedef T_DjiReturnCode (*WaypointV3ActionStateCallback)(T_DjiWaypointV3ActionState missionState);
+
+/**
+ * @brief Prototype of callback function used to receive ADN assist positioning mode status.
+ * @warning User can not execute blocking style operations or functions in callback function, because that will block
+ * root thread, causing problems such as slow system response, payload disconnection or infinite loop.
+ * @param info: current assist positioning mode status pushed by the flight controller.
+ * @return Execution result.
+ */
+typedef T_DjiReturnCode (*WaypointV3AssistPosModeInfoCallback)(T_DjiWaypointV3AssistPosModeInfo info);
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -150,6 +187,27 @@ T_DjiReturnCode DjiWaypointV3_RegMissionStateCallback(WaypointV3MissionStateCall
  * @return Execution result.
  */
 T_DjiReturnCode DjiWaypointV3_RegActionStateCallback(WaypointV3ActionStateCallback callback);
+
+/**
+ * @brief Register the callback for ADN assist positioning mode status.
+ * @note  This interface should be called after DjiWaypointV3_Init and before entering ADN mode.
+ *        The callback is invoked each time the flight controller pushes an assist positioning
+ *        mode status update. Pass NULL to unregister and stop receiving callbacks.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiWaypointV3_RegAssistPosModeInfoCallback(WaypointV3AssistPosModeInfoCallback callback);
+
+
+/**
+ * @brief Send external localization data to the aircraft for ADN mode positioning.
+ * @details In ADN mode, the aircraft uses the position data sent via this interface as its
+ *          external position reference for no-GPS flight. This interface should be called
+ *          continuously at a fixed frequency to maintain stable positioning.
+ * @param info Pointer to the localization data to send.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiWaypointV3_SendExternalLocalizationInfo(
+    const T_DjiWaypointV3ExternalLocalizationInfo *info);
 
 #ifdef __cplusplus
 }
