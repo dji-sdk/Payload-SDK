@@ -29,6 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "dji_typedef.h"
+#include "dji_sei_parser.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,6 +93,9 @@ typedef enum {
     DJI_LIVEVIEW_CAMERA_SOURCE_M4TD_VIS = 1,
     DJI_LIVEVIEW_CAMERA_SOURCE_M4TD_IR = 2,
     DJI_LIVEVIEW_CAMERA_SOURCE_M4TD_4K = 3,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_VIS = 1,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_IR  = 2,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_4K  = 3,
 } E_DjiLiveViewCameraSource;
 
 /**
@@ -205,6 +209,31 @@ typedef void (*DjiLiveview_ImageCallback)(E_DjiLiveViewCameraPosition position, 
  * @brief Callback for handling encoded output data
  */
 typedef void (*DjiLiveview_EncoderCallback)(const uint8_t *buf, uint32_t len);
+
+/**
+ * @brief Liveview camera h264 stream callback with parsed SEI data.
+ * @note
+ *  - This API is not available in the current version.
+ * @param position: Camera mount position.
+ * @param buf: H264 frame data buffer.
+ * @param len: H264 frame data length.
+ * @param seiInfo: Parsed SEI info container. NULL if no SEI in this frame.
+ *                 Use seiInfo->hasAi / seiInfo->hasAr to check available data.
+ *                 Valid only during the callback scope, do not cache the pointer.
+ */
+typedef void (*DjiLiveview_H264WithSeiCallback)(E_DjiLiveViewCameraPosition position,
+                                                 const uint8_t *buf, uint32_t len,
+                                                 const T_DjiSeiInfo *seiInfo);
+
+/**
+ * @brief Liveview camera stream callback with parsed SEI data.
+ * @note
+ *  - This API is not available in the current version.
+ * @note Same signature as DjiLiveview_H264WithSeiCallback, used by DjiLiveview_StartStreamWithSei.
+ */
+typedef void (*DjiLiveview_StreamWithSeiCallback)(E_DjiLiveViewCameraPosition position,
+                                                   const uint8_t *buf, uint32_t len,
+                                                   const T_DjiSeiInfo *seiInfo);
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialize the liveview module.
@@ -228,6 +257,7 @@ T_DjiReturnCode DjiLiveview_Deinit(void);
  * 2. If state callback reports success, call DjiLiveview_SetEncodingStrategy().
  * 3. The configurable bitrate limits for different video streams and resolutions may vary.
  * 4. The actual bitrate may fluctuate by up to 20% above the configured bitrate, and the lower limit of the actual bitrate also depends on the captured image.
+ * 5. This API is not available in the current version.
  * @param position: Camera position for the H264 stream output to set the encoding strategy.
  * @param source: sub-camera source for the H264 stream output.
  * @param bitrate_kbps: The target bitrate, unit: Kbps. For the wa345, the recommended bitrate range for H264 at 1440x1080 resolution is 12 Mbps to 20 Mbps.
@@ -242,6 +272,7 @@ T_DjiReturnCode DjiLiveview_SetEncodingStrategy(E_DjiLiveViewCameraPosition posi
  * @param position: Camera position for the H264 stream output.
  * @param source: sub-camera source for the H264 stream output.
  * @param callback: Callback function in a callback thread when a new h264 frame is received
+ * @note This interface will no longer be maintained in future releases.
  * @return Execution result.
  */
 T_DjiReturnCode DjiLiveview_StartH264Stream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source,
@@ -251,9 +282,77 @@ T_DjiReturnCode DjiLiveview_StartH264Stream(E_DjiLiveViewCameraPosition position
  * @brief Stop the FPV or Camera H264 Stream from the specified position.
  * @param position: Camera position for the H264 stream output.
  * @param source: sub-camera source for the H264 stream output.
+ * @note This interface will no longer be maintained in future releases.
  * @return Execution result.
  */
 T_DjiReturnCode DjiLiveview_StopH264Stream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the FPV or camera stream from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @param callback: Callback function in a callback thread when a new frame is received
+ * @note This interface is compatible with the original DjiLiveview_StartH264Stream interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartStream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source,
+                                            DjiLiveview_H264Callback callback);
+
+/**
+ * @brief Stop the FPV or Camera Stream from the specified position.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @note This interface is compatible with the original DjiLiveview_StopH264Stream interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopStream(E_DjiLiveViewCameraPosition position, E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the camera H264 stream with AI SEI parsing from the specified position.
+ * @note This API is not available in the current version.
+ * @param position: Camera position for the H264 stream output.
+ * @param source: sub-camera source for the H264 stream output.
+ * @param callback: Callback function with AI SEI data when a new h264 frame is received.
+ *                  The aiInfo parameter will be NULL when the frame has no AI SEI data.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartH264StreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                    E_DjiLiveViewCameraSource source,
+                                                    DjiLiveview_H264WithSeiCallback callback);
+
+/**
+ * @brief Stop the camera H264 stream with SEI from the specified position.
+ * @note This API is not available in the current version.
+ * @param position: Camera position for the H264 stream output.
+ * @param source: sub-camera source for the H264 stream output.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopH264StreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                   E_DjiLiveViewCameraSource source);
+
+/**
+ * @brief Start the camera stream with AI SEI parsing from the specified position.
+ * @note This API is not available in the current version.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @param callback: Callback function with AI SEI data when a new frame is received.
+ * @note This interface is compatible with the original DjiLiveview_StartH264StreamWithSei interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StartStreamWithSei(E_DjiLiveViewCameraPosition position,
+                                                E_DjiLiveViewCameraSource source,
+                                                DjiLiveview_StreamWithSeiCallback callback);
+
+/**
+ * @brief Stop the camera stream with SEI from the specified position.
+ * @note This API is not available in the current version.
+ * @param position: Camera position for the stream output.
+ * @param source: sub-camera source for the stream output.
+ * @note This interface is compatible with the original DjiLiveview_StopH264StreamWithSei interface.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiLiveview_StopStreamWithSei(E_DjiLiveViewCameraPosition position,
+                                               E_DjiLiveViewCameraSource source);
 
 /**
  * @brief Request the intraframe Frame of camera H264 stream from the specified position.
@@ -340,7 +439,7 @@ T_DjiReturnCode DjiLiveview_SendAiMetaToPilot(T_DjiLiveViewStandardMetaData *met
 
 /**
  * @brief Stop the native liveview stream.
- * @note This interface only supported on M4T.
+ * @note This API is not available in the current version.
  * Recommended call sequence:
  * 1. The aircraft will restore to the default open native DJI liveview transmission state after reboot.
  * @param nativeLiveviewConfig: Configuration value for native liveview stream

@@ -180,6 +180,10 @@ void DjiUser_RunStereoVisionViewSample(void)
             <<
             std::endl;
         std::cout
+            << "| M5TD only support subscribe options d, f, r:                   |"
+            <<
+            std::endl;
+        std::cout
             << "| [d] Subscribe down stereo camera pair images                   |"
             <<
             std::endl;

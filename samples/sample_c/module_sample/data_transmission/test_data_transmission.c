@@ -107,7 +107,8 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
-            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD) &&
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD) &&
             s_aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD) {
         channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromCloud);
@@ -117,11 +118,12 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         }
     }
 
-    if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+    if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400 ||
+        s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD) {
         uint8_t Channel_Callback_count = (sizeof(g_channelCallbacks) / sizeof(g_channelCallbacks[0]));
         for (uint8_t i = 0; i < Channel_Callback_count; i++) {
             const ChannelCallbackEntry *entry = &g_channelCallbacks[i];
-            T_DjiReturnCode djiStat = 
+            T_DjiReturnCode djiStat =
                             DjiLowSpeedDataChannel_RegRecvDataCallback(entry->channelAddress, entry->callback);
 
             if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -132,7 +134,8 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
         USER_LOG_INFO("Only supports small data transmission between PSDK and MSDK.");
     } else if (s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 ||
         s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO2 ||
-        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3) {
+        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_PAYLOAD_PORT_NO3 ||
+        s_aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT_V2_AGRAS) {
         channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT;
         djiStat = DjiLowSpeedDataChannel_RegRecvDataCallback(channelAddress, ReceiveDataFromExtensionPort);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -228,19 +231,21 @@ static void *UserDataTransmission_Task(void *arg)
     while (1) {
         osalHandler->TaskSleepMs(1000 / DATA_TRANSMISSION_TASK_FREQ);
 
-        channelAddress = DJI_CHANNEL_ADDRESS_MASTER_RC_APP;
-        djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
-        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
-            USER_LOG_ERROR("send data to mobile error.");
+        if (s_aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M5TD) {
+            channelAddress = DJI_CHANNEL_ADDRESS_MASTER_RC_APP;
+            djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
+            if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+                USER_LOG_ERROR("send data to mobile error.");
 
-        djiStat = DjiLowSpeedDataChannel_GetSendDataState(channelAddress, &state);
-        if (djiStat == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_DEBUG(
-                "send to mobile state: realtimeBandwidthBeforeFlowController: %d, realtimeBandwidthAfterFlowController: %d, busyState: %d.",
-                state.realtimeBandwidthBeforeFlowController, state.realtimeBandwidthAfterFlowController,
-                state.busyState);
-        } else {
-            USER_LOG_ERROR("get send to mobile channel state error.");
+            djiStat = DjiLowSpeedDataChannel_GetSendDataState(channelAddress, &state);
+            if (djiStat == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_DEBUG(
+                    "send to mobile state: realtimeBandwidthBeforeFlowController: %d, realtimeBandwidthAfterFlowController: %d, busyState: %d.",
+                    state.realtimeBandwidthBeforeFlowController, state.realtimeBandwidthAfterFlowController,
+                    state.busyState);
+            } else {
+                USER_LOG_ERROR("get send to mobile channel state error.");
+            }
         }
 
         if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M30  ||
@@ -248,7 +253,8 @@ static void *UserDataTransmission_Task(void *arg)
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3D  ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M3TD ||
             s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4D  ||
-            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD ) {
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD) {
             channelAddress = DJI_CHANNEL_ADDRESS_CLOUD_API;
             djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
             if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
@@ -265,11 +271,13 @@ static void *UserDataTransmission_Task(void *arg)
             }
         }
 
-        if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400){
+        if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400 ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD){
             /*!< Code Example for Data Transmission Between PSDK and PSDK. */
-            /*!< Only support Psdk on M400. */
+            /*!< Only support Psdk on M400/M5TD. */
+            // channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO1;
             /*
-            channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO1;
+
             djiStat = DjiLowSpeedDataChannel_SendData(channelAddress, dataToBeSent, sizeof(dataToBeSent));
             if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
                 USER_LOG_ERROR("send data to psdk error port1.");

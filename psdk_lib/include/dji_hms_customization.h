@@ -82,6 +82,13 @@ typedef struct {
 T_DjiReturnCode DjiHmsCustomization_Init(void);
 
 /**
+ * @brief Check whether the HMS customization module has been initialized.
+ * @note This API is not available in the current version.
+ * @return true if initialized, false otherwise.
+ */
+bool DjiHmsCustomization_IsInited(void);
+
+/**
  * @brief DeInitialize hms customization module.
  * @return Execution result.
  */
@@ -90,7 +97,7 @@ T_DjiReturnCode DjiHmsCustomization_DeInit(void);
 /**
  * @brief Inject custom hms error code to APP.
  * @note: For the same hms error code, a single call is enough, no need to call repeatedly.
- * @param errorCode: hms error code, value range: [0x1E020000 ~ 0x1E02FFFF].
+ * @param errorCode: hms error code, value range: [0x1E020005 ~ 0x1E02FFFF].
  * @param errorLevel: hms error level, see reference of E_DjiHmsErrorLevel.
  * @return Execution result.
  */
@@ -99,7 +106,7 @@ T_DjiReturnCode DjiHmsCustomization_InjectHmsErrorCode(uint32_t errorCode, E_Dji
 /**
  * @brief Eliminate custom hms error code to APP.
  * @note: For the same hms error code, a single call is enough, no need to call repeatedly.
- * @param errorCode: hms error code, value range: [0x1E020000 ~ 0x1E02FFFF].
+ * @param errorCode: hms error code, value range: [0x1E020005 ~ 0x1E02FFFF].
  * @return Execution result.
  */
 T_DjiReturnCode DjiHmsCustomization_EliminateHmsErrorCode(uint32_t errorCode);

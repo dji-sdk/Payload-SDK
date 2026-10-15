@@ -44,6 +44,10 @@ static T_DjiReturnCode DjiTest_FcSubscriptionReceiveQuaternionCallback(const uin
 /* Private variables ---------------------------------------------------------*/
 static T_DjiTaskHandle s_userFcSubscriptionThread;
 static bool s_userFcSubscriptionDataShow = false;
+/* Indicates whether the resident background subscription service is running. While it is
+ * active, RunSample skips the global unsubscribe/deinitialization so the shared subscriptions
+ * are not torn down. */
+static bool s_fcSubscriptionServiceRunning = false;
 static uint8_t s_totalSatelliteNumberUsed = 0;
 static uint32_t s_userFcSubscriptionDataCnt = 0;
 
@@ -103,6 +107,7 @@ T_DjiReturnCode DjiTest_FcSubscriptionStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
+    s_fcSubscriptionServiceRunning = true;
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
@@ -196,9 +201,9 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         // Attention: if you want to subscribe the single battery info on M300 RTK, you need connect USB cable to
         // OSDK device or use topic DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO instead.
         djiStat = DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX1,
-                                                          (uint8_t *) &singleBatteryInfo,
-                                                          sizeof(T_DjiFcSubscriptionSingleBatteryInfo),
-                                                          &timestamp);
+                                                        (uint8_t *) &singleBatteryInfo,
+                                                        sizeof(T_DjiFcSubscriptionSingleBatteryInfo),
+                                                        &timestamp);
         if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get value of topic battery single info index1 error.");
         } else {
@@ -245,43 +250,27 @@ T_DjiReturnCode DjiTest_FcSubscriptionRunSample(void)
         }
     }
 
-    USER_LOG_INFO("--> Step 5: Unsubscribe the topics of quaternion, velocity and gps position and gps times");
-    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_POSITION);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("UnSubscribe topic quaternion error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_TIME);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("UnSubscribe topic gpstimes error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    djiStat = DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_DATE);
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("UnSubscribe topic gpstimes error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
-
-    USER_LOG_INFO("--> Step 5: Deinit fc subscription module");
-
-    djiStat = DjiFcSubscription_DeInit();
-    if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Deinit fc subscription error.");
-        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    /* If the resident background subscription service (DjiTest_FcSubscriptionStartService)
+     * is active, this sample shares the global FC subscription module with it. Shared topics
+     * (e.g. quaternion, velocity, gps_position) are not reference-counted, so unsubscribing
+     * affects all users. Skip unsubscribe/deinit in this case to avoid tearing down topics
+     * the background service still relies on (which would make it keep reporting
+     * "Requested topic have not been subscribed"). Perform the full unsubscribe and
+     * deinitialization only when running standalone, to avoid leaving stale subscriptions. */
+    if (s_fcSubscriptionServiceRunning == false) {
+        USER_LOG_INFO("--> Step 5: Unsubscribe topics and deinit fc subscription module");
+        DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION);
+        DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY);
+        DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_POSITION);
+        DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_TIME);
+        DjiFcSubscription_UnSubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GPS_DATE);
+        djiStat = DjiFcSubscription_DeInit();
+        if (djiStat != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Deinit fc subscription error.");
+        }
+    } else {
+        USER_LOG_INFO("--> Step 5: fc subscription background service is running, "
+                      "skip unsubscribe/deinit to avoid breaking it.");
     }
 
     s_userFcSubscriptionDataShow = false;

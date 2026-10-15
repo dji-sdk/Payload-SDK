@@ -43,6 +43,11 @@
 #define TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER             (64 * 1024)
 #define TEST_MOP_CHANNEL_NORMAL_TRANSFOR_RECV_BUFFER             (100 * 1024)
 
+/* Reliable transparent transfer channel (psdk-psdk, no File-Service protocol) */
+#define TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_CHANNEL_ID            49153
+#define TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_SEND_BUFFER           (64 * 1024)
+#define TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_RECV_BUFFER           (100 * 1024)
+
 #define TEST_MOP_CHANNEL_FILE_SERVICE_CHANNEL_ID                 49153
 #define TEST_MOP_CHANNEL_FILE_SERVICE_SEND_BUFFER                (3 * 1024 * 1024)
 #define TEST_MOP_CHANNEL_FILE_SERVICE_RECV_BUFFER                (100 * 1024)
@@ -94,9 +99,19 @@ static T_DjiTaskHandle s_fileServiceMopChannelAcceptTask;
 static T_DjiMopChannelHandle s_fileServiceMopChannelHandle;
 static T_MopFileServiceClientContent s_fileServiceContent[TEST_MOP_CHANNEL_FILE_SERVICE_CLIENT_MAX_SUPPORT_NUM];
 
+/* Reliable transparent transfer */
+static T_DjiMopChannelHandle s_testMopChannelReliableHandle;
+static T_DjiMopChannelHandle s_testMopChannelReliableOutHandle;
+static T_DjiTaskHandle s_testMopChannelReliableRecvTask;
+static T_DjiTaskHandle s_testMopChannelReliableSendTask;
+static T_DjiSemaHandle s_testMopChannelReliableReadySema;
+static bool s_testMopChannelReliableConnected = false;
+
 /* Private functions declaration ---------------------------------------------*/
 static void *DjiTest_MopChannelSendNormalTask(void *arg);
 static void *DjiTest_MopChannelRecvNormalTask(void *arg);
+static void *DjiTest_MopChannelReliableRecvTask(void *arg);
+static void *DjiTest_MopChannelReliableSendTask(void *arg);
 static void *DjiTest_MopChannelFileServiceAcceptTask(void *arg);
 static void *DjiTest_MopChannelFileServiceRecvTask(void *arg);
 static void *DjiTest_MopChannelFileServiceSendTask(void *arg);
@@ -107,9 +122,17 @@ T_DjiReturnCode DjiTest_MopChannelStartService(void)
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
+    USER_LOG_INFO("MOP channel service starting...");
+
     returnCode = osalHandler->SemaphoreCreate(0, &s_testMopChannelReadySema);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("mop channel create msdk sema error, stat:0x%08llX.", returnCode);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    }
+
+    returnCode = osalHandler->SemaphoreCreate(0, &s_testMopChannelReliableReadySema);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("mop channel create reliable sema error, stat:0x%08llX.", returnCode);
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
@@ -133,6 +156,10 @@ T_DjiReturnCode DjiTest_MopChannelStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
+    /* File-Service uses ch=49153 which conflicts with reliable transparent transfer.
+     * Disable File-Service accept task when doing psdk-psdk transparent transfer test.
+     * Uncomment below if File-Service is needed (and change RELIABLE_TRANSFOR_CHANNEL_ID away from 49153).】
+     * */
     returnCode = osalHandler->TaskCreate("mop_msdk_accept_task", DjiTest_MopChannelFileServiceAcceptTask,
                                          DJI_MOP_CHANNEL_TASK_STACK_SIZE, NULL, &s_fileServiceMopChannelAcceptTask);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -147,6 +174,121 @@ T_DjiReturnCode DjiTest_MopChannelStartService(void)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
 #pragma GCC diagnostic ignored "-Wreturn-type"
+
+/* ---------- Reliable transparent transfer tasks (ch=49154) ---------- */
+static void *DjiTest_MopChannelReliableRecvTask(void *arg)
+{
+    USER_UTIL_UNUSED(arg);
+    uint8_t *recvBuf = NULL;
+    uint32_t realLen;
+    T_DjiReturnCode returnCode;
+    uint32_t recvDataCount = 0;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+
+    osalHandler->TaskSleepMs(TEST_MOP_CHANNEL_INIT_TIMEMS);
+
+    returnCode = DjiMopChannel_Create(&s_testMopChannelReliableHandle, DJI_MOP_CHANNEL_TRANS_RELIABLE);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("[Reliable] create handle error, stat:0x%08llX.", returnCode);
+        return NULL;
+    }
+
+    recvBuf = osalHandler->Malloc(TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_RECV_BUFFER);
+    if (recvBuf == NULL) {
+        USER_LOG_ERROR("[Reliable] malloc recv buffer error");
+        DjiMopChannel_Destroy(s_testMopChannelReliableHandle);
+        return NULL;
+    }
+
+REBIND_REL:
+    returnCode = DjiMopChannel_Bind(s_testMopChannelReliableHandle, TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_CHANNEL_ID);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("[Reliable] bind channel error :0x%08llX", returnCode);
+        osalHandler->TaskSleepMs(TEST_MOP_CHANNEL_RETRY_TIMEMS);
+        goto REBIND_REL;
+    }
+
+REACCEPT_REL:
+    returnCode = DjiMopChannel_Accept(s_testMopChannelReliableHandle, &s_testMopChannelReliableOutHandle);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_WARN("[Reliable] accept error :0x%08llX", returnCode);
+        osalHandler->TaskSleepMs(TEST_MOP_CHANNEL_RETRY_TIMEMS);
+        goto REACCEPT_REL;
+    }
+
+    USER_LOG_INFO("[Reliable] mop channel is connected");
+
+    s_testMopChannelReliableConnected = true;
+    osalHandler->SemaphorePost(s_testMopChannelReliableReadySema);
+
+    while (1) {
+        memset(recvBuf, 0, TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_RECV_BUFFER);
+        returnCode = DjiMopChannel_RecvData(s_testMopChannelReliableOutHandle, recvBuf,
+                                            TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_RECV_BUFFER, &realLen);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            if (returnCode == DJI_ERROR_MOP_CHANNEL_MODULE_CODE_CONNECTION_CLOSE) {
+                USER_LOG_INFO("[Reliable] mop channel is disconnected");
+                s_testMopChannelReliableConnected = false;
+                osalHandler->TaskSleepMs(TEST_MOP_CHANNEL_RETRY_TIMEMS);
+                DjiMopChannel_Close(s_testMopChannelReliableOutHandle);
+                DjiMopChannel_Destroy(s_testMopChannelReliableOutHandle);
+                s_testMopChannelReliableOutHandle = NULL;
+                goto REACCEPT_REL;
+            }
+        } else {
+            USER_LOG_INFO("[Reliable] recv length:%u count:%u  data: %.*s",
+                          realLen, recvDataCount++,
+                          (int)(realLen > 64 ? 64 : realLen), (char *)recvBuf);
+        }
+    }
+}
+
+static void *DjiTest_MopChannelReliableSendTask(void *arg)
+{
+    USER_UTIL_UNUSED(arg);
+    uint8_t *sendBuf = NULL;
+    uint32_t realLen = 0;
+    T_DjiReturnCode returnCode;
+    uint32_t sendDataCount = 0;
+    T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+
+    osalHandler->TaskSleepMs(TEST_MOP_CHANNEL_INIT_TIMEMS);
+
+    sendBuf = osalHandler->Malloc(TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_SEND_BUFFER);
+    if (sendBuf == NULL) {
+        USER_LOG_ERROR("[Reliable] malloc send buffer error");
+        return NULL;
+    }
+
+REWAIT_REL:
+    returnCode = osalHandler->SemaphoreWait(s_testMopChannelReliableReadySema);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("[Reliable] wait sema error, stat:0x%08llX.", returnCode);
+        osalHandler->Free(sendBuf);
+        return NULL;
+    }
+
+    while (1) {
+        if (s_testMopChannelReliableConnected == false) {
+            sendDataCount = 0;
+            goto REWAIT_REL;
+        }
+
+        sendDataCount++;
+        memset(sendBuf, 'A' + (sendDataCount - 1) % 26, TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_SEND_BUFFER);
+        returnCode = DjiMopChannel_SendData(s_testMopChannelReliableOutHandle, sendBuf,
+                                            TEST_MOP_CHANNEL_RELIABLE_TRANSFOR_SEND_BUFFER, &realLen);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("[Reliable] send data error, stat:0x%08llX", returnCode);
+        } else {
+            USER_LOG_INFO("[Reliable] send length:%u count:%u", realLen, sendDataCount);
+        }
+
+        osalHandler->TaskSleepMs(1000);
+    }
+}
+
+/* ---------- End of reliable transparent transfer tasks ---------- */
 
 static void *DjiTest_MopChannelSendNormalTask(void *arg)
 {
@@ -170,6 +312,7 @@ REWAIT:
     returnCode = osalHandler->SemaphoreWait(s_testMopChannelReadySema);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("mop channel wait sema error, stat:0x%08llX.", returnCode);
+        osalHandler->Free(sendBuf);
         return NULL;
     }
 
@@ -180,7 +323,7 @@ REWAIT:
         }
 
         sendDataCount++;
-        memset(sendBuf, 'A' - 1 + (sendDataCount % 26), TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER);
+        memset(sendBuf, 'A' + (sendDataCount - 1) % 26, TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER);
         returnCode = DjiMopChannel_SendData(s_testMopChannelNormalOutHandle, sendBuf,
                                             TEST_MOP_CHANNEL_NORMAL_TRANSFOR_SEND_BUFFER, &realLen);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -224,6 +367,13 @@ static void *DjiTest_MopChannelRecvNormalTask(void *arg)
     }
 #endif
 
+    recvBuf = osalHandler->Malloc(TEST_MOP_CHANNEL_NORMAL_TRANSFOR_RECV_BUFFER);
+    if (recvBuf == NULL) {
+        USER_LOG_ERROR("malloc recv buffer error");
+        DjiMopChannel_Destroy(s_testMopChannelNormalHandle);
+        return NULL;
+    }
+
 REBIND:
     returnCode = DjiMopChannel_Bind(s_testMopChannelNormalHandle, TEST_MOP_CHANNEL_NORMAL_TRANSFOR_CHANNEL_ID);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -241,12 +391,6 @@ REACCEPT:
     }
 
     USER_LOG_INFO("mop channel is connected");
-
-    recvBuf = osalHandler->Malloc(TEST_MOP_CHANNEL_NORMAL_TRANSFOR_RECV_BUFFER);
-    if (recvBuf == NULL) {
-        USER_LOG_ERROR("malloc recv buffer error");
-        return NULL;
-    }
 
     s_testMopChannelConnected = true;
 

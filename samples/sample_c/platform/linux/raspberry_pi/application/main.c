@@ -67,7 +67,7 @@
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
 #define DJI_LOG_MAX_COUNT               (10)
-#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (128)
 #define DJI_SYSTEM_RESULT_STR_MAX_SIZE  (128)
 
 /* Private types -------------------------------------------------------------*/
@@ -113,6 +113,7 @@ int main(int argc, char **argv)
 
     // attention: when the program is hand up ctrl-c will generate the coredump file
     signal(SIGTERM, DjiUser_NormalExitHandler);
+    signal(SIGINT,  DjiUser_NormalExitHandler);
 
     /*!< Step 1: Prepare system environment, such as osal, hal uart, console function and so on. */
     returnCode = DjiUser_PrepareSystemEnvironment();
@@ -160,6 +161,7 @@ int main(int argc, char **argv)
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
+    if (aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT) {
         returnCode = DjiAircraftInfo_GetAircraftVersion(&aircraftInfoVersion);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get aircraft version info error");
@@ -167,6 +169,7 @@ int main(int argc, char **argv)
             USER_LOG_INFO("Aircraft version is V%02d.%02d.%02d.%02d", aircraftInfoVersion.majorVersion,
                           aircraftInfoVersion.minorVersion, aircraftInfoVersion.modifyVersion,
                           aircraftInfoVersion.debugVersion);
+        }
     }
 
     /*!< Step 4: Initialize the selected modules by macros in dji_sdk_config.h . */
@@ -211,7 +214,6 @@ int main(int argc, char **argv)
     if (aircraftInfoBaseInfo.mountPosition == DJI_MOUNT_POSITION_EXTENSION_PORT &&
         (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M300_RTK ||
          aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M350_RTK)) {
-        // TODO: something is no support on E-Port of M300/M350 ???
     } else {
         #if CONFIG_MODULE_SAMPLE_CAMERA_EMU_ON
             returnCode = DjiTest_CameraEmuBaseStartService();
@@ -224,13 +226,6 @@ int main(int argc, char **argv)
             returnCode = DjiTest_CameraEmuMediaStartService();
             if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("camera emu media init error");
-            }
-        #endif
-
-        #if CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
-            returnCode = DjiTest_FcSubscriptionStartService();
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                USER_LOG_ERROR("data subscription sample init error\n");
             }
         #endif
 
@@ -253,13 +248,6 @@ int main(int argc, char **argv)
             }
         #endif
 
-    #if CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
-        returnCode = DjiTest_MopChannelStartService();
-        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("mop channel sample init error");
-        }
-    #endif
-
         #if CONFIG_MODULE_SAMPLE_PAYLOAD_COLLABORATION_ON
             if (aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
                 aircraftInfoBaseInfo.djiAdapterType == DJI_SDK_ADAPTER_TYPE_XPORT) {
@@ -270,6 +258,20 @@ int main(int argc, char **argv)
             }
         #endif
     }
+
+    #if CONFIG_MODULE_SAMPLE_FC_SUBSCRIPTION_ON
+        returnCode = DjiTest_FcSubscriptionStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("data subscription sample init error\n");
+        }
+    #endif
+
+    #if CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
+        returnCode = DjiTest_MopChannelStartService();
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("mop channel sample init error");
+        }
+    #endif
 
     #if CONFIG_MODULE_SAMPLE_UPGRADE_ON
         T_DjiTestUpgradePlatformOpt linuxUpgradePlatformOpt = {

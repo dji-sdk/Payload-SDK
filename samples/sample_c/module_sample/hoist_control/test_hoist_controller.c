@@ -256,7 +256,7 @@ static void *UsrHoistController_Task(void *arg)
 
         DjiHoistController_flightAvoidStatus(&avoid_data);
         if (avoid_data.is_avoid_stop_finish || avoid_data.is_cargo_avoid || avoid_data.is_start_avoid){
-            USER_LOG_INFO("FC100 start avoid stop_finish:%d, cargo_aviod:%d, start avoid:%d !!!",avoid_data.is_avoid_stop_finish,
+            USER_LOG_INFO("aircraft start avoid stop_finish:%d, cargo_aviod:%d, start avoid:%d !!!",avoid_data.is_avoid_stop_finish,
                     avoid_data.is_cargo_avoid, avoid_data.is_start_avoid);
         }
 

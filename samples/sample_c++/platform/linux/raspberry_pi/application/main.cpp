@@ -44,6 +44,10 @@
 #include <hms_manager/hms_manager_entry.h>
 #include "camera_manager/test_camera_manager_entry.h"
 #include <widget_manager/test_widget_manager.hpp>
+#include "liveview/test_liveview.h"
+#include "liveview/test_ar_pixel_to_gps.h"
+#include "liveview/test_sei_geo_converter.h"
+#include "mop_channel/test_mop_channel_client.h"
 /* Private constants ---------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -76,7 +80,13 @@ start:
         << "| [g] Request Lidar data sample - Request Lidar data and store the point cloud data as pcd files   |\n"
         << "| [h] Request Radar data sample - Request radar data                                               |\n"
         << "| [l] Run widget states manager sample, control widget states on other payload                     |\n"
-        << "| [m] Run H.264 liveview sample with config param - save H.264 files in the current directory      |\n"
+        << "| [m] Run H.264 liveview sample with config param - save H.264 files custom configuration param    |\n"
+        << "| [n] Run H.264 liveview sample - save H.264 files in the current directory                        |\n"
+        << "| [o] MOP channel client sample - connect to V4 payload server and transfer data                  |\n"
+        << "| [p] AR Pixel-to-GPS - preset screen points + fixed distance -> GPS (only needs AR+FOV SEI)       |\n"
+        << "|     Verifies the coordinate conversion pipeline. No AI detection required. Run this first.       |\n"
+        << "| [q] AI Target-to-GPS - AI detected targets + measured distance -> GPS (needs AR+AI+FOV SEI)      |\n"
+        << "|     End-to-end AI target positioning. Requires camera AI detection active with targets visible.   |\n"
         << std::endl;
 
     std::cin >> inputChar;
@@ -122,6 +132,18 @@ start:
             break;
         case 'm':
             DjiTest_RunCameraStreamViewWithParam();
+            break;
+        case 'n':
+            DjiTest_LiveviewSample();
+            break;
+        case 'o':
+            DjiTest_MopChannelClientRun();
+            break;
+        case 'p':
+            DjiUser_RunArPixelToGpsSample();
+            break;
+        case 'q':
+            DjiUser_RunSeiGeoConverterSample();
             break;
         default:
             break;

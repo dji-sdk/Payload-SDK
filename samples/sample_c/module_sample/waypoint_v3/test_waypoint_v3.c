@@ -209,6 +209,19 @@ close_file:
     DjiTest_WidgetLogAppend("aircraft on the ground, motor toped.");
     USER_LOG_INFO("The aircraft is on the ground now, and motor are stoped.");
 
+    /*! Query the exit reason of the just-finished waypoint v3 mission so users can learn how
+     * the mission ended (normal finish / user exit / abnormal exit, etc.). */
+    T_DjiWaypointV3ExitResult exitResult = {0};
+    returnCode = DjiWaypointV3_GetExitReason(&exitResult);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Get waypoint v3 exit reason failed, error code: 0x%08llX", returnCode);
+    } else {
+        USER_LOG_INFO("Waypoint v3 mission exit result: status = %d, reason = %d",
+                      exitResult.status, exitResult.reason);
+        DjiTest_WidgetLogAppend("WP3 exit: status=%d, reason=%d",
+                                exitResult.status, exitResult.reason);
+    }
+
 out:
 #ifdef SYSTEM_ARCH_LINUX
     if (kmzFile != NULL) {

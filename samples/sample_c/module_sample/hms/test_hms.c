@@ -44,7 +44,7 @@
 #define HMS_DIR_PATH_LEN_MAX             (256)
 
 #ifdef SYSTEM_ARCH_LINUX
-#define DJI_CUSTOM_HMS_CODE_INJECT_ON    (0)
+#define DJI_CUSTOM_HMS_CODE_INJECT_ON    (1)
 #else
 #define DJI_CUSTOM_HMS_CODE_INJECT_ON    (1)
 #endif
@@ -195,10 +195,15 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
 #endif
 
 #if DJI_CUSTOM_HMS_CODE_INJECT_ON
-    DjiHmsCustomization_InjectHmsErrorCode(0x1E020000, DJI_HMS_ERROR_LEVEL_FATAL);
-    DjiHmsCustomization_InjectHmsErrorCode(0x1E020001, DJI_HMS_ERROR_LEVEL_CRITICAL);
-    DjiHmsCustomization_InjectHmsErrorCode(0x1E020002, DJI_HMS_ERROR_LEVEL_WARN);
-    DjiHmsCustomization_InjectHmsErrorCode(0x1E020003, DJI_HMS_ERROR_LEVEL_HINT);
+    T_DjiReturnCode injectStat;
+    injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020005, DJI_HMS_ERROR_LEVEL_FATAL);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020005 level=FATAL stat=0x%08llX", injectStat);
+    injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020006, DJI_HMS_ERROR_LEVEL_CRITICAL);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020006 level=CRITICAL stat=0x%08llX", injectStat);
+    injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020007, DJI_HMS_ERROR_LEVEL_WARN);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020007 level=WARN stat=0x%08llX", injectStat);
+    injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020008, DJI_HMS_ERROR_LEVEL_HINT);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020008 level=HINT stat=0x%08llX", injectStat);
 #endif
 
     return returnCode;

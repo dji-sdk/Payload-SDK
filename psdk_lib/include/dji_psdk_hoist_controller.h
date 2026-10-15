@@ -76,7 +76,7 @@ typedef enum {
 } E_DjiSimpleHoistEscapeCmd;
 
 /**
- * @brief hoist status from hoist system data structure for FC100.
+ * @brief hoist status from hoist system data structure for FC100,FC200
  */
 typedef struct {
     /*cerrent staus,0x00: finish taking up; 0x01:taking up; 0x02:pause acion; 0x3:taking down; 0x04:finish taking down; 0x0f: hoist system error*/
@@ -97,7 +97,7 @@ typedef struct {
 } __attribute__((packed)) psdk_receive_hoist_status_t;
 
 /**
- * @brief smart hook status from hoist system data structure for FC100.
+ * @brief smart hook status from hoist system data structure for FC100,FC200.
  */
 typedef struct {
    uint8_t  version;
@@ -111,7 +111,7 @@ typedef struct {
 } __attribute__((packed)) psdk_receive_hook_status_t;
 
 /**
- * @brief smart hook status from hoist system data structure for FC100.
+ * @brief smart hook status from hoist system data structure for FC100,FC200.
  */
 typedef struct {
    uint8_t  version;
@@ -141,7 +141,7 @@ T_DjiReturnCode DjiHoistControllerManagement_Init(void);
 T_DjiReturnCode DjiHoistControllerManagement_DeInit(void);
 
 /**
- * @brief notify flightcontorller can control hoist system in FC100
+ * @brief notify flightcontorller can control hoist system in FC100,FC200.
  * @note we use it must,befor use DjiHoistControllerManagement_Init().
  * @param void: none
  * @return Execution E_DjiHoistType.
@@ -154,7 +154,7 @@ T_DjiReturnCode DjiHoistControllerManagement_DeInit(void);
 T_DjiReturnCode psdk_HoistController_NotifyFlight_to_startPushInfo(void);
 
 /**
- * @brief Get hoist stuts for PSDK user in FC100
+ * @brief Get hoist stuts for PSDK user in FC100 FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param hoistStatus: return hoist status struction :psdk_receive_hoist_status_t
  * @return Execution result.
@@ -163,7 +163,7 @@ T_DjiReturnCode DjiHoistController_hoistStatus(psdk_receive_hoist_status_t *hois
 
 
 /**
- * @brief Get simple hoist stuts for PSDK user in FC100
+ * @brief Get simple hoist stuts for PSDK user in FC100, FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param hoistStatus: return simple hoist status struction :psdk_receive_simple_hoist_status_t
  * @return Execution result.
@@ -171,7 +171,7 @@ T_DjiReturnCode DjiHoistController_hoistStatus(psdk_receive_hoist_status_t *hois
 T_DjiReturnCode DjiHoistController_simpleHoistStatus(psdk_receive_simple_hoist_status_t *simpleHoistStatus);
 
 /**
- * @brief Get hoist stuts for PSDK user in FC100
+ * @brief Get hoist stuts for PSDK user in FC100, FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param hookStatus: return hoist status struction :psdk_receive_hook_status_t
  * @return Execution result.
@@ -180,7 +180,7 @@ T_DjiReturnCode DjiHoistController_hookStatus(psdk_receive_hook_status_t *hookSt
 
 
 /**
- * @brief Set hoist command for PSDK user in FC100
+ * @brief Set hoist command for PSDK user in FC100, FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param cmd: set param is E_DjiHoistControllerCmdStatus
  * @return Execution result.
@@ -188,7 +188,7 @@ T_DjiReturnCode DjiHoistController_hookStatus(psdk_receive_hook_status_t *hookSt
 T_DjiReturnCode psdk_hoistControllerCmdAction(E_DjiHoistControllerCmdStatus cmd);
 
 /**
- * @brief Set hook command for PSDK user in FC100
+ * @brief Set hook command for PSDK user in FC100, FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param cmd: set param is E_DjiHookControllerCmdStatus
  * @return Execution result.
@@ -196,7 +196,7 @@ T_DjiReturnCode psdk_hoistControllerCmdAction(E_DjiHoistControllerCmdStatus cmd)
 T_DjiReturnCode psdk_hookControllerCmdAction(E_DjiHookControllerCmdStatus cmd);
 
 /**
- * @brief Set simple hoist escape command for PSDK user in FC100
+ * @brief Set simple hoist escape command for PSDK user in FC100, FC200.
  * @note we use it must,befor use psdk_HoistController_NotifyFlight_to_startPushInfo().
  * @param cmd: set param is E_DjiSimpleHoistEscapeCmd
  * @return Execution result.
@@ -204,7 +204,7 @@ T_DjiReturnCode psdk_hookControllerCmdAction(E_DjiHookControllerCmdStatus cmd);
 T_DjiReturnCode psdk_simpleHoistEscapeCmdAction(E_DjiSimpleHoistEscapeCmd cmd);
 
 /**
- * @brief Get avoid stuts for PSDK user in FC100
+ * @brief Get avoid stuts for PSDK user in FC100, FC200.
  * @note we use it must below 10HZ
  * @param cmd: Get param is psdk_receive_avoid_status_t
  * @return Execution result.

@@ -33,6 +33,7 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/gimbal/*.c*
         ../../../module_sample/flight_controller/*.c*
         ../../../module_sample/hms_manager/*.c*
+        ../../../module_sample/mop_channel/*.c*
         ../../../../sample_c/module_sample/*.c
         ../../../module_sample/widget_manager/*.c*
         )

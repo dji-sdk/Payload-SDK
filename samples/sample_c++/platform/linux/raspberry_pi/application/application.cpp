@@ -47,6 +47,7 @@
 #include "widget/test_widget_speaker.h"
 #include <power_management/test_power_management.h>
 #include "data_transmission/test_data_transmission.h"
+#include "dji_mop_channel.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define DJI_LOG_PATH                    "Logs/DJI"
@@ -267,6 +268,7 @@ void Application::DjiUser_ApplicationStart()
 
     // attention: when the program is hand up ctrl-c will generate the coredump file
     signal(SIGTERM, DjiUser_NormalExitHandler);
+    signal(SIGINT,  DjiUser_NormalExitHandler);
 
     returnCode = DjiUser_FillInUserInfo(&userInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -296,7 +298,8 @@ void Application::DjiUser_ApplicationStart()
 
     if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT &&
         aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE &&
-        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_SKYPORT_V3) {
+        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_SKYPORT_V3 &&
+        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_EPORT_V3_RIBBON_CABLE) {
         throw std::runtime_error("Please run this sample on extension port or skyport v3.");
     }
 
@@ -374,6 +377,11 @@ void Application::DjiUser_ApplicationStart()
 
 T_DjiReturnCode Application::DjiUser_PrintConsole(const uint8_t *data, uint16_t dataLen)
 {
+    /* Filter out verbose MOP internal logs */
+    if (dataLen >= 7 && strncmp((const char *)data, "MOP_API", 7) == 0) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+    }
+
     printf("%s", data);
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

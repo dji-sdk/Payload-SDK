@@ -29,9 +29,42 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "dji_typedef.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* Exported types (SPZ tracking) ---------------------------------------------*/
+/**
+ * @brief Track type for spotlight-zoom target selection.
+ */
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_TARGET_ID = 0, /*!< Select target by ID from MOT push callback. */
+    DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_BOX       = 1, /*!< Select target by user-drawn bounding box. */
+    DJI_FLIGHT_CONTROLLER_SPZ_TRACK_CONFIRM        = 3, /*!< Confirm target, no additional data (action_type=CONFIRM_TARGET). */
+} E_DjiFlightControllerSpzTrackType;
+
+/**
+ * @brief Bounding box for spotlight-zoom target selection.
+ *        All coordinates are in units of 1/10000 of the frame dimension.
+ */
+typedef struct {
+    uint16_t cx; /*!< Box center X, unit: 1/10000 of frame width. */
+    uint16_t cy; /*!< Box center Y, unit: 1/10000 of frame height. */
+    uint16_t w;  /*!< Box width,    unit: 1/10000 of frame width. */
+    uint16_t h;  /*!< Box height,   unit: 1/10000 of frame height. */
+} T_DjiFlightControllerSpzBox;
+
+/**
+ * @brief Parameters for spotlight-zoom target tracking selection.
+ */
+typedef struct {
+    E_DjiFlightControllerSpzTrackType trackType;
+    union {
+        uint32_t                    targetId; /*!< Target ID from MOT push; only lower 16 bits sent on wire. */
+        T_DjiFlightControllerSpzBox box;      /*!< Bounding box in 1/10000 frame coordinates. */
+    };
+} T_DjiFlightControllerSpotlightZoomTrackParam;
 
 /* Exported constants --------------------------------------------------------*/
 #define EMERGENCY_STOP_MOTOR_MSG_MAX_LENGTH 10 /*!<  Max length of emergency stop motor message. */
@@ -46,6 +79,8 @@ typedef enum {
     DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_HOVER = 0,  /*!< Aircraft will execute hover action when RC is lost. */
     DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_LANDING = 1,  /*!< Aircraft will execute land action when RC is lost. */
     DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GOHOME = 2,  /*!< Aircraft will execute go-home action when RC is lost. */
+    DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GO_UP = 3,  /*!< Aircraft will ascend to the height configured by DjiFlightController_SetRCLostGoUpHeight and then go home when RC is lost. */
+    DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_RETURN_HOME = 4,  /*!< Aircraft will execute return to home action when RC is lost. */
 } E_DjiFlightControllerRCLostAction;
 
 /**
@@ -60,6 +95,16 @@ typedef enum {
 } E_DjiFlightControllerRtkPositionEnableStatus;
 
 /**
+ * @brief Spotlight-zoom approach mode enum.
+ *        Controls whether the aircraft enforces a minimum distance to the target.
+ *        The setting is saved to EEPROM and persists across power cycles. Default: normal mode (1).
+ */
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_SPZ_APPROACH_MODE  = 0, /*!< Approach mode: no minimum distance limit; aircraft can get close to target. */
+    DJI_FLIGHT_CONTROLLER_SPZ_NORMAL_MODE    = 1, /*!< Normal mode (default): minimum distance limit is enforced. */
+} E_DjiFlightControllerSpzTooCloseLimitMode;
+
+/**
  * @brief Enable/Disable obstacle sensing enum
  */
 typedef enum {
@@ -68,6 +113,15 @@ typedef enum {
     DJI_FLIGHT_CONTROLLER_ENABLE_OBSTACLE_AVOIDANCE = 1, /*!< 0: The aircraft will perform obstacle sensing in the
                                                           * specified direction */
 } E_DjiFlightControllerObstacleAvoidanceEnableStatus;
+
+/**
+ * @brief Enable/Disable spotlight-zoom auto zoom function enum.
+ * @note The setting is saved to EEPROM and persists across power cycles.
+ */
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_SPZ_AUTO_ZOOM_DISABLE = 0, /*!< Disable spotlight-zoom auto zoom. */
+    DJI_FLIGHT_CONTROLLER_SPZ_AUTO_ZOOM_ENABLE  = 1, /*!< Enable spotlight-zoom auto zoom (default). */
+} E_DjiFlightControllerSpzAutoZoomStatus;
 
 /**
  * @brief Enable/Disable emergency stop motor function enum
@@ -120,8 +174,9 @@ typedef enum {
  * @brief The aircraft's light status enum
  */
 typedef enum {
-    DJI_FLIGHT_CONTROLLER_LIGHT_OFF = 0,
-    DJI_FLIGHT_CONTROLLER_LIGHT_ON = 1,
+    DJI_FLIGHT_CONTROLLER_LIGHT_OFF = 0,       /*!< Light off (bottom light: always off) */
+    DJI_FLIGHT_CONTROLLER_LIGHT_ON = 1,         /*!< Light on (bottom light: always on during flight, off after landing) */
+    DJI_FLIGHT_CONTROLLER_LIGHT_AUTO = 2,       /*!< Bottom light only: automatic mode controlled by vision system */
     DJI_FLIGHT_CONTROLLER_LIGHT_STATUS_MAX,
 } E_DjiFlightControllerLightStatus;
 
@@ -253,6 +308,11 @@ typedef enum {
 } E_DjiFlightControllerCloseAllAvoidCommand;
 
 typedef enum {
+    DJI_FLIGHT_CONTROLLER_DISABLE_HOIST_OPTION_IN_FLIGHT = 0, /*disable hoist action in flight*/
+    DJI_FLIGHT_CONTROLLER_ENABLE_HOIST_OPTION_IN_FLIGHT = 1,  /*enable hoist action in flight*/
+} E_DjiFlightControllerHoistActionInFlightCommand;
+
+typedef enum {
     DJI_FLIGHT_CONTROLLER_NO_MOTOR_IN_SLOW_ROTATE_MODE = 0,
     DJI_FLIGHT_CONTROLLER_SOME_MOTOR_IN_SLOW_ROTATE_MODE = 1,
     DJI_FLIGHT_CONTROLLER_ALL_MOTOR_IN_SLOW_ROTATE_MODE = 2,
@@ -262,6 +322,16 @@ typedef enum {
     DJI_FLIGHT_CONTROLLER_FTS_NOT_TRIGGERD = 0,
     DJI_FLIGHT_CONTROLLER_FTS_TRIGGERD = 1,
 } E_DjiFlightControllerFtsStatus;
+
+/**
+ * @brief Enable/disable status of multiple positioning mode.
+ * @note  Must be set to DJI_FLIGHT_CONTROLLER_MULTIPLE_MODE_ENABLE before configuring
+ *        assist_positioning_mode to PSDK (ADN mode).
+ */
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_MULTIPLE_MODE_DISABLE = 0, /*!< Multiple positioning mode disabled. */
+    DJI_FLIGHT_CONTROLLER_MULTIPLE_MODE_ENABLE  = 2, /*!< Disable Gnss mode. */
+} E_DjiFlightControllerMultipleMode;
 
 /**
  * @brief Joystick mode.
@@ -360,17 +430,55 @@ typedef struct
     uint8_t gohome_capacity;  /*!< Returning to home and landing requires power capacity, unit: percent, 0 indicates invalid */
 } T_DjiFlightControllerBatteryCapacityGohome;
 
+/**
+ * @brief Flight controller mode type, from DJI OSD push protocol (cmd_id 0x43).
+ *        Values correspond to DJI_MC_MODE_TYPE in the internal protocol definition.
+ */
+typedef uint8_t E_DjiMcModeType;
+#define E_DJI_MC_MODE_TYPE_MANUAL                   ((E_DjiMcModeType)0)
+#define E_DJI_MC_MODE_TYPE_ATTI                     ((E_DjiMcModeType)1)
+#define E_DJI_MC_MODE_TYPE_GPS_ATTI                 ((E_DjiMcModeType)6)   /*!< GPS / P mode */
+#define E_DJI_MC_MODE_TYPE_GO_HOME                  ((E_DjiMcModeType)15)  /*!< Return to home */
+#define E_DJI_MC_MODE_TYPE_JOYSTICK                 ((E_DjiMcModeType)17)  /*!< Joystick/SDK control */
+#define E_DJI_MC_MODE_TYPE_GPS_SPORT                ((E_DjiMcModeType)31)  /*!< Sport mode */
+#define E_DJI_MC_MODE_TYPE_NAVI_SUBMODE_NAVI_POI   ((E_DjiMcModeType)50)  /*!< Navigation POI mode */
+#define E_DJI_MC_MODE_TYPE_NAVI_SUBMODE_TA          ((E_DjiMcModeType)51)  /*!< Target Acquisition: SPZ active tracking */
+#define E_DJI_MC_MODE_TYPE_MASTERSHOT               ((E_DjiMcModeType)58)
+#define E_DJI_MC_MODE_TYPE_SPOTLIGHT_NORMAL         ((E_DjiMcModeType)69)
+#define E_DJI_MC_MODE_TYPE_SPOTLIGHT_TRIPOD         ((E_DjiMcModeType)70)
+#define E_DJI_MC_MODE_TYPE_SPOTLIGHT_SPORT          ((E_DjiMcModeType)71)
+/* Full value list: refer to DJI_MC_MODE_TYPE in dji_ofdm_define.h / DJI_V1_3_67_COMMANDS protocol */
+
 typedef struct
 {
-    dji_f64_t longitude; /*!< radian, unit: rad [-180, 180]*/
-    dji_f64_t latitude; /*!< radian, unit: rad [-190, 90]*/
-    int16_t relative_height; /*!< Relative height to home point, unit: 0.1m */
-    int16_t speed_x; /*!< Ground-based X-axis velocity, unit: 0.1m/s */
-    int16_t speed_y; /*!< Ground-based Y-axis velocity, unit: 0.1m/s */
-    int16_t speed_z; /*!< Ground-based Z-axis velocity, unit: 0.1m/s */
-    int16_t pitch; /*!< Pitch axis angle, unit: 0.1 degree [-1800, 1800] */
-    int16_t roll; /*!< Roll axis angle, unit: 0.1 degree [-1800, 1800] */
-    int16_t yaw; /*!< Yaw axis angle, unit: 0.1 degree [-1800, 1800] */
+    dji_f64_t longitude;        /*!< radian, unit: rad [-180, 180]*/
+    dji_f64_t latitude;         /*!< radian, unit: rad [-90, 90]*/
+    int16_t relative_height;    /*!< Relative height to home point, unit: 0.1m */
+    int16_t speed_x;            /*!< Ground-based X-axis velocity, unit: 0.1m/s */
+    int16_t speed_y;            /*!< Ground-based Y-axis velocity, unit: 0.1m/s */
+    int16_t speed_z;            /*!< Ground-based Z-axis velocity, unit: 0.1m/s */
+    int16_t pitch;              /*!< Pitch axis angle, unit: 0.1 degree [-1800, 1800] */
+    int16_t roll;               /*!< Roll axis angle, unit: 0.1 degree [-1800, 1800] */
+    int16_t yaw;                /*!< Yaw axis angle, unit: 0.1 degree [-1800, 1800] */
+    int16_t yaw_rate;           /*!< Yaw angular rate, unit: 0.1 degree/s */
+    int16_t agl_height;         /*!< True height above ground (AGL), unit: 0.1m */
+    int32_t hsml;               /*!< GPS absolute altitude (height above sea mean level), unit: 0.001m */
+    E_DjiMcModeType mode;       /*!< Flight controller mode, refer to E_DjiMcModeType */
+    uint8_t failsafe;           /*!< RC failsafe flag: 1 = RC signal lost */
+    uint8_t ground_or_sky;      /*!< Aircraft position: 0 = unknown, 1 = on ground, 2 = in air */
+    uint8_t is_motor_up;        /*!< Motor running flag: 1 = motors spinning */
+    uint8_t is_gps_valid;       /*!< GPS available flag: 1 = GPS is valid */
+    uint8_t gps_num;            /*!< Number of GPS satellites */
+    uint8_t positioning_signal_level; /*!< Positioning signal strength level (0-5: GPS, 10: RTK) */
+    uint8_t positional_src_type;  /*!< Positioning source: 0=Unknown, 1=MVO, 2=GPS, 3=RTK */
+    uint8_t heading_src_type;     /*!< Heading source: 0=Gyroscope, 1=Compass, 2=RTK */
+    uint8_t battery_warning;      /*!< Battery warning level: 0=normal, 1=level-1, 2=level-2 */
+    uint8_t gohome_landing_reason; /*!< Reason for go-home or landing action */
+    uint8_t motor_start_error_code; /*!< Motor start failure code (continuously updated) */
+    uint8_t wind_spd_dm;          /*!< Estimated wind speed, unit: dm/s */
+    uint8_t wind_dir;             /*!< Wind direction (clockwise): 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW */
+    uint8_t product_type;         /*!< Aircraft type, refer to DJI_DRONE_TYPE */
+    uint8_t heading_level_ok;     /*!< Heading fusion quality flag: 1 = heading fusion level >= 6, 0 = heading fusion level < 6 */
 } T_DjiFlightControllerOsdInfo;
 
 #pragma pack()
@@ -378,7 +486,7 @@ typedef struct
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Set all radar avoid action.
- * @note  It only supports FC100.
+ * @note  It only supports FC100, FC200
  * @param rcLostAction: actions when radar action.It inherits from Pilot's param.
  * @return Execution result.
  */
@@ -386,11 +494,27 @@ T_DjiReturnCode DjiFlightController_SetAllAvoidAction(E_DjiFlightControllerClose
 
 /**
  * @brief Get all radar avoid action.
- * @note It only supports FC100.
+ * @note It only supports FC100,FC200
  * @param rcLostAction: see reference of E_DjiFlightControllerCloseAllAvoidCommand.It inherits from Pilot's param.
  * @return Execution result.
  */
 T_DjiReturnCode DjiFlightController_GetAllAvoidAction(E_DjiFlightControllerCloseAllAvoidCommand *allAction);
+
+/**
+ * @brief Set allow conctrl cable about standard hosit for FC100
+ * @note  It only supports FC100.
+ * @param rcLostAction: E_DjiFlightControllerHoistActionInFlightCommand,
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetHoistActionInFlight(E_DjiFlightControllerHoistActionInFlightCommand isEnable);
+
+/**
+ * @brief Get allow conctrl cable about standard hosit for FC100
+ * @note It only supports FC100.
+ * @param rcLostAction: see reference of E_DjiFlightControllerHoistActionInFlightCommand.It inherits from Pilot's param.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetHoistActionInFlight(E_DjiFlightControllerHoistActionInFlightCommand *isEnable);
 
 /**
  * @brief Initialise flight controller module
@@ -453,6 +577,7 @@ T_DjiReturnCode DjiFlightController_GetControlInAttitudeModeEnabled(bool *enable
 
 /**
  * @brief Prototype of callback function used to get osd info.
+ * @note This API is not available in the current version.
  * @return Execution result.
 */
 typedef T_DjiReturnCode (*FcCmderOsdInfoCbFunc)(T_DjiFlightControllerOsdInfo eventData);
@@ -477,12 +602,20 @@ typedef T_DjiReturnCode (*FcCmderModeCoreTrajEventCbFunc)(T_DjiFlightControllerC
 
 /**
  * @brief Register callback function for the osd info, see reference of T_DjiFlightControllerOsdInfo.
- * @note This API is restricted to specific controlled scenarios and is not enabled for general external use by default.
+ * @note
+ *       1.This API is restricted to specific controlled scenarios and is not enabled for general external use by default.
  *       For information regarding its actual availability, please contact our official support team.
+ *       2.This API is not available in the current version.
  * @param callback: the callback for the osd info.
  * @return Execution result.
  */
 T_DjiReturnCode DjiFlightController_RegisterOsdInfoCallBack(FcCmderOsdInfoCbFunc callback);
+/**
+ * @brief Unregister callback function for the osd info.
+ * @note This API is not available in the current version.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_UnregisterOsdInfoCallBack(void);
 
 /**
  * @brief Register callback function for the gohome battery capacity.
@@ -916,12 +1049,14 @@ T_DjiReturnCode DjiFlightController_GetElectronicSpeedControllerStatus(E_DjiFlig
  * @brief This API is used to get the status of the arm lights.
  * @note
  * 1. This interface is used to obtain the on/off status of the arm lights and is supported only on certain aircraft models.
+ * 2. This API is not available in the current version.
  * @param lightStatus Pointer to the light status.
  *                    When the arm lights are on, the value of `lightStatus` will be `DJI_FLIGHT_CONTROLLER_LIGHT_ON`.
  *                    Otherwise, it will be `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
  *                    The value of `lightStatus` will only be one of the `E_DjiFlightControllerLightStatus` enum values; otherwise, it indicates an abnormal state.
  * @return T_DjiReturnCode error code
- * 1. If the aircraft model does not support this function, the error code `DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT` will be returned.
+ *  1. If the aircraft model does not support this function, the error code `DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT` will be returned.
+ *  2. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_GetArmLightStatus(E_DjiFlightControllerLightStatus *lightStatus);
 
@@ -930,6 +1065,7 @@ T_DjiReturnCode DjiFlightController_GetArmLightStatus(E_DjiFlightControllerLight
  *  1. This interface is used to set the on/off status of the arm lights and is supported only on certain aircraft models.
  *  2. The status of the arm lights can be set to `DJI_FLIGHT_CONTROLLER_LIGHT_ON` or `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
  *  3. After setting, you can call `DjiFlightController_GetArmLightStatus` to query the status.
+ *  4. This API is not available in the current version.
  * @param lightStatus The light status you wish to set.
  *                     The value of `lightStatus` will only be one of the `E_DjiFlightControllerLightStatus` enum values; otherwise, it indicates an abnormal state.
  *  @return T_DjiReturnCode error code
@@ -937,12 +1073,14 @@ T_DjiReturnCode DjiFlightController_GetArmLightStatus(E_DjiFlightControllerLight
  *  2. After the aircraft restarts, the arm light will retain the state they were in before the aircraft was powered off.
  *     This API is no longer maintained. Whether the status is retained after power loss varies by firmware version and aircraft model,
  *     the actual behavior should be verified through testing on the specific aircraft model.
+ *  3. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_SetArmLightStatus(E_DjiFlightControllerLightStatus lightStatus);
 
 /*! @brief This API is used to get the status of the bottom lights.
  *  @note
  *  1. This interface is used to obtain the on/off status of the bottom lights and is supported only on certain aircraft models.
+ *  2. This API is not available in the current version.
  *  @param lightStatus Pointer to the light status.
  *                     When the bottom lights are on, the value of `lightStatus` will be `DJI_FLIGHT_CONTROLLER_LIGHT_ON`.
  *                     Otherwise, it will be `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
@@ -950,6 +1088,7 @@ T_DjiReturnCode DjiFlightController_SetArmLightStatus(E_DjiFlightControllerLight
  *  @return T_DjiReturnCode error code
  *  1. If the aircraft model does not support this function, the error code `DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT` will be returned.
  *  2. This API can only get the current on/off status of the light, it cannot get the current mode setting of the light.
+ *  3. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_GetBottomLightStatus(E_DjiFlightControllerLightStatus *lightStatus);
 
@@ -957,28 +1096,28 @@ T_DjiReturnCode DjiFlightController_GetBottomLightStatus(E_DjiFlightControllerLi
  *  @note
  *  1. This interface is used to set the on/off status of the bottom lights and is supported only on certain aircraft models.
  *  2. The status of the bottom lights can be set to `DJI_FLIGHT_CONTROLLER_LIGHT_ON` or `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
+ *  3. This API is not available in the current version.
  * @param lightStatus The light status you wish to set.
  *                     The value of `lightStatus` will only be one of the `E_DjiFlightControllerLightStatus` enum values; otherwise, it indicates an abnormal state.
  *  @return T_DjiReturnCode error code
  *  1. If the aircraft model does not support this function, the error code `DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT` will be returned.
- *  2. After the aircraft restarts, the bottom light will revert to its default state.
- *     This API is no longer maintained. Whether the status is retained after power loss varies by firmware version and aircraft model,
- *     the actual behavior should be verified through testing on the specific aircraft model.
- *  3. When the bottom light is turned on, this API will set the bottom light to automatic mode.
- *     Note: in automatic mode, the light's on/off status is influenced by ambient light conditions.
- *           The light will automatically turn on at night and turn off during the day.
+ *  2. Supported values: LIGHT_OFF (always off), LIGHT_ON (always on during flight, off after landing),
+ *     LIGHT_AUTO (automatic mode controlled by vision system, bottom light only).
+ *  3. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_SetBottomLightStatus(E_DjiFlightControllerLightStatus lightStatus);
 
 /*! @brief This API is used to get the status of the battery lights.
  *  @note
  *  1. This interface is used to obtain the on/off status of the battery lights and is supported only on certain aircraft models.
+ *  2. This API is not available in the current version.
  *  @param lightStatus Pointer to the light status.
  *                     When the battery lights are on, the value of `lightStatus` will be `DJI_FLIGHT_CONTROLLER_LIGHT_ON`.
  *                     Otherwise, it will be `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
  *                     The value of `lightStatus` will only be one of the `E_DjiFlightControllerLightStatus` enum values; otherwise, it indicates an abnormal state.
  *  @return T_DjiReturnCode error code
  *  1. If the aircraft model does not support this function, the error code `DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT` will be returned.
+ *  2. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_GetBatteryLightStatus(E_DjiFlightControllerLightStatus *lightStatus);
 
@@ -988,6 +1127,7 @@ T_DjiReturnCode DjiFlightController_GetBatteryLightStatus(E_DjiFlightControllerL
  *  2. The status of the battery lights can be set to `DJI_FLIGHT_CONTROLLER_LIGHT_ON` or `DJI_FLIGHT_CONTROLLER_LIGHT_OFF`.
  *  3. Approximately 3 seconds after setting, you can call `DjiFlightController_GetBatteryLightStatus` to query the status.
  *     If you query the status immediately after setting, you may still get the old status.
+ *  4. This API is not available in the current version.
  * @param lightStatus The light status you wish to set.
  *                     The value of `lightStatus` will only be one of the `E_DjiFlightControllerLightStatus` enum values; otherwise, it indicates an abnormal state.
  *  @return T_DjiReturnCode error code
@@ -995,8 +1135,295 @@ T_DjiReturnCode DjiFlightController_GetBatteryLightStatus(E_DjiFlightControllerL
  *  2. After the aircraft restarts, the battery light will retain the state they were in before the aircraft was powered off.
  *     This API is no longer maintained. Whether the status is retained after power loss varies by firmware version and aircraft model,
  *     the actual behavior should be verified through testing on the specific aircraft model.
+ *  3. This API is not available in the current version.
  */
 T_DjiReturnCode DjiFlightController_SetBatteryLightStatus(E_DjiFlightControllerLightStatus lightStatus);
+
+/**
+ * @brief Query the exit reason of the most recent spotlight-zoom mission.
+ * @details This function sends a synchronous query command to the flight controller to
+ *          retrieve the reason why the last spotlight-zoom (POI surround) mission was exited.
+ *          Upon success, the exit reason is stored in `*exitReason` and the corresponding
+ *          human-readable description is printed via DJI_ERROR_PRINT_MSG using the SPZ error
+ *          code system defined in dji_error.h.
+ * @note
+ *  - This function can be called after a spotlight-zoom mission has ended to diagnose
+ *    the cause of exit (normal exit, error, or external trigger).
+ *  - The exit reason is only meaningful after a mission has started and stopped. Calling
+ *    this function before any mission has run may return an undefined value.
+ *  - This API is not available in the current version.
+ * @param exitReason Pointer to a uint8_t that receives the exit reason code on success.
+ *                   The value corresponds to E_DjiSpotlightZoomStatusMessage defined in
+ *                   dji_fc_define.h. Must not be NULL.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Query succeeded; `*exitReason` is valid.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER: `exitReason` is NULL.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_TIMEOUT: No response from flight controller.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+T_DjiReturnCode DjiFlightController_QuerySpotlightZoomExitReason(uint8_t *exitReason);
+
+/**
+ * @brief Start a spotlight-zoom mission on the specified payload position.
+ * @details This function sends a synchronous command to enable the spotlight-zoom
+ *          navigation function via the switch_navigation_function.
+ *
+ * @note
+ *  - The current implementation supports single-payload mode only. Multi-payload
+ *    support (DJI_FUNC_SWITCH_CAMERA_POS + payloadPosition) is reserved for future
+ *    extension via the param_data field of dji_vision_set_switch_navigation_function_req.
+ *  - Before calling this function, ensure the aircraft is airborne and GPS signal is
+ *    valid; otherwise the flight controller will reject the command (ret_code != 0).
+ *  - After a successful start, use DjiInterestPoint_SetSpeed / SetApproachSpeed /
+ *    SetApproachAngle / SetZoomTypeParam to configure mission parameters in real time.
+ *  - To stop the mission, call DjiFlightController_SpotlightZoomStop_Common.
+ *  - This API is not available in the current version.
+ *
+ * @param payloadPosition The mount position of the payload camera to be used by the
+ *                        spotlight-zoom mission. Currently reserved; pass
+ *                        DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 for single-payload scenarios.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Mission started successfully.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT: Current license level does not support this interface.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR: Failed to retrieve license level.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN: Flight controller responded with a non-zero
+ *    ret_code (e.g. aircraft not in air, GPS invalid, unsupported flight mode).
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_TIMEOUT: No response from flight controller.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+T_DjiReturnCode DjiFlightController_SpotlightZoomStart_Common(E_DjiMountPosition payloadPosition);
+
+/**
+ * @brief Stop the currently running spotlight-zoom mission.
+ * @details This function sends a synchronous command to disable the spotlight-zoom
+ *          navigation function via the switch_navigation_function.
+ *
+ * @note
+ *  - If no spotlight-zoom mission is currently running, the flight controller may still
+ *    return success (ret_code = 0); the caller does not need to guard against this case.
+ *  - After stopping, call DjiFlightController_QuerySpotlightZoomExitReason to retrieve
+ *    the exit reason for diagnostics.
+ *  - Multi-payload support (DJI_FUNC_SWITCH_CAMERA_POS + payloadPosition) is reserved
+ *    for future extension; see TODO comment in implementation.
+ *  - This API is not available in the current version.
+ *
+ * @param payloadPosition The mount position of the payload camera. Currently reserved;
+ *                        pass DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 for single-payload
+ *                        scenarios.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Stop command acknowledged successfully.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT: Current license level does not support this interface.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR: Failed to retrieve license level.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN: Flight controller responded with a non-zero
+ *    ret_code.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_TIMEOUT: No response from flight controller.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+T_DjiReturnCode DjiFlightController_SpotlightZoomStop_Common(E_DjiMountPosition payloadPosition);
+
+/**
+ * @brief Select or confirm a tracking target for the spotlight-zoom mission.
+ * @details This function sends a synchronous target-selection command to the flight controller,
+ *          using the SPOTLIGHT_ZOOM_SELECT_TARGET protocol. Two selection methods are supported,
+ *          controlled by trackParam.trackType:
+ *
+ *          1. DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_TARGET_ID:
+ *             Select a candidate target by its ID, obtained from the TM MOT push
+ *             (Multi-Object Tracking). Only the lower 16 bits of targetId are sent
+ *             on the wire.
+ *
+ *          2. DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_BOX:
+ *             Select a target by drawing a bounding box over the live view.
+ *             Box coordinates use
+ *             1/10000 of the frame dimension as the unit:
+ *             - cx / cy : box center X / Y (range:1-10000)
+ *             - w       : box width (range:1-10000)
+ *             - h       : box height (range:1-10000)
+ *
+ *          The request also sets submode = DJI_SPOTLIGHT_ZOOM_MODE_FREE_LOCK_YAW,
+ *          which keeps the aircraft yaw locked to the target direction while the
+ *          gimbal tracks the target. A monotonically increasing sequence number (seq)
+ *          is sent with each call to allow the flight controller to discard stale
+ *          commands.
+ *
+ * @note
+ *  - This function should be called after DjiFlightController_SpotlightZoomStart_Common
+ *    has succeeded and the spotlight-zoom state push shows the mission is in
+ *    DJI_SPOTLIGHT_ZOOM_MOT or DJI_SPOTLIGHT_ZOOM_WAITING state.
+ *    (not yet wrapped; send directly via the protocol if needed).
+ *  - trackType values other than the two above will be rejected before sending.
+ *  - This API is not available in the current version.
+ *
+ * @param payloadPosition Mount position of the payload camera. Currently reserved for
+ *                        future multi-payload support; pass
+ *                        DJI_MOUNT_POSITION_PAYLOAD_PORT_NO1 for single-payload use.
+ * @param trackParam      Target selection parameters. Fill either targetId or box
+ *                        according to trackType:
+ *                        - trackType = DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_TARGET_ID:
+ *                          set trackParam.targetId (uint32_t, lower 16 bits used).
+ *                        - trackType = DJI_FLIGHT_CONTROLLER_SPZ_TRACK_BY_BOX:
+ *                          set trackParam.box.{cx, cy, w, h} in 1/10000 frame units.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Command sent and acknowledged (ack=0).
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER: trackType is not a recognized value.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT: Current license level does not support this interface.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR: Failed to retrieve license level.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN: Flight controller responded with non-zero ack.
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_TIMEOUT: No response from flight controller.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+ T_DjiReturnCode DjiFlightController_SpotlightZoomStartTracking_Common(
+    E_DjiMountPosition payloadPosition,
+    T_DjiFlightControllerSpotlightZoomTrackParam trackParam);
+
+/**
+ * @brief Enable or disable the spotlight-zoom auto zoom function.
+ * @details In the SPZ mission flow, this function is an optional step that should be
+ *          called before setting the target screen occupancy ratio:
+ *
+ *          [Optional] Call this function to disable auto zoom before setting
+ *          target screen occupancy ratio; then set occupancy ratio via
+ *          DjiInterestPoint_SetZoomByPercentage / DjiInterestPoint_SetZoomTypeParam
+ * @note
+ *  - This API is not available in the current version.
+ *
+ * @param status Auto zoom switch. Use E_DjiFlightControllerSpzAutoZoomStatus:
+ *               - DJI_FLIGHT_CONTROLLER_SPZ_AUTO_ZOOM_DISABLE (0): disable auto zoom;
+ *                 call this before manually controlling the target screen occupancy ratio.
+ *               - DJI_FLIGHT_CONTROLLER_SPZ_AUTO_ZOOM_ENABLE  (1): enable auto zoom (default);
+ *                 the flight controller automatically adjusts zoom to maintain target size.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Parameter written successfully.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+T_DjiReturnCode DjiFlightController_SetSpzAutoZoomStatus(E_DjiFlightControllerSpzAutoZoomStatus status);
+
+/**
+ * @brief Set the spotlight-zoom approach mode.
+ * @details - DJI_FLIGHT_CONTROLLER_SPZ_APPROACH_MODE (0): Approach mode. The minimum
+ *            distance limit to the target is removed, allowing the aircraft to fly
+ *            close to the target during spotlight-zoom approach phase.
+ *          - DJI_FLIGHT_CONTROLLER_SPZ_NORMAL_MODE   (1): Normal mode (default). The
+ *            flight controller enforces a minimum safe distance to the target.
+ * @note
+ *  - This API is not available in the current version.
+ *
+ * @param mode Approach mode switch. Use E_DjiFlightControllerSpzTooCloseLimitMode.
+ * @return T_DjiReturnCode
+ *  - DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS: Parameter written successfully.
+ *  - Other error codes: Refer to dji_error.h for details.
+ */
+T_DjiReturnCode DjiFlightController_SetSpzTooCloseLimitMode(E_DjiFlightControllerSpzTooCloseLimitMode mode);
+T_DjiReturnCode DjiFlightController_GetSpzTooCloseLimitMode(E_DjiFlightControllerSpzTooCloseLimitMode *mode);
+
+/**
+ * @brief Set the target ascend height for the RC-lost GO_UP failsafe action.
+ * @details Takes effect only when rc_lost_action is set to
+ *          DJI_FLIGHT_CONTROLLER_RC_LOST_ACTION_GO_UP: the aircraft ascends to this
+ *          height (relative to the home point) and then returns home.
+ * @note
+ *  - This API is not available in the current version.
+ * @param heightMeter Target ascend height in meters.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetRCLostGoUpHeight(int32_t heightMeter);
+
+/**
+ * @brief Get the target ascend height configured for the RC-lost GO_UP failsafe action.
+ * @note
+ *  - This API is not available in the current version.
+ * @param heightMeter Output - current go-up height in meters.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetRCLostGoUpHeight(int32_t *heightMeter);
+
+/**
+ * @brief Set whether multiple positioning mode is enabled.
+ * @details Must be enabled before setting assist positioning mode to PSDK (ADN mode).
+ *          Set to DJI_FLIGHT_CONTROLLER_MULTIPLE_MODE_DISABLE to exit multiple positioning mode.
+ * @note
+ *  - This API is not available in the current version.
+ * @param mode See E_DjiFlightControllerMultipleMode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetMultipleMode(E_DjiFlightControllerMultipleMode mode);
+
+/**
+ * @brief Get whether multiple positioning mode is enabled.
+ * @note
+ *  - This API is not available in the current version.
+ * @param mode Output - current multiple positioning mode status.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetMultipleMode(E_DjiFlightControllerMultipleMode *mode);
+
+/**
+ * @brief Assist positioning mode for no-GPS flight.
+ */
+typedef enum {
+    DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_OFF     = 0, /*!< Assist positioning disabled. */
+    DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_HEADING = 1, /*!< Heading reference mode. */
+    DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_ANCHOR  = 2, /*!< Anchor point reference mode. */
+    DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_MSDK    = 3, /*!< MSDK external position reference mode. */
+    DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_PSDK    = 4, /*!< PSDK external position reference mode. */
+} E_DjiFlightControllerAssistPositioningMode;
+
+/**
+ * @brief Set the assist positioning mode for no-GPS flight.
+ * @details Controls how the aircraft obtains position reference when GPS is unavailable.
+ *          To enter ADN mode, first call DjiFlightController_SetMultipleMode with
+ *          DJI_FLIGHT_CONTROLLER_MULTIPLE_MODE_ENABLE, then call this interface with
+ *          DJI_FLIGHT_CONTROLLER_ASSIST_POSITIONING_MODE_PSDK.
+ * @note
+ *  - This API is not available in the current version.
+ * @param mode Assist positioning mode. See E_DjiFlightControllerAssistPositioningMode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetAssistPositioningMode(
+    E_DjiFlightControllerAssistPositioningMode mode);
+
+/**
+ * @brief Get the current assist positioning mode.
+ * @note
+ *  - This API is not available in the current version.
+ * @param mode Output - current assist positioning mode.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetAssistPositioningMode(
+    E_DjiFlightControllerAssistPositioningMode *mode);
+
+/**
+ * @brief Enable or disable ADN mode (PSDK external position reference mode).
+ * @details When enabled, the aircraft uses position data provided by the PSDK payload
+ *          as the external position reference for no-GPS flight.
+ *          When disabled, the aircraft exits ADN mode and restores default positioning behavior.
+ * @note
+ *  - This API is not available in the current version.
+ * @param enable true to enter ADN mode, false to exit.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetADNModeEnable(bool enable);
+
+/**
+ * @brief Enable or disable extreme battery endurance mode.
+ * @details When enabled, the aircraft disables smart battery go-home and smart battery
+ *          landing protection to maximize flight endurance.
+ *          When disabled, both protections are restored to their default enabled state.
+ * @note Takes effect in flight; writing on ground may be rejected by the flight controller.
+ *  - This API is not available in the current version.
+ * @param enabled true to enable extreme battery endurance mode, false to disable.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetExtremeBatteryEnduranceModeEnabled(bool enabled);
+
+/**
+ * @brief Get the current state of extreme battery endurance mode.
+ * @note
+ *  - This API is not available in the current version.
+ * @param enabled Output - true if extreme battery endurance mode is enabled, false otherwise.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetExtremeBatteryEnduranceModeEnabled(bool *enabled);
 
 #ifdef __cplusplus
 }

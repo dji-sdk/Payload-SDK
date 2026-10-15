@@ -80,6 +80,7 @@ static const T_DjiTestCameraTypeStr s_cameraTypeStrList[] = {
     {DJI_CAMERA_TYPE_M4E,     "M4E Camera"},
     {DJI_CAMERA_TYPE_M4TD,    "M4TD Camera"},
     {DJI_CAMERA_TYPE_M4D,     "M4D Camera"},
+    {DJI_CAMERA_TYPE_M5TD,    "M5TD Camera"},
 };
 
 #ifndef SYSTEM_ARCH_RTOS
