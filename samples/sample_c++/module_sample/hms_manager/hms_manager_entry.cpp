@@ -32,7 +32,7 @@
 #include "dji_aircraft_info.h"
 
 /* Private constants ---------------------------------------------------------*/
-#define DJI_HMS_ERROR_NETWORK_IS_POOR   (0x1E020004)
+#define DJI_HMS_ERROR_NETWORK_IS_POOR   (0x1E020005)
 
 /* Private types -------------------------------------------------------------*/
 

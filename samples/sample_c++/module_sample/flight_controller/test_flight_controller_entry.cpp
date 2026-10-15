@@ -31,6 +31,16 @@
 #include <waypoint_v2/test_waypoint_v2.h>
 #include <waypoint_v3/test_waypoint_v3.h>
 #include <interest_point/test_interest_point.h>
+#include "dji_aircraft_info.h"
+
+/* Forward declaration: defined in modules/aircraft_info/dji_aircraft_info.c */
+#ifdef __cplusplus
+extern "C" {
+#endif
+const char *DjiAircraftInfo_GetMountPositionName(E_DjiMountPosition position);
+#ifdef __cplusplus
+}
+#endif
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -45,6 +55,9 @@ void DjiUser_RunFlightControllerSample(void)
 {
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     char inputSelectSample;
+    T_DjiReturnCode returnCode;
+    T_DjiAircraftInfoBaseInfo baseInfo = {};
+    const char *portName = "UNKNOWN";
 
 start:
     osalHandler->TaskSleepMs(100);
@@ -61,16 +74,21 @@ start:
         << "| [6] Flight controller sample - set get parameters                                                              |\n"
         << "| [7] Waypoint 2.0 sample - run airline mission by settings (only support on M300 RTK)                           |\n"
         << "| [8] Waypoint 3.0 sample - run airline mission by kmz file (not support on M300 RTK)                            |\n"
-        << "| [9] Interest point sample - run interest point mission by settings (only support on M3E/M3T)                   |\n"
+        << "| [9] Interest point sample - run interest point mission by settings (only support on M3E/M3T/M5TD)              |\n"
         << "| [a] EU-C6 FTS trigger sample - receive fts callback to trigger parachute function (only support on M3D/M3DT)   |\n"
         << "| [b] Slow rotate blade sample, only support on M400                                                             |\n"
         << "| [c] Select the FTS PWM trigger on E-Port or E-Port Lite (either one). Supported on M4/M4T/M4D/M4TD.            |\n"
         << "| [d] Select the FTS PWM trigger on Port 4 (M400 only). Not supported on Manifold 3.                             |\n"
         << "| [e] Flight controller sample - set get perception parameters, support on M400                                  |\n"
-        << "| [f] Flight controller sample - set cmd start mission, support on M400                                          |\n"
+        << "| [f] Flight controller sample - set cmd start mission, support on M400/M5TD                                     |\n"
         << "| [g] Flight controller sample - get battery capacity gohome                                                     |\n"
         << "| [h] Flight controller sample - register osd info, get relative high                                            |\n"
         << "| [i] Flight controller sample - stealth mode control                                                            |\n"
+        << "| [j] Select FTS pwm trigger position, support on M5TD                                                           |\n"
+        << "| [l] Flight controller sample - spz approach control                                                            |\n"
+        << "| [k] Flight controller sample - no gnss mode, heading go home, support on M4D                                   |\n"
+        << "| [m] Flight controller sample - flight control no gps mode and function                                         |\n"
+        << "| [n] Flight controller sample - extreme battery endurance mode control                                          |\n"
         << std::endl;
 
     std::cin >> inputSelectSample;
@@ -133,6 +151,40 @@ start:
             goto start;
         case 'i':
             DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_STEALTH_MODE);
+            goto start;
+        case 'j': // for m5d
+            {
+                returnCode = DjiAircraftInfo_GetBaseInfo(&baseInfo);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("get aircraft base info error, 0x%08X", returnCode);
+                    goto start;
+                }
+                portName = DjiAircraftInfo_GetMountPositionName(baseInfo.mountPosition);
+                USER_LOG_INFO("current mount position: %d (%s)", baseInfo.mountPosition, portName);
+                DjiTest_FtsPwmTriggerSample(baseInfo.mountPosition, portName);
+                goto start;
+            }
+        case 'l': {
+            uint16_t cx, cy, w, h;
+            float speed, angle;
+            std::cout << "Enter SPZ box params (cx cy w h, range 0~10000): ";
+            std::cin >> cx >> cy >> w >> h;
+            std::cout << "Enter approach params (speed_ms angle_deg): ";
+            std::cin >> speed >> angle;
+            DjiTest_SpzSetBoxParam(cx, cy, w, h);
+            DjiTest_SpzSetApproachParam(speed, angle);
+            DjiTest_SpzApproachRunSample();
+            goto start;
+        }
+        case 'k':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_NO_GNSS_MODE);
+            goto start;
+        case 'm':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_NO_GPS_MODE);
+            goto start;
+        case 'n':
+            DjiTest_FlightControlRunSample(E_DJI_TEST_FLIGHT_CTRL_SAMPLE_SELECT_EXTREME_BATTERY_ENDURANCE_MODE);
+            goto start;
         case 'q':
             break;
         default:

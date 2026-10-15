@@ -59,6 +59,7 @@
 #include "upgrade/test_upgrade.h"
 #include "power_management/test_power_management.h"
 #include "tethered_battery/test_tethered_battery.h"
+#include "flight_control/test_flight_control.h"
 #include "FreeRTOS.h"
 /* Private constants ---------------------------------------------------------*/
 #define RUN_INDICATE_TASK_FREQ_1HZ        1
@@ -358,6 +359,21 @@ void DjiUser_StartTask(void const *argument)
     returnCode = DjiTest_FcSubscriptionRunSample();
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Fc subcription run sample failed, 0x%08X", returnCode);
+    }
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_FC_FTS_ON
+    T_DjiAircraftInfoBaseInfo baseInfo = {0};
+    returnCode = DjiAircraftInfo_GetBaseInfo(&baseInfo);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error, 0x%08X", returnCode);
+    } else {
+        USER_LOG_INFO("Identify MountPosition = %s",
+                        DjiAircraftInfo_GetMountPositionName(baseInfo.mountPosition));
+        returnCode = DjiTest_FtsPwmTriggerSample(baseInfo.mountPosition, DjiAircraftInfo_GetMountPositionName(baseInfo.mountPosition));
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Fts pwm trigger sample failed, 0x%08X", returnCode);
+        }
     }
 #endif
 

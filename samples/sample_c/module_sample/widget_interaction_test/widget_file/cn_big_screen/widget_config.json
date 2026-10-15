@@ -224,6 +224,18 @@
           },
           {
             "item_name": "30_test_network-rtk-stop"
+          },
+          {
+            "item_name": "31_test_spz-start"
+          },
+          {
+            "item_name": "32_test_spz-stop"
+          },
+          {
+            "item_name": "33_test_ar_pixel_gps-start"
+          },
+          {
+            "item_name": "34_test_ar_pixel_gps-stop"
           }
         ]
       },
@@ -238,19 +250,19 @@
         "widget_name": "Please Select Errcode",
         "list_item": [
           {
-            "item_name": "0x1E020000"
+            "item_name": "0x1E020005"
           },
           {
-            "item_name": "0x1E020001"
+            "item_name": "0x1E020006"
           },
           {
-            "item_name": "0x1E020002"
+            "item_name": "0x1E020007"
           },
           {
-            "item_name": "0x1E020003"
+            "item_name": "0x1E020008"
           },
           {
-            "item_name": "0x1E020004"
+            "item_name": "0x1E020009"
           }
         ]
       },

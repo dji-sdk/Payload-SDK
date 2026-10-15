@@ -96,7 +96,7 @@ void DjiUser_BspInitTask(void const *argument)
     Button_Init(BUTTON_KEY1, BUTTON_MODE_GPIO);
 
     // FTS Pin output Init
-    Pwm_Init(PWM_FTS, 400, 0);
+    // Pwm_Init(PWM_FTS, 400, 50);
 
     // PPS Init
     DjiTest_PpsSignalResponseInit();

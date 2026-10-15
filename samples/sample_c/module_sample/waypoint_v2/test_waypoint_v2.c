@@ -104,8 +104,9 @@ T_DjiReturnCode DjiTest_WaypointV2RunSample(void)
         return returnCode;
     }
 
-    if (aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M300_RTK) {
-        USER_LOG_WARN("Waypoint V2 sample only support M300 RTK");
+    if (aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M300_RTK &&
+        aircraftInfoBaseInfo.aircraftType != DJI_AIRCRAFT_TYPE_M350_RTK) {
+        USER_LOG_WARN("Waypoint V2 sample only support M300 RTK / M350 RTK");
         return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
     }
 

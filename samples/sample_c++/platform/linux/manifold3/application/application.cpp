@@ -45,7 +45,7 @@
 #define DJI_LOG_FOLDER_NAME             "data/logs"
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
-#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (128)
 #define DJI_LOG_MAX_COUNT               (10)
 
 #define USER_UTIL_UNUSED(x)                                 ((x) = (x))
@@ -208,13 +208,6 @@ void Application::DjiUser_ApplicationStart()
     returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         throw std::runtime_error("Get aircraft base info error.");
-    }
-
-    if (aircraftInfoBaseInfo.mountPosition != DJI_MOUNT_POSITION_EXTENSION_PORT &&
-        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_EPORT_V2_RIBBON_CABLE &&
-        aircraftInfoBaseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_MANIFOLD3_ONBOARD &&
-        aircraftInfoBaseInfo.djiAdapterType != DJI_SDK_ADAPTER_TYPE_SKYPORT_V3) {
-        throw std::runtime_error("Please run this sample on extension port or skyport v3.");
     }
 
     returnCode = DjiCore_SetAlias("PSDK_APPALIAS");

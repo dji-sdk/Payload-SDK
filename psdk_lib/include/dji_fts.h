@@ -78,6 +78,17 @@ T_DjiReturnCode DjiFts_SelectFtsPwmTrigger(E_DjiMountPosition position);
  */
 T_DjiReturnCode DjiFts_GetFtsPwmTriggerStatus(T_DjiFtsPwmEscTriggerStatus* trigger_status);
 
+/**
+ * @brief Resolve a mount position to its canonical position.
+ * When isFtsPosDupblicate is set, alias positions (e.g. V3_NO3) are remapped
+ * to the canonical entry in positionMapTriggerArray (e.g. V3_NO2) so that
+ * callers can compare against the value returned by DjiFts_GetFtsPwmTriggerStatus.
+ * For products without duplicate positions the input is returned unchanged.
+ * @param position: The mount position to resolve.
+ * @return Canonical mount position.
+ */
+E_DjiMountPosition DjiFts_ResolveCanonicalPosition(E_DjiMountPosition position);
+
 #ifdef __cplusplus
 }
 #endif

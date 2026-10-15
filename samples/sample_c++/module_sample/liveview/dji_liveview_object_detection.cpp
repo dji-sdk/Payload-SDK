@@ -381,7 +381,7 @@ void DjiUser_RunCameraAiDetectionSample()
 
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
-    USER_LOG_INFO("Input cammera sourece(1:1080p, 3:M4 serials 4K, 7:H30 serials 4K): ");
+    USER_LOG_INFO("Input cammera sourece(1:1080p, 3:M4/M5TD serials 4K, 7:H30 serials 4K): ");
     std::cin >> mediaSource;
     if (pos < 1 || pos > 3 || mediaSource > 7)
     {

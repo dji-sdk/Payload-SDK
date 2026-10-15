@@ -61,7 +61,7 @@
 #define DJI_LOG_PATH_MAX_SIZE           (128)
 #define DJI_LOG_FOLDER_NAME_MAX_SIZE    (32)
 #define DJI_LOG_MAX_COUNT               (10)
-#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (64)
+#define DJI_SYSTEM_CMD_STR_MAX_SIZE     (128)
 #define DJI_SYSTEM_RESULT_STR_MAX_SIZE  (128)
 
 #define DJI_USE_WIDGET_INTERACTION       1
@@ -263,6 +263,7 @@ int main(int argc, char **argv)
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4T
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4E
+        || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD
     ) {
         sleep(2);
         USER_LOG_INFO("DjiTest_MopChannelStartService();");

@@ -1075,6 +1075,11 @@
 </File>
 <File>
 <FileType>5</FileType>
+<FileName>dji_sei_parser.h</FileName>
+<FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_sei_parser.h</FilePath>
+</File>
+<File>
+<FileType>5</FileType>
 <FileName>dji_time_sync.h</FileName>
 <FilePath>..\..\..\..\..\..\..\psdk_lib\include\dji_time_sync.h</FilePath>
 </File>

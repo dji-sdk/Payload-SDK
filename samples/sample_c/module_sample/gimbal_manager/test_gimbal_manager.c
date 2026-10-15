@@ -94,7 +94,8 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
         DJI_AIRCRAFT_SERIES_M3 == aircraftSeries ||
 	    DJI_AIRCRAFT_SERIES_M3D == aircraftSeries ||
         DJI_AIRCRAFT_SERIES_M4 == aircraftSeries ||
-        DJI_AIRCRAFT_SERIES_M4D == aircraftSeries) {
+        DJI_AIRCRAFT_SERIES_M4D == aircraftSeries ||
+        DJI_AIRCRAFT_SERIES_M5TD == aircraftSeries) {
         returnCode = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, DJI_DATA_SUBSCRIPTION_TOPIC_50_HZ, NULL);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("Failed to subscribe topic %d, 0x%08X", DJI_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
@@ -153,6 +154,7 @@ T_DjiReturnCode DjiTest_GimbalManagerRunSample(E_DjiMountPosition mountPosition,
 	            || DJI_AIRCRAFT_SERIES_M3D == aircraftSeries
                 || DJI_AIRCRAFT_SERIES_M4 == aircraftSeries
                 || DJI_AIRCRAFT_SERIES_M4D == aircraftSeries
+                || DJI_AIRCRAFT_SERIES_M5TD == aircraftSeries
             ) {
                 if (s_rotationActionList[i].rotation.rotationMode == DJI_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE) {
                     T_DjiFcSubscriptionGimbalAngles gimbalAngles = {0};

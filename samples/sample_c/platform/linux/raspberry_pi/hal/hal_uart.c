@@ -194,6 +194,8 @@ T_DjiReturnCode HalUart_DeInit(T_DjiUartHandle uartHandle)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
+    tcflush(uartHandleStruct->uartFd, TCIOFLUSH);  // flush rx+tx before close
+
     ret = close(uartHandleStruct->uartFd);
     if (ret < 0) {
         return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;

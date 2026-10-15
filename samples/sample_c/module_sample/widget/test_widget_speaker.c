@@ -282,6 +282,8 @@ create_decoder_failed:
 open_pcm_audio_failed:
     fclose(fin);
 #endif
+    s_isDecodeFinished = true;
+    USER_LOG_INFO("Decode Finished...");
     return EXIT_SUCCESS;
 
 #ifdef OPUS_INSTALLED
@@ -376,7 +378,9 @@ static T_DjiReturnCode DjiTest_PlayTtsData(void)
         snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
                  WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 
-        return DjiUserUtil_RunSystemCmd(cmdStr);
+        T_DjiReturnCode ttsRet = DjiUserUtil_RunSystemCmd(cmdStr);
+        USER_LOG_INFO("TTS Playing finished");
+        return ttsRet;
     }
 }
 
@@ -437,6 +441,7 @@ static void SetSpeakerState(E_DjiWidgetSpeakerState speakerState)
 {
     T_DjiReturnCode returnCode;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
+    USER_LOG_DEBUG("speakerState %d", speakerState);
 
     returnCode = osalHandler->MutexLock(s_speakerMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -760,6 +765,8 @@ static void *DjiTest_WidgetSpeakerTask(void *arg)
         osalHandler->TaskSleepMs(10);
 
         if (s_speakerState.state == DJI_WIDGET_SPEAKER_STATE_PLAYING) {
+            USER_LOG_DEBUG("Current state: %d, work mode: %d, play mode: %d",
+                s_speakerState.state, s_speakerState.workMode, s_speakerState.playMode);
             if (s_speakerState.playMode == DJI_WIDGET_SPEAKER_PLAY_MODE_LOOP_PLAYBACK) {
                 if (s_speakerState.workMode == DJI_WIDGET_SPEAKER_WORK_MODE_VOICE) {
                     USER_LOG_DEBUG("Waiting opus decoder finished...");
@@ -778,11 +785,14 @@ static void *DjiTest_WidgetSpeakerTask(void *arg)
                 }
                 osalHandler->TaskSleepMs(1000);
             } else {
+                USER_LOG_DEBUG("Current state: %d, work mode: %d, play mode: %d",
+                s_speakerState.state, s_speakerState.workMode, s_speakerState.playMode);
                 if (s_speakerState.workMode == DJI_WIDGET_SPEAKER_WORK_MODE_VOICE) {
                     USER_LOG_DEBUG("Waiting opus decoder finished...");
                     while (s_isDecodeFinished == false) {
                         osalHandler->TaskSleepMs(1);
                     }
+                    USER_LOG_INFO("Decode done, calling PlayAudioData");
                     djiReturnCode = DjiTest_PlayAudioData();
                     if (djiReturnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                         USER_LOG_ERROR("Play audio data failed, error: 0x%08llX.", djiReturnCode);
@@ -800,6 +810,7 @@ static void *DjiTest_WidgetSpeakerTask(void *arg)
                 }
 
                 if (s_speakerState.playMode == DJI_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY) {
+                    USER_LOG_INFO("SINGLE_PLAY done, setting IDLE");
                     s_speakerState.state = DJI_WIDGET_SPEAKER_STATE_IDEL;
                 }
 
