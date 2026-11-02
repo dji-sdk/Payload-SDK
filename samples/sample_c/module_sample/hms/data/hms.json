@@ -567,7 +567,7 @@
       "zh": "空调供电异常"
     },
     "dock_tip_0x19113D16": {
-      "en": "",
+      "en": "Air conditioning external circulation air inlet blocked",
       "es": "",
       "ja": "",
       "ko": "",
@@ -706,7 +706,7 @@
       "zh": "雨量计短路"
     },
     "dock_tip_0x19114810": {
-      "en": "",
+      "en": "Anemometer module connection error",
       "es": "",
       "ja": "",
       "ko": "",
@@ -3070,6 +3070,7 @@
       "zh": "激光雷达电压过高/过低"
     },
     "fpv_tip_0x148100C0": {
+      "en": "LiDAR engine error",
       "es": "Error del motor del LiDAR"
     },
     "fpv_tip_0x148100c0": {
@@ -4151,7 +4152,7 @@
       "zh": "传感器系统异常,请返航或降落"
     },
     "fpv_tip_0x16010050": {
-      "en": "",
+      "en": "Currently using radar positioning only. Do not fly in environments such as narrow corridors or tunnels.",
       "zh": "当前仅使用雷达定位，请勿在狭窄走廊、隧道等环境飞行"
     },
     "fpv_tip_0x16020001": {
@@ -4331,7 +4332,7 @@
       "zh": "IMU异常,请返航或降落"
     },
     "fpv_tip_0x1602002B": {
-      "en": "",
+      "en": "Gyro temperature control error; constant temperature cannot be maintained",
       "zh": "陀螺温度控制异常，无法保证恒温"
     },
     "fpv_tip_0x16020620": {
@@ -5083,7 +5084,7 @@
       "zh": "RTK 数据异常，请重启飞行器"
     },
     "fpv_tip_0x16070022": {
-      "en": "",
+      "en": "RTK dual antennas installed incorrectly",
       "zh": "RTK双天线安装错误"
     },
     "fpv_tip_0x16070023": {
@@ -5263,11 +5264,11 @@
       "zh": "RTK认证错误"
     },
     "fpv_tip_0x16070038": {
-      "en": "",
+      "en": "RTK main antenna signal error",
       "zh": "RTK主天线信号异常"
     },
     "fpv_tip_0x16070039": {
-      "en": "",
+      "en": "RTK auxiliary antenna signal error",
       "zh": "RTK副天线信号异常"
     },
     "fpv_tip_0x16070040": {
@@ -8156,6 +8157,7 @@
       "zh": "无法起飞：飞机已多次失稳，为保证飞行安全，请联系大疆售后服务"
     },
     "fpv_tip_0x16100023": {
+      "en": "AirSense malfunction; unable to receive information about nearby crewed aircraft",
       "zh": "AirSense功能异常，无法接收附近载人飞机信息"
     },
     "fpv_tip_0x16100024": {
@@ -11292,7 +11294,7 @@
     "fpv_tip_0x16400002": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP actively released control",
       "es": "",
       "fr": "",
       "id": "",
@@ -11314,7 +11316,7 @@
     "fpv_tip_0x16400003": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP control command error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11336,7 +11338,7 @@
     "fpv_tip_0x16400004": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP heartbeat error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11358,7 +11360,7 @@
     "fpv_tip_0x16400005": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "MCU-side mission scheduler status packet error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11380,7 +11382,7 @@
     "fpv_tip_0x16400006": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Mission scheduler error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11402,7 +11404,7 @@
     "fpv_tip_0x16400007": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "No mission running in the scheduler",
       "es": "",
       "fr": "",
       "id": "",
@@ -11424,7 +11426,7 @@
     "fpv_tip_0x16400008": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP-to-MCU link error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11446,7 +11448,7 @@
     "fpv_tip_0x16400009": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP did not send control commands",
       "es": "",
       "fr": "",
       "id": "",
@@ -11468,7 +11470,7 @@
     "fpv_tip_0x1640000A": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "AP hang",
       "es": "",
       "fr": "",
       "id": "",
@@ -11490,7 +11492,7 @@
     "fpv_tip_0x1640000B": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "System real-time performance error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11512,7 +11514,7 @@
     "fpv_tip_0x1640000C": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Service real-time performance error",
       "es": "",
       "fr": "",
       "id": "",
@@ -11534,7 +11536,7 @@
     "fpv_tip_0x16400100": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data fly_core is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11556,7 +11558,7 @@
     "fpv_tip_0x16400101": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data fly_extend is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11578,7 +11580,7 @@
     "fpv_tip_0x16400102": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data fmu_gps is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11600,7 +11602,7 @@
     "fpv_tip_0x16400103": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data fmu_rtk is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11622,7 +11624,7 @@
     "fpv_tip_0x16400104": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data fusion_out is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11644,7 +11646,7 @@
     "fpv_tip_0x16400105": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data vio_result is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11666,7 +11668,7 @@
     "fpv_tip_0x16400106": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data image_status is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11688,7 +11690,7 @@
     "fpv_tip_0x16400107": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data radar_detect_info is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11710,7 +11712,7 @@
     "fpv_tip_0x16400108": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data gimbal_state is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11732,7 +11734,7 @@
     "fpv_tip_0x16400109": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_state is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11754,7 +11756,7 @@
     "fpv_tip_0x1640010A": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_cap_status is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11776,7 +11778,7 @@
     "fpv_tip_0x1640010B": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_video_param is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11798,7 +11800,7 @@
     "fpv_tip_0x1640010C": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_lens_param is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11820,7 +11822,7 @@
     "fpv_tip_0x1640010D": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_lens_param_ir is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11842,7 +11844,7 @@
     "fpv_tip_0x1640010E": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_data_hd is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11864,7 +11866,7 @@
     "fpv_tip_0x1640010F": {
       "ar": "",
       "de": "",
-      "en": "",
+      "en": "Abstract data camera_data_vga is empty",
       "es": "",
       "fr": "",
       "id": "",
@@ -11884,1363 +11886,1363 @@
       "zh-Hant": ""
     },
     "fpv_tip_0x16400110": {
-      "en": "",
+      "en": "Abstract data gimbal_state is empty",
       "zh": "抽象数据gimbal_state无内容"
     },
     "fpv_tip_0x16400111": {
-      "en": "",
+      "en": "Abstract data camera_state is empty",
       "zh": "抽象数据camera_state无内容"
     },
     "fpv_tip_0x16400112": {
-      "en": "",
+      "en": "Abstract data camera_cap_status is empty",
       "zh": "抽象数据camera_cap_status无内容"
     },
     "fpv_tip_0x16400113": {
-      "en": "",
+      "en": "Abstract data camera_video_param is empty",
       "zh": "抽象数据camera_video_param无内容"
     },
     "fpv_tip_0x16400114": {
-      "en": "",
+      "en": "Abstract data camera_lens_param is empty",
       "zh": "抽象数据camera_lens_param无内容"
     },
     "fpv_tip_0x16400115": {
-      "en": "",
+      "en": "Abstract data camera_lens_param_ir is empty",
       "zh": "抽象数据camera_lens_param_ir无内容"
     },
     "fpv_tip_0x16400116": {
-      "en": "",
+      "en": "Abstract data camera_data_hd is empty",
       "zh": "抽象数据camera_data_hd无内容"
     },
     "fpv_tip_0x16400117": {
-      "en": "",
+      "en": "Abstract data camera_data_vga is empty",
       "zh": "抽象数据camera_data_vga无内容"
     },
     "fpv_tip_0x16400118": {
-      "en": "",
+      "en": "Stick input passthrough to RC error",
       "zh": "杆量直通rc异常"
     },
     "fpv_tip_0x16400119": {
-      "en": "",
+      "en": "Stick input passthrough to motion_rc error",
       "zh": "杆量直通motion_rc异常"
     },
     "fpv_tip_0x16416001": {
-      "en": "",
+      "en": "DSP failed to send interrupt to ARM",
       "zh": "DSP向ARM发出中断失败"
     },
     "fpv_tip_0x16416002": {
-      "en": "",
+      "en": "DSP-side interaction timed out",
       "zh": "DSP侧交互部分超时"
     },
     "fpv_tip_0x16418000": {
-      "en": "",
+      "en": "Error when user calls DSP interface",
       "zh": "使用者调用dsp接口出错"
     },
     "fpv_tip_0x16418001": {
-      "en": "",
+      "en": "DSP input parameter error",
       "zh": "DSP输入参数错误"
     },
     "fpv_tip_0x16418500": {
-      "en": "",
+      "en": "Error in developer-designed DSP interface",
       "zh": "开发者设计dsp接口出错"
     },
     "fpv_tip_0x16418501": {
-      "en": "",
+      "en": "DSP operator call timed out",
       "zh": "DSP算子调用超时"
     },
     "fpv_tip_0x16418502": {
-      "en": "",
+      "en": "DSP operator call busy",
       "zh": "DSP算子调用忙"
     },
     "fpv_tip_0x16420000": {
-      "en": "",
+      "en": "Flight system module initialization failed",
       "zh": "飞行系统模块初始化失败"
     },
     "fpv_tip_0x16420001": {
-      "en": "",
+      "en": "Flight system AP_Linux module init failed",
       "zh": "飞行系统AP_Linux模块init失败"
     },
     "fpv_tip_0x16420002": {
-      "en": "",
+      "en": "Flight system AP_Linux module start failed",
       "zh": "飞行系统AP_Linux模块start失败"
     },
     "fpv_tip_0x16420003": {
-      "en": "",
+      "en": "Flight system AP_RTOS module init failed",
       "zh": "飞行系统AP_RTOS模块init失败"
     },
     "fpv_tip_0x16420004": {
-      "en": "",
+      "en": "Flight system AP_RTOS module start failed",
       "zh": "飞行系统AP_RTOS模块start失败"
     },
     "fpv_tip_0x16420010": {
-      "en": "",
+      "en": "Flight system power management error",
       "zh": "飞行系统功耗管理异常"
     },
     "fpv_tip_0x16420011": {
-      "en": "",
+      "en": "sysmode did not respond to event",
       "zh": "sysmode未响应event事件"
     },
     "fpv_tip_0x16420012": {
-      "en": "",
+      "en": "Flight system event notification failed",
       "zh": "飞行系统event事件通知失败"
     },
     "fpv_tip_0x16420013": {
-      "en": "",
+      "en": "Flight system power scenario switch timed out",
       "zh": "飞行系统功耗场景切换超时"
     },
     "fpv_tip_0x16420014": {
-      "en": "",
+      "en": "Power management message queue send timed out",
       "zh": "功耗管理消息队列发送超时"
     },
     "fpv_tip_0x16420015": {
-      "en": "",
+      "en": "Power management node status synchronization failed",
       "zh": "功耗管理节点状态同步失败"
     },
     "fpv_tip_0x16420016": {
-      "en": "",
+      "en": "V1 messages between power management child nodes are not getting through",
       "zh": "功耗管理子节点间V1消息不通"
     },
     "fpv_tip_0x16420020": {
-      "en": "",
+      "en": "Capability parameter synchronization failed",
       "zh": "能力项参数同步失败"
     },
     "fpv_tip_0x16420021": {
-      "en": "",
+      "en": "CSDK disconnected",
       "zh": "csdk断连"
     },
     "fpv_tip_0x16420022": {
-      "en": "",
+      "en": "Failed to read capability set parameter table data",
       "zh": "能力集参数表数据读取失败"
     },
     "fpv_tip_0x16420100": {
-      "en": "",
+      "en": "DBUS topic app_state has no data",
       "zh": "dbus话题app_state无数据"
     },
     "fpv_tip_0x16420101": {
-      "en": "",
+      "en": "DBUS topic battery_state has no data",
       "zh": "dbus话题battery_state无数据"
     },
     "fpv_tip_0x16420102": {
-      "en": "",
+      "en": "DBUS topic flight_state has no data",
       "zh": "dbus话题flight_state无数据"
     },
     "fpv_tip_0x16420103": {
-      "en": "",
+      "en": "DBUS topic fly_limit has no data",
       "zh": "dbus话题fly_limit无数据"
     },
     "fpv_tip_0x16420104": {
-      "en": "",
+      "en": "DBUS topic home_state has no data",
       "zh": "dbus话题home_state无数据"
     },
     "fpv_tip_0x16420105": {
-      "en": "",
+      "en": "DBUS topic mission_config has no data",
       "zh": "dbus话题mission_config无数据"
     },
     "fpv_tip_0x16420106": {
-      "en": "",
+      "en": "DBUS topic rc_state has no data",
       "zh": "dbus话题rc_state无数据"
     },
     "fpv_tip_0x16420107": {
-      "en": "",
+      "en": "DBUS topic sensor_data has no data",
       "zh": "dbus话题sensor_data无数据"
     },
     "fpv_tip_0x16420108": {
-      "en": "",
+      "en": "DBUS topic flight_record has no data",
       "zh": "dbus话题flight_record无数据"
     },
     "fpv_tip_0x16420109": {
-      "en": "",
+      "en": "DBUS topic motion_rc_info has no data",
       "zh": "dbus话题motion_rc_info无数据"
     },
     "fpv_tip_0x1642010A": {
-      "en": "",
+      "en": "DBUS topic vio_result has no data",
       "zh": "dbus话题vio_result无数据"
     },
     "fpv_tip_0x1642010B": {
-      "en": "",
+      "en": "DBUS topic image_status has no data",
       "zh": "dbus话题image_status无数据"
     },
     "fpv_tip_0x1642010C": {
-      "en": "",
+      "en": "DBUS topic fmu_gps has no data",
       "zh": "dbus话题fmu_gps无数据"
     },
     "fpv_tip_0x1642010D": {
-      "en": "",
+      "en": "DBUS topic fmu_rtk has no data",
       "zh": "dbus话题fmu_rtk无数据"
     },
     "fpv_tip_0x1642010E": {
-      "en": "",
+      "en": "DBUS topic fusion_out has no data",
       "zh": "dbus话题fusion_out无数据"
     },
     "fpv_tip_0x1642010F": {
-      "en": "",
+      "en": "DBUS topic radar_detect_info has no data",
       "zh": "dbus话题radar_detect_info无数据"
     },
     "fpv_tip_0x16420110": {
-      "en": "",
+      "en": "DBUS topic gimbal_state has no data",
       "zh": "dbus话题gimbal_state无数据"
     },
     "fpv_tip_0x16420111": {
-      "en": "",
+      "en": "DBUS topic camera_state has no data",
       "zh": "dbus话题camera_state无数据"
     },
     "fpv_tip_0x16420112": {
-      "en": "",
+      "en": "DBUS topic camera_cap_status has no data",
       "zh": "dbus话题camera_cap_status无数据"
     },
     "fpv_tip_0x16420113": {
-      "en": "",
+      "en": "DBUS topic camera_video_param has no data",
       "zh": "dbus话题camera_video_param无数据"
     },
     "fpv_tip_0x16420114": {
-      "en": "",
+      "en": "DBUS topic camera_lens_param has no data",
       "zh": "dbus话题camera_lens_param无数据"
     },
     "fpv_tip_0x16420115": {
-      "en": "",
+      "en": "DBUS topic camera_lens_param_ir has no data",
       "zh": "dbus话题camera_lens_param_ir无数据"
     },
     "fpv_tip_0x16420116": {
-      "en": "",
+      "en": "DBUS topic camera_data_hd has no data",
       "zh": "dbus话题camera_data_hd无数据"
     },
     "fpv_tip_0x16420117": {
-      "en": "",
+      "en": "DBUS topic camera_data_vga has no data",
       "zh": "dbus话题camera_data_vga无数据"
     },
     "fpv_tip_0x16430001": {
-      "en": "",
+      "en": "Abnormal exit from focus tracking",
       "zh": "异常退出焦点跟随"
     },
     "fpv_tip_0x16430002": {
-      "en": "",
+      "en": "Abnormal exit to focus",
       "zh": "异常退出到聚焦"
     },
     "fpv_tip_0x16430003": {
-      "en": "",
+      "en": "Abnormal exit to multi-target scan",
       "zh": "异常退出到多目标扫描"
     },
     "fpv_tip_0x16430004": {
-      "en": "",
+      "en": "Focus tracking error prompt",
       "zh": "焦点跟随异常提示"
     },
     "fpv_tip_0x16430005": {
-      "en": "",
+      "en": "Fusion data invalid",
       "zh": "融合数据无效"
     },
     "fpv_tip_0x16430006": {
-      "en": "",
+      "en": "Sensor data update failed",
       "zh": "传感器数据更新失败"
     },
     "fpv_tip_0x16430007": {
-      "en": "",
+      "en": "Not taken off",
       "zh": "未起飞"
     },
     "fpv_tip_0x16430008": {
-      "en": "",
+      "en": "Camera mode not supported",
       "zh": "相机模式不支持"
     },
     "fpv_tip_0x16430009": {
-      "en": "",
+      "en": "Fusion timestamp error",
       "zh": "融合时间戳异常"
     },
     "fpv_tip_0x1643000A": {
-      "en": "",
+      "en": "Abstract data pointer is null",
       "zh": "抽象数据指针为空"
     },
     "fpv_tip_0x1643000B": {
-      "en": "",
+      "en": "DBUS data retrieval pointer is null",
       "zh": "DBUS获取数据指针为空"
     },
     "fpv_tip_0x1643000C": {
-      "en": "",
+      "en": "TM error",
       "zh": "TM异常"
     },
     "fpv_tip_0x1643000D": {
-      "en": "",
+      "en": "Aircraft attitude too large",
       "zh": "飞机姿态过大"
     },
     "fpv_tip_0x1643000E": {
-      "en": "",
+      "en": "Ambient light too dark",
       "zh": "环境光过暗"
     },
     "fpv_tip_0x1643000F": {
-      "en": "",
+      "en": "Remote controller disconnected",
       "zh": "遥控器断连"
     },
     "fpv_tip_0x16430010": {
-      "en": "",
+      "en": "TKPlanner error",
       "zh": "TKPlanner异常"
     },
     "fpv_tip_0x16430011": {
-      "en": "",
+      "en": "TE error",
       "zh": "TE异常"
     },
     "fpv_tip_0x16430012": {
-      "en": "",
+      "en": "POI error",
       "zh": "POI异常"
     },
     "fpv_tip_0x16430013": {
-      "en": "",
+      "en": "ML error",
       "zh": "ML异常"
     },
     "fpv_tip_0x16430014": {
-      "en": "",
+      "en": "Data link error",
       "zh": "数据链路异常"
     },
     "fpv_tip_0x16430015": {
-      "en": "",
+      "en": "IMU data error",
       "zh": "IMU数据异常"
     },
     "fpv_tip_0x16430016": {
-      "en": "",
+      "en": "Gimbal data error",
       "zh": "云台数据异常"
     },
     "fpv_tip_0x16430017": {
-      "en": "",
+      "en": "FOV data error",
       "zh": "fov数据异常"
     },
     "fpv_tip_0x16430018": {
-      "en": "",
+      "en": "ML state error",
       "zh": "ml状态异常"
     },
     "fpv_tip_0x16430019": {
-      "en": "",
+      "en": "SOE data error",
       "zh": "soe数据异常"
     },
     "fpv_tip_0x1643001A": {
-      "en": "",
+      "en": "IMU data invalid",
       "zh": "IMU数据无效"
     },
     "fpv_tip_0x1643001B": {
-      "en": "",
+      "en": "Gimbal data invalid",
       "zh": "云台数据无效"
     },
     "fpv_tip_0x1643001C": {
-      "en": "",
+      "en": "FOV data invalid",
       "zh": "fov数据无效"
     },
     "fpv_tip_0x1643001D": {
-      "en": "",
+      "en": "ML state data invalid",
       "zh": "ml状态数据无效"
     },
     "fpv_tip_0x1643001E": {
-      "en": "",
+      "en": "SOE data invalid",
       "zh": "soe数据无效"
     },
     "fpv_tip_0x1643001F": {
-      "en": "",
+      "en": "Orbit ranging took too long",
       "zh": "环绕测距时间过长"
     },
     "fpv_tip_0x16430020": {
-      "en": "",
+      "en": "Too close to the ground during orbit",
       "zh": "环绕时距地面过近"
     },
     "fpv_tip_0x16430021": {
-      "en": "",
+      "en": "Distance limit",
       "zh": "限远"
     },
     "fpv_tip_0x16430022": {
-      "en": "",
+      "en": "Altitude limit",
       "zh": "限高"
     },
     "fpv_tip_0x16430023": {
-      "en": "",
+      "en": "Target type not supported",
       "zh": "目标类型不支持"
     },
     "fpv_tip_0x16430024": {
-      "en": "",
+      "en": "Target lost when about to enter Tracking/Orbit",
       "zh": "将要进入Tracking/环绕时目标丢失"
     },
     "fpv_tip_0x16430025": {
-      "en": "",
+      "en": "Pay attention to the zoom range during target tracking",
       "zh": "目标跟随中注意变焦范围"
     },
     "fpv_tip_0x16430026": {
-      "en": "",
+      "en": "Target occupies too large a proportion of the frame",
       "zh": "目标在画面中占比过大"
     },
     "fpv_tip_0x16430101": {
-      "en": "",
+      "en": "Abnormal exit from QuickShots",
       "zh": "异常退出一键短片"
     },
     "fpv_tip_0x16430102": {
-      "en": "",
+      "en": "QuickShots recording terminated abnormally",
       "zh": "异常终止一键短片拍摄"
     },
     "fpv_tip_0x16430103": {
-      "en": "",
+      "en": "Sensor data verification error",
       "zh": "传感器数据验证错误"
     },
     "fpv_tip_0x16430104": {
-      "en": "",
+      "en": "Null pointer",
       "zh": "空指针"
     },
     "fpv_tip_0x16430105": {
-      "en": "",
+      "en": "Abstract data pointer is null",
       "zh": "抽象数据指针为空"
     },
     "fpv_tip_0x16430106": {
-      "en": "",
+      "en": "DBUS data retrieval pointer is null",
       "zh": "DBUS获取数据指针为空"
     },
     "fpv_tip_0x16430107": {
-      "en": "",
+      "en": "QuickShots cannot be executed on the ground",
       "zh": "在地面不能执行一键短片"
     },
     "fpv_tip_0x16430108": {
-      "en": "",
+      "en": "User stick input",
       "zh": "用户打杆"
     },
     "fpv_tip_0x16430109": {
-      "en": "",
+      "en": "User paused",
       "zh": "用户暂停"
     },
     "fpv_tip_0x1643010A": {
-      "en": "",
+      "en": "Altitude limit",
       "zh": "限高"
     },
     "fpv_tip_0x1643010B": {
-      "en": "",
+      "en": "Distance limit",
       "zh": "限远"
     },
     "fpv_tip_0x1643010C": {
-      "en": "",
+      "en": "Recording stop error",
       "zh": "录像停止错误"
     },
     "fpv_tip_0x1643010D": {
-      "en": "",
+      "en": "Recording start error",
       "zh": "录像开始错误"
     },
     "fpv_tip_0x1643010E": {
-      "en": "",
+      "en": "Obstacle avoidance",
       "zh": "避障"
     },
     "fpv_tip_0x1643010F": {
-      "en": "",
+      "en": "Remote controller signal lost",
       "zh": "遥控器信号丢失"
     },
     "fpv_tip_0x16430110": {
-      "en": "",
+      "en": "Initialization failed",
       "zh": "初始化失败"
     },
     "fpv_tip_0x16430111": {
-      "en": "",
+      "en": "Failed to take control",
       "zh": "夺权失败"
     },
     "fpv_tip_0x16430112": {
-      "en": "",
+      "en": "Insufficient storage space",
       "zh": "储存空间不足"
     },
     "fpv_tip_0x16430113": {
-      "en": "",
+      "en": "Target lost",
       "zh": "目标丢失"
     },
     "fpv_tip_0x16430114": {
-      "en": "",
+      "en": "Photo capture failed",
       "zh": "拍照失败"
     },
     "fpv_tip_0x16430115": {
-      "en": "",
+      "en": "Compositing failed",
       "zh": "合成失败"
     },
     "fpv_tip_0x16430116": {
-      "en": "",
+      "en": "Failed to load camera parameters",
       "zh": "加载相机参数失败"
     },
     "fpv_tip_0x16430117": {
-      "en": "",
+      "en": "Failed to adjust camera parameters",
       "zh": "调整相机参数失败"
     },
     "fpv_tip_0x16430118": {
-      "en": "",
+      "en": "Camera angle error",
       "zh": "相机角度错误"
     },
     "fpv_tip_0x16430119": {
-      "en": "",
+      "en": "Unknown camera error",
       "zh": "相机未知错误"
     },
     "fpv_tip_0x1643011A": {
-      "en": "",
+      "en": "Camera parameter error",
       "zh": "相机参数错误"
     },
     "fpv_tip_0x1643011B": {
-      "en": "",
+      "en": "Camera status error",
       "zh": "相机状态错误"
     },
     "fpv_tip_0x1643011C": {
-      "en": "",
+      "en": "Timed out setting TOPMODE",
       "zh": "设置TOPMODE超时"
     },
     "fpv_tip_0x1643011D": {
-      "en": "",
+      "en": "Camera TOPMODE error",
       "zh": "相机TOPMODE错误"
     },
     "fpv_tip_0x1643011E": {
-      "en": "",
+      "en": "QuickShots error prompt",
       "zh": "异常提示一键短片"
     },
     "fpv_tip_0x16430201": {
-      "en": "",
+      "en": "MasterShots abnormal exit",
       "zh": "大师镜头异常退出"
     },
     "fpv_tip_0x16430202": {
-      "en": "",
+      "en": "MasterShots abnormally paused",
       "zh": "大师镜头异常暂停"
     },
     "fpv_tip_0x16430203": {
-      "en": "",
+      "en": "MasterShots found a null pointer",
       "zh": "大师镜头发现空指针"
     },
     "fpv_tip_0x16430204": {
-      "en": "",
+      "en": "MasterShots abstract data pointer is null",
       "zh": "大师镜头抽象数据指针为空"
     },
     "fpv_tip_0x16430205": {
-      "en": "",
+      "en": "MasterShots DBUS data retrieval pointer is null",
       "zh": "大师镜头DBUS获取数据指针为空"
     },
     "fpv_tip_0x16430206": {
-      "en": "",
+      "en": "MasterShots sensor data verification error",
       "zh": "大师镜头传感器数据验证错误"
     },
     "fpv_tip_0x16430207": {
-      "en": "",
+      "en": "MasterShots user stick input",
       "zh": "大师镜头用户打杆"
     },
     "fpv_tip_0x16430208": {
-      "en": "",
+      "en": "MasterShots user paused",
       "zh": "大师镜头用户暂停"
     },
     "fpv_tip_0x16430209": {
-      "en": "",
+      "en": "MasterShots encountered altitude limit",
       "zh": "大师镜头遇限高"
     },
     "fpv_tip_0x1643020A": {
-      "en": "",
+      "en": "MasterShots encountered distance limit",
       "zh": "大师镜头遇限远"
     },
     "fpv_tip_0x1643020B": {
-      "en": "",
+      "en": "MasterShots recording stop failed",
       "zh": "大师镜头录像停止失败"
     },
     "fpv_tip_0x1643020C": {
-      "en": "",
+      "en": "MasterShots recording start failed",
       "zh": "大师镜头录像开始失败"
     },
     "fpv_tip_0x1643020D": {
-      "en": "",
+      "en": "MasterShots encountered an obstacle",
       "zh": "大师镜头遇障碍物"
     },
     "fpv_tip_0x1643020E": {
-      "en": "",
+      "en": "MasterShots remote controller signal lost",
       "zh": "大师镜头遥控器信号丢失"
     },
     "fpv_tip_0x1643020F": {
-      "en": "",
+      "en": "MasterShots initialization failed",
       "zh": "大师镜头初始化失败"
     },
     "fpv_tip_0x16430210": {
-      "en": "",
+      "en": "MasterShots failed to take control",
       "zh": "大师镜头夺权失败"
     },
     "fpv_tip_0x16430211": {
-      "en": "",
+      "en": "MasterShots insufficient storage space",
       "zh": "大师镜头储存空间不足"
     },
     "fpv_tip_0x16430212": {
-      "en": "",
+      "en": "MasterShots target lost",
       "zh": "大师镜头目标丢失"
     },
     "fpv_tip_0x16430213": {
-      "en": "",
+      "en": "MasterShots camera parameter error",
       "zh": "大师镜头相机参数错误"
     },
     "fpv_tip_0x16430214": {
-      "en": "",
+      "en": "MasterShots timed out setting TOPMODE",
       "zh": "大师镜头设置TOPMODE超时"
     },
     "fpv_tip_0x16430215": {
-      "en": "",
+      "en": "MasterShots TOPMODE setting error",
       "zh": "大师镜头设置TOPMODE异常"
     },
     "fpv_tip_0x16430216": {
-      "en": "",
+      "en": "MasterShots warning",
       "zh": "大师镜头警告"
     },
     "fpv_tip_0x16430217": {
-      "en": "",
+      "en": "MasterShots failed to adjust camera parameters",
       "zh": "大师镜头调整相机参数失败"
     },
     "fpv_tip_0x16430218": {
-      "en": "",
+      "en": "MasterShots gimbal control error",
       "zh": "大师镜头云台控制错误"
     },
     "fpv_tip_0x16430219": {
-      "en": "",
+      "en": "MasterShots Yaw control error",
       "zh": "大师镜头Yaw控制错误"
     },
     "fpv_tip_0x1643021A": {
-      "en": "",
+      "en": "MasterShots VA control error",
       "zh": "大师镜头VA控制错误"
     },
     "fpv_tip_0x1643021B": {
-      "en": "",
+      "en": "MasterShots speed control error",
       "zh": "大师镜头速度控制错误"
     },
     "fpv_tip_0x1643021C": {
-      "en": "",
+      "en": "MasterShots camera control error",
       "zh": "大师镜头相机控制错误"
     },
     "fpv_tip_0x1643021D": {
-      "en": "",
+      "en": "MasterShots mission mismatch",
       "zh": "大师镜头任务不匹配"
     },
     "fpv_tip_0x16430301": {
-      "en": "",
+      "en": "Abnormal exit from Hyperlapse",
       "zh": "异常退出延时摄影"
     },
     "fpv_tip_0x16430302": {
-      "en": "",
+      "en": "Hyperlapse abnormally exited the current mission",
       "zh": "延时摄影异常退出当前任务"
     },
     "fpv_tip_0x16430303": {
-      "en": "",
+      "en": "Hyperlapse abnormally entered the paused state",
       "zh": "延时摄影异常进入暂停状态"
     },
     "fpv_tip_0x16430304": {
-      "en": "",
+      "en": "Hyperlapse error prompt",
       "zh": "延时摄影异常提示"
     },
     "fpv_tip_0x16430305": {
-      "en": "",
+      "en": "Ground motors already started",
       "zh": "地面电机已启动"
     },
     "fpv_tip_0x16430306": {
-      "en": "",
+      "en": "Camera mode error",
       "zh": "相机模式异常"
     },
     "fpv_tip_0x16430307": {
-      "en": "",
+      "en": "Current mission mismatch",
       "zh": "当前任务不匹配"
     },
     "fpv_tip_0x16430308": {
-      "en": "",
+      "en": "Abstract data is empty",
       "zh": "抽象数据为空"
     },
     "fpv_tip_0x16430309": {
-      "en": "",
+      "en": "Camera mode timed out",
       "zh": "相机模式超时"
     },
     "fpv_tip_0x1643030a": {
-      "en": "",
+      "en": "Camera mode mismatch",
       "zh": "相机模式不匹配"
     },
     "fpv_tip_0x1643030b": {
-      "en": "",
+      "en": "Frame lost during directional Hyperlapse",
       "zh": "定向延时中框丢失"
     },
     "fpv_tip_0x1643030c": {
-      "en": "",
+      "en": "Route platform error when returning to the first waypoint",
       "zh": "返回首航点航线平台异常"
     },
     "fpv_tip_0x1643030d": {
-      "en": "",
+      "en": "Orbit ranging timed out",
       "zh": "环绕测距超时"
     },
     "fpv_tip_0x1643030e": {
-      "en": "",
+      "en": "Flight restriction",
       "zh": "限飞"
     },
     "fpv_tip_0x1643030f": {
-      "en": "",
+      "en": "Low battery for ground Hyperlapse",
       "zh": "地面延时电量低"
     },
     "fpv_tip_0x16430310": {
-      "en": "",
+      "en": "Poor GPS signal",
       "zh": "GPS信号差"
     },
     "fpv_tip_0x16430311": {
-      "en": "",
+      "en": "Obstacle avoidance",
       "zh": "避障"
     },
     "fpv_tip_0x16430312": {
-      "en": "",
+      "en": "Orbit ranging triggered flight restriction",
       "zh": "环绕测距触发限飞"
     },
     "fpv_tip_0x16430313": {
-      "en": "",
+      "en": "Trajectory Hyperlapse triggered altitude limit",
       "zh": "轨迹延时触发限高"
     },
     "fpv_tip_0x16430314": {
-      "en": "",
+      "en": "Returning to the first waypoint triggered flight restriction",
       "zh": "返回首航点触发限飞"
     },
     "fpv_tip_0x16430315": {
-      "en": "",
+      "en": "Obstacle avoidance failed",
       "zh": "避障失效"
     },
     "fpv_tip_0x16430316": {
-      "en": "",
+      "en": "Returning to the first waypoint triggered obstacle avoidance",
       "zh": "返回首航点触发避障"
     },
     "fpv_tip_0x16430317": {
-      "en": "",
+      "en": "Obstacle avoidance triggered during operation",
       "zh": "运行过程中触发避障"
     },
     "fpv_tip_0x16430318": {
-      "en": "",
+      "en": "Flight restriction triggered during shooting",
       "zh": "拍摄过程中触发限飞"
     },
     "fpv_tip_0x16430319": {
-      "en": "",
+      "en": "Route platform terminated abnormally",
       "zh": "航线平台异常终止"
     },
     "fpv_tip_0x1643031a": {
-      "en": "",
+      "en": "Slow camera storage",
       "zh": "相机存储慢"
     },
     "fpv_tip_0x1643031b": {
-      "en": "",
+      "en": "Weak GPS signal; trajectory point recording failed",
       "zh": "GPS信号弱轨迹点记录失败"
     },
     "fpv_tip_0x1643031c": {
-      "en": "",
+      "en": "Maximum photo limit reached",
       "zh": "已达到最大照片限制"
     },
     "fpv_tip_0x1643031d": {
-      "en": "",
+      "en": "Insufficient storage space",
       "zh": "存储空间不足"
     },
     "fpv_tip_0x1643031e": {
-      "en": "",
+      "en": "Directional Hyperlapse route not locked",
       "zh": "定向延时航线未锁定"
     },
     "fpv_tip_0x1643031f": {
-      "en": "",
+      "en": "Gimbal attitude change too small",
       "zh": "云台姿态变化太小"
     },
     "fpv_tip_0x16430320": {
-      "en": "",
+      "en": "Gimbal attitude change exceeds the limit",
       "zh": "云台姿态变化超限"
     },
     "fpv_tip_0x16430321": {
-      "en": "",
+      "en": "Trajectory loading failed",
       "zh": "轨迹载入失败"
     },
     "fpv_tip_0x16430322": {
-      "en": "",
+      "en": "Adding 1s failed",
       "zh": "增加1s失败"
     },
     "fpv_tip_0x16430323": {
-      "en": "",
+      "en": "Too few photos taken to compose a video",
       "zh": "完成照片太少无法合成视频"
     },
     "fpv_tip_0x16430324": {
-      "en": "",
+      "en": "Trajectory generation failed when returning to the first waypoint",
       "zh": "返回首航点轨迹生成失败"
     },
     "fpv_tip_0x16432400": {
-      "en": "",
+      "en": "Abnormal exit from ApasMission",
       "zh": "异常退出 ApasMission"
     },
     "fpv_tip_0x16432401": {
-      "en": "",
+      "en": "Fusion data subscription error",
       "zh": "融合数据订阅异常"
     },
     "fpv_tip_0x16432402": {
-      "en": "",
+      "en": "Failed to read JSON file",
       "zh": "Json文件读取失败"
     },
     "fpv_tip_0x16432403": {
-      "en": "",
+      "en": "FlyCore data subscription error",
       "zh": "FlyCore数据订阅异常"
     },
     "fpv_tip_0x16432404": {
-      "en": "",
+      "en": "Fusion data timed out",
       "zh": "融合数据超时"
     },
     "fpv_tip_0x16432405": {
-      "en": "",
+      "en": "Fusion positioning data invalid",
       "zh": "融合定位数据无效"
     },
     "fpv_tip_0x16432410": {
-      "en": "",
+      "en": "ApasMission abnormal exit to close",
       "zh": "ApasMission 异常退出到关闭"
     },
     "fpv_tip_0x16432411": {
-      "en": "",
+      "en": "ImageStatus subscription error",
       "zh": "ImageStatus 订阅异常"
     },
     "fpv_tip_0x16432412": {
-      "en": "",
+      "en": "Night scene mode",
       "zh": "夜景模式"
     },
     "fpv_tip_0x16432413": {
-      "en": "",
+      "en": "Ambient light too dark and flight environment safe",
       "zh": "环境光过暗且飞行环境安全"
     },
     "fpv_tip_0x16432414": {
-      "en": "",
+      "en": "Ambient light too dark and hovering with no horizontal stick input",
       "zh": "环境光过暗且悬停无水平杆"
     },
     "fpv_tip_0x16432415": {
-      "en": "",
+      "en": "APAS Planner malfunction and flight environment safe",
       "zh": "APAS Planner 功能异常且飞行环境安全"
     },
     "fpv_tip_0x16432416": {
-      "en": "",
+      "en": "APAS Planner malfunction and hovering with no horizontal stick input",
       "zh": "APAS Planner 功能异常且悬停无水平杆"
     },
     "fpv_tip_0x16432417": {
-      "en": "",
+      "en": "OA Planner malfunction and flight environment safe",
       "zh": "OA Planner 功能异常且飞行环境安全"
     },
     "fpv_tip_0x16432418": {
-      "en": "",
+      "en": "OA Planner malfunction and hovering with no horizontal stick input",
       "zh": "OA Planner 功能异常且悬停无水平杆"
     },
     "fpv_tip_0x16432419": {
-      "en": "",
+      "en": "In clouds or fog",
       "zh": "在云雾中"
     },
     "fpv_tip_0x16432420": {
-      "en": "",
+      "en": "ApasMission detour abnormally exited to brake and stop",
       "zh": "ApasMission 绕行异常退出到刹停"
     },
     "fpv_tip_0x16432421": {
-      "en": "",
+      "en": "Edge of flight restriction zone",
       "zh": "限飞区边缘"
     },
     "fpv_tip_0x16432422": {
-      "en": "",
+      "en": "Too close to the ground, less than 0.5 m",
       "zh": "距离地面过近小于0.5m"
     },
     "fpv_tip_0x16432423": {
-      "en": "",
+      "en": "Ambient light partially too dark",
       "zh": "部分环境光过暗"
     },
     "fpv_tip_0x16432424": {
-      "en": "",
+      "en": "APAS Planner malfunction",
       "zh": "APAS Planner功能异常"
     },
     "fpv_tip_0x16432425": {
-      "en": "",
+      "en": "High frame rate recording",
       "zh": "高帧率录像"
     },
     "fpv_tip_0x16432430": {
-      "en": "",
+      "en": "ApasMission abnormally triggered braking",
       "zh": "ApasMission 异常触发刹车"
     },
     "fpv_tip_0x16432431": {
-      "en": "",
+      "en": "Ambient light too dark; normal braking",
       "zh": "环境光过暗普通刹车"
     },
     "fpv_tip_0x16432432": {
-      "en": "",
+      "en": "Ambient light too dark; emergency braking",
       "zh": "环境光过暗紧急刹车"
     },
     "fpv_tip_0x16432433": {
-      "en": "",
+      "en": "APAS Planner malfunction; normal braking",
       "zh": "APAS Planner 功能异常普通刹车"
     },
     "fpv_tip_0x16432434": {
-      "en": "",
+      "en": "APAS Planner malfunction; emergency braking",
       "zh": "APAS Planner 功能异常紧急刹车"
     },
     "fpv_tip_0x16432435": {
-      "en": "",
+      "en": "OA Planner malfunction; normal braking",
       "zh": "OA Planner 功能异常普通刹车"
     },
     "fpv_tip_0x16432436": {
-      "en": "",
+      "en": "OA Planner malfunction; emergency braking",
       "zh": "OA Planner 功能异常紧急刹车"
     },
     "fpv_tip_0x16432500": {
-      "en": "",
+      "en": "OA module cannot work properly",
       "zh": "OA模块无法正常工作"
     },
     "fpv_tip_0x16432501": {
-      "en": "",
+      "en": "OA module cannot work properly due to a map error",
       "zh": "OA模块因地图异常无法正常工作"
     },
     "fpv_tip_0x16432502": {
-      "en": "",
+      "en": "OA module cannot work properly due to a map error",
       "zh": "OA模块因地图异常无法正常工作"
     },
     "fpv_tip_0x16432503": {
-      "en": "",
+      "en": "OA cannot work properly because the camera is in night scene mode",
       "zh": "相机处于夜景模式OA无法正常工作"
     },
     "fpv_tip_0x16432504": {
-      "en": "",
+      "en": "OA module cannot work properly because it is in clouds or fog",
       "zh": "OA模块因处于云雾中无法正常工作"
     },
     "fpv_tip_0x16432505": {
-      "en": "",
+      "en": "OA module cannot work properly because the ambient light is too dark",
       "zh": "OA模块因环境光过暗无法正常工作"
     },
     "fpv_tip_0x16432506": {
-      "en": "",
+      "en": "OA module ToF obstacle avoidance cannot work properly",
       "zh": "OA模块tof避障无法正常工作"
     },
     "fpv_tip_0x16432550": {
-      "en": "",
+      "en": "OA module triggered abnormal protection",
       "zh": "OA模块触发异常保护"
     },
     "fpv_tip_0x16432551": {
-      "en": "",
+      "en": "OA module triggered emergency braking",
       "zh": "OA模块触发紧急刹车"
     },
     "fpv_tip_0x16450001": {
-      "en": "",
+      "en": "Aircraft failed to return to the dock",
       "zh": "飞机未能返回机场"
     },
     "fpv_tip_0x16450002": {
-      "en": "",
+      "en": "Aircraft triggered a non-cancelable landing outside the dock",
       "zh": "飞机机场外触发不可取消降落"
     },
     "fpv_tip_0x16450011": {
-      "en": "",
+      "en": "Aircraft hover timed out",
       "zh": "飞机悬停超时"
     },
     "fpv_tip_0x16450012": {
-      "en": "",
+      "en": "Aircraft cannot receive the dock status",
       "zh": "飞机无法接收到机场状态"
     },
     "fpv_tip_0x16450013": {
-      "en": "",
+      "en": "Dock temporarily does not allow landing",
       "zh": "机场暂时不允许降落"
     },
     "fpv_tip_0x16450014": {
-      "en": "",
+      "en": "Marker horizontal position source invalid",
       "zh": "Marker水平位置源无效"
     },
     "fpv_tip_0x16450015": {
-      "en": "",
+      "en": "Marker horizontal position source has a large deviation",
       "zh": "Marker水平位置源偏差大"
     },
     "fpv_tip_0x16450016": {
-      "en": "",
+      "en": "Marker horizontal position source subscription failed",
       "zh": "Marker水平位置源订阅失败"
     },
     "fpv_tip_0x16450017": {
-      "en": "",
+      "en": "RTK horizontal position source invalid",
       "zh": "RTK水平位置源无效"
     },
     "fpv_tip_0x16450018": {
-      "en": "",
+      "en": "RTK horizontal position source failed the ionospheric check",
       "zh": "RTK水平位置源电离层校验不通过"
     },
     "fpv_tip_0x16450019": {
-      "en": "",
+      "en": "Aircraft horizontal control capability weak",
       "zh": "飞机水平控制能力弱"
     },
     "fpv_tip_0x16450021": {
-      "en": "",
+      "en": "Dock landing function malfunction",
       "zh": "机场降落功能运行异常"
     },
     "fpv_tip_0x16450022": {
-      "en": "",
+      "en": "Aircraft switched to normal landing due to an attitude change",
       "zh": "飞机因为切姿态变为普通降落"
     },
     "fpv_tip_0x16450023": {
-      "en": "",
+      "en": "Dock has no alternate landing point set; alternate landing cannot be triggered",
       "zh": "机场没有设置备降点无法触发备降"
     },
     "fpv_tip_0x16450024": {
-      "en": "",
+      "en": "Aircraft did not trigger early propeller stop",
       "zh": "飞机没有触发提前停桨"
     },
     "fpv_tip_0x16450025": {
-      "en": "",
+      "en": "Abstract data update failed",
       "zh": "抽象数据更新失败"
     },
     "fpv_tip_0x16450031": {
-      "en": "",
+      "en": "Aircraft triggered alternate landing",
       "zh": "飞机触发备降"
     },
     "fpv_tip_0x16450032": {
-      "en": "",
+      "en": "Aircraft MCU took over control",
       "zh": "飞机MCU接管控制"
     },
     "fpv_tip_0x16450033": {
-      "en": "",
+      "en": "Dock status abnormal; landing permanently not allowed",
       "zh": "机场状态异常永久不允许降落"
     },
     "fpv_tip_0x16450034": {
-      "en": "",
+      "en": "Aircraft hovered until low battery and triggered alternate landing",
       "zh": "飞机悬停到低电量触发备降"
     },
     "fpv_tip_0x16450035": {
-      "en": "",
+      "en": "Aircraft failed to reach the alternate landing point and landed midway",
       "zh": "飞机未能到达备降点中途降落"
     },
     "fpv_tip_0x16450101": {
-      "en": "",
+      "en": "Route abnormally paused",
       "zh": "航线异常暂停"
     },
     "fpv_tip_0x16450102": {
-      "en": "",
+      "en": "Route abnormally aborted",
       "zh": "航线异常中止"
     },
     "fpv_tip_0x16450103": {
-      "en": "",
+      "en": "Route function malfunction",
       "zh": "航线功能异常"
     },
     "fpv_tip_0x16450104": {
-      "en": "",
+      "en": "Route altitude limit",
       "zh": "航线限高"
     },
     "fpv_tip_0x16450105": {
-      "en": "",
+      "en": "Route lower altitude limit",
       "zh": "航线限低"
     },
     "fpv_tip_0x16450106": {
-      "en": "",
+      "en": "Route distance limit",
       "zh": "航线限远"
     },
     "fpv_tip_0x16450107": {
-      "en": "",
+      "en": "Route touched a no-fly zone",
       "zh": "航线触碰到禁飞区"
     },
     "fpv_tip_0x16450108": {
-      "en": "",
+      "en": "Obstacle detected during route execution",
       "zh": "航线执行中检测到障碍物"
     },
     "fpv_tip_0x16450109": {
-      "en": "",
+      "en": "Weak GPS signal during route execution",
       "zh": "航线执行中gps信号弱"
     },
     "fpv_tip_0x1645010A": {
-      "en": "",
+      "en": "Low battery",
       "zh": "低电量"
     },
     "fpv_tip_0x1645010B": {
-      "en": "",
+      "en": "Route generation timed out",
       "zh": "航线生成超时"
     },
     "fpv_tip_0x1645010C": {
-      "en": "",
+      "en": "Unable to obtain abstract data",
       "zh": "拿不到抽象数据"
     },
     "fpv_tip_0x1645010D": {
-      "en": "",
+      "en": "Failed to read parameter table",
       "zh": "参数表读取失败"
     },
     "fpv_tip_0x1645010E": {
-      "en": "",
+      "en": "Trajectory library calculation failed",
       "zh": "轨迹库计算失败"
     },
     "fpv_tip_0x1645010F": {
-      "en": "",
+      "en": "Takeoff request failed",
       "zh": "请求起飞失败"
     },
     "fpv_tip_0x16450110": {
-      "en": "",
+      "en": "Route mission request failed",
       "zh": "请求航线任务失败"
     },
     "fpv_tip_0x16450111": {
-      "en": "",
+      "en": "Return-to-home request failed",
       "zh": "请求返航失败"
     },
     "fpv_tip_0x16450112": {
-      "en": "",
+      "en": "Landing request failed",
       "zh": "请求降落失败"
     },
     "fpv_tip_0x16450113": {
-      "en": "",
+      "en": "Aircraft lost connection",
       "zh": "飞行器失联"
     },
     "fpv_tip_0x16450114": {
-      "en": "",
+      "en": "During real-time terrain following, there is a camera status problem (overexposed, underexposed, or uneven brightness on both sides)",
       "zh": "实时仿地过程中，相机状态有问题（过亮，过暗，两侧亮度不一致）"
     },
     "fpv_tip_0x16450115": {
-      "en": "",
+      "en": "Global map calculation error during real-time terrain following",
       "zh": "实时仿地过程中全局地图计算出错"
     },
     "fpv_tip_0x16450116": {
-      "en": "",
+      "en": "Route action group parsing failed",
       "zh": "航线动作组解析失败"
     },
     "fpv_tip_0x16450117": {
-      "en": "",
+      "en": "Flight task conflict; unable to obtain aircraft control",
       "zh": "飞行任务冲突，无法获取飞机控制权"
     },
     "fpv_tip_0x16450118": {
-      "en": "",
+      "en": "Parsing error in the file to be executed",
       "zh": "要执行的文件解析错误"
     },
     "fpv_tip_0x16450119": {
-      "en": "",
+      "en": "Waiting for the WPMZ file to be read took too long",
       "zh": "等待wpmz文件读取时间过长"
     },
     "fpv_tip_0x1645011A": {
-      "en": "",
+      "en": "Route has already started and cannot be started again",
       "zh": "航线已经开始，不能再次开始"
     },
     "fpv_tip_0x1645011B": {
-      "en": "",
+      "en": "Camera abstract device error",
       "zh": "相机抽象设备异常"
     },
     "fpv_tip_0x1645011C": {
-      "en": "",
+      "en": "Gimbal abstract device error",
       "zh": "云台抽象设备异常"
     },
     "fpv_tip_0x1645011D": {
-      "en": "",
+      "en": "App link error",
       "zh": "app链路异常"
     },
     "fpv_tip_0x1645011E": {
-      "en": "",
+      "en": "Factory file not deleted",
       "zh": "工厂文件未删除"
     },
     "fpv_tip_0x1645011F": {
-      "en": "",
+      "en": "RTK status jump; route exited",
       "zh": "RTK状态跳变，航线已退出"
     },
     "fpv_tip_0x16450120": {
-      "en": "",
+      "en": "Quick takeoff request failed",
       "zh": "请求快速起飞失败"
     },
     "fpv_tip_0x16450121": {
-      "en": "",
+      "en": "Auto takeoff failed to run",
       "zh": "自动起飞运行失败"
     },
     "fpv_tip_0x16450122": {
-      "en": "",
+      "en": "Route touched a custom flight zone",
       "zh": "航线触碰到自定义飞行区"
     },
     "fpv_tip_0x16450123": {
-      "en": "",
+      "en": "Route panorama shooting action error",
       "zh": "航线全景拍照动作出错"
     },
     "fpv_tip_0x16450124": {
-      "en": "",
+      "en": "Panorama shooting execution timed out",
       "zh": "执行全景拍照过程超时"
     },
     "fpv_tip_0x16450125": {
-      "en": "",
+      "en": "Failed to set camera topmode for panorama shooting",
       "zh": "全景拍照设置相机topmode失败"
     },
     "fpv_tip_0x16450126": {
-      "en": "",
+      "en": "Failed to set camera submode for panorama shooting",
       "zh": "全景拍照设置相机submode失败"
     },
     "fpv_tip_0x16450127": {
-      "en": "",
+      "en": "Aircraft yaw rotation before panorama shooting timed out",
       "zh": "全景拍照前飞机转yaw超时"
     },
     "fpv_tip_0x16450128": {
-      "en": "",
+      "en": "Aircraft yaw recovery after panorama shooting timed out",
       "zh": "全景拍照后飞机恢复yaw超时"
     },
     "fpv_tip_0x16450129": {
-      "en": "",
+      "en": "Panorama shooting null pointer error",
       "zh": "全景拍照空指针错误"
     },
     "fpv_tip_0x16461000": {
-      "en": "",
+      "en": "Fusion positioning system switched abnormally",
       "zh": "融合定位系统异常切换"
     },
     "fpv_tip_0x16461001": {
-      "en": "",
+      "en": "ap_fusion disconnected",
       "zh": "ap_fusion 断联"
     },
     "fpv_tip_0x16461002": {
-      "en": "",
+      "en": "ap_fusion has a serious fault",
       "zh": "ap_fusion 存在严重故障"
     },
     "fpv_tip_0x16461003": {
-      "en": "",
+      "en": "Default fusion positioning system was modified",
       "zh": "默认融合定位系统被修改"
     },
     "fpv_tip_0x16462001": {
-      "en": "",
+      "en": "Hall device disconnected",
       "zh": "霍尔设备断开"
     },
     "fpv_tip_0x16462004": {
-      "en": "",
+      "en": "Hall calibration data error",
       "zh": "霍尔校准数据异常"
     },
     "fpv_tip_0x16462007": {
-      "en": "",
+      "en": "Hall sensor is missing its magnetic ring and is working abnormally",
       "zh": "霍尔传感器缺少磁环，工作异常"
     },
     "fpv_tip_0x1646200A": {
-      "en": "",
+      "en": "Mutual check between Hall sensors failed",
       "zh": "霍尔传感器间互检失败"
     },
     "fpv_tip_0x16463001": {
-      "en": "",
+      "en": "RTK No NLFix",
       "zh": "RTK No NLFix"
     },
     "fpv_tip_0x16463004": {
-      "en": "",
+      "en": "Poor main antenna observation quality",
       "zh": "主天线观测质量差"
     },
     "fpv_tip_0x16463005": {
-      "en": "",
+      "en": "Signal frequently loses lock",
       "zh": "信号频繁失锁"
     },
     "fpv_tip_0x16463006": {
-      "en": "",
+      "en": "Ionosphere is active",
       "zh": "电离层活跃"
     },
     "fpv_tip_0x16463007": {
-      "en": "",
+      "en": "Main antenna SNR dropped sharply",
       "zh": "主天线SNR陡降"
     },
     "fpv_tip_0x16463008": {
-      "en": "",
+      "en": "Auxiliary antenna SNR dropped sharply",
       "zh": "副天线SNR陡降"
     },
     "fpv_tip_0x16463009": {
-      "en": "",
+      "en": "Main antenna open circuit or short circuit",
       "zh": "主天线开路或短路"
     },
     "fpv_tip_0x1646300A": {
-      "en": "",
+      "en": "Auxiliary antenna open circuit or short circuit",
       "zh": "副天线开路或短路"
     },
     "fpv_tip_0x1646300B": {
-      "en": "",
+      "en": "RTK Heading No NLFix",
       "zh": "RTK Heading No NLFix"
     },
     "fpv_tip_0x16463011": {
-      "en": "",
+      "en": "RTK base station RTCM data error",
       "zh": "RTK基站RTCM数据异常"
     },
     "fpv_tip_0x16463012": {
-      "en": "",
+      "en": "2607 did not receive RTCM",
       "zh": "2607未收到RTCM"
     },
     "fpv_tip_0x16463013": {
-      "en": "",
+      "en": "2607 RTCM V1 packet assembly error",
       "zh": "2607 RTCM V1组包异常"
     },
     "fpv_tip_0x16463014": {
-      "en": "",
+      "en": "2607 RTCM transmission bit error",
       "zh": "2607RTCM传输误码"
     },
     "fpv_tip_0x16463021": {
-      "en": "",
+      "en": "2906 did not receive RTCM",
       "zh": "2906未收到RTCM"
     },
     "fpv_tip_0x16463022": {
-      "en": "",
+      "en": "2906 RTK data sources inconsistent",
       "zh": "2906RTK数据源不一致"
     },
     "fpv_tip_0x16463023": {
-      "en": "",
+      "en": "2906 RTK data source invalid",
       "zh": "2906RTK数据源无效"
     },
     "fpv_tip_0x16463024": {
-      "en": "",
+      "en": "2906 RTK data source initialization failed",
       "zh": "2906RTK数据源初始化失败"
     },
     "fpv_tip_0x16463031": {
-      "en": "",
+      "en": "2606 did not receive RTCM",
       "zh": "2606未收到RTCM"
     },
     "fpv_tip_0x16463032": {
-      "en": "",
+      "en": "2606 RTK data sources inconsistent",
       "zh": "2606RTK数据源不一致"
     },
     "fpv_tip_0x16463033": {
-      "en": "",
+      "en": "2606 RTK data source invalid",
       "zh": "2606RTK数据源无效"
     },
     "fpv_tip_0x16463034": {
-      "en": "",
+      "en": "2606 did not receive information from the RTK information source",
       "zh": "2606未收到RTK信息源的信息"
     },
     "fpv_tip_0x16471000": {
-      "en": "",
+      "en": "No positioning output; the FC sensor may not be ready",
       "zh": "定位无输出，可能是FC传感器未就绪"
     },
     "fpv_tip_0x16471001": {
-      "en": "",
+      "en": "Positioning error, system error or loading error",
       "zh": "定位异常，系统异常或loading异常"
     },
     "fpv_tip_0x16471002": {
-      "en": "",
+      "en": "Poor consistency between positioning output velocity and position",
       "zh": "定位输出速度位置一致性差"
     },
     "fpv_tip_0x16471003": {
-      "en": "",
+      "en": "Flight controller sensor not ready",
       "zh": "飞控传感器未就绪"
     },
     "fpv_tip_0x16471004": {
-      "en": "",
+      "en": "State real-time delay too large",
       "zh": "状态实时性delay太大"
     },
     "fpv_tip_0x16471005": {
-      "en": "",
+      "en": "Loop time consumption error",
       "zh": "loop耗时异常"
     },
     "fpv_tip_0x16471006": {
-      "en": "",
+      "en": "State timestamp error",
       "zh": "状态时间戳异常"
     },
     "fpv_tip_0x16471007": {
-      "en": "",
+      "en": "IMU BIAS random walk error",
       "zh": "IMU BIAS随机游走异常"
     },
     "fpv_tip_0x16471010": {
-      "en": "",
+      "en": "Visual positioning multi-direction synchronization error",
       "zh": "视觉定位多方向同步异常"
     },
     "fpv_tip_0x16471012": {
-      "en": "",
+      "en": "Hardware accelerator call error",
       "zh": "硬件加速器调用异常"
     },
     "fpv_tip_0x16471100": {
-      "en": "",
+      "en": "IMU timestamp error",
       "zh": "IMU 时间戳异常"
     },
     "fpv_tip_0x16471101": {
-      "en": "",
+      "en": "Vision timestamp error",
       "zh": "视觉时间戳异常"
     },
     "fpv_tip_0x16471102": {
-      "en": "",
+      "en": "UBLOX GPS timestamp error",
       "zh": "UBLOX GPS时间戳异常"
     },
     "fpv_tip_0x16471103": {
-      "en": "",
+      "en": "DJI GPS timestamp error",
       "zh": "DJI GPS时间戳异常"
     },
     "fpv_tip_0x16471201": {
-      "en": "",
+      "en": "IMU stationary detection update error",
       "zh": "IMU静止检测更新异常"
     },
     "fpv_tip_0x16471204": {
-      "en": "",
+      "en": "Barometer update error",
       "zh": "气压计更新异常"
     },
     "fpv_tip_0x16471205": {
-      "en": "",
+      "en": "TOF update error",
       "zh": "TOF更新异常"
     },
     "fpv_tip_0x16471207": {
-      "en": "",
+      "en": "Vision update error",
       "zh": "视觉更新异常"
     },
     "fpv_tip_0x16471209": {
-      "en": "",
+      "en": "GPS update error",
       "zh": "GPS更新异常"
     },
     "fpv_tip_0x16476000": {
-      "en": "",
+      "en": "VIO front-end error",
       "zh": "VIO 前端异常"
     },
     "fpv_tip_0x16476001": {
-      "en": "",
+      "en": "Initialization error",
       "zh": "初始化异常"
     },
     "fpv_tip_0x16476002": {
-      "en": "",
+      "en": "Front-end startup error",
       "zh": "前端启动错误"
     },
     "fpv_tip_0x16476003": {
@@ -13248,267 +13250,267 @@
       "zh": "视觉定位前端获取里程计异常,尝试重启后再工作"
     },
     "fpv_tip_0x16476004": {
-      "en": "",
+      "en": "TF tree error",
       "zh": "TF树异常"
     },
     "fpv_tip_0x16476005": {
-      "en": "",
+      "en": "circular_tracking error",
       "zh": "circular_tracking错误"
     },
     "fpv_tip_0x16476006": {
-      "en": "",
+      "en": "DSP translation KLT error",
       "zh": "DSP translation KLT异常"
     },
     "fpv_tip_0x16476007": {
-      "en": "",
+      "en": "DSP eis KLT error",
       "zh": "DSP eis KLT异常"
     },
     "fpv_tip_0x16476008": {
-      "en": "",
+      "en": "Number of input Harris points exceeds the maximum set number of points",
       "zh": "输入harris点数大于最大设置点数"
     },
     "fpv_tip_0x16476009": {
-      "en": "",
+      "en": "Camera parameters not updated",
       "zh": "相机参数未更新"
     },
     "fpv_tip_0x16476100": {
-      "en": "",
+      "en": "VIO dynamic image cropping error",
       "zh": "VIO 动态切图异常"
     },
     "fpv_tip_0x16476101": {
-      "en": "",
+      "en": "Dynamic image cropping initialization error",
       "zh": "动态切图初始化异常"
     },
     "fpv_tip_0x16476102": {
-      "en": "",
+      "en": "Dynamic image cropping parameter error",
       "zh": "动态切图参数异常"
     },
     "fpv_tip_0x16476103": {
-      "en": "",
+      "en": "acc_rectify_channel_update error",
       "zh": "acc_rectify_channel_update异常"
     },
     "fpv_tip_0x16476104": {
-      "en": "",
+      "en": "insert_rectify_one_channel error",
       "zh": "insert_rectify_one_channel异常"
     },
     "fpv_tip_0x16476105": {
-      "en": "",
+      "en": "ss_dbus_shm_acquire error",
       "zh": "ss_dbus_shm_acquire异常"
     },
     "fpv_tip_0x16476106": {
-      "en": "",
+      "en": "ss_dbus_shm_publish error",
       "zh": "ss_dbus_shm_publish异常"
     },
     "fpv_tip_0x16476107": {
-      "en": "",
+      "en": "Timed out getting camera parameters",
       "zh": "获取相机参数超时"
     },
     "fpv_tip_0x16479000": {
-      "en": "",
+      "en": "V1-RTK function error",
       "zh": "V1-RTK功能异常"
     },
     "fpv_tip_0x16479001": {
-      "en": "",
+      "en": "RTK initialization error",
       "zh": "RTK初始化异常"
     },
     "fpv_tip_0x16479002": {
-      "en": "",
+      "en": "RTK DSP running error",
       "zh": "RTK DSP运行异常"
     },
     "fpv_tip_0x16479003": {
-      "en": "",
+      "en": "RTK process scheduling error",
       "zh": "RTK进程调度异常"
     },
     "fpv_tip_0x16479004": {
-      "en": "",
+      "en": "RTK output frequency error",
       "zh": "RTK输出频率异常"
     },
     "fpv_tip_0x16479005": {
-      "en": "",
+      "en": "RTK MIPI data error",
       "zh": "RTK MIPI数据异常"
     },
     "fpv_tip_0x16479006": {
-      "en": "",
+      "en": "RTK device driver error",
       "zh": "RTK 设备驱动异常"
     },
     "fpv_tip_0x16479011": {
-      "en": "",
+      "en": "RTK device configuration error",
       "zh": "RTK 设备配置异常"
     },
     "fpv_tip_0x16479012": {
-      "en": "",
+      "en": "RTK initialization resource request error",
       "zh": "RTK初始化资源申请异常"
     },
     "fpv_tip_0x16479013": {
-      "en": "",
+      "en": "MIPI initialization error",
       "zh": "MIPI初始化异常"
     },
     "fpv_tip_0x16479014": {
-      "en": "",
+      "en": "RTK initialization parameter configuration error",
       "zh": "RTK初始化参数配置异常"
     },
     "fpv_tip_0x16479015": {
-      "en": "",
+      "en": "RTK firmware version mismatch",
       "zh": "RTK固件版本不匹配"
     },
     "fpv_tip_0x16479021": {
-      "en": "",
+      "en": "RTK operator hang",
       "zh": "RTK算子异常挂死"
     },
     "fpv_tip_0x16479022": {
-      "en": "",
+      "en": "RTK operator run timed out",
       "zh": "RTK算子运行超时"
     },
     "fpv_tip_0x16479031": {
-      "en": "",
+      "en": "RTK system interrupt error",
       "zh": "RTK系统中断异常"
     },
     "fpv_tip_0x16479032": {
-      "en": "",
+      "en": "RTK system real-time performance error",
       "zh": "RTK系统实时性异常"
     },
     "fpv_tip_0x16479041": {
-      "en": "",
+      "en": "RTK timing error",
       "zh": "RTK时序错误"
     },
     "fpv_tip_0x16479051": {
-      "en": "",
+      "en": "RTK MIPI data synchronization error",
       "zh": "RTK MIPI数据同步错误"
     },
     "fpv_tip_0x16479052": {
-      "en": "",
+      "en": "RTK MIPI data frame loss",
       "zh": "RTK MIPI数据丢帧"
     },
     "fpv_tip_0x1647C010": {
-      "en": "",
+      "en": "Compass needs calibration",
       "zh": "指南针需要校准"
     },
     "fpv_tip_0x1647C011": {
-      "en": "",
+      "en": "Compass magnitude too large; calibration needed",
       "zh": "指南针模长过大，需要校准"
     },
     "fpv_tip_0x1647C012": {
-      "en": "",
+      "en": "Large compass Yaw error; calibration needed",
       "zh": "指南针Yaw误差大，需要校准"
     },
     "fpv_tip_0x1647C013": {
-      "en": "",
+      "en": "Compass yaw inconsistent; calibration needed",
       "zh": "指南针yaw不一致，需要校准"
     },
     "fpv_tip_0x1647C014": {
-      "en": "",
+      "en": "Compass magnitude inconsistent; calibration needed",
       "zh": "指南针模长不一致，需要校准"
     },
     "fpv_tip_0x1647C015": {
-      "en": "",
+      "en": "Compass heading inconsistent; calibration needed",
       "zh": "指南针航向不一致，需要校准"
     },
     "fpv_tip_0x1647C016": {
-      "en": "",
+      "en": "Compass not calibrated over a long distance; calibration needed",
       "zh": "指南针长距离未校准，需要校准"
     },
     "fpv_tip_0x1647C017": {
-      "en": "",
+      "en": "Compass not calibrated for a long time; calibration needed",
       "zh": "指南针长时间未校准，需要校准"
     },
     "fpv_tip_0x1647C018": {
-      "en": "",
+      "en": "Compass abnormal for a long time; calibration needed",
       "zh": "指南针长时间异常，需要校准"
     },
     "fpv_tip_0x1647C019": {
-      "en": "",
+      "en": "Compass heading inconsistent with fusion heading; calibration needed",
       "zh": "指南针航向与融合航向不一致，需要校准"
     },
     "fpv_tip_0x1647C020": {
-      "en": "",
+      "en": "Aircraft needs to be moved",
       "zh": "需要移动飞机"
     },
     "fpv_tip_0x1647C021": {
-      "en": "",
+      "en": "Compass magnitude too large after calibration; move the aircraft",
       "zh": "指南针校准完后模长过大，需要移动飞机"
     },
     "fpv_tip_0x1647C022": {
-      "en": "",
+      "en": "Large compass Yaw error after calibration; move the aircraft",
       "zh": "指南针校准完后Yaw误差大，需要移动飞机"
     },
     "fpv_tip_0x1647C023": {
-      "en": "",
+      "en": "Compass yaw inconsistent after calibration; move the aircraft",
       "zh": "指南针校准完后yaw不一致，需要移动飞机"
     },
     "fpv_tip_0x1647C024": {
-      "en": "",
+      "en": "Compass magnitude inconsistent after calibration; move the aircraft",
       "zh": "指南针校准完后模长不一致，需要移动飞机"
     },
     "fpv_tip_0x1647C025": {
-      "en": "",
+      "en": "Compass heading inconsistent after calibration; move the aircraft",
       "zh": "指南针校准完后航向不一致，需要移动飞机"
     },
     "fpv_tip_0x1647C030": {
-      "en": "",
+      "en": "Move the aircraft or wait for RTK-FIX",
       "zh": "需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C031": {
-      "en": "",
+      "en": "Compass magnitude too large after calibration; move the aircraft or wait for RTK-FIX",
       "zh": "指南针校准完后模长过大，需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C032": {
-      "en": "",
+      "en": "Large compass Yaw error after calibration; move the aircraft or wait for RTK-FIX",
       "zh": "指南针校准完后Yaw误差大，需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C033": {
-      "en": "",
+      "en": "Compass yaw inconsistent after calibration; move the aircraft or wait for RTK-FIX",
       "zh": "指南针校准完后yaw不一致，需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C034": {
-      "en": "",
+      "en": "Compass magnitude inconsistent after calibration; move the aircraft or wait for RTK-FIX",
       "zh": "指南针校准完后模长不一致，需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C035": {
-      "en": "",
+      "en": "Compass heading inconsistent after calibration; move the aircraft or wait for RTK-FIX",
       "zh": "指南针校准完后航向不一致，需要移动飞机或等待RTK-FIX"
     },
     "fpv_tip_0x1647C040": {
-      "en": "",
+      "en": "Compass needs calibration or wait for RTK-FIX",
       "zh": "指南针需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C041": {
-      "en": "",
+      "en": "Compass magnitude too large; calibrate or wait for RTK-FIX",
       "zh": "指南针模长过大，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C042": {
-      "en": "",
+      "en": "Large compass Yaw error; calibrate or wait for RTK-FIX",
       "zh": "指南针Yaw误差大，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C043": {
-      "en": "",
+      "en": "Compass yaw inconsistent; calibrate or wait for RTK-FIX",
       "zh": "指南针yaw不一致，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C044": {
-      "en": "",
+      "en": "Compass magnitude inconsistent; calibrate or wait for RTK-FIX",
       "zh": "指南针模长不一致，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C045": {
-      "en": "",
+      "en": "Compass heading inconsistent; calibrate or wait for RTK-FIX",
       "zh": "指南针航向不一致，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C046": {
-      "en": "",
+      "en": "Compass not calibrated over a long distance; calibrate or wait for RTK-FIX",
       "zh": "指南针长距离未校准，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C047": {
-      "en": "",
+      "en": "Compass not calibrated for a long time; calibrate or wait for RTK-FIX",
       "zh": "指南针长时间未校准，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x1647C048": {
-      "en": "",
+      "en": "Compass abnormal for a long time; calibrate or wait for RTK-FIX",
       "zh": "指南针长时间异常，需要校准或等待RTK-FIX"
     },
     "fpv_tip_0x16490001": {
-      "en": "",
+      "en": "Tracking planner exited abnormally",
       "zh": "tracking planner异常退出"
     },
     "fpv_tip_0x16490002": {
-      "en": "",
+      "en": "Tracking planner parameters invalid",
       "zh": "tracking planner参数无效"
     },
     "fpv_tip_0x16490003": {
@@ -13534,183 +13536,183 @@
       "zh-Hant": ""
     },
     "fpv_tip_0x16490004": {
-      "en": "",
+      "en": "Tracking planner follow failed",
       "zh": "tracking planner跟随失败"
     },
     "fpv_tip_0x16490005": {
-      "en": "",
+      "en": "Tracking planner map timed out",
       "zh": "tracking planner地图超时"
     },
     "fpv_tip_0x16490006": {
-      "en": "",
+      "en": "Tracking planner map null pointer",
       "zh": "tracking planner地图空指针"
     },
     "fpv_tip_0x16490007": {
-      "en": "",
+      "en": "Tracking planner obstacle avoidance exited abnormally",
       "zh": "tracking planner避障异常退出"
     },
     "fpv_tip_0x16490008": {
-      "en": "",
+      "en": "Tracking planner target safety error",
       "zh": "tracking planner目标安全性异常"
     },
     "fpv_tip_0x16490009": {
-      "en": "",
+      "en": "Tracking planner trajectory following error",
       "zh": "tracking planner轨迹跟随异常"
     },
     "fpv_tip_0x1649000A": {
-      "en": "",
+      "en": "Tracking planner target estimation error",
       "zh": "tracking planner目标估计错误"
     },
     "fpv_tip_0x1649000B": {
-      "en": "",
+      "en": "Tracking planner failed",
       "zh": "tracking planner失效"
     },
     "fpv_tip_0x1649000C": {
-      "en": "",
+      "en": "Tracking planner emergency braking",
       "zh": "tracking planner紧急刹车"
     },
     "fpv_tip_0x1649000D": {
-      "en": "",
+      "en": "Tracking planner smoothness error",
       "zh": "tracking planner平滑性异常"
     },
     "fpv_tip_0x1649000E": {
-      "en": "",
+      "en": "Tracking planner trajectory detection error",
       "zh": "tracking planner轨迹检测异常"
     },
     "fpv_tip_0x1649000F": {
-      "en": "",
+      "en": "Tracking planner braking planning error",
       "zh": "tracking planner刹车规划异常"
     },
     "fpv_tip_0x16490010": {
-      "en": "",
+      "en": "Tracking planner path planning error",
       "zh": "tracking planner路径规划异常"
     },
     "fpv_tip_0x16490011": {
-      "en": "",
+      "en": "Tracking planner trajectory planning error",
       "zh": "tracking planner轨迹规划异常"
     },
     "fpv_tip_0x16493000": {
-      "en": "",
+      "en": "Global map: unable to get high-frequency fly_core push from the MCU",
       "zh": "全局地图：拿不到MCU的高频推送 fly_core"
     },
     "fpv_tip_0x16493100": {
-      "en": "",
+      "en": "Global map: unable to get low-frequency fly_extend push from the MCU",
       "zh": "全局地图：拿不到MCU的低频推送 fly_extend"
     },
     "fpv_tip_0x16493200": {
-      "en": "",
+      "en": "Global map: unable to get valid positioning data fusion_output",
       "zh": "全局地图：拿不到有效的定位数据 fusion_output"
     },
     "fpv_tip_0x16493300": {
-      "en": "",
+      "en": "Global map: unable to get valid calibration data",
       "zh": "全局地图：拿不到有效的标定数据"
     },
     "fpv_tip_0x16493400": {
-      "en": "",
+      "en": "Global map: unable to get valid sky semantics",
       "zh": "全局地图：拿不到有效的天空语义"
     },
     "fpv_tip_0x16493500": {
-      "en": "",
+      "en": "Global map: unable to get a valid local map",
       "zh": "全局地图：拿不到有效的局部地图"
     },
     "fpv_tip_0x16493600": {
-      "en": "",
+      "en": "Global map: local map processing failed/timed out",
       "zh": "全局地图：局部地图处理失败/超时"
     },
     "fpv_tip_0x16494000": {
-      "en": "",
+      "en": "APAS Planner malfunction",
       "zh": "APAS Planner 功能异常"
     },
     "fpv_tip_0x16494001": {
-      "en": "",
+      "en": "Local map subscription error",
       "zh": "局部地图订阅异常"
     },
     "fpv_tip_0x16494002": {
-      "en": "",
+      "en": "Environment speed limit subscription error",
       "zh": "环境限速订阅异常"
     },
     "fpv_tip_0x16494003": {
-      "en": "",
+      "en": "APAS Planner blocked",
       "zh": "APAS Planner 阻塞"
     },
     "fpv_tip_0x16494004": {
-      "en": "",
+      "en": "APAS Follower blocked",
       "zh": "APAS Follower 阻塞"
     },
     "fpv_tip_0x16494100": {
-      "en": "",
+      "en": "APAS Planner performance error",
       "zh": "APAS Planner 性能异常"
     },
     "fpv_tip_0x16494101": {
-      "en": "",
+      "en": "APAS Planner local map shared memory timed out",
       "zh": "APAS Planner 局部地图共享内存超时"
     },
     "fpv_tip_0x16494102": {
-      "en": "",
+      "en": "APAS Planner initial trajectory solving failed",
       "zh": "APAS Planner 初始轨迹求解失败"
     },
     "fpv_tip_0x16494103": {
-      "en": "",
+      "en": "APAS Planner detour trajectory solving failed",
       "zh": "APAS Planner 绕行轨迹求解失败"
     },
     "fpv_tip_0x16494104": {
-      "en": "",
+      "en": "APAS Planner triggered emergency braking",
       "zh": "APAS Planner 触发紧急刹车"
     },
     "fpv_tip_0x16494105": {
-      "en": "",
+      "en": "APAS Follower tracking error too large",
       "zh": "APAS Follower 跟踪误差过大"
     },
     "fpv_tip_0x16494106": {
-      "en": "",
+      "en": "APAS Follower control sequence collision check failed",
       "zh": "APAS Follower 控制序列碰撞检查失败"
     },
     "fpv_tip_0x16497100": {
-      "en": "",
+      "en": "Terrain-following detour error",
       "zh": "仿地绕行异常"
     },
     "fpv_tip_0x16497110": {
-      "en": "",
+      "en": "Terrain-following detour mission setting error",
       "zh": "仿地绕行任务设置异常"
     },
     "fpv_tip_0x16497111": {
-      "en": "",
+      "en": "Terrain-following detour mission altitude error",
       "zh": "仿地绕行任务高度异常"
     },
     "fpv_tip_0x16497112": {
-      "en": "",
+      "en": "Terrain-following detour mission speed error",
       "zh": "仿地绕行任务速度异常"
     },
     "fpv_tip_0x16497113": {
-      "en": "",
+      "en": "Terrain-following detour mission route setting error",
       "zh": "仿地绕行任务航线设置异常"
     },
     "fpv_tip_0x16497120": {
-      "en": "",
+      "en": "Terrain-following detour perception input error",
       "zh": "仿地绕行感知输入异常"
     },
     "fpv_tip_0x16497121": {
-      "en": "",
+      "en": "Terrain-following detour mapping error",
       "zh": "仿地绕行建图异常"
     },
     "fpv_tip_0x16497122": {
-      "en": "",
+      "en": "Terrain-following detour map timed out",
       "zh": "仿地绕行地图超时"
     },
     "fpv_tip_0x16497130": {
-      "en": "",
+      "en": "Terrain-following detour planning failed",
       "zh": "仿地绕行规划失败"
     },
     "fpv_tip_0x16497131": {
-      "en": "",
+      "en": "Terrain-following detour search path invalid",
       "zh": "仿地绕行搜索路径无效"
     },
     "fpv_tip_0x16497132": {
-      "en": "",
+      "en": "Terrain-following detour search failed",
       "zh": "仿地绕行搜索失败"
     },
     "fpv_tip_0x16497133": {
-      "en": "",
+      "en": "Terrain-following detour trajectory optimization failed",
       "zh": "仿地绕行轨迹优化失败"
     },
     "fpv_tip_0x164A1005": {
@@ -13722,431 +13724,431 @@
       "zh": "无位置保持模式下，无法稳定悬停，可能影响飞行安全，建议切换为普通模式"
     },
     "fpv_tip_0x164C0000": {
-      "en": "",
+      "en": "Local map module error",
       "zh": "局部地图模块异常"
     },
     "fpv_tip_0x164C0040": {
-      "en": "",
+      "en": "Local map module data reception error",
       "zh": "局部地图模块接受数据异常"
     },
     "fpv_tip_0x164C0080": {
-      "en": "",
+      "en": "Local map module data processing error",
       "zh": "局部地图模块数据处理异常"
     },
     "fpv_tip_0x164C00C0": {
-      "en": "",
+      "en": "Local map module planning command subscription error",
       "zh": "局部地图模块规划指令订阅异常"
     },
     "fpv_tip_0x164C0100": {
-      "en": "",
+      "en": "Local map module downward-view DPP subscription error",
       "zh": "局部地图模块订阅下视dpp异常"
     },
     "fpv_tip_0x164C0101": {
-      "en": "",
+      "en": "Local map module forward-view DPP subscription error",
       "zh": "局部地图模块订阅前视dpp异常"
     },
     "fpv_tip_0x164C0102": {
-      "en": "",
+      "en": "Local map module backward-view DPP subscription error",
       "zh": "局部地图模块订阅后视dpp异常"
     },
     "fpv_tip_0x164C0103": {
-      "en": "",
+      "en": "Local map module right-view DPP subscription error",
       "zh": "局部地图模块订阅右视dpp异常"
     },
     "fpv_tip_0x164C0104": {
-      "en": "",
+      "en": "Local map module left-view DPP subscription error",
       "zh": "局部地图模块订阅左视dpp异常"
     },
     "fpv_tip_0x164C0105": {
-      "en": "",
+      "en": "Local map module upward-view DPP subscription error",
       "zh": "局部地图模块订阅上视dpp异常"
     },
     "fpv_tip_0x164C013E": {
-      "en": "",
+      "en": "Local map module DPP subscription error",
       "zh": "局部地图模块订阅dpp异常"
     },
     "fpv_tip_0x164C0140": {
-      "en": "",
+      "en": "Local map module calibration parameter subscription error",
       "zh": "局部地图模块订阅标定参数异常"
     },
     "fpv_tip_0x164C0180": {
-      "en": "",
+      "en": "Local map module camera status subscription error",
       "zh": "局部地图模块订阅相机状态异常"
     },
     "fpv_tip_0x164C01C0": {
-      "en": "",
+      "en": "Local map module data processing timed out",
       "zh": "局部地图模块数据处理超时"
     },
     "fpv_tip_0x164C0200": {
-      "en": "",
+      "en": "Local map module data processing error",
       "zh": "局部地图模块数据处理过程错误"
     },
     "fpv_tip_0x164C0240": {
-      "en": "",
+      "en": "DPP module downward-view disparity map timing error",
       "zh": "dpp模块下视视差图时序异常"
     },
     "fpv_tip_0x164C0241": {
-      "en": "",
+      "en": "DPP module forward-view disparity map timing error",
       "zh": "dpp模块前视视差图时序异常"
     },
     "fpv_tip_0x164C0242": {
-      "en": "",
+      "en": "DPP module backward-view disparity map timing error",
       "zh": "dpp模块后视视差图时序异常"
     },
     "fpv_tip_0x164C0243": {
-      "en": "",
+      "en": "DPP module right-view disparity map timing error",
       "zh": "dpp模块右视视差图时序异常"
     },
     "fpv_tip_0x164C0244": {
-      "en": "",
+      "en": "DPP module left-view disparity map timing error",
       "zh": "dpp模块左视视差图时序异常"
     },
     "fpv_tip_0x164C0245": {
-      "en": "",
+      "en": "DPP module upward-view disparity map timing error",
       "zh": "dpp模块上视视差图时序异常"
     },
     "fpv_tip_0x164C027E": {
-      "en": "",
+      "en": "DPP module disparity map timing error",
       "zh": "dpp模块视差图时序异常"
     },
     "fpv_tip_0x164C0280": {
-      "en": "",
+      "en": "DPP module downward-view disparity map lost",
       "zh": "dpp模块下视视差图丢失"
     },
     "fpv_tip_0x164C0281": {
-      "en": "",
+      "en": "DPP module forward-view disparity map lost",
       "zh": "dpp模块前视视差图丢失"
     },
     "fpv_tip_0x164C0282": {
-      "en": "",
+      "en": "DPP module backward-view disparity map lost",
       "zh": "dpp模块后视视差图丢失"
     },
     "fpv_tip_0x164C0283": {
-      "en": "",
+      "en": "DPP module right-view disparity map lost",
       "zh": "dpp模块右视视差图丢失"
     },
     "fpv_tip_0x164C0284": {
-      "en": "",
+      "en": "DPP module left-view disparity map lost",
       "zh": "dpp模块左视视差图丢失"
     },
     "fpv_tip_0x164C0285": {
-      "en": "",
+      "en": "DPP module upward-view disparity map lost",
       "zh": "dpp模块上视视差图丢失"
     },
     "fpv_tip_0x164C02BE": {
-      "en": "",
+      "en": "DPP module disparity map consistently lost in a certain direction",
       "zh": "dpp模块某方向固定丢失视差图"
     },
     "fpv_tip_0x164C02C0": {
-      "en": "",
+      "en": "Local map module map update delay too large",
       "zh": "局部地图模块地图更新延迟大"
     },
     "fpv_tip_0x164C0300": {
-      "en": "",
+      "en": "Local map module ESDF calculation delay too large",
       "zh": "局部地图模块esdf计算延迟大"
     },
     "fpv_tip_0x164C0440": {
-      "en": "",
+      "en": "Local map module pose data subscription error",
       "zh": "局部地图模块订阅位姿数据异常"
     },
     "fpv_tip_0x164C04BE": {
-      "en": "",
+      "en": "DPP module semantic depth data subscription error",
       "zh": "dpp模块订阅语义depth数据异常"
     },
     "fpv_tip_0x164C04FE": {
-      "en": "",
+      "en": "DPP module SGBM data subscription error",
       "zh": "dpp模块订阅sgbm数据异常"
     },
     "fpv_tip_0x164C053E": {
-      "en": "",
+      "en": "DPP module semantic glare detection data subscription error",
       "zh": "dpp模块订阅语义炫光检测数据异常"
     },
     "fpv_tip_0x164C057E": {
-      "en": "",
+      "en": "DPP module semantic sky data subscription error",
       "zh": "dpp模块订阅语义天空数据异常"
     },
     "fpv_tip_0x164C05BE": {
-      "en": "",
+      "en": "DPP module semantic propeller blade detection data subscription error",
       "zh": "dpp模块订阅语义桨叶检测数据异常"
     },
     "fpv_tip_0x164C05FE": {
-      "en": "",
+      "en": "DPP module data processing error",
       "zh": "dpp模块数据处理异常"
     },
     "fpv_tip_0x164C0600": {
-      "en": "",
+      "en": "Semantic depth module initialization error",
       "zh": "语义depth模块初始化异常"
     },
     "fpv_tip_0x164C0640": {
-      "en": "",
+      "en": "Semantic perception module main direction data subscription error",
       "zh": "语义感知模块订阅主方向数据异常"
     },
     "fpv_tip_0x164C0680": {
-      "en": "",
+      "en": "Semantic perception module image status data subscription error",
       "zh": "语义感知模块订阅图像状态数据异常"
     },
     "fpv_tip_0x164C06C0": {
-      "en": "",
+      "en": "Semantic perception module input image data subscription error",
       "zh": "语义感知模块订阅输入图数据异常"
     },
     "fpv_tip_0x164C0700": {
-      "en": "",
+      "en": "Semantic perception module latest frame number data subscription error",
       "zh": "语义感知模块订阅最新帧号数据异常"
     },
     "fpv_tip_0x164C0740": {
-      "en": "",
+      "en": "Semantic perception module execution error",
       "zh": "语义感知模块执行异常"
     },
     "fpv_tip_0x164C0780": {
-      "en": "",
+      "en": "Semantic depth module disparity result publishing error",
       "zh": "语义depth模块发布视差结果异常"
     },
     "fpv_tip_0x164C07C0": {
-      "en": "",
+      "en": "Semantic perception module NNF interface call error",
       "zh": "语义感知模块调用nnf接口异常"
     },
     "fpv_tip_0x164C0800": {
-      "en": "",
+      "en": "Semantic depth module disparity result retrieval error",
       "zh": "语义depth模块获取视差结果异常"
     },
     "fpv_tip_0x164C0840": {
-      "en": "",
+      "en": "Semantic glare module initialization error",
       "zh": "语义炫光模块初始化异常"
     },
     "fpv_tip_0x164C0940": {
-      "en": "",
+      "en": "Semantic glare module glare detection result publishing error",
       "zh": "语义炫光模块发布炫光检测结果异常"
     },
     "fpv_tip_0x164C09C0": {
-      "en": "",
+      "en": "Semantic sky module initialization error",
       "zh": "语义天空模块初始化异常"
     },
     "fpv_tip_0x164C0A40": {
-      "en": "",
+      "en": "Semantic perception module channel_manager data subscription error",
       "zh": "语义感知模块订阅channel_manager数据异常"
     },
     "fpv_tip_0x164C0B00": {
-      "en": "",
+      "en": "Semantic perception module post-processing error",
       "zh": "语义感知模块后处理异常"
     },
     "fpv_tip_0x164C0BC0": {
-      "en": "",
+      "en": "Semantic sky module segmentation result publishing error",
       "zh": "语义天空模块发布分割结果异常"
     },
     "fpv_tip_0x164C0C00": {
-      "en": "",
+      "en": "Semantic sky module horizon calculation error",
       "zh": "语义天空模块地平线计算异常"
     },
     "fpv_tip_0x164C0C40": {
-      "en": "",
+      "en": "Semantic sky module sky count publishing error",
       "zh": "语义天空模块发布天空数量异常"
     },
     "fpv_tip_0x164C0C80": {
-      "en": "",
+      "en": "Semantic sky module intrinsic parameter data subscription error",
       "zh": "语义天空模块订阅内参数据异常"
     },
     "fpv_tip_0x164C0CC0": {
-      "en": "",
+      "en": "Semantic sky module extrinsic parameter data subscription error",
       "zh": "语义天空模块订阅外参数据异常"
     },
     "fpv_tip_0x164C0D40": {
-      "en": "",
+      "en": "Semantic sky module coordinate transformation data subscription error",
       "zh": "语义天空模块订阅坐标转换数据异常"
     },
     "fpv_tip_0x164C0D80": {
-      "en": "",
+      "en": "Semantic propeller blade detection module initialization error",
       "zh": "语义桨叶检测模块初始化异常"
     },
     "fpv_tip_0x164C0E80": {
-      "en": "",
+      "en": "Semantic propeller blade detection module segmentation result publishing error",
       "zh": "语义桨叶检测模块发布分割结果异常"
     },
     "fpv_tip_0x164C0EC0": {
-      "en": "",
+      "en": "Marker recognition module initialization error",
       "zh": "marker识别模块初始化异常"
     },
     "fpv_tip_0x164C0ED0": {
-      "en": "",
+      "en": "Marker recognition module fusion_data subscription error",
       "zh": "marker识别模块订阅fusion_data数据异常"
     },
     "fpv_tip_0x164C0F40": {
-      "en": "",
+      "en": "Marker recognition module marker_info publishing error",
       "zh": "marker识别模块发布marker_info数据异常"
     },
     "fpv_tip_0x164C0F80": {
-      "en": "",
+      "en": "Marker recognition module marker_status publishing error",
       "zh": "marker识别模块发布marker_status数据异常"
     },
     "fpv_tip_0x164C0d00": {
-      "en": "",
+      "en": "Semantic sky module VIO pose data subscription error",
       "zh": "语义天空模块订阅vio位姿数据异常"
     },
     "fpv_tip_0x164D0000": {
-      "en": "",
+      "en": "Environment detection error",
       "zh": "环境检测异常"
     },
     "fpv_tip_0x164D0001": {
-      "en": "",
+      "en": "Environment detection module initialization error",
       "zh": "环境检测模块初始化异常"
     },
     "fpv_tip_0x164D0002": {
-      "en": "",
+      "en": "Environment detection module DBUS publishing error",
       "zh": "环境检测模块DBUS发布异常"
     },
     "fpv_tip_0x164D0003": {
-      "en": "",
+      "en": "Environment detection module V1 publishing error",
       "zh": "环境检测模块V1发布异常"
     },
     "fpv_tip_0x164D0004": {
-      "en": "",
+      "en": "Environment detection module too-dark flag push error",
       "zh": "环境检测模块过暗标志推送异常"
     },
     "fpv_tip_0x164D0005": {
-      "en": "",
+      "en": "Environment detection module entered low power mode",
       "zh": "环境检测模块进入低功耗"
     },
     "fpv_tip_0x164D0006": {
-      "en": "",
+      "en": "Environment detection module exited low power mode",
       "zh": "环境检测模块退出低功耗"
     },
     "fpv_tip_0x164D0040": {
-      "en": "",
+      "en": "Illuminance detection module error",
       "zh": "照度检测模块异常"
     },
     "fpv_tip_0x164D0041": {
-      "en": "",
+      "en": "Water surface detection module error",
       "zh": "水面检测模块异常"
     },
     "fpv_tip_0x164D0042": {
-      "en": "",
+      "en": "Cloud and fog detection module error",
       "zh": "云雾检测模块异常"
     },
     "fpv_tip_0x164D0043": {
-      "en": "",
+      "en": "Propeller guard detection module error",
       "zh": "桨保检测模块异常"
     },
     "fpv_tip_0x164D0044": {
-      "en": "",
+      "en": "Dirt detection module error",
       "zh": "脏污检测模块异常"
     },
     "fpv_tip_0x164D0045": {
-      "en": "",
+      "en": "Occlusion detection module error",
       "zh": "遮挡检测模块异常"
     },
     "fpv_tip_0x164D0046": {
-      "en": "",
+      "en": "Indoor detection module error",
       "zh": "室内检测模块异常"
     },
     "fpv_tip_0x164D0080": {
-      "en": "",
+      "en": "Environment detection module AEC data subscription error",
       "zh": "环境检测模块AEC数据订阅异常"
     },
     "fpv_tip_0x164D0081": {
-      "en": "",
+      "en": "Environment detection module illuminance matrix subscription error",
       "zh": "环境检测模块照度矩阵订阅异常"
     },
     "fpv_tip_0x164D0082": {
-      "en": "",
+      "en": "Environment detection module maphex subscription error",
       "zh": "环境检测模块maphex订阅异常"
     },
     "fpv_tip_0x164D0083": {
-      "en": "",
+      "en": "Environment detection module visual cloud and fog data error",
       "zh": "环境检测模块视觉云雾数据异常"
     },
     "fpv_tip_0x164D0084": {
-      "en": "",
+      "en": "Environment detection module VIO front-end data error",
       "zh": "环境检测模块VIO前端数据异常"
     },
     "fpv_tip_0x164D0085": {
-      "en": "",
+      "en": "Environment detection module TOF cloud and fog data error",
       "zh": "环境检测模块TOF云雾数据异常"
     },
     "fpv_tip_0x164D0086": {
-      "en": "",
+      "en": "Environment detection module propeller guard image subscription error",
       "zh": "环境检测模块桨保图像订阅异常"
     },
     "fpv_tip_0x164D0087": {
-      "en": "",
+      "en": "Environment detection module 3DTOF data error",
       "zh": "环境检测模块3DTOF数据异常"
     },
     "fpv_tip_0x164D0088": {
-      "en": "",
+      "en": "Environment detection module CNN dirt data error",
       "zh": "环境检测模块CNN脏污数据异常"
     },
     "fpv_tip_0x164D0089": {
-      "en": "",
+      "en": "Environment detection module CNN indoor data error",
       "zh": "环境检测模块CNN室内数据异常"
     },
     "fpv_tip_0x164D008A": {
-      "en": "",
+      "en": "Environment detection module CNN water surface data error",
       "zh": "环境检测模块CNN水面数据异常"
     },
     "fpv_tip_0x164D008B": {
-      "en": "",
+      "en": "Environment detection module CNN glare data error",
       "zh": "环境检测模块CNN炫光数据异常"
     },
     "fpv_tip_0x164D008C": {
-      "en": "",
+      "en": "Environment detection module FMU FLY CORE data error",
       "zh": "环境检测模块FMU FLY CORE数据异常"
     },
     "fpv_tip_0x164D008D": {
-      "en": "",
+      "en": "Environment detection module flight status data error",
       "zh": "环境检测模块飞行状态数据异常"
     },
     "fpv_tip_0x164D008E": {
-      "en": "",
+      "en": "Environment detection module PARSING state data error",
       "zh": "环境检测模块PARSING态数据异常"
     },
     "fpv_tip_0x164DFFF1": {
-      "en": "",
+      "en": "1DTOF error",
       "zh": "1DTOF异常"
     },
     "fpv_tip_0x164DFFF2": {
-      "en": "",
+      "en": "3DTOF error",
       "zh": "3DtoF异常"
     },
     "fpv_tip_0x164DFFF3": {
-      "en": "",
+      "en": "Radar sensor error",
       "zh": "雷达传感器异常"
     },
     "fpv_tip_0x164DFFF4": {
-      "en": "",
+      "en": "Ultrasonic sensor error",
       "zh": "超声波传感器异常"
     },
     "fpv_tip_0x164a0001": {
-      "en": "",
+      "en": "Vertical altitude control error",
       "zh": "垂直高度控制异常"
     },
     "fpv_tip_0x164a0002": {
-      "en": "",
+      "en": "Vertical speed control error",
       "zh": "垂直速度控制异常"
     },
     "fpv_tip_0x164a0003": {
-      "en": "",
+      "en": "Vertical altitude feedback error",
       "zh": "垂直高度反馈异常"
     },
     "fpv_tip_0x164a0004": {
-      "en": "",
+      "en": "Vertical speed feedback error",
       "zh": "垂直速度反馈异常"
     },
     "fpv_tip_0x164a0005": {
-      "en": "",
+      "en": "Vertical power saturation error",
       "zh": "垂直动力饱和异常"
     },
     "fpv_tip_0x164a1001": {
-      "en": "",
+      "en": "Horizontal control error",
       "zh": "水平控制异常"
     },
     "fpv_tip_0x164a1002": {
-      "en": "",
+      "en": "Horizontal speed control error",
       "zh": "水平速度控制异常"
     },
     "fpv_tip_0x164a1003": {
-      "en": "",
+      "en": "Horizontal speed feedback error",
       "zh": "水平速度反馈异常"
     },
     "fpv_tip_0x164a1004": {
-      "en": "",
+      "en": "Attitude control error",
       "zh": "姿态控制异常"
     },
     "fpv_tip_0x17000001": {
@@ -18460,31 +18462,31 @@
       "zh": "视频直播无法获取无人机位置"
     },
     "fpv_tip_0x19117042": {
-      "en": "",
+      "en": "Aircraft did not start charging on the charging pad",
       "zh": "飞机充电板未进入充电"
     },
     "fpv_tip_0x19117100": {
-      "en": "",
+      "en": "Battery cannot be heated to keep it warm",
       "zh": "电池无法加热保温"
     },
     "fpv_tip_0x19117121": {
-      "en": "",
+      "en": "Battery did not enter the warming state",
       "zh": "电池未进入保温状态"
     },
     "fpv_tip_0x19117200": {
-      "en": "",
+      "en": "Aircraft power-on failure",
       "zh": "飞机开机发生故障"
     },
     "fpv_tip_0x19117300": {
-      "en": "",
+      "en": "Aircraft shutdown failed",
       "zh": "飞机关机失败"
     },
     "fpv_tip_0x19117420": {
-      "en": "",
+      "en": "Aircraft battery temperature too low to operate",
       "zh": "飞机电池温度过低，不能工作"
     },
     "fpv_tip_0x19117440": {
-      "en": "",
+      "en": "Aircraft battery temperature above 45 degrees; cannot operate",
       "zh": "飞机电池超45度，不能工作"
     },
     "fpv_tip_0x19200001": {
@@ -18554,7 +18556,7 @@
       "zh": "负载系统异常，可能影响作业"
     },
     "fpv_tip_0x1A010004": {
-      "en": "",
+      "en": "Vision NN denoising error (visual denoising)",
       "zh": "视觉NN降噪异常(视觉降噪)"
     },
     "fpv_tip_0x1A010007": {
@@ -20318,39 +20320,39 @@
       "zh": "后视红外传感器连接异常,请返航或降落"
     },
     "fpv_tip_0x1A030183": {
-      "en": "",
+      "en": "3DTOF image output error (upward view)",
       "zh": "3DTOF 出图异常(上视)"
     },
     "fpv_tip_0x1A030184": {
-      "en": "",
+      "en": "3DTOF image output error (left view)",
       "zh": "3DTOF 出图异常(左视)"
     },
     "fpv_tip_0x1A030185": {
-      "en": "",
+      "en": "3DTOF image output error (right view)",
       "zh": "3DTOF 出图异常(右视)"
     },
     "fpv_tip_0x1A0301C0": {
-      "en": "",
+      "en": "TOF3D_CALIBRATION_FAIL_0 (downward view)",
       "zh": "TOF3D_CALIBRATION_FAIL_0(下视)"
     },
     "fpv_tip_0x1A0301C1": {
-      "en": "",
+      "en": "TOF3D_CALIBRATION_FAIL_1 (forward view)",
       "zh": "TOF3D_CALIBRATION_FAIL_1(前视)"
     },
     "fpv_tip_0x1A0301C2": {
-      "en": "",
+      "en": "3DTOF calibration error (backward view)",
       "zh": "3DTOF 标定异常(后视)"
     },
     "fpv_tip_0x1A0301C3": {
-      "en": "",
+      "en": "3DTOF calibration error (upward view)",
       "zh": "3DTOF 标定异常(上视)"
     },
     "fpv_tip_0x1A0301C4": {
-      "en": "",
+      "en": "3DTOF calibration error (left view)",
       "zh": "3DTOF 标定异常(左视)"
     },
     "fpv_tip_0x1A0301C5": {
-      "en": "",
+      "en": "3DTOF calibration error (right view)",
       "zh": "3DTOF 标定异常(右视)"
     },
     "fpv_tip_0x1A040001": {
@@ -20453,71 +20455,71 @@
       "zh-Hant": ""
     },
     "fpv_tip_0x1A060041": {
-      "en": "",
+      "en": "Front radar sensor connection error",
       "zh": "前雷达传感器连接异常"
     },
     "fpv_tip_0x1A060042": {
-      "en": "",
+      "en": "Rear radar sensor connection error",
       "zh": "后雷达传感器连接异常"
     },
     "fpv_tip_0x1A060043": {
-      "en": "",
+      "en": "Center radar sensor connection error",
       "zh": "中心雷达传感器连接异常"
     },
     "fpv_tip_0x1A060080": {
-      "en": "",
+      "en": "Upper radar sensor calibration error",
       "zh": "上雷达传感器标定异常"
     },
     "fpv_tip_0x1A060081": {
-      "en": "",
+      "en": "Front radar sensor calibration error",
       "zh": "前雷达传感器标定异常"
     },
     "fpv_tip_0x1A060082": {
-      "en": "",
+      "en": "Rear radar sensor calibration error",
       "zh": "后雷达传感器标定异常"
     },
     "fpv_tip_0x1A060083": {
-      "en": "",
+      "en": "Center radar sensor calibration error",
       "zh": "中心雷达传感器标定异常"
     },
     "fpv_tip_0x1A0600C0": {
-      "en": "",
+      "en": "Upper radar sensor hardware fault",
       "zh": "上雷达传感器硬件故障"
     },
     "fpv_tip_0x1A0600C1": {
-      "en": "",
+      "en": "Front radar sensor hardware fault",
       "zh": "前雷达传感器硬件故障"
     },
     "fpv_tip_0x1A0600C2": {
-      "en": "",
+      "en": "Rear radar sensor hardware fault",
       "zh": "后雷达传感器硬件故障"
     },
     "fpv_tip_0x1A0600C3": {
-      "en": "",
+      "en": "Center radar sensor hardware fault",
       "zh": "中心雷达传感器硬件故障"
     },
     "fpv_tip_0x1A080080": {
-      "en": "",
+      "en": "Lower front ultrasonic sensor hardware fault",
       "zh": "下前超声波传感器硬件故障"
     },
     "fpv_tip_0x1A080081": {
-      "en": "",
+      "en": "Lower rear ultrasonic sensor hardware fault",
       "zh": "下后超声波传感器硬件故障"
     },
     "fpv_tip_0x1A080082": {
-      "en": "",
+      "en": "Lower left ultrasonic sensor hardware fault",
       "zh": "下左超声波传感器硬件故障"
     },
     "fpv_tip_0x1A080083": {
-      "en": "",
+      "en": "Lower right ultrasonic sensor hardware fault",
       "zh": "下右超声波传感器硬件故障"
     },
     "fpv_tip_0x1A080084": {
-      "en": "",
+      "en": "Center left ultrasonic sensor hardware fault",
       "zh": "中心左超声波传感器硬件故障"
     },
     "fpv_tip_0x1A080085": {
-      "en": "",
+      "en": "Center right ultrasonic sensor hardware error",
       "zh": "中心右超声波传感器硬件异常"
     },
     "fpv_tip_0x1A210180": {
@@ -21097,11 +21099,11 @@
       "zh": "视觉避障失效，已切换为雷达避障，注意可避障区间变化"
     },
     "fpv_tip_0x1A421B40": {
-      "en": "",
+      "en": "LiDAR connected",
       "zh": "激光雷达已连接"
     },
     "fpv_tip_0x1A421B80": {
-      "en": "",
+      "en": "LiDAR disconnected",
       "zh": "激光雷达连接已断开"
     },
     "fpv_tip_0x1A430680": {
@@ -24070,7 +24072,7 @@
     },
     "fpv_tip_0x1C000001": {
       "de": "",
-      "en": "",
+      "en": "Gimbal camera X is overheated. Wait for it to cool down before using it.",
       "es": "",
       "fr": "Surchauffe caméra X . Attendez que la température de la caméra revienne à la normale avant usage",
       "ja": "",
@@ -24486,7 +24488,7 @@
       "zh": "存储卡加密待验证，请输入密码验证后使用"
     },
     "fpv_tip_0x1C000414": {
-      "en": "",
+      "en": "SD card storage is severely fragmented. Back up the footage and format the card.",
       "zh": "SD卡存储碎片化程度严重，请备份素材后格式化"
     },
     "fpv_tip_0x1C000602": {
@@ -24773,7 +24775,7 @@
     },
     "fpv_tip_0x1C001003": {
       "de": "",
-      "en": "",
+      "en": "Failed to get DJI PROSSD storage information. To avoid storage risks, back up the footage and format the drive.",
       "es": "",
       "fr": "Surchauffe du processeur de la caméra . Retournez au point de départ ou atterrissez immédiatement et attendez que la température de la caméra revienne à la normale avant usage\r\r\n\r\r\nSurchauffe du processeur de la caméra . Retournez au point de départ ou atterrissez immédiatement et attendez que la température de la caméra revienne à la normale avant usage",
       "ja": "",
@@ -25395,7 +25397,7 @@
     },
     "fpv_tip_0x1C002004": {
       "de": "",
-      "en": "",
+      "en": "H20 camera image sensor chip error",
       "es": "",
       "fr": "Erreur du processeur de transmission d'images du capteur de la caméra H20",
       "ja": "",
@@ -25460,11 +25462,12 @@
       "zh": "雷达可能被遮挡，或者不在量程内"
     },
     "fpv_tip_0x1C002301": {
+      "en": "The vsync of the EIS image frame is 0",
       "zh": "EIS的图像帧的vsync为0"
     },
     "fpv_tip_0x1C002302": {
       "de": "",
-      "en": "",
+      "en": "EIS image frame vsync sequence error",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25475,7 +25478,7 @@
     },
     "fpv_tip_0x1C002303": {
       "de": "",
-      "en": "",
+      "en": "EIS cannot get IMU data",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25486,7 +25489,7 @@
     },
     "fpv_tip_0x1C002304": {
       "de": "",
-      "en": "",
+      "en": "EIS got insufficient IMU data",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25497,7 +25500,7 @@
     },
     "fpv_tip_0x1C002305": {
       "de": "",
-      "en": "",
+      "en": "EIS got too much IMU data",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25508,7 +25511,7 @@
     },
     "fpv_tip_0x1C002306": {
       "de": "",
-      "en": "",
+      "en": "EIS failed to get IMU data",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25519,7 +25522,7 @@
     },
     "fpv_tip_0x1C002307": {
       "de": "",
-      "en": "",
+      "en": "Vsync sequence error in the IMU data obtained by EIS",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25530,7 +25533,7 @@
     },
     "fpv_tip_0x1C002308": {
       "de": "",
-      "en": "",
+      "en": "EIS IMU target out of constraint range",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25541,7 +25544,7 @@
     },
     "fpv_tip_0x1C002309": {
       "de": "",
-      "en": "",
+      "en": "EIS iterative solution result exceeds the boundary of the input image",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25552,7 +25555,7 @@
     },
     "fpv_tip_0x1C00230A": {
       "de": "",
-      "en": "",
+      "en": "EIS IMU alignment range exceeds the position of the obtained IMU data",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25563,7 +25566,7 @@
     },
     "fpv_tip_0x1C00230B": {
       "de": "",
-      "en": "",
+      "en": "EIS inter-frame time interval problem; vsync unstable",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25574,7 +25577,7 @@
     },
     "fpv_tip_0x1C00230C": {
       "de": "",
-      "en": "",
+      "en": "The current frame was matched with vsync information in step mode",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25585,7 +25588,7 @@
     },
     "fpv_tip_0x1C00230D": {
       "de": "",
-      "en": "",
+      "en": "The current frame was matched with invalid vsync information",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25596,7 +25599,7 @@
     },
     "fpv_tip_0x1C00230E": {
       "de": "",
-      "en": "",
+      "en": "The current frame cannot be matched with vsync information",
       "es": "",
       "fr": "",
       "ja": "",
@@ -25607,7 +25610,7 @@
     },
     "fpv_tip_0x1C003001": {
       "de": "",
-      "en": "",
+      "en": "H20 lens error. Power off and restart.",
       "es": "",
       "fr": "Erreur de l'objectif de la caméra H20. Redémarrez la caméra",
       "ja": "",
@@ -27047,9 +27050,11 @@
       "zh": "云台无法获取飞行器信息"
     },
     "fpv_tip_0x1D030002": {
+      "en": "Communication link between the aircraft and the payload interrupted. Check the payload connection.",
       "zh": "飞行器与负载通讯链路中断，请检查负载连接情况"
     },
     "fpv_tip_0x1D030002_in_the_sky": {
+      "en": "Communication link between the aircraft and the payload interrupted. Return to home and check the payload connection.",
       "zh": "飞行器与负载通讯链路中断，请返航并检查负载连接情况"
     },
     "fpv_tip_0x1D030C01": {
@@ -27690,7 +27695,7 @@
       "zh": "云台升级失败"
     },
     "fpv_tip_0x1E00000": {
-      "en": "",
+      "en": "The speaker is resonating with the airframe and the power supply has been disconnected. Wait for it to recover automatically.",
       "zh": "喊话器与机身发生共振，供电已断开，请等待自行恢复"
     },
     "fpv_tip_0x1E000001": {
