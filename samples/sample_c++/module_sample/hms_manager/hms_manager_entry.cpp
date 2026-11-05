@@ -85,29 +85,29 @@ void DjiUser_RunHmsEnhanceSample(void)
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiHmsAlarmEnhancedSetting setting;
 
-    USER_LOG_INFO("shake motor times 3, interval 500ms...");
+    USER_LOG_INFO("shake motor times 3, interval 2s...");
     setting.type = DJI_HMS_ALARM_ENHANCED_TYPE_SHAKE_MOTOR;
     setting.times = 3;
-    setting.interval = 500;
+    setting.interval = 2000;
     DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
-    osalHandler->TaskSleepMs(4000);
+    osalHandler->TaskSleepMs(10000);
 
-    USER_LOG_INFO("play sound times 3, interval 500ms...");
+    USER_LOG_INFO("play sound times 3, interval 2s...");
     setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND;
     DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
-    osalHandler->TaskSleepMs(4000);
+    osalHandler->TaskSleepMs(10000);
 
-    USER_LOG_INFO("shake motor and play sound times 3, interval 500ms...");
+    USER_LOG_INFO("shake motor and play sound times 3, interval 2s...");
     setting.times = 3;
     setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND_AND_SHAKE_MOTOR;
     DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
-    osalHandler->TaskSleepMs(4000);
+    osalHandler->TaskSleepMs(10000);
 
-    USER_LOG_INFO("shake motor and play sound times 20, interval 500ms, interrupt 3s exit...");
+    USER_LOG_INFO("shake motor and play sound times 20, interval 2s, interrupt 10s exit...");
     setting.times = 20;
     setting.type = DJI_HMS_ALARM_ENHANCED_PLAY_SOUND_AND_SHAKE_MOTOR;
     DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_START, setting);
-    osalHandler->TaskSleepMs(4000);
+    osalHandler->TaskSleepMs(10000);
     DjiHmsCustomization_AlarmEnhancedCtrl(DJI_HMS_ALARM_ENHANCED_ACTION_EXIT_ALL, setting);
     USER_LOG_INFO("AlarmEnhaned exit.");
 }

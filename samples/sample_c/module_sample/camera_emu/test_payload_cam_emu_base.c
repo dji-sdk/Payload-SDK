@@ -24,6 +24,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "math.h"
+#include "dji_sdk_config.h"
 #include "test_payload_cam_emu_base.h"
 #include "utils/util_misc.h"
 #include "dji_logger.h"
@@ -35,6 +36,10 @@
 #include "gimbal_emu/test_payload_gimbal_emu.h"
 #include <widget_interaction_test/test_widget_interaction.h>
 #include "test_raspberry_pi_camera.h"
+
+#ifndef CONFIG_CAMERA_EMU_STREAM_MODE
+#define CONFIG_CAMERA_EMU_STREAM_MODE DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI_VALUE
+#endif
 
 /* Private constants ---------------------------------------------------------*/
 #define PAYLOAD_CAMERA_EMU_TASK_FREQ            (100)
@@ -121,8 +126,13 @@ static uint32_t s_tapZoomNewestTargetHybridFocalLength = 0; // unit: 0.1mm
 static T_DjiMutexHandle s_tapZoomMutex = NULL;
 static E_DjiCameraVideoStreamType s_cameraVideoStreamType;
 static uint32_t s_currentVideoRecordTimeInSeconds = 0;
+static E_DjiTestCameraEmuStreamMode s_cameraEmuStreamMode =
+    (E_DjiTestCameraEmuStreamMode) CONFIG_CAMERA_EMU_STREAM_MODE;
 
 /* Private functions declaration ---------------------------------------------*/
+static T_DjiReturnCode DjiTest_CameraEmuGetVideoStreamConfig(E_DjiCameraVideoStreamType *streamType,
+                                                             const char **streamModeName,
+                                                             const char **sampleFileName);
 static T_DjiReturnCode GetSystemState(T_DjiCameraSystemState *systemState);
 static T_DjiReturnCode SetMode(E_DjiCameraMode mode);
 static T_DjiReturnCode StartRecordVideo(void);
@@ -1295,6 +1305,9 @@ T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void)
     uint16_t port = 0;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
     T_DjiAircraftInfoBaseInfo aircraftInfoBaseInfo = {0};
+    E_DjiCameraVideoStreamType streamType = DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT;
+    const char *streamModeName = "H264";
+    const char *sampleFileName = H264_SAMPLE_FILE_NAME;
 
     returnCode = osalHandler->MutexCreate(&s_commonMutex);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1439,16 +1452,25 @@ T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void)
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    returnCode = DjiPayloadCamera_SetVideoStreamType(DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT);
+    returnCode = DjiTest_CameraEmuGetVideoStreamConfig(&streamType, &streamModeName, &sampleFileName);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("invalid camera emu stream mode: %d", s_cameraEmuStreamMode);
+        return returnCode;
+    }
+
+    returnCode = DjiPayloadCamera_SetVideoStreamType(streamType);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("DJI camera set video stream error.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
-    s_cameraVideoStreamType = DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT;
+    s_cameraVideoStreamType = streamType;
+    USER_LOG_INFO("Configured camera video stream type for %s sample: %d", streamModeName, s_cameraVideoStreamType);
+    USER_LOG_INFO("Camera emu sample mode: %s, sample file: media_file/%s", streamModeName, sampleFileName);
+    USER_LOG_INFO("Camera emu note: media_file directory must be writable, because the sample generates out.h264/out.hevc before sending.");
 
     returnCode = DjiPayloadCamera_GetVideoStreamRemoteAddress(ipAddr, &port);
     if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_DEBUG("Get video stream remote address: %s, port: %d", ipAddr, port);
+        USER_LOG_INFO("Get video stream remote address: %s, port: %d", ipAddr, port);
     } else {
         USER_LOG_ERROR("get video stream remote address error.");
         return DJI_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
@@ -1457,6 +1479,22 @@ T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void)
     s_isCamInited = true;
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+T_DjiReturnCode DjiTest_CameraEmuSetStreamMode(E_DjiTestCameraEmuStreamMode mode)
+{
+    if (mode != DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI &&
+        mode != DJI_TEST_CAMERA_EMU_STREAM_MODE_H265_CUSTOM) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    s_cameraEmuStreamMode = mode;
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+E_DjiTestCameraEmuStreamMode DjiTest_CameraEmuGetStreamMode(void)
+{
+    return s_cameraEmuStreamMode;
 }
 
 T_DjiReturnCode DjiTest_CameraGetDigitalZoomFactor(dji_f32_t *factor)
@@ -1540,6 +1578,32 @@ T_DjiReturnCode DjiTest_CameraGetVideoStreamType(E_DjiCameraVideoStreamType *typ
 bool DjiTest_CameraIsInited(void)
 {
     return s_isCamInited;
+}
+
+static T_DjiReturnCode DjiTest_CameraEmuGetVideoStreamConfig(E_DjiCameraVideoStreamType *streamType,
+                                                             const char **streamModeName,
+                                                             const char **sampleFileName)
+{
+    if (streamType == NULL || streamModeName == NULL || sampleFileName == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    switch (s_cameraEmuStreamMode) {
+        case DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI:
+            *streamType = DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT;
+            *streamModeName = "H264";
+            *sampleFileName = H264_SAMPLE_FILE_NAME;
+            break;
+        case DJI_TEST_CAMERA_EMU_STREAM_MODE_H265_CUSTOM:
+            *streamType = DJI_CAMERA_VIDEO_STREAM_TYPE_H265_CUSTOM_FORMAT;
+            *streamModeName = "H265";
+            *sampleFileName = H265_SAMPLE_FILE_NAME;
+            break;
+        default:
+            return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 /****************** (C) COPYRIGHT DJI Innovations *****END OF FILE****/

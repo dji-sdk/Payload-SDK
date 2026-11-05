@@ -52,6 +52,9 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_CAMERA_MEDIA_ON
 
+/* 0: H264 DJI format, 1: H265 custom format */
+#define CONFIG_CAMERA_EMU_STREAM_MODE 0
+
 #define CONFIG_MODULE_SAMPLE_GIMBAL_EMU_ON
 
 #define CONFIG_MODULE_SAMPLE_XPORT_ON
@@ -69,7 +72,7 @@ extern "C" {
 /*!< Attention: This function needs to be used together with mobile sdk mop sample.
 * */
 
-#define CONFIG_MODULE_SAMPLE_CLOUD_API_ON
+// #define CONFIG_MODULE_SAMPLE_CLOUD_API_ON
 
 #define CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON                 true
 

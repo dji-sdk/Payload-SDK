@@ -31,16 +31,35 @@
 #include "dji_typedef.h"
 #include "dji_payload_camera.h"
 
+#ifndef DJI_CAMERA_VIDEO_STREAM_TYPE_H265_CUSTOM_FORMAT
+#define DJI_CAMERA_VIDEO_STREAM_TYPE_H265_CUSTOM_FORMAT ((E_DjiCameraVideoStreamType) 2)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
+#define H265_SAMPLE_FILE_NAME                "output.h265"
+#define H264_SAMPLE_FILE_NAME                "PSDK_0005.h264"
+#define TEST_CAMERA_EMU_DUMP_BEFORE_SEND     0
+#define CAMERA_EMU_DUMP_DIR                  "data/logs"
+#define H265_DUMP_FILE_NAME                  "out_before_send.h265"
+#define H264_DUMP_FILE_NAME                  "out_before_send.h264"
+
+#define DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI_VALUE      0
+#define DJI_TEST_CAMERA_EMU_STREAM_MODE_H265_CUSTOM_VALUE   1
 
 /* Exported types ------------------------------------------------------------*/
+typedef enum {
+    DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI = DJI_TEST_CAMERA_EMU_STREAM_MODE_H264_DJI_VALUE,
+    DJI_TEST_CAMERA_EMU_STREAM_MODE_H265_CUSTOM = DJI_TEST_CAMERA_EMU_STREAM_MODE_H265_CUSTOM_VALUE,
+} E_DjiTestCameraEmuStreamMode;
 
 /* Exported functions --------------------------------------------------------*/
 T_DjiReturnCode DjiTest_CameraEmuBaseStartService(void);
+T_DjiReturnCode DjiTest_CameraEmuSetStreamMode(E_DjiTestCameraEmuStreamMode mode);
+E_DjiTestCameraEmuStreamMode DjiTest_CameraEmuGetStreamMode(void);
 T_DjiReturnCode DjiTest_CameraGetDigitalZoomFactor(dji_f32_t *factor);
 T_DjiReturnCode DjiTest_CameraGetOpticalZoomFactor(dji_f32_t *factor);
 T_DjiReturnCode DjiTest_CameraGetMode(E_DjiCameraMode *mode);

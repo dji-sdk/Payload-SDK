@@ -50,6 +50,7 @@
 #include "positioning/test_positioning_entry.h"
 #include <signal.h>
 #include "dji_aircraft_info.h"
+#include "mop_channel/test_mop_channel_client.h"
 
 /* Private constants ---------------------------------------------------------*/
 
@@ -88,6 +89,8 @@ start:
         << "| [l] Run widget states manager sample, control widget states on other payload                     |\n"
         << "| [m] Run Open Ar sample - draw ar gragh                                                           |\n"
         << "| [n] Run H.264 liveview sample - save H.264 files in the current directory                        |\n"
+        << "| [r] Run dual H.264 liveview sample - pull two streams with input position/source params         |\n"
+        << "| [o] MOP channel client sample - connect to V4 payload server and transfer data                  |\n"
         << "| [p] Run the onboard RTK sample – you can control the onboard RTK to start or stop                |\n"
         << std::endl;
 
@@ -143,10 +146,14 @@ start:
         case 'n':
             DjiTest_LiveviewSample();
             break;
+        case 'r':
+            DjiTest_LiveviewDualStreamSample();
+            break;
+        case 'o':
+            DjiTest_MopChannelClientRun();
+            break;
         case 'p':
             DjiTest_RunOnboardRTKSample();
-            break;
-        case 'q':
             break;
         default:
             break;

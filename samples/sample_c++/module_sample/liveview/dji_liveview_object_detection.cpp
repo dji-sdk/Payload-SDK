@@ -374,16 +374,16 @@ void DjiUser_RunOpenArSample()
 void DjiUser_RunCameraAiDetectionSample()
 {
     int pos = 1;
-    int mediaSource = 0; //support 0(app liveview)/1(1080p)/7(4k) for H30 camera
+    int mediaSource = 0;
     char isQuit;
     E_DjiLiveViewCameraPosition CameraPostion;
     E_DjiLiveViewCameraSource MediaResource;
 
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
 
-    USER_LOG_INFO("Input cammera sourece(1:1080p, 3:M4/M5TD serials 4K, 7:H30 serials 4K): ");
+    USER_LOG_INFO("Input cammera sourece(0:1080p, 1:1080p/M5T 4K, 3:M4/M5 serials 4K, 7:H30 serials 4K): ");
     std::cin >> mediaSource;
-    if (pos < 1 || pos > 3 || mediaSource > 7)
+    if (pos < 1 || pos > 3 || mediaSource < 0 || mediaSource > 7)
     {
         USER_LOG_ERROR("invalid param");
         return;
@@ -428,12 +428,6 @@ void DjiUser_RunCameraAiDetectionSample()
     {
         USER_LOG_ERROR("Liveview init faild, ret: 0x%08llX", returnCode);
         goto init_failed;
-    }
-
-    returnCode = DjiAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("get aircraft base info error");
-        return;
     }
 
 #ifdef OPEN_CV_INSTALLED

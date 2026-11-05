@@ -236,6 +236,7 @@ int main(int argc, char **argv)
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4T
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4E
+        || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5T
     ) {
         returnCode = DjiTest_CloudApiByWebSocketStartService();
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -263,6 +264,7 @@ int main(int argc, char **argv)
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4TD
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4T
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M4E
+        || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5T
         || aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD
     ) {
         sleep(2);

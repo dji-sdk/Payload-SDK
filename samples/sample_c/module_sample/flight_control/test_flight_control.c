@@ -163,13 +163,10 @@ T_DjiReturnCode DjiTest_FlightControlInit(void)
     }
 
     returnCode = DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION);
-    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        /* Some older flight controllers (e.g. M350 / PM431) do not support the
-         * DISABLE_RC_LOST_ACTION parameter; the linker layer returns INVALID_PARAMETER.
-         * Only log a warning here instead of aborting init, so that the whole flight
-         * control sample remains usable on these aircraft. */
-        USER_LOG_WARN("Set RC lost action enable status not supported on this aircraft, skip. error code:0x%08llX",
-                      returnCode);
+    if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT) {
+        USER_LOG_INFO("SetRCLostActionEnableStatus: requires advanced license, skip.");
+    } else if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_WARN("Set RC lost action enable status failed, skip. error code:0x%08llX", returnCode);
     }
 
     /*! subscribe fc data */
@@ -684,6 +681,7 @@ void DjiTest_FlightControlSetGetParamSample()
     E_DjiFlightControllerObstacleAvoidanceEnableStatus upwardsVisualObstacleAvoidanceStatus;
     E_DjiFlightControllerObstacleAvoidanceEnableStatus upwardsRadarObstacleAvoidanceStatus;
     E_DjiFlightControllerObstacleAvoidanceEnableStatus downloadsVisualObstacleAvoidanceStatus;
+    E_DjiFlightControllerObstacleAvoidanceEnableStatus downwardsTofObstacleAvoidanceStatus;
     E_DjiFlightControllerGoHomeAltitude goHomeAltitude;
     E_DjiFlightControllerRtkPositionEnableStatus rtkEnableStatus;
     E_DjiFlightControllerRCLostAction rcLostAction;
@@ -844,6 +842,33 @@ void DjiTest_FlightControlSetGetParamSample()
                   downloadsVisualObstacleAvoidanceStatus);
     s_osalHandler->TaskSleepMs(1000);
 
+    /*! Turn off downwards TOF avoid enable (M400 downwards TOF param: tof_app_enable_status) */
+    USER_LOG_INFO("--> Step 10.1: Turn off downwards TOF obstacle avoidance.");
+    DjiTest_WidgetLogAppend("--> Step 10.1: Turn off downwards TOF obstacle avoidance.");
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+        returnCode = DjiFlightController_SetDownwardsTofObstacleAvoidanceEnableStatus(
+            DJI_FLIGHT_CONTROLLER_DISABLE_OBSTACLE_AVOIDANCE);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Turn off downwards TOF obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+    }
+    s_osalHandler->TaskSleepMs(1000);
+
+    USER_LOG_INFO("--> Step 10.1: Get downwards TOF obstacle avoidance status\r\n");
+    DjiTest_WidgetLogAppend("--> Step 10.1: Get downwards TOF obstacle avoidance status\r\n");
+    if (aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400) {
+        returnCode = DjiFlightController_GetDownwardsTofObstacleAvoidanceEnableStatus(
+            &downwardsTofObstacleAvoidanceStatus);
+        if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("Get downwards TOF obstacle avoidance failed, error code: 0x%08X", returnCode);
+            goto out;
+        }
+        USER_LOG_INFO("Current downwards TOF obstacle avoidance status is %d\r\n",
+                      downwardsTofObstacleAvoidanceStatus);
+    }
+    s_osalHandler->TaskSleepMs(1000);
+
     /*! Set new go home altitude */
     USER_LOG_INFO("--> Step 11: Set go home altitude to 50(m)");
     DjiTest_WidgetLogAppend("--> Step 11: Set go home altitude to 50(m)");
@@ -926,16 +951,17 @@ void DjiTest_FlightControlSetGetParamSample()
         USER_LOG_INFO("--> Step 17: Turn on get all avoidance for result AG: %d success", allAvoidStatus);
 
         s_osalHandler->TaskSleepMs(1000);
-        returnCode = DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION);{
-            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS){
-                USER_LOG_ERROR("--> Step 18: Turn on set all avoidance for AG: %d failed", returnCode);
-                goto out;
-            }else{
-                USER_LOG_INFO("--> Step 18: Turn on set all avoidance for AG: %d success", returnCode);
-                s_osalHandler->TaskSleepMs(1000);
-                returnCode = DjiFlightController_GetEnableRCLostActionStatus(&rcLostActionStatus);
-                USER_LOG_INFO("--> Step 18: Turn on get GetEnableRCLostActionStatus:%d, ret:%d", rcLostActionStatus), returnCode;
-            }
+        returnCode = DjiFlightController_SetRCLostActionEnableStatus(DJI_FLIGHT_CONTROLLER_DISABLE_RC_LOST_ACTION);
+        if (returnCode == DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT) {
+            USER_LOG_INFO("--> Step 18: SetRCLostActionEnableStatus requires advanced license, skip.");
+        } else if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("--> Step 18: SetRCLostActionEnableStatus failed: %d", returnCode);
+            goto out;
+        } else {
+            USER_LOG_INFO("--> Step 18: SetRCLostActionEnableStatus success");
+            s_osalHandler->TaskSleepMs(1000);
+            returnCode = DjiFlightController_GetEnableRCLostActionStatus(&rcLostActionStatus);
+            USER_LOG_INFO("--> Step 18: GetEnableRCLostActionStatus:%d, ret:%d", rcLostActionStatus, returnCode);
         }
 
         s_osalHandler->TaskSleepMs(1000);
@@ -1092,6 +1118,7 @@ void DjiTest_FlightControlSetModeStartMission()
         case DJI_AIRCRAFT_TYPE_M4TD:
         case DJI_AIRCRAFT_TYPE_M400:
         case DJI_AIRCRAFT_TYPE_M5TD:
+        case DJI_AIRCRAFT_TYPE_M5T:
             break;
 
         default:
