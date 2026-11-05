@@ -810,6 +810,26 @@ T_DjiReturnCode DjiFlightController_GetDownwardsVisualObstacleAvoidanceEnableSta
     E_DjiFlightControllerObstacleAvoidanceEnableStatus *downwardsObstacleAvoidanceEnableStatus);
 
 /**
+ * @brief Enable/Disable downwards TOF obstacle sensing.
+ * @note Only supported on aircraft mounted with downwards TOF sensor (e.g. Matrice 400).
+ * @param downwardsTofObstacleAvoidanceEnableStatus: see reference of E_DjiFlightControllerObstacleAvoidanceEnableStatus.
+ * It inherits from Pilot's param.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_SetDownwardsTofObstacleAvoidanceEnableStatus(
+    E_DjiFlightControllerObstacleAvoidanceEnableStatus downwardsTofObstacleAvoidanceEnableStatus);
+
+/**
+ * @brief Get the switch status of downwards TOF obstacle sensing.
+ * @note Only supported on aircraft mounted with downwards TOF sensor (e.g. Matrice 400).
+ * @param downwardsTofObstacleAvoidanceEnableStatus: see reference of E_DjiFlightControllerObstacleAvoidanceEnableStatus.
+ * It inherits from Pilot's param.
+ * @return Execution result.
+ */
+T_DjiReturnCode DjiFlightController_GetDownwardsTofObstacleAvoidanceEnableStatus(
+    E_DjiFlightControllerObstacleAvoidanceEnableStatus *downwardsTofObstacleAvoidanceEnableStatus);
+
+/**
  * @brief Arrest flying means emergency braking
  * @note When the aircraft is on the ground, it will stop motors and display "hms description" on App. when the aircraft is
  * in the air, it will continue flying and display "hms description" on App only.

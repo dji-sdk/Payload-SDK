@@ -104,7 +104,7 @@ extern "C" {
 \
 /* mop channel module error message */ \
 {DJI_ERROR_MOP_CHANNEL_MODULE_CODE_CONNECTION_CLOSE, "Connection of channel is closed. The peer channel do not work or abnormally be closed.", "Please confirm state of the peer channel and reaccept the connection request of MSDK/OSDK"}, \
-\
+ \
 /* flight controller module error message */ \
 {DJI_ERROR_FC_MODULE_CODE_RC_MODE_ERROR, "RC_MODE_ERROR", "Please check the RC mode"}, \
 {DJI_ERROR_FC_MODULE_CODE_RELEASE_CONTROL_SUCCESS, "RELEASE_CONTROL_SUCCESS", NULL} ,\
@@ -119,8 +119,8 @@ extern "C" {
 {DJI_ERROR_FC_MODULE_CODE_NO_AUTHORIZATION_ERROR, "No authorization", "Please finish activation firstly"} ,\
 {DJI_ERROR_FC_MODULE_CODE_NO_RIGHTS_ERROR, "No rights error", NULL} ,\
 {DJI_ERROR_FC_MODULE_CODE_SYSTEM_ERROR, "Unknown system error", NULL} ,\
-\
-/* flight controller action module error message */\
+ \
+/* flight controller joystick module error message */\
 {DJI_ERROR_FC_JOYSTICK_MODULE_OBTAIN_RELEASE_JOYSTICK_AUTH_SUCCESS, "Obtain/Release joystick authority success", NULL} ,\
 {DJI_ERROR_FC_JOYSTICK_MODULE_DEVICE_NOT_ALLOW, "The requesting device is not allowed to obtain/release joystick control authority, only support OSDK/MSDK", "Please use right devices(OSDK/MSDK)"} ,\
 {DJI_ERROR_FC_JOYSTICK_MODULE_TAKING_OFF, "Not allowed to obtain/release joystick control authority when drone is taking off ", "Please do it before or after taking off"} ,\
@@ -130,7 +130,7 @@ extern "C" {
 {DJI_ERROR_FC_JOYSTICK_MODULE_CMD_LENGTH_ERROR, "Invalid length of input command", "Please input valid length command"} ,\
 {DJI_ERROR_FC_JOYSTICK_MODULE_HAS_NO_JOYSTICK_AUTHORITY, "Not allowed to release joystick control authority when drone has no joystick authority", "Please obtain joystick authority first"} ,\
 {DJI_ERROR_FC_JOYSTICK_MODULE_IN_RC_LOST_ACTION, "Not allowed to obtain/release joystick control authority when drone is executing rc lost action", "Please change battery"} ,\
-\
+ \
 /* flight controller action module error message */\
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_MOTOR_ON, "now motor is on", "Please check motor status"} ,\
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_MOTOR_OFF, "now motor is off", "Please check motor status"} ,\
@@ -139,9 +139,24 @@ extern "C" {
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_HOME_POINT_NOT_SET, "home point not set", "Please set home point"} ,\
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_BAD_GPS, "bad GPS", "Please fly where the GPS signal is good"} ,\
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_IN_SIMULATION, "in simulation", "Please exit simulation first"} ,\
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_CMD_IS_RUNNING, "Command is running.", "Please wait for command to finish."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_IS_NOT_RUNNING, "Command is not running.", "Please start command first."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_CMD_INVALID, "Command is invalid.", "Please check command validity."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_NO_GEAR, "No landing gear.", "Please check landing gear."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_GIMBAL_MOUNTED, "Folding mode: gimbal is mounted.", "Please remove gimbal before folding."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_US_NOT_HEALTHY, "Folding mode: aircraft is not healthy.", "Please check aircraft health."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_HAS_PACKED, "Already in folded state.", NULL}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_NOT_PACKED, "Not in folded state.", NULL}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_NOT_SUPPORTED, "Folding is not supported.", NULL}, \
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_CANNOT_START_MOTOR, "can not start motor", "Please check motor status"} ,\
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_LOW_VOLTAGE, "low voltage", "Please change battery"} ,\
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_IN_HOVER, "Aircraft is hovering.", NULL}, \
 {DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_SPEED_TOO_LARGE, "speed too large", "Please slow down"} ,\
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_NO_HORIZ_VEL_INFO, "No horizontal velocity information.", NULL}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_ANG_NORMAL, "Flip recovery: attitude is normal.", NULL}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_CRAFT_NEVER_CRASH, "Flip recovery: aircraft has not crashed.", NULL}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_DRONE_UNCTRLABLE, "Aircraft is uncontrollable.", "Please check aircraft status."}, \
+{DJI_ERROR_FC_ACTION_MODULE_ERROR_CRAFT_NO_AVAILABLE_ESC, "Flip recovery: all ESCs are abnormal.", "Please check ESC status."}, \
                           \
 /* flight controller arrest flying module error message */\
 {DJI_ERROR_FC_ARREST_FLYING_MODULE_REGISTER_LOGOUT_SET_SUCCESS, "register/logout/execute arrest-flying success", NULL} ,\
@@ -160,61 +175,106 @@ extern "C" {
 {DJI_ERROR_FC_HOME_LOCATION_MODULE_NOT_BE_RECORD, "home location is not inited", "Please waiting for aircraft recording home location"} ,\
 {DJI_ERROR_FC_HOME_LOCATION_MODULE_GPS_NOT_READY, "GPS level < 4", NULL} ,\
 {DJI_ERROR_FC_HOME_LOCATION_MODULE_DIS_TOO_FAR, "new home location is more than 20km away from current home locaton(APP/RC)", NULL} ,\
+{DJI_ERROR_FC_HOME_LOCATION_MODULE_RTK_ENABLE_BUT_NOT_READY, "RTK is enabled but not converged.", "Please wait for RTK to converge."}, \
+{DJI_ERROR_FC_HOME_LOCATION_MODULE_RC_NOT_READY, "Beacon/RC positioning accuracy is too poor.", "Please check beacon/RC positioning."}, \
+{DJI_ERROR_FC_HOME_LOCATION_MODULE_RC_IN_NFZ, "Home point is in a no-fly zone.", "Please set home point outside of no-fly zones."}, \
+{DJI_ERROR_FC_HOME_LOCATION_MODULE_NONSUPPORT_CUR_HP_TYPE, "Current home point type is not supported.", "Please check home point type."}, \
 \
 /* flight controller emergency stop motor module error message */\
-{DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_VERSION_NOT_MATCH, "emergency stop motor version not match", NULL} ,\
+{DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_VERSION_NOT_MATCH, "Emergency stop motor failed", "Please check aircraft status and motor state."} ,\
 {DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_CMD_INVALID, "emergency stop motor cmd invalid", NULL} ,\
 /* camera manager module error message */\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND, "Command not supported", "Check the firmware or command validity"} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TIMEOUT, "Camera's execution of this action has timed out", "Try again or check the firmware or command"} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED, "Camera's execution of this action is out of memory", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER,  "Camera received invalid parameters", "Check the validity of the parameter"} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE, "Camera is busy or the command is not supported in the Camera's current state", "Check current camera state is if appropriate fot the CMD"} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CAMERA_TIME_NOT_SYNCHRONIZED, "The time stamp of the camera is not sync", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_SET_FAILED, "Camera failed to set the parameters it received", "Please check the parameter to set is if supported in your devices."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_GET_FAILED, "Camera param get failed", "Please check the parameter to get is if supported in your devices."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_MISSING, "Camera has no SD Card", "Please install SD card."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_FULL, "The Camera's SD Card is full", "Please make sure the SD card has enough space."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_ERROR, "Error accessing the SD Card", "Please check the validity of the SD card."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SENSOR_ERROR, "Camera sensor error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SYSTEM_ERROR, "Camera system error", "Please recheck all the running conditions or contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG, "Camera param get failed", "Please check the validity of the parameter length"} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MODULE_INACTIVATED, "Camera module is not activated", "Please activate the module first."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS, "The seq number of Firmware data is invalid", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR, "Firmware check error", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR, "Camera flash write error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH, "Firmware type is invalid", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED, "Remote Control is disconnected now", "Please check the connection with remote control is if OK."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_HARDWARE_ERROR, "Camera hardware error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED, "Disconnect with aircraft", "Please check the connection with aircraft is if OK."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE, "Camera cannot not upgrade in current status", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNDEFINE_ERROR, "Undefined error", "Please contact <dev@dji.com> for help."} ,\
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_ACK, "ACK message.", NULL}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_ENTER_PLAYBACK_IN_CUR_STATE, "Cannot enter playback mode in current camera state.", "Please check camera state."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FILE_TRANSFER_BUSY, "File transfer is busy.", "Please wait for current transfer to finish."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_TASK_INFORMATION, "No valid task information.", "Please check task information."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TASK_UPLOAD_ERROR, "Task information upload error.", "Please retry task upload."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_REQUEST_PARAMETER, "Invalid request parameter.", "Please double-check requested parameters."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MAY_CROSS_RESTRICTED_AREA, "Task may cross restricted area.", "Please check flight route."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_EXCEEDED_INPUT_TIME_LIMIT, "Task duration may exceed input time limit.", "Please adjust task parameters."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_EXECUTING_HIGHER_PRIORITY_TASK, "A higher priority task is being executed.", "Please stop the higher priority task or try again later."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_START_TASK_WEAK_GPS, "Cannot start task due to weak GPS signal.", "Please fly to an area with better GPS signal."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_START_TASK_VOLTAGE_ALARM, "Cannot start task due to voltage alarm.", "Please check battery voltage."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MISMATCH, "Operation does not match.", "Please check operation validity."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_DATA, "Returning data.", NULL}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TRY_LATER, "Resource is occupied, please try again later.", "Please try again later."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_NOT_IMPLEMENTED, "Feature is not implemented.", "Please contact DJI for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANCELLED, "Operation cancelled by user.", NULL}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_NOT_FOUND, "Resource not found.", "Please check resource availability."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND, "Command not supported", "Check the firmware or command validity"}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TIMEOUT, "Camera's execution of this action has timed out", "Try again or check the firmware or command"}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED, "Camera's execution of this action is out of memory", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER, "Camera received invalid parameters", "Check the validity of the parameter"}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE, "Camera is busy or the command is not supported in the Camera's current state", "Check current camera state is if appropriate for the CMD"}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CAMERA_TIME_NOT_SYNCHRONIZED, "The time stamp of the camera is not sync", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_SET_FAILED, "Camera failed to set the parameters it received", "Please check the parameter to set is if supported in your devices."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_GET_FAILED, "Camera param get failed", "Please check the parameter to get is if supported in your devices."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_MISSING, "Camera has no SD Card", "Please install SD card."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_FULL, "The Camera's SD Card is full", "Please make sure the SD card has enough space."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SD_CARD_ERROR, "Error accessing the SD Card", "Please check the validity of the SD card."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SENSOR_ERROR, "Camera sensor error", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SYSTEM_ERROR, "Camera system error", "Please recheck all the running conditions or contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG, "Camera param get failed", "Please check the validity of the parameter length"}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MODULE_INACTIVATED, "Camera module is not activated", "Please activate the module first."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_USER_UNBOUND, "User is not bound.", "Please bind the user first."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS, "The seq number of Firmware data is invalid", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_DATA_OVERLOAD_FLASH, "Firmware data exceeds Flash space.", "Please check firmware size."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR, "Firmware check error", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_ERASE_ERROR, "Flash erase error.", "Please contact DJI for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR, "Camera flash write error", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UPGRADE_STATUS_ERROR, "Upgrade status error.", "Please check upgrade status."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH, "Firmware type is invalid", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_WAITING_CLIENT_UPGRADE_STATUS, "Upgrade host needs to wait for client upgrade status push.", "Please wait for client upgrade status."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED, "Remote Control is disconnected now", "Please check the connection with remote control is if OK."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MOTOR_NOT_STOPPED, "Motor is not stopped.", "Please stop motor first."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_HARDWARE_ERROR, "Camera hardware error", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INSUFFICIENT_ELECTRICITY, "Insufficient battery.", "Please replace battery."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED, "Disconnect with aircraft", "Please check the connection with aircraft is if OK."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_IS_ERASING, "Flash is erasing.", "Please wait for erase to complete."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE, "Camera cannot not upgrade in current status", "Please contact <dev@dji.com> for help."}, \
+{DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNDEFINE_ERROR, "Undefined error", "Please contact <dev@dji.com> for help."}, \
 \
 /* gimbal manager module error message */\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND, "Command not supported", "Check the firmware or command validity"} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TIMEOUT, "Camera's execution of this action has timed out", "Try again or check the firmware or command"} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED, "Camera's execution of this action is out of memory", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER,  "Camera received invalid parameters", "Check the validity of the parameter"} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE, "Camera is busy or the command is not supported in the Camera's current state", "Check current camera state is if appropriate fot the CMD"} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CAMERA_TIME_NOT_SYNCHRONIZED, "The time stamp of the camera is not sync", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_SET_FAILED, "Camera failed to set the parameters it received", "Please check the parameter to set is if supported in your devices."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_GET_FAILED, "Camera param get failed", "Please check the parameter to get is if supported in your devices."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_MISSING, "Camera has no SD Card", "Please install SD card."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_FULL, "The Camera's SD Card is full", "Please make sure the SD card has enough space."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_ERROR, "Error accessing the SD Card", "Please check the validity of the SD card."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SENSOR_ERROR, "Camera sensor error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SYSTEM_ERROR, "Camera system error", "Please recheck all the running conditions or contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG, "Camera param get failed", "Please check the validity of the parameter length"} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MODULE_INACTIVATED, "Camera module is not activated", "Please activate the module first."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS, "The seq number of Firmware data is invalid", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR, "Firmware check error", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR, "Camera flash write error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH, "Firmware type is invalid", "Please check the validity of the camera firmware."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED, "Remote Control is disconnected now", "Please check the connection with remote control is if OK."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_HARDWARE_ERROR, "Camera hardware error", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED, "Disconnect with aircraft", "Please check the connection with aircraft is if OK."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE, "Camera cannot not upgrade in current status", "Please contact <dev@dji.com> for help."} ,\
-{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNDEFINE_ERROR, "Undefined error", "Please contact <dev@dji.com> for help."} ,\
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_ACK, "ACK message.", NULL}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INVALID_REQUEST_PARAMETER, "Invalid request parameter.", "Please double-check requested parameters."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MISMATCH, "Operation does not match.", "Please check operation validity."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_DATA, "Returning data.", NULL}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TRY_LATER, "Resource is occupied, please try again later.", "Please try again later."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_NOT_IMPLEMENTED, "Feature is not implemented.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CANCELLED, "Operation cancelled by user.", NULL}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_NOT_FOUND, "Resource not found.", "Please check resource availability."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND, "Command not supported", "Check the firmware or command validity"}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TIMEOUT, "Execution timeout.", "Please try again or check the firmware or command."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED, "Memory allocation failed.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER, "Invalid command parameter.", "Please check the validity of the parameter."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE, "Command is not supported in current state.", "Please check current state is appropriate for the command."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CAMERA_TIME_NOT_SYNCHRONIZED, "Time is not synchronized.", "Please wait for time sync."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_SET_FAILED, "Set parameter failed.", "Please check the parameter to set is supported in your device."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_GET_FAILED, "Get parameter failed.", "Please check the parameter to get is supported in your device."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_MISSING, "SD card is not inserted.", "Please install SD card."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_FULL, "SD card is full.", "Please make sure the SD card has enough space."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SD_CARD_ERROR, "SD card error.", "Please check the validity of the SD card."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SENSOR_ERROR, "Sensor error.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SYSTEM_ERROR, "System error.", "Please recheck all the running conditions or contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG, "Parameter length is too long.", "Please check the validity of the parameter length."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MODULE_INACTIVATED, "Module is not activated.", "Please activate the module first."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_USER_UNBOUND, "User is not bound.", "Please bind the user first."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS, "The seq number of Firmware data is invalid", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_DATA_OVERLOAD_FLASH, "Firmware data exceeds Flash space.", "Please check firmware size."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR, "Firmware check error", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_ERASE_ERROR, "Flash erase error.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR, "Flash write error.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UPGRADE_STATUS_ERROR, "Upgrade status error.", "Please check upgrade status."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH, "Firmware type is invalid", "Please check the validity of the camera firmware."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_WAITING_CLIENT_UPGRADE_STATUS, "Upgrade host needs to wait for client upgrade status push.", "Please wait for client upgrade status."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED, "Remote Control is disconnected now", "Please check the connection with remote control is if OK."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MOTOR_NOT_STOPPED, "Motor is not stopped.", "Please stop motor first."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_HARDWARE_ERROR, "Hardware error.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INSUFFICIENT_ELECTRICITY, "Insufficient battery.", "Please replace battery."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED, "Disconnect with aircraft", "Please check the connection with aircraft is if OK."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_IS_ERASING, "Flash is erasing.", "Please wait for erase to complete."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE, "Cannot upgrade in current state.", "Please contact DJI for help."}, \
+{DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNDEFINE_ERROR, "Undefined error", "Please contact <dev@dji.com> for help."}, \
 \
 /* waypoint v2 module error message */   \
 {DJI_ERROR_WAYPOINT_V2_MODULE_CODE_COMMON_SUCCESS, "Execute waypoint v2 cmd successfully", NULL}, \
@@ -339,6 +399,7 @@ extern "C" {
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_BREAK_WAYLINE_WHEN_WAYLINE_NOT_RUNNING, "Cannot break wayline when wayline not running. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_REQUEST_DRONE_CONTROL, "Flight mission conflict, unable to obtain control auth of the aircraft. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_RESUME_WAYLINE_IN_CUR_STATE, "Failed to resume wayline in current state. ", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_TAKEOFF_ON_SHIP, "Cannot takeoff on ship.", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_HEIGHT_LIMIT, "Execute waypoint v3 failed due to height limit. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_RADIUS_LIMIT, "Execute waypoint v3 failed due to radius limit. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CROSS_FLYLIMIT_AERA, "Execute waypoint v3 failed due to cross flylimit area. ", NULL},    \
@@ -355,6 +416,11 @@ extern "C" {
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_REQUEST_QUICK_TAKEOFF_ASSIST_FAIL, "Failed to request quick take off assist. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_QUICK_TAKEOFF_ASSIST_RUN_FAIL, "Failed to run quick takeoff assist. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_VFENCE_LIMIT, "Execute waypoint v3 failed due to vfence limit. ", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_TARGET_NOT_REACHABLE, "Target point is unreachable, may have no-fly zone or obstacle.", "Please check target location."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_TRAJ_PLAN_FAILED, "Trajectory planning failed.", "Please check wayline parameters."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_FAIL, "Departure wayline execution failed.", "Please retry the mission."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_INIT_FAIL, "Departure wayline initialization failed.", "Please retry the mission."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_INVALID, "Departure wayline is unavailable.", "Please retry the mission."},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_GPS_INVALID, "Execute waypoint v3 failed due to gps invalid. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_START_AT_CURRENT_RC_MODE, "Failed to start at current rc mode. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_HOME_POINT_NOT_RECORDED, "Execute waypoint v3 failed due to homepoint not recorded. ", NULL},    \
@@ -369,12 +435,30 @@ extern "C" {
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_SURFACE_FOLLOW_HEIGHT_INVALID, "Execute waypoint v3 failed due to surface follow height invalid.", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_SURFACE_FOLLOW_MAP_WRONG, "Execute waypoint v3 failed due to surface follow map wrong. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_HOMEPOINT_NOT_MATCH_RTK, "Execute waypoint v3 failed due to homepoint not match rtk. ", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRANSPORT_DIVERT, "Transport aircraft divert.", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_STRONG_WIND_GOHOME, "Execute waypoint v3 failed due to strong wind gohome. ", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DOCK_MOVE_GOHOME, "Dock move gohome.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_HEADING_LEVEL_POOR, "Heading level too poor to reach waypoint.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_JAMMING_GOHOME, "Signal interference or spoofing gohome.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WIND_SPD, "Wind speed too high, exit wayline.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_BUSY_IMU_CHANGED, "Primary IMU changed.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_RAIN_DETECT_VALID, "Rain detected.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM1_ERROR, "Arm 1 not in position.", "Please check arm 1 status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM2_ERROR, "Arm 2 not in position.", "Please check arm 2 status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM3_ERROR, "Arm 3 not in position.", "Please check arm 3 status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM4_ERROR, "Arm 4 not in position.", "Please check arm 4 status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_RADAR_PEDEX_WARNING, "Radar obstacle detection abnormal.", "Please check radar status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_OVERLOAD, "Aircraft overloaded.", "Please reduce payload."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_HOIST_NOT_READY, "Hoist not ready.", "Please check hoist status."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_HOIST_SELF_CHECK_ERR, "Hoist self-check error.", "Please check hoist cable."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_PREVENT_MOTOR_START, "Other reason prevents motor start, wayline failed.", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_EST_BAT_OVERTEMP_ERROR, "Estimated battery overtemperature during wayline flight.", "Please check battery temperature."},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DRONE_CRITICAL_ERROR, "Execute waypoint v3 failed due to drone critical error. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_FIND_PAYLOAD, "Execute waypoint v3 failed due to cannot find payload. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_ACTION_EXECUTION_FAILED, "Execute waypoint v3 failed due to action execution failed. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_FARM_NO_PESTICIDE, "Execute waypoint v3 failed due to farm no pesticide. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_RADAR_DISCONNECT, "Execute waypoint v3 failed due to radar disconnect. ", NULL},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_PAYLOAD_NOT_HOIST, "Payload type is not hoist.", "Please check payload type."},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_USER_EXIT, "Execute waypoint v3 failed due to user exit. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_USER_BREAK, "Execute waypoint v3 failed due to user break. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_USER_SET_GOHOME, "Execute waypoint v3 failed due to user set gohome. ", NULL},    \
@@ -438,7 +522,10 @@ extern "C" {
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND, "Execute waypoint v3 failed due to actuator not found. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_NOT_FOUND, "Execute waypoint v3 failed due to trigger not found. ", NULL},    \
 {DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL, "Execute waypoint v3 failed due to single time check failed. ", NULL},    \
-\
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_INNER_ERROR, "DJI internal error.", "Please contact DJI for help."},    \
+{DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_UNKNOWN_ERROR, "Unknown internal error.", "Please contact DJI for help."},    \
+{DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_CODE_MISSION_NOT_EXIST, "Breakpoint query: mission does not exist.", "Please check mission ID."},    \
+{DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_CODE_NO_BREAKPOINT, "Breakpoint query: no breakpoint found.", NULL},    \
 /* spotlight zoom module error message */ \
 {DJI_ERROR_SPZ_MODULE_CODE_OK,                          "SpotlightZoom status normal.", NULL}, \
 {DJI_ERROR_SPZ_MODULE_CODE_TAR_TOO_NEAR,                "SpotlightZoom: target too near.", "Please increase distance to target."}, \
@@ -465,8 +552,67 @@ extern "C" {
 {DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_CTRL_MODE,  "SpotlightZoom exit: wrong flight control mode.", "Please switch to the correct flight mode."}, \
 {DJI_ERROR_SPZ_MODULE_CODE_EXIT_UNSUPPORTED_FLIGHT_MODE,"SpotlightZoom exit: unavailable in current flight mode (RTH/landing).", NULL}, \
 {DJI_ERROR_SPZ_MODULE_CODE_EXIT_RC_LOST,                "SpotlightZoom exit: RC or video link lost.", "Please check RC and video link connection."}, \
-{DJI_ERROR_SPZ_MODULE_CODE_EXIT_STATUS_ERR,             "SpotlightZoom exit: internal error (dbus/IMU/gimbal/camera data abnormal).", "Please contact DJI for help."}, \
+{DJI_ERROR_SPZ_MODULE_CODE_EXIT_STATUS_ERR,             "SpotlightZoom exit: internal error.", "Please contact DJI for help."}, \
 {DJI_ERROR_SPZ_MODULE_CODE_EXIT_INNER_UNKNOW_ERROR,     "SpotlightZoom exit: unknown internal error.", "Please contact DJI for help."}, \
+\
+/* FlyTo (SetModeStartMission) module error message */ \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_INTERNAL_ERROR,     "FlyTo failed: internal aircraft communication error.", "Please contact DJI for help."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_BAD_GPS_SIGNAL,       "FlyTo failed: GPS signal too weak.", "Please fly to an area with better GPS signal and retry."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_ABSPOS_INVALID,       "FlyTo failed: positioning completely unavailable.", "Please wait for GPS/RTK to be ready before starting the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PLANNING_FAIL,        "FlyTo failed: route planning failed.", "Please check the target coordinates and retry."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_HOME_NOTSET,          "FlyTo failed: home point not set.", "Please set the home point before starting the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_RC_LOST,              "FlyTo failed: remote controller signal lost.", "Please check the RC link and retry."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_TAKEOFF_ON_SHIP,      "FlyTo failed: auto takeoff on a vessel is prohibited.", NULL}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_SOMEWAYRUNOUT,        "FlyTo warning: insufficient energy to complete the mission.", "Please check battery level or shorten the flight distance."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_SWITCH_PLANNING_ALGO, "FlyTo warning: planning algorithm was switched during the mission.", NULL}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_HEIGHT_EXCEED_LIMIT,  "FlyTo warning: target altitude exceeds flight altitude limit.", "Please lower the target altitude or raise the altitude limit."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETHORLIM,        "FlyTo failed: target point is inside a horizontal no-fly zone.", "Please choose a target outside of no-fly zones."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETHORLIM_RADIUS, "FlyTo failed: target point exceeds user-defined distance limit.", "Please increase the max distance limit or choose a closer target."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM,        "FlyTo failed: target point is inside a vertical no-fly zone.", "Please choose a target outside of no-fly zones."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM_TOP,    "FlyTo failed: target altitude exceeds user-defined altitude ceiling.", "Please lower the target altitude or raise the altitude limit."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM_BOTTOM, "FlyTo failed: target altitude is below minimum flight altitude.", "Please raise the target altitude."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_ERROR,          "FlyTo failed: departure wayline execution failed.", "Please retry the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_INIT,           "FlyTo failed: departure wayline initialization failed.", "Please retry the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_INVALID,        "FlyTo failed: departure wayline is unavailable.", "Please retry the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_NOT_REACHABLE,  "FlyTo failed: departure point unreachable due to no-fly zone or obstacle.", "Please check for obstacles or restricted airspace near the takeoff point."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_PLANNING_FAIL,  "FlyTo failed: departure wayline planning failed.", "Please retry the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_RC_SWITCH_MODE, "FlyTo failed: RC is not in P-mode.", "Please switch the RC to P-mode and retry."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_RTK_TYPE_ERR,   "FlyTo failed: BeiDou-only aircraft does not support departure wayline.", "Please use an aircraft with GPS+BeiDou support."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PREVENT_MOTOR_ERROR,    "FlyTo failed: motor pre-arm check failed.", "Please check motor status before starting the mission."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOALINVALID,             "FlyTo failed: target coordinates are invalid or out of planning range.", "Please verify the target latitude/longitude values."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_MAXFLYVEL_INVALID,       "FlyTo failed: maximum flight speed parameter is invalid.", "Please check the fly_vel parameter."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_VERSION_INVALID,         "FlyTo failed: protocol version mismatch.", "Please update firmware and SDK to matching versions."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_STATEMACHINE_INVALID,    "FlyTo failed: mission state machine busy.", "Please wait for the current task to finish and retry."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_MEA_INVALID,             "FlyTo failed: minimum enroute altitude (MEA) is too low.", "Please set MEA to at least 20 m."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETHORLIM,          "FlyTo exit: aircraft entered horizontal no-fly zone.", "Please land and resume flight in an unrestricted area."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETHORLIM_RADIUS,   "FlyTo exit: aircraft exceeded user-defined distance limit.", "Please increase the max distance limit."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM,          "FlyTo exit: aircraft entered vertical no-fly zone.", "Please land and resume flight in an unrestricted area."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM_TOP,      "FlyTo exit: aircraft reached user-defined altitude ceiling.", "Please raise the altitude limit."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM_BOTTOM,   "FlyTo exit: aircraft reached minimum flight altitude.", NULL}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_TAKEOFF_FAIL,            "FlyTo exit: takeoff failed.", "Please check motor and sensor status."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_BLOCKEDBY_OBSTACLE, "FlyTo exit: target point blocked by obstacle.", "Please choose a target in an unobstructed area."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_OBSTACLETOOCLOSE,        "FlyTo exit: obstacle too close, emergency brake applied.", "Please fly away from the obstacle."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_ROUTE_BLOCKED,           "FlyTo exit: route blocked, replanning failed.", "Please choose an alternative target or clear the path."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVFENCE,          "FlyTo exit: aircraft hit virtual fence boundary.", "Please adjust the virtual fence or the target location."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_APPROACH_GEOCAGE,    "FlyTo exit: aircraft approaching GeoFence boundary.", "Please adjust the GeoFence or choose a target within the boundary."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_USER_CONTROL_RC,               "FlyTo exit: operator took over control via RC.", NULL}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_USER_REQUESTSTOP,              "FlyTo exit: mission stopped by user request.", NULL}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_LOWBATHOME,          "FlyTo exit: low battery, returning to home.", "Please replace the battery."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_LOWBATLAND,          "FlyTo exit: low battery, forced landing.", "Please replace the battery."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_ADSB,                "FlyTo exit: mission preempted by ADS-B collision avoidance.", "Please check surrounding airspace for traffic."}, \
+{DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_HIGHERPRIORITY_MIS,  "FlyTo exit: preempted by a higher-priority mission.", NULL}, \
+/* FC motor slow rotation error message */\
+{DJI_ERROR_FC_MOTOR_MODULE_CODE_SLOW_ROTATE_FAIL, "Motor slow rotation failed.", "Please check motor status."}, \
+\
+/* gimbal setparams module error message */ \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_NO_CONTROL_SRC, "Gimbal control input source not set.", "Please set the control input source first."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_NOT_FOUND, "Parameter ID does not exist.", "Please check the parameter ID validity."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_LEN_ERR, "Parameter length is incorrect.", "Please check the parameter length."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_VALUE_BELOW_MIN, "Parameter value is below the minimum limit.", "Please increase the value to within the valid range."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_VALUE_ABOVE_MAX, "Parameter value exceeds the maximum limit.", "Please decrease the value to within the valid range."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_RESP_DATA_TOO_MANY, "Returned data exceeds buffer capacity.", "Please increase the buffer size."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_INDEX_ERR, "Parameter table index is incorrect.", "Please check the parameter index validity."}, \
+{DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_MUTEX_FAILED, "Memory mutex operation failed.", "Please try again."}, \
 
 #define DJI_RETURN_CODE_OK                 DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS             /*!< Payload SDK return code represents as status is ok. */
 #define DJI_RETURN_CODE_ERR_ALLOC          DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED /*!< Payload SDK return code represents as status alloc error. */
@@ -522,7 +668,14 @@ typedef enum {
     DJI_ERROR_MODULE_WAYPOINT_V2,
     DJI_ERROR_MODULE_WAYPOINT_V3,
     DJI_ERROR_MODULE_ERROR,
-    DJI_ERROR_MODULE_SPZ, /*!< Spotlight zoom module */
+    DJI_ERROR_MODULE_SPZ,    /*!< Spotlight zoom module */
+    DJI_ERROR_MODULE_FC_FLYTO, /*!< Flight controller FlyTo mission module */
+    DJI_ERROR_MODULE_FC_MOTOR, /*!< Flight controller motor rotation module */
+    DJI_ERROR_MODULE_PERCEPTION, /*!< Perception module */
+    DJI_ERROR_MODULE_FILE_TRANSFER, /*!< File transfer module */
+    DJI_ERROR_MODULE_CENTER_SUB, /*!< Center board subscription module */
+    DJI_ERROR_MODULE_TM_PUSH, /*!< TM push subscription module */
+    DJI_ERROR_MODULE_GIMBAL_SETPARAMS, /*!< Gimbal setparams module */
 } E_DjiErrorModule;
 
 /**
@@ -650,6 +803,21 @@ typedef enum {
     DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_CANNOT_START_MOTOR = 0x11,
     DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_LOW_VOLTAGE = 0x12,
     DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_SPEED_TOO_LARGE = 0x14,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CMD_IS_RUNNING = 0x08,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_IS_NOT_RUNNING = 0x09,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CMD_INVALID = 0x0A,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NO_GEAR = 0x0B,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_GIMBAL_MOUNTED = 0x0C,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_US_NOT_HEALTHY = 0x0D,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_HAS_PACKED = 0x0E,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NOT_PACKED = 0x0F,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_NOT_SUPPORTED = 0x10,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_IN_HOVER = 0x13,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NO_HORIZ_VEL_INFO = 0x15,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_ANG_NORMAL = 0x16,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CRAFT_NEVER_CRASH = 0x17,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_DRONE_UNCTRLABLE = 0x18,
+    DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CRAFT_NO_AVAILABLE_ESC = 0x19,
 } E_DjiErrorFCActionModuleRawCode;
 
 /**
@@ -676,6 +844,10 @@ typedef enum {
     DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_NOT_BE_RECORD = 0x03,
     DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_GPS_NOT_READY = 0x04,
     DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_DIS_TOO_FAR = 0x05,
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RTK_ENABLE_BUT_NOT_READY = 0x06,
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RC_NOT_READY = 0x07,
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RC_IN_NFZ = 0x08,
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_NONSUPPORT_CUR_HP_TYPE = 0x09,
 } E_DjiErrorFCHomeLocationModuleRawCode;
 
 /**
@@ -690,59 +862,116 @@ typedef enum {
  * @brief Raw error code of camera manager
  */
 typedef enum {
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND = 0xE0, /*!< Do not support this command */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TIMEOUT = 0xE1, /*!< Execution timeout */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED = 0xE2, /*!< Memory alloc failed */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER = 0xE3, /*!< Invalid parameter for the command */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = 0xE4, /*!< Do not support this command in the current state */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CAMERA_TIME_NOT_SYNCHRONIZED = 0xE5, /*!< Timestamp of camera is not synchronized */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_SET_FAILED = 0xE6, /*!< Setting parameter failed */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_GET_FAILED = 0xE7, /*!< Getting parameter failed */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_MISSING = 0xE8, /*!< SD card is not installed */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_FULL = 0xE9, /*!< SD card is full */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_ERROR = 0xEA, /*!< Error accessing the SD Card */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR = 0xEB, /*!< Sensor go wrong */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR = 0xEC, /*!< System error */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG = 0xED, /*!< Length of the parameter is too long */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = 0xF0, /*!< Fireware data number is a discontinuous number */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR = 0xF2, /*!< Error verifying fireware */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR = 0xF4, /*!< Error writing flash */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH = 0xF6, /*!< Firmware type don't match */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED = 0xF8, /*!< Not connect remote control yet */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR = 0xFA, /*!< Hardware fault */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED = 0xFC, /*!< Aircraft is not connected yet */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE = 0xFE, /*!< Cannot upgrade in current status (Please reboot or contact with DJI support */
-    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR = 0xFF, /*!< Undefined error */
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_ACK = 0x01,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_ENTER_PLAYBACK_IN_CUR_STATE = 0xB0,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FILE_TRANSFER_BUSY = 0xC0,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_TASK_INFORMATION = 0xD2,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TASK_UPLOAD_ERROR = 0xD3,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_REQUEST_PARAMETER = 0xD4,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MAY_CROSS_RESTRICTED_AREA = 0xD5,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_EXCEEDED_INPUT_TIME_LIMIT = 0xD6,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_EXECUTING_HIGHER_PRIORITY_TASK = 0xD7,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_START_TASK_WEAK_GPS = 0xD8,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_START_TASK_VOLTAGE_ALARM = 0xD9,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MISMATCH = 0xDA,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_DATA = 0xDB,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TRY_LATER = 0xDC,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_NOT_IMPLEMENTED = 0xDD,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANCELLED = 0xDE,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_NOT_FOUND = 0xDF,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND = 0xE0,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TIMEOUT = 0xE1,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED = 0xE2,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER = 0xE3,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = 0xE4,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CAMERA_TIME_NOT_SYNCHRONIZED = 0xE5,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_SET_FAILED = 0xE6,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_GET_FAILED = 0xE7,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_MISSING = 0xE8,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_FULL = 0xE9,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SD_CARD_ERROR = 0xEA,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR = 0xEB,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR = 0xEC,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG = 0xED,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MODULE_INACTIVATED = 0xEE,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_USER_UNBOUND = 0xEF,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = 0xF0,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_OVERLOAD_FLASH = 0xF1,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR = 0xF2,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_ERASE_ERROR = 0xF3,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR = 0xF4,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UPGRADE_STATUS_ERROR = 0xF5,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH = 0xF6,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_WAITING_CLIENT_UPGRADE_STATUS = 0xF7,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED = 0xF8,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MOTOR_NOT_STOPPED = 0xF9,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR = 0xFA,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INSUFFICIENT_ELECTRICITY = 0xFB,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED = 0xFC,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_IS_ERASING = 0xFD,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE = 0xFE,
+    DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR = 0xFF,
 } E_DjiErrorCameraManagerModuleRawCode;
 
 /**
  * @brief Raw error code of gimbal manager
  */
 typedef enum {
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND = 0xE0, /*!< Do not support this command */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TIMEOUT = 0xE1, /*!< Execution timeout */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED = 0xE2, /*!< Memory alloc failed */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER = 0xE3, /*!< Invalid parameter for the command */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = 0xE4, /*!< Do not support this command in the current state */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CAMERA_TIME_NOT_SYNCHRONIZED = 0xE5, /*!< Timestamp of camera is not synchronized */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_SET_FAILED = 0xE6, /*!< Setting parameter failed */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_GET_FAILED = 0xE7, /*!< Getting parameter failed */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_MISSING = 0xE8, /*!< SD card is not installed */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_FULL = 0xE9, /*!< SD card is full */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_ERROR = 0xEA, /*!< Error accessing the SD Card */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR = 0xEB, /*!< Sensor go wrong */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR = 0xEC, /*!< System error */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG = 0xED, /*!< Length of the parameter is too long */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = 0xF0, /*!< Fireware data number is a discontinuous number */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR = 0xF2, /*!< Error verifying fireware */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR = 0xF4, /*!< Error writing flash */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH = 0xF6, /*!< Firmware type don't match */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED = 0xF8, /*!< Not connect remote control yet */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR = 0xFA, /*!< Hardware fault */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED = 0xFC, /*!< Aircraft is not connected yet */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE = 0xFE, /*!< Cannot upgrade in current status (Please reboot or contact with DJI support */
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR = 0xFF, /*!< Undefined error */
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_ACK = 0x01,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INVALID_REQUEST_PARAMETER = 0xD4,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MISMATCH = 0xDA,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_DATA = 0xDB,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TRY_LATER = 0xDC,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_NOT_IMPLEMENTED = 0xDD,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANCELLED = 0xDE,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_NOT_FOUND = 0xDF,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND = 0xE0,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TIMEOUT = 0xE1,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED = 0xE2,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER = 0xE3,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = 0xE4,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CAMERA_TIME_NOT_SYNCHRONIZED = 0xE5,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_SET_FAILED = 0xE6,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_GET_FAILED = 0xE7,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_MISSING = 0xE8,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_FULL = 0xE9,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SD_CARD_ERROR = 0xEA,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR = 0xEB,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR = 0xEC,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG = 0xED,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MODULE_INACTIVATED = 0xEE,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_USER_UNBOUND = 0xEF,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = 0xF0,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_OVERLOAD_FLASH = 0xF1,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR = 0xF2,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_ERASE_ERROR = 0xF3,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR = 0xF4,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UPGRADE_STATUS_ERROR = 0xF5,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH = 0xF6,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_WAITING_CLIENT_UPGRADE_STATUS = 0xF7,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED = 0xF8,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MOTOR_NOT_STOPPED = 0xF9,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR = 0xFA,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INSUFFICIENT_ELECTRICITY = 0xFB,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED = 0xFC,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_IS_ERASING = 0xFD,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE = 0xFE,
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR = 0xFF,
 } E_DjiErrorGimbalManagerModuleRawCode;
+
+/**
+ * @brief Raw error code of gimbal setparams module.
+ */
+typedef enum {
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_NO_CONTROL_SRC = 0x01,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_NOT_FOUND = 0x03,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_LEN_ERR = 0x04,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_VALUE_BELOW_MIN = 0x05,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_VALUE_ABOVE_MAX = 0x06,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_RESP_DATA_TOO_MANY = 0x07,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_INDEX_ERR = 0x09,
+    DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_MUTEX_FAILED = 0x0A,
+} E_DjiErrorGimbalSetparamsModuleRawCode;
 
 /**
  * @brief Raw error code of spotlight zoom (SPZ) module.
@@ -777,6 +1006,72 @@ typedef enum {
     DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_STATUS_ERR          = 254, /*!< Internal error (dbus/IMU/gimbal/camera) */
     DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INNER_UNKNOW_ERROR  = 255, /*!< Unknown internal error */
 } E_DjiErrorSpzModuleRawCode;
+
+/**
+ * @brief Raw error code of flight controller FlyTo (SetModeStartMission) module.
+ * These are the error_code values returned in T_DjiFlightControllerStartMissionRsp.
+ * CMDER_MODE_DBUS_NULLPTR (0x0001) is sanitized as "internal aircraft communication error".
+ */
+typedef enum {
+    /* Common check errors — reject/exit mission */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_INTERNAL_ERROR     = 0x0001, /*!< Internal aircraft communication error */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_BAD_GPS_SIGNAL       = 0x0002, /*!< GPS signal too weak to execute mission */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_ABSPOS_INVALID       = 0x0003, /*!< Positioning completely unavailable */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PLANNING_FAIL        = 0x0004, /*!< Route planning failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_HOME_NOTSET          = 0x0005, /*!< Home point not set */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_RC_LOST              = 0x0006, /*!< Remote controller signal lost */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_TAKEOFF_ON_SHIP      = 0x0007, /*!< Auto takeoff on a vessel is prohibited */
+
+    /* Common check warnings */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_SOMEWAYRUNOUT        = 0x0011, /*!< Insufficient energy to complete mission */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_SWITCH_PLANNING_ALGO = 0x0012, /*!< Planning algorithm was switched during mission */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_HEIGHT_EXCEED_LIMIT  = 0x0013, /*!< Target altitude exceeds flight altitude limit */
+
+    /* Static check warnings */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETHORLIM        = 0x0201, /*!< Target point is inside a horizontal no-fly zone */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETHORLIM_RADIUS = 0x0202, /*!< Target point exceeds user-defined distance limit */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM        = 0x0203, /*!< Target point is inside a vertical no-fly zone */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM_TOP    = 0x0204, /*!< Target altitude exceeds user-defined altitude ceiling */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM_BOTTOM = 0x0205, /*!< Target altitude is below minimum flight altitude */
+
+    /* Departure wayline errors */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_ERROR          = 0x0300, /*!< Departure wayline execution failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INIT           = 0x0301, /*!< Departure wayline initialization failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INVALID        = 0x0302, /*!< Departure wayline is unavailable */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_NOT_REACHABLE  = 0x0303, /*!< Departure point unreachable (no-fly zone or obstacle) */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_PLANNING_FAIL  = 0x0304, /*!< Departure wayline planning failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_RC_SWITCH_MODE = 0x0305, /*!< RC is not in P-mode */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_RTK_TYPE_ERR   = 0x0306, /*!< BeiDou-only aircraft does not support departure wayline */
+
+    /* Static check errors — reject mission */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREVENT_MOTOR_ERROR    = 0x0401, /*!< Motor pre-arm check failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOALINVALID             = 0x0402, /*!< Target point out of planning range or invalid coordinates */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_MAXFLYVEL_INVALID       = 0x0403, /*!< Maximum flight speed parameter is invalid */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_VERSION_INVALID         = 0x0404, /*!< Protocol version mismatch */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_STATEMACHINE_INVALID    = 0x0405, /*!< Mission state machine busy; retry after current task finishes */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_MEA_INVALID             = 0x0406, /*!< Minimum enroute altitude (MEA) too low (must be >=20 m for M220) */
+
+    /* Dynamic check errors — exit mission in flight */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETHORLIM          = 0x0601, /*!< Aircraft entered horizontal no-fly zone */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETHORLIM_RADIUS   = 0x0602, /*!< Aircraft exceeded user-defined distance limit */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM          = 0x0603, /*!< Aircraft entered vertical no-fly zone */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM_TOP      = 0x0604, /*!< Aircraft reached user-defined altitude ceiling */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM_BOTTOM   = 0x0605, /*!< Aircraft reached minimum flight altitude floor */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_TAKEOFF_FAIL            = 0x0606, /*!< Takeoff failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_BLOCKEDBY_OBSTACLE = 0x0607, /*!< Target point blocked by obstacle */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_OBSTACLETOOCLOSE        = 0x0608, /*!< Obstacle too close; emergency brake */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_ROUTE_BLOCKED           = 0x0609, /*!< Route blocked; replanning failed */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVFENCE          = 0x060A, /*!< Aircraft hit virtual fence boundary */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_APPROACH_GEOCAGE    = 0x060B, /*!< Aircraft approaching GeoFence boundary */
+
+    /* External module interruptions */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_USER_CONTROL_RC               = 0x0801, /*!< Operator took over control via RC */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_USER_REQUESTSTOP              = 0x0802, /*!< Mission stopped by user request */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_LOWBATHOME          = 0x0803, /*!< Low battery: returning to home */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_LOWBATLAND          = 0x0804, /*!< Low battery: forced landing */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_ADSB                = 0x0805, /*!< Mission preempted by ADS-B collision avoidance */
+    DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_HIGHERPRIORITY_MIS  = 0x0806, /*!< Mission preempted by a higher-priority mission */
+} E_DjiErrorFcFlytoModuleRawCode;
 
 /**
  * @brief Waypoint v2 total error raw code.
@@ -1030,7 +1325,52 @@ typedef enum {
     DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND = 1634,
     DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_NOT_FOUND = 1649,
     DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL = 1650,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_CANNOT_TAKEOFF_ON_SHIP = 263,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_TARGET_NOT_REACHABLE = 529,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_TRAJ_PLAN_FAILED = 530,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_FAIL = 531,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INIT_FAIL = 532,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INVALID = 533,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRANSPORT_DIVERT = 783,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DOCK_MOVE_GOHOME = 786,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_HEADING_LEVEL_POOR = 787,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_JAMMING_GOHOME = 788,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WIND_SPD = 789,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_BUSY_IMU_CHANGED = 790,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_RAIN_DETECT_VALID = 791,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM1_ERROR = 800,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM2_ERROR = 801,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM3_ERROR = 802,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM4_ERROR = 803,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_RADAR_PEDEX_WARNING = 804,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_OVERLOAD = 805,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_HOIST_NOT_READY = 806,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_HOIST_SELF_CHECK_ERR = 807,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_PREVENT_MOTOR_START = 808,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_EST_BAT_OVERTEMP_ERROR = 816,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_PAYLOAD_NOT_HOIST = 1040,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_INNER_ERROR = 65534,
+    DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_UNKNOWN_ERROR = 65535,
 } E_DjiErrorWaypoint3ModuleRawCode;
+
+/**
+ * @brief Raw error code of waypoint v3 breakpoint query (cmd_set=0x22, cmd_id=0xAF).
+ * error_code field in dji_fc2_get_wp3_query_breakpoint_info_rsp.
+ * Values from duss description (no enum defined, magic numbers documented inline).
+ */
+typedef enum {
+    DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_RAW_CODE_HAS_BREAKPOINT = 0x00000000,
+    DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_RAW_CODE_MISSION_NOT_EXIST = 0x00010001,
+    DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_RAW_CODE_NO_BREAKPOINT = 0x00010004,
+} E_DjiErrorWaypointV3BreakPointQueryRawCode;
+
+/**
+ * @brief Raw error code of FC motor slow rotation (cmd_set=0x22, cmd_id=0x5E).
+ */
+typedef enum {
+    DJI_ERROR_FC_MOTOR_MODULE_RAW_CODE_SLOW_ROTATE_OK = 0x00,
+    DJI_ERROR_FC_MOTOR_MODULE_RAW_CODE_SLOW_ROTATE_FAIL = 0x01,
+} E_DjiErrorFcMotorModuleRawCode;
 
 //@formatter:off
 /**
@@ -1127,6 +1467,21 @@ enum DjiErrorCode {
     DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_CANNOT_START_MOTOR= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_CANNOT_START_MOTOR),
     DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_LOW_VOLTAGE= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_LOW_VOLTAGE),
     DJI_ERROR_FC_ACTION_MODULE_TRIGGER_ERROR_SPEED_TOO_LARGE= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_TRIGGER_ERROR_SPEED_TOO_LARGE),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_CMD_IS_RUNNING= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CMD_IS_RUNNING),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_IS_NOT_RUNNING= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_IS_NOT_RUNNING),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_CMD_INVALID= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CMD_INVALID),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_NO_GEAR= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NO_GEAR),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_GIMBAL_MOUNTED= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_GIMBAL_MOUNTED),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_US_NOT_HEALTHY= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_US_NOT_HEALTHY),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_HAS_PACKED= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_HAS_PACKED),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_NOT_PACKED= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NOT_PACKED),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_PACK_NOT_SUPPORTED= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_PACK_NOT_SUPPORTED),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_IN_HOVER= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_IN_HOVER),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_NO_HORIZ_VEL_INFO= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_NO_HORIZ_VEL_INFO),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_ANG_NORMAL= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_ANG_NORMAL),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_CRAFT_NEVER_CRASH= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CRAFT_NEVER_CRASH),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_DRONE_UNCTRLABLE= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_DRONE_UNCTRLABLE),
+    DJI_ERROR_FC_ACTION_MODULE_ERROR_CRAFT_NO_AVAILABLE_ESC= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ACTION, DJI_ERROR_FC_ACTION_MODULE_RAW_CODE_ERROR_CRAFT_NO_AVAILABLE_ESC),
 
     /* Flight controller arrest flying errors */
     DJI_ERROR_FC_ARREST_FLYING_MODULE_REGISTER_LOGOUT_SET_SUCCESS = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_ARREST_FLYING, DJI_ERROR_FC_ARREST_FLYING_MODULE_RAW_CODE_REGISTER_LOGOUT_SET_SUCCESS),
@@ -1145,14 +1500,35 @@ enum DjiErrorCode {
     DJI_ERROR_FC_HOME_LOCATION_MODULE_NOT_BE_RECORD = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_NOT_BE_RECORD),
     DJI_ERROR_FC_HOME_LOCATION_MODULE_GPS_NOT_READY = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_GPS_NOT_READY),
     DJI_ERROR_FC_HOME_LOCATION_MODULE_DIS_TOO_FAR = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_DIS_TOO_FAR),
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RTK_ENABLE_BUT_NOT_READY= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RTK_ENABLE_BUT_NOT_READY),
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RC_NOT_READY= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RC_NOT_READY),
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_RC_IN_NFZ= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_RC_IN_NFZ),
+    DJI_ERROR_FC_HOME_LOCATION_MODULE_NONSUPPORT_CUR_HP_TYPE= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_HOME_LOCATION, DJI_ERROR_FC_HOME_LOCATION_MODULE_RAW_CODE_NONSUPPORT_CUR_HP_TYPE),
 
     /* Flight controller emergency stop motor errors */
     DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_VERSION_NOT_MATCH= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_EMERGENCY_STOP_MOTOR, DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_RAW_CODE_VERSION_NOT_MATCH),
     DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_CMD_INVALID= DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_EMERGENCY_STOP_MOTOR, DJI_ERROR_FC_EMERGENCY_STOP_MOTOR_MODULE_RAW_CODE_CMD_INVALID),
 
     /* Camera manager errors */
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_ACK = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_ACK),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_ENTER_PLAYBACK_IN_CUR_STATE = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_ENTER_PLAYBACK_IN_CUR_STATE),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FILE_TRANSFER_BUSY = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FILE_TRANSFER_BUSY),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_TASK_INFORMATION = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_TASK_INFORMATION),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TASK_UPLOAD_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TASK_UPLOAD_ERROR),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_REQUEST_PARAMETER = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_REQUEST_PARAMETER),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MAY_CROSS_RESTRICTED_AREA = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MAY_CROSS_RESTRICTED_AREA),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_EXCEEDED_INPUT_TIME_LIMIT = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_EXCEEDED_INPUT_TIME_LIMIT),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_EXECUTING_HIGHER_PRIORITY_TASK = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_EXECUTING_HIGHER_PRIORITY_TASK),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_START_TASK_WEAK_GPS = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_START_TASK_WEAK_GPS),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_START_TASK_VOLTAGE_ALARM = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_START_TASK_VOLTAGE_ALARM),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MISMATCH = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MISMATCH),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_DATA = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_DATA),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TRY_LATER = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TRY_LATER),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_NOT_IMPLEMENTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_NOT_IMPLEMENTED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANCELLED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANCELLED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_NOT_FOUND),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND),
-    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TIMEOUT = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TIMEOUT ),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_TIMEOUT = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_TIMEOUT),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE),
@@ -1165,20 +1541,37 @@ enum DjiErrorCode {
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SENSOR_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_SYSTEM_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG),
-    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MODULE_INACTIVATED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_SYSTEM_MODULE_RAW_CODE_MODULE_INACTIVATED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MODULE_INACTIVATED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MODULE_INACTIVATED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_USER_UNBOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_USER_UNBOUND),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_DATA_OVERLOAD_FLASH = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_OVERLOAD_FLASH),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_ERASE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_ERASE_ERROR),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UPGRADE_STATUS_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UPGRADE_STATUS_ERROR),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_WAITING_CLIENT_UPGRADE_STATUS = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_WAITING_CLIENT_UPGRADE_STATUS),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_MOTOR_NOT_STOPPED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_MOTOR_NOT_STOPPED),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_HARDWARE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_INSUFFICIENT_ELECTRICITY = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_INSUFFICIENT_ELECTRICITY),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED),
+    DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_FLASH_IS_ERASING = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_FLASH_IS_ERASING),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE),
     DJI_ERROR_CAMERA_MANAGER_MODULE_CODE_UNDEFINE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_CAMERA_MANAGER, DJI_ERROR_CAMERA_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR),
 
+
     /* Gimbal manager errors */
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_ACK = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_ACK),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INVALID_REQUEST_PARAMETER = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INVALID_REQUEST_PARAMETER),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MISMATCH = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MISMATCH),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_DATA = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_DATA),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TRY_LATER = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TRY_LATER),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_NOT_IMPLEMENTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_NOT_IMPLEMENTED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CANCELLED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANCELLED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_NOT_FOUND),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND),
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TIMEOUT = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TIMEOUT ),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_TIMEOUT = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_TIMEOUT),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_RAM_ALLOCATION_FAILED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_RAM_ALLOCATION_FAILED),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INVALID_COMMAND_PARAMETER = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INVALID_COMMAND_PARAMETER),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNSUPPORTED_COMMAND_IN_CUR_STATE),
@@ -1191,16 +1584,34 @@ enum DjiErrorCode {
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SENSOR_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SENSOR_ERROR),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_SYSTEM_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_SYSTEM_ERROR),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_PARAMETER_TOTAL_TOO_LONG = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_PARAMETER_TOTAL_TOO_LONG),
-    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MODULE_INACTIVATED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_SYSTEM_MODULE_RAW_CODE_MODULE_INACTIVATED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MODULE_INACTIVATED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MODULE_INACTIVATED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_USER_UNBOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_USER_UNBOUND),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_NUM_DISCONTINUOUS),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_DATA_OVERLOAD_FLASH = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_DATA_OVERLOAD_FLASH),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_VERIFICATION_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_VERIFICATION_ERROR),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_ERASE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_ERASE_ERROR),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_WRITE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_WRITE_ERROR),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UPGRADE_STATUS_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UPGRADE_STATUS_ERROR),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FIRMWARE_TYPE_MISMATCH = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FIRMWARE_TYPE_MISMATCH),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_WAITING_CLIENT_UPGRADE_STATUS = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_WAITING_CLIENT_UPGRADE_STATUS),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_REMOTE_CONTROL_UNCONNECTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_REMOTE_CONTROL_UNCONNECTED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_MOTOR_NOT_STOPPED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_MOTOR_NOT_STOPPED),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_HARDWARE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_HARDWARE_ERROR),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_INSUFFICIENT_ELECTRICITY = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_INSUFFICIENT_ELECTRICITY),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_AIRCRAFT_UNCONNECTED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_AIRCRAFT_UNCONNECTED),
+    DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_FLASH_IS_ERASING = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_FLASH_IS_ERASING),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_CANNOT_UPGRADE_IN_CUR_STATE = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_CANNOT_UPGRADE_IN_CUR_STATE),
     DJI_ERROR_GIMBAL_MANAGER_MODULE_CODE_UNDEFINE_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_MANAGER, DJI_ERROR_GIMBAL_MANAGER_MODULE_RAW_CODE_UNDEFINE_ERROR),
+
+	/* gimbal setparams module error code */
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_VALUE_ABOVE_MAX = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_VALUE_ABOVE_MAX),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_VALUE_BELOW_MIN = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_VALUE_BELOW_MIN),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_NOT_FOUND),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_LEN_ERR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_LEN_ERR),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_NO_CONTROL_SRC = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_NO_CONTROL_SRC),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_RESP_DATA_TOO_MANY = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_RESP_DATA_TOO_MANY),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_PARAM_INDEX_ERR = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_PARAM_INDEX_ERR),
+	DJI_ERROR_GIMBAL_SETPARAMS_MODULE_CODE_MUTEX_FAILED = DJI_ERROR_CODE(DJI_ERROR_MODULE_GIMBAL_SETPARAMS, DJI_ERROR_GIMBAL_SETPARAMS_MODULE_RAW_CODE_MUTEX_FAILED),
 
 	/* Waypoint v2 total errors */
 	DJI_ERROR_WAYPOINT_V2_MODULE_CODE_COMMON_SUCCESS = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V2, DJI_ERROR_WAYPOINT_V2_MODULE_RAW_CODE_COMMON_SUCCESS),
@@ -1425,6 +1836,36 @@ enum DjiErrorCode {
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_ACTUATOR_COMMON_ACTUATOR_NOT_FOUND),
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_NOT_FOUND = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_NOT_FOUND),
     DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRIGGER_SINGLE_TIME_CHECK_FAIL),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_CANNOT_TAKEOFF_ON_SHIP = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_CANNOT_TAKEOFF_ON_SHIP),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_TARGET_NOT_REACHABLE = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_TARGET_NOT_REACHABLE),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_TRAJ_PLAN_FAILED = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_TRAJ_PLAN_FAILED),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_FAIL = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_FAIL),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_INIT_FAIL = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INIT_FAIL),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DEPARTURE_WAYLINE_INVALID = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INVALID),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_TRANSPORT_DIVERT = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_TRANSPORT_DIVERT),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DOCK_MOVE_GOHOME = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DOCK_MOVE_GOHOME),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_HEADING_LEVEL_POOR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_HEADING_LEVEL_POOR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_JAMMING_GOHOME = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_JAMMING_GOHOME),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WIND_SPD = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WIND_SPD),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_BUSY_IMU_CHANGED = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_BUSY_IMU_CHANGED),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_RAIN_DETECT_VALID = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_RAIN_DETECT_VALID),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM1_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM1_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM2_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM2_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM3_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM3_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_ARM4_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_ARM4_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_RADAR_PEDEX_WARNING = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_RADAR_PEDEX_WARNING),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_OVERLOAD = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_OVERLOAD),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_HOIST_NOT_READY = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_HOIST_NOT_READY),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_HOIST_SELF_CHECK_ERR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_HOIST_SELF_CHECK_ERR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_PREVENT_MOTOR_START = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_PREVENT_MOTOR_START),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_WP_EST_BAT_OVERTEMP_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_WP_EST_BAT_OVERTEMP_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_PAYLOAD_NOT_HOIST = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_PAYLOAD_NOT_HOIST),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_INNER_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_INNER_ERROR),
+    DJI_ERROR_WAYPOINT_V3_MODULE_CODE_DJI_UNKNOWN_ERROR = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_MODULE_RAW_CODE_DJI_UNKNOWN_ERROR),
+
+    /* Waypoint v3 breakpoint query errors */
+    DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_CODE_MISSION_NOT_EXIST = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_RAW_CODE_MISSION_NOT_EXIST),
+    DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_CODE_NO_BREAKPOINT = DJI_ERROR_CODE(DJI_ERROR_MODULE_WAYPOINT_V3, DJI_ERROR_WAYPOINT_V3_BREAKPOINT_QUERY_RAW_CODE_NO_BREAKPOINT),
 
     /* Spotlight zoom (SPZ) module errors */
     DJI_ERROR_SPZ_MODULE_CODE_OK                            = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_OK),
@@ -1454,6 +1895,54 @@ enum DjiErrorCode {
     DJI_ERROR_SPZ_MODULE_CODE_EXIT_RC_LOST                  = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_RC_LOST),
     DJI_ERROR_SPZ_MODULE_CODE_EXIT_STATUS_ERR               = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_STATUS_ERR),
     DJI_ERROR_SPZ_MODULE_CODE_EXIT_INNER_UNKNOW_ERROR       = DJI_ERROR_CODE(DJI_ERROR_MODULE_SPZ, DJI_ERROR_SPZ_MODULE_RAW_CODE_EXIT_INNER_UNKNOW_ERROR),
+
+    /* FlyTo (SetModeStartMission) errors */
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_INTERNAL_ERROR     = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_INTERNAL_ERROR),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_BAD_GPS_SIGNAL       = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_BAD_GPS_SIGNAL),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_ABSPOS_INVALID       = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_ABSPOS_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PLANNING_FAIL        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PLANNING_FAIL),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_HOME_NOTSET          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_HOME_NOTSET),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_RC_LOST              = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_RC_LOST),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_TAKEOFF_ON_SHIP      = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_TAKEOFF_ON_SHIP),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_SOMEWAYRUNOUT        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_SOMEWAYRUNOUT),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_SWITCH_PLANNING_ALGO = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_SWITCH_PLANNING_ALGO),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_HEIGHT_EXCEED_LIMIT  = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_HEIGHT_EXCEED_LIMIT),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETHORLIM        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETHORLIM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETHORLIM_RADIUS = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETHORLIM_RADIUS),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM_TOP    = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM_TOP),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_MEETVERLIM_BOTTOM = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_MEETVERLIM_BOTTOM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_ERROR          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_ERROR),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_INIT           = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INIT),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_INVALID        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_NOT_REACHABLE  = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_NOT_REACHABLE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_PLANNING_FAIL  = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_PLANNING_FAIL),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_RC_SWITCH_MODE = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_RC_SWITCH_MODE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_DEPARTURE_WAYLINE_RTK_TYPE_ERR   = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_DEPARTURE_WAYLINE_RTK_TYPE_ERR),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PREVENT_MOTOR_ERROR    = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREVENT_MOTOR_ERROR),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOALINVALID             = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOALINVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_MAXFLYVEL_INVALID       = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_MAXFLYVEL_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_VERSION_INVALID         = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_VERSION_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_STATEMACHINE_INVALID    = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_STATEMACHINE_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_MEA_INVALID             = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_MEA_INVALID),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETHORLIM          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETHORLIM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETHORLIM_RADIUS   = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETHORLIM_RADIUS),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM_TOP      = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM_TOP),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVERLIM_BOTTOM   = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVERLIM_BOTTOM),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_TAKEOFF_FAIL            = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_TAKEOFF_FAIL),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_GOAL_BLOCKEDBY_OBSTACLE = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_GOAL_BLOCKEDBY_OBSTACLE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_OBSTACLETOOCLOSE        = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_OBSTACLETOOCLOSE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_ROUTE_BLOCKED           = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_ROUTE_BLOCKED),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_MEETVFENCE          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_MEETVFENCE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_UAV_APPROACH_GEOCAGE    = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_UAV_APPROACH_GEOCAGE),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_USER_CONTROL_RC               = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_USER_CONTROL_RC),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_USER_REQUESTSTOP              = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_USER_REQUESTSTOP),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_LOWBATHOME          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_LOWBATHOME),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_LOWBATLAND          = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_LOWBATLAND),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_ADSB                = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_ADSB),
+    DJI_ERROR_FC_FLYTO_MODULE_CODE_PREEMPTBY_HIGHERPRIORITY_MIS  = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_FLYTO, DJI_ERROR_FC_FLYTO_MODULE_RAW_CODE_PREEMPTBY_HIGHERPRIORITY_MIS),
+    DJI_ERROR_FC_MOTOR_MODULE_CODE_SLOW_ROTATE_FAIL = DJI_ERROR_CODE(DJI_ERROR_MODULE_FC_MOTOR, DJI_ERROR_FC_MOTOR_MODULE_RAW_CODE_SLOW_ROTATE_FAIL),
 };
 //@formatter:on
 

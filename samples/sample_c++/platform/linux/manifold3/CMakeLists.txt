@@ -30,6 +30,7 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../module_sample/hms_manager/*.c*
         ../../../module_sample/widget_manager/*.c*
         ../../../module_sample/positioning/*.c*
+        ../../../module_sample/mop_channel/*.c*
         ../../../../sample_c/module_sample/*.c
         ../../../../sample_c/positioning/*.c
         ../../../../sample_c/module_sample/widget_interaction_test/*.c
@@ -104,6 +105,8 @@ endif()
 if (NOT EXECUTABLE_OUTPUT_PATH)
     set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 endif()
+
+add_dependencies(${PROJECT_NAME} djisdk)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
 

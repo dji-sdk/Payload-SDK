@@ -34,6 +34,7 @@
 #include "dji_platform.h"
 #include "dji_fc_subscription.h"
 #include "hms_text_c/en/hms_text_config_json.h"
+#include "hms_text_c/cn/hms_text_config_json.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define MAX_HMS_PRINT_COUNT              (150)
@@ -58,6 +59,9 @@ static const char *oldReplaceComponentIndexStr = "%component_index";
 static bool isHmsManagerInit = false;
 static T_DjiHmsFileBinaryArray s_EnHmsTextConfigFileBinaryArrayList[] = {
     {hms_text_config_json_fileName, hms_text_config_json_fileSize, hms_text_config_json_fileBinaryArray},
+};
+static T_DjiHmsFileBinaryArray s_CnHmsTextConfigFileBinaryArrayList[] = {
+    {hms_text_config_cn_json_fileName, hms_text_config_cn_json_fileSize, hms_text_config_cn_json_fileBinaryArray},
 };
 #ifdef SYSTEM_ARCH_LINUX
 static uint8_t *s_hmsJsonData = NULL;
@@ -186,10 +190,30 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
         .fileBinaryArrayList = s_EnHmsTextConfigFileBinaryArrayList
     };
 
-    //set default hms text config
+    //set default hms text config (English)
     returnCode = DjiHmsCustomization_RegDefaultHmsTextConfigByBinaryArray(&enHmsTextBinaryArrayConfig);
     if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Add default hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    //set hms text config for English language
+    returnCode = DjiHmsCustomization_RegHmsTextConfigByBinaryArray(DJI_MOBILE_APP_LANGUAGE_ENGLISH,
+                                                                   &enHmsTextBinaryArrayConfig);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add en hms text config error, stat = 0x%08llX", returnCode);
+        return returnCode;
+    }
+
+    //set hms text config for Chinese language
+    T_DjiHmsBinaryArrayConfig cnHmsTextBinaryArrayConfig = {
+        .binaryArrayCount = sizeof(s_CnHmsTextConfigFileBinaryArrayList) / sizeof(T_DjiHmsFileBinaryArray),
+        .fileBinaryArrayList = s_CnHmsTextConfigFileBinaryArrayList
+    };
+    returnCode = DjiHmsCustomization_RegHmsTextConfigByBinaryArray(DJI_MOBILE_APP_LANGUAGE_CHINESE,
+                                                                   &cnHmsTextBinaryArrayConfig);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Add cn hms text config error, stat = 0x%08llX", returnCode);
         return returnCode;
     }
 #endif
@@ -197,13 +221,13 @@ T_DjiReturnCode DjiTest_HmsCustomizationStartService(void)
 #if DJI_CUSTOM_HMS_CODE_INJECT_ON
     T_DjiReturnCode injectStat;
     injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020005, DJI_HMS_ERROR_LEVEL_FATAL);
-    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020005 level=FATAL stat=0x%08llX", injectStat);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020005 level=FATAL");
     injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020006, DJI_HMS_ERROR_LEVEL_CRITICAL);
-    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020006 level=CRITICAL stat=0x%08llX", injectStat);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020006 level=CRITICAL");
     injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020007, DJI_HMS_ERROR_LEVEL_WARN);
-    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020007 level=WARN stat=0x%08llX", injectStat);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020007 level=WARN");
     injectStat = DjiHmsCustomization_InjectHmsErrorCode(0x1E020008, DJI_HMS_ERROR_LEVEL_HINT);
-    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020008 level=HINT stat=0x%08llX", injectStat);
+    USER_LOG_INFO("[HMS Inject] errorCode=0x1E020008 level=HINT");
 #endif
 
     return returnCode;

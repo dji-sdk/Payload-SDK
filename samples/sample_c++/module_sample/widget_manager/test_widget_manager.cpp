@@ -24,6 +24,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <iostream>
+#include <limits>
 #include "test_widget_manager.hpp"
 #include "dji_widget_manager.h"
 #include <dji_logger.h>
@@ -66,7 +67,8 @@ T_DjiReturnCode DjiTest_WidgetMannagerStart(void)
 
     std::cout << "Please select the position where the payload needs to be managed." << std::endl;
     std::cin >> inputPosition;
-    std::cout << "Please select load type (1: third party payload; 2: DJI searchlight; 3: DJI speaker) ";
+    std::cout << "Please select load type (1: third party payload; 2: DJI searchlight; 3: DJI speaker) " << std::endl;
+    std::cout << "DJI searchlight is not supported on M5/M5D." << std::endl;
     std::cin >>payloadType;
     if (inputPosition < 1 || inputPosition > 8) {
         std::cerr << "Invalid input for position. Must be between 1 and 8." << std::endl;
@@ -144,11 +146,22 @@ T_DjiReturnCode DjiTest_WidgetMannagerStart(void)
     }
 
 set_value:
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "If you need to change the widget state, enter 1 " << std::endl;
     std::cin >> continueFlag;
     if(continueFlag != 1) goto finish_management;
 
     std::cout << "Please enter the index and type to be set and the value to be set to :" << std::endl;
+    std::cout << "  Format : <index> <type> <value>" << std::endl;
+    std::cout << "  type 1 = Button    : value 0=release, 1=press" << std::endl;
+    std::cout << "  type 2 = Switch    : value 0=off, 1=on" << std::endl;
+    std::cout << "  type 3 = Scale     : value 0~100 (percentage)" << std::endl;
+    std::cout << "  type 4 = List      : value 0~(N-1), N=number of list items defined by target payload (check widget_config.json)." << std::endl;
+    std::cout << "                       NOTE: out-of-range value will be accepted by protocol but may cause abnormal display on target payload." << std::endl;
+    std::cout << "  type 5 = InputBox  : value int32 range, valid range defined by target payload" << std::endl;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin >> inputIndex >> widget_type_input >> state.widgetValue;
 
     if (widget_type_input >= 1 && widget_type_input <= 5)
@@ -159,7 +172,24 @@ set_value:
     else
     {
         std::cout << "Invalid widget type input." << std::endl;
-        goto finish_management;
+        goto set_value;
+    }
+
+    /* Basic value range check for known widget types */
+    if (widget_type_input == DJI_WIDGET_TYPE_BUTTON &&
+        (state.widgetValue < 0 || state.widgetValue > 1)) {
+        std::cout << "Warning: Button value out of range [0,1], input=" << state.widgetValue << std::endl;
+        goto set_value;
+    }
+    if (widget_type_input == DJI_WIDGET_TYPE_SWITCH &&
+        (state.widgetValue < 0 || state.widgetValue > 1)) {
+        std::cout << "Warning: Switch value out of range [0,1], input=" << state.widgetValue << std::endl;
+        goto set_value;
+    }
+    if (widget_type_input == DJI_WIDGET_TYPE_SCALE &&
+        (state.widgetValue < 0 || state.widgetValue > 100)) {
+        std::cout << "Warning: Scale value out of range [0,100], input=" << state.widgetValue << std::endl;
+        goto set_value;
     }
 
     djiStat = DjiWidgetManager_SetWidgetState(position, state);

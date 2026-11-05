@@ -38,6 +38,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 #define DJI_TARGET_LIMIT_CNT                    128  /*!< Maximum number of AI targets per frame */
+#define DJI_SEI_PAYLOAD_TYPE_LIST_MAX           32   /*!< Max distinct SEI F5 TLV types reported per frame */
 
 /* Exported types ------------------------------------------------------------*/
 
@@ -205,6 +206,13 @@ typedef struct {
 
     bool hasFov;              /*!< Whether FOV / camera intrinsic data is present */
     T_DjiSeiFovInfo fov;      /*!< FOV camera intrinsic data (TLV type=10) */
+
+    /* Raw list of ALL 0xF5 TLV payload types found in this frame (diagnostics).
+     * Includes types the SDK does not fully parse, e.g. 1=ASSIST_INFO, 4=AR,
+     * 6=ROI, 7=AI, 9=EIS, 10=FOV. Use this to confirm which SEI modules a given
+     * camera stream actually carries. */
+    uint8_t  payloadTypeCount;                            /*!< Number of entries in payloadTypes[] */
+    uint16_t payloadTypes[DJI_SEI_PAYLOAD_TYPE_LIST_MAX]; /*!< The TLV payload type values */
 } T_DjiSeiInfo;
 
 #ifdef __cplusplus

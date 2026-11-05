@@ -43,7 +43,13 @@
 #define SEND_VIDEO_TASK_FREQ                 120
 #define VIDEO_FRAME_MAX_COUNT                18000 // max video duration 10 minutes
 #define VIDEO_FRAME_AUD_LEN                  6
+#define VIDEO_FRAME_HEVC_AUD_LEN             7
 #define DATA_SEND_FROM_VIDEO_STREAM_MAX_LEN  60000
+
+#define HEVC_NAL_TYPE_VPS                    32
+#define HEVC_NAL_TYPE_SPS                    33
+#define HEVC_NAL_TYPE_PPS                    34
+
 
 /* Private types -------------------------------------------------------------*/
 typedef enum {
@@ -101,6 +107,33 @@ static T_DjiReturnCode DjiPlayback_GetFrameRateOfVideoFile(const char *path, flo
 static T_DjiReturnCode
 DjiPlayback_GetFrameNumberByTime(T_TestPayloadCameraVideoFrameInfo *frameInfo, uint32_t frameCount,
                                  uint32_t *frameNumber, uint32_t timeMs);
+static bool DjiTest_CameraMediaIsH265Stream(E_DjiCameraVideoStreamType videoStreamType);
+static const char *DjiTest_CameraMediaGetDefaultSampleFileName(E_DjiCameraVideoStreamType videoStreamType);
+static uint32_t DjiTest_CameraMediaFindAnnexBStartCode(const uint8_t *data, uint32_t dataLen, uint32_t offset,
+                                                       uint32_t *startCodeLength);
+static bool DjiTest_CameraMediaHevcFrameHasPrefix(const uint8_t *data, uint32_t dataLength);
+static T_DjiReturnCode DjiTest_CameraMediaBuildH264FrameForSend(const uint8_t *rawFrameData,
+                                                                uint32_t rawFrameLength,
+                                                                E_DjiCameraVideoStreamType videoStreamType,
+                                                                uint8_t **outputFrameData,
+                                                                uint32_t *outputFrameLength);
+static T_DjiReturnCode DjiTest_CameraMediaBuildH265FrameForSend(const uint8_t *rawFrameData,
+                                                                uint32_t rawFrameLength,
+                                                                const T_TestPayloadCameraVideoFrameInfo *frameInfo,
+                                                                const uint8_t *hevcPrefixData,
+                                                                uint32_t hevcPrefixLength,
+                                                                uint8_t **outputFrameData,
+                                                                uint32_t *outputFrameLength);
+static T_DjiReturnCode DjiTest_CameraMediaBuildFrameForSend(const uint8_t *rawFrameData,
+                                                            uint32_t rawFrameLength,
+                                                            const T_TestPayloadCameraVideoFrameInfo *frameInfo,
+                                                            E_DjiCameraVideoStreamType videoStreamType,
+                                                            const uint8_t *hevcPrefixData,
+                                                            uint32_t hevcPrefixLength,
+                                                            uint8_t **outputFrameData,
+                                                            uint32_t *outputFrameLength);
+static T_DjiReturnCode DjiTest_CameraMediaExtractHevcPrefix(const char *filePath, uint8_t **prefixData,
+                                                            uint32_t *prefixLength);
 static T_DjiReturnCode GetMediaFileDir(char *dirPath);
 static T_DjiReturnCode GetMediaFileOriginData(const char *filePath, uint32_t offset, uint32_t length,
                                               uint8_t *data);
@@ -145,6 +178,7 @@ static const char *s_frameSizeKeyChar = "size";
 static T_DjiMediaFileHandle s_mediaFileThumbNailHandle;
 static T_DjiMediaFileHandle s_mediaFileScreenNailHandle;
 static const uint8_t s_frameAudInfo[VIDEO_FRAME_AUD_LEN] = {0x00, 0x00, 0x00, 0x01, 0x09, 0x10};
+static const uint8_t s_frameHevcAudInfo[VIDEO_FRAME_HEVC_AUD_LEN] = {0x00, 0x00, 0x00, 0x01, 0x46, 0x01, 0x30};
 static char s_mediaFileDirPath[DJI_FILE_PATH_SIZE_MAX] = {0};
 static bool s_isMediaFileDirPathConfigured = false;
 
@@ -285,6 +319,284 @@ out:
 }
 
 /* Private functions definition-----------------------------------------------*/
+static bool DjiTest_CameraMediaIsH265Stream(E_DjiCameraVideoStreamType videoStreamType)
+{
+    return videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H265_CUSTOM_FORMAT;
+}
+
+static const char *DjiTest_CameraMediaGetDefaultSampleFileName(E_DjiCameraVideoStreamType videoStreamType)
+{
+    return DjiTest_CameraMediaIsH265Stream(videoStreamType) ? H265_SAMPLE_FILE_NAME : H264_SAMPLE_FILE_NAME;
+}
+
+static T_DjiReturnCode DjiTest_CameraMediaBuildH264FrameForSend(const uint8_t *rawFrameData,
+                                                                uint32_t rawFrameLength,
+                                                                E_DjiCameraVideoStreamType videoStreamType,
+                                                                uint8_t **outputFrameData,
+                                                                uint32_t *outputFrameLength)
+{
+    uint32_t finalLength = rawFrameLength;
+
+    if (outputFrameData == NULL || outputFrameLength == NULL || rawFrameData == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
+        finalLength += VIDEO_FRAME_AUD_LEN;
+    }
+
+    *outputFrameData = calloc(finalLength, 1);
+    if (*outputFrameData == NULL) {
+        USER_LOG_ERROR("malloc h264 output frame fail.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
+    }
+
+    memcpy(*outputFrameData, rawFrameData, rawFrameLength);
+    if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
+        memcpy(*outputFrameData + rawFrameLength, s_frameAudInfo, VIDEO_FRAME_AUD_LEN);
+    }
+
+    *outputFrameLength = finalLength;
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_CameraMediaBuildH265FrameForSend(const uint8_t *rawFrameData,
+                                                                uint32_t rawFrameLength,
+                                                                const T_TestPayloadCameraVideoFrameInfo *frameInfo,
+                                                                const uint8_t *hevcPrefixData,
+                                                                uint32_t hevcPrefixLength,
+                                                                uint8_t **outputFrameData,
+                                                                uint32_t *outputFrameLength)
+{
+    bool hasEmbeddedHevcPrefix;
+    uint32_t finalLength = rawFrameLength + VIDEO_FRAME_HEVC_AUD_LEN;
+
+    if (outputFrameData == NULL || outputFrameLength == NULL || rawFrameData == NULL || frameInfo == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    hasEmbeddedHevcPrefix = DjiTest_CameraMediaHevcFrameHasPrefix(rawFrameData, rawFrameLength);
+    if (frameInfo->frameType == TEST_PAYLOAD_CAMERA_FRAME_TYPE_INTRA && !hasEmbeddedHevcPrefix) {
+        finalLength += hevcPrefixLength;
+    }
+
+    *outputFrameData = calloc(finalLength, 1);
+    if (*outputFrameData == NULL) {
+        USER_LOG_ERROR("malloc h265 output frame fail.");
+        return DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
+    }
+
+    if (frameInfo->frameType == TEST_PAYLOAD_CAMERA_FRAME_TYPE_INTRA && !hasEmbeddedHevcPrefix) {
+        memcpy(*outputFrameData, hevcPrefixData, hevcPrefixLength);
+        memcpy(*outputFrameData + hevcPrefixLength, rawFrameData, rawFrameLength);
+        memcpy(*outputFrameData + hevcPrefixLength + rawFrameLength, s_frameHevcAudInfo, VIDEO_FRAME_HEVC_AUD_LEN);
+    } else {
+        if (frameInfo->frameType == TEST_PAYLOAD_CAMERA_FRAME_TYPE_INTRA && hasEmbeddedHevcPrefix) {
+            USER_LOG_DEBUG("HEVC key frame already contains VPS/SPS/PPS, skip duplicate prefix insertion.");
+        }
+        memcpy(*outputFrameData, rawFrameData, rawFrameLength);
+        memcpy(*outputFrameData + rawFrameLength, s_frameHevcAudInfo, VIDEO_FRAME_HEVC_AUD_LEN);
+    }
+
+    *outputFrameLength = finalLength;
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_DjiReturnCode DjiTest_CameraMediaBuildFrameForSend(const uint8_t *rawFrameData,
+                                                            uint32_t rawFrameLength,
+                                                            const T_TestPayloadCameraVideoFrameInfo *frameInfo,
+                                                            E_DjiCameraVideoStreamType videoStreamType,
+                                                            const uint8_t *hevcPrefixData,
+                                                            uint32_t hevcPrefixLength,
+                                                            uint8_t **outputFrameData,
+                                                            uint32_t *outputFrameLength)
+{
+    if (DjiTest_CameraMediaIsH265Stream(videoStreamType)) {
+        return DjiTest_CameraMediaBuildH265FrameForSend(rawFrameData, rawFrameLength, frameInfo,
+                                                        hevcPrefixData, hevcPrefixLength,
+                                                        outputFrameData, outputFrameLength);
+    }
+
+    return DjiTest_CameraMediaBuildH264FrameForSend(rawFrameData, rawFrameLength, videoStreamType,
+                                                    outputFrameData, outputFrameLength);
+}
+
+static bool DjiTest_CameraMediaHevcFrameHasPrefix(const uint8_t *data, uint32_t dataLength)
+{
+    uint32_t offset = 0;
+    uint32_t startCodeLength = 0;
+    uint8_t expectedNalTypes[] = {HEVC_NAL_TYPE_VPS, HEVC_NAL_TYPE_SPS, HEVC_NAL_TYPE_PPS};
+
+    if (data == NULL || dataLength < 16) {
+        return false;
+    }
+
+    for (size_t i = 0; i < sizeof(expectedNalTypes) / sizeof(expectedNalTypes[0]); ++i) {
+        offset = DjiTest_CameraMediaFindAnnexBStartCode(data, dataLength, offset, &startCodeLength);
+        if (offset >= dataLength || startCodeLength == 0 || offset + startCodeLength >= dataLength) {
+            return false;
+        }
+
+        if (((data[offset + startCodeLength] >> 1) & 0x3F) != expectedNalTypes[i]) {
+            return false;
+        }
+
+        offset += startCodeLength + 2;
+    }
+
+    return true;
+}
+
+static uint32_t DjiTest_CameraMediaFindAnnexBStartCode(const uint8_t *data, uint32_t dataLen, uint32_t offset,
+                                                       uint32_t *startCodeLength)
+{
+    for (uint32_t i = offset; i + 3 < dataLen; ++i) {
+        if (data[i] == 0x00 && data[i + 1] == 0x00) {
+            if (data[i + 2] == 0x01) {
+                *startCodeLength = 3;
+                return i;
+            }
+            if (i + 4 < dataLen && data[i + 2] == 0x00 && data[i + 3] == 0x01) {
+                *startCodeLength = 4;
+                return i;
+            }
+        }
+    }
+
+    *startCodeLength = 0;
+    return dataLen;
+}
+
+static T_DjiReturnCode DjiTest_CameraMediaExtractHevcPrefix(const char *filePath, uint8_t **prefixData,
+                                                            uint32_t *prefixLength)
+{
+    FILE *fp = NULL;
+    long fileSize;
+    uint8_t *fileData = NULL;
+    uint32_t vpsOffset = 0, vpsLength = 0;
+    uint32_t spsOffset = 0, spsLength = 0;
+    uint32_t ppsOffset = 0, ppsLength = 0;
+    T_DjiReturnCode returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+
+    if (prefixData == NULL || prefixLength == NULL) {
+        return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
+    }
+
+    *prefixData = NULL;
+    *prefixLength = 0;
+
+    fp = fopen(filePath, "rb");
+    if (fp == NULL) {
+        USER_LOG_ERROR("open HEVC sample file fail: %s, errno=%d.", filePath, errno);
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    }
+
+    if (fseek(fp, 0, SEEK_END) != 0) {
+        USER_LOG_ERROR("seek HEVC sample file tail fail.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto out;
+    }
+
+    fileSize = ftell(fp);
+    if (fileSize <= 0) {
+        USER_LOG_ERROR("HEVC sample file size invalid.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto out;
+    }
+
+    if (fseek(fp, 0, SEEK_SET) != 0) {
+        USER_LOG_ERROR("seek HEVC sample file head fail.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto out;
+    }
+
+    fileData = malloc((size_t) fileSize);
+    if (fileData == NULL) {
+        USER_LOG_ERROR("malloc HEVC prefix parser buffer fail.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
+        goto out;
+    }
+
+    if (fread(fileData, 1, (size_t) fileSize, fp) != (size_t) fileSize) {
+        USER_LOG_ERROR("read HEVC sample file fail.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        goto out;
+    }
+
+    for (uint32_t searchOffset = 0; searchOffset < (uint32_t) fileSize;) {
+        uint32_t startCodeLength = 0;
+        uint32_t nalOffset = DjiTest_CameraMediaFindAnnexBStartCode(fileData, (uint32_t) fileSize, searchOffset,
+                                                                    &startCodeLength);
+        if (nalOffset >= (uint32_t) fileSize) {
+            break;
+        }
+
+        uint32_t nalHeaderOffset = nalOffset + startCodeLength;
+        uint32_t nextStartCodeLength = 0;
+        uint32_t nextNalOffset = DjiTest_CameraMediaFindAnnexBStartCode(fileData, (uint32_t) fileSize,
+                                                                        nalHeaderOffset + 2,
+                                                                        &nextStartCodeLength);
+        uint32_t nalLength = (nextNalOffset >= (uint32_t) fileSize) ? (uint32_t) fileSize - nalOffset
+                                                                     : nextNalOffset - nalOffset;
+
+        if (nalHeaderOffset < (uint32_t) fileSize) {
+            uint8_t nalType = (fileData[nalHeaderOffset] >> 1) & 0x3F;
+            if (nalType == HEVC_NAL_TYPE_VPS && vpsLength == 0) {
+                vpsOffset = nalOffset;
+                vpsLength = nalLength;
+            } else if (nalType == HEVC_NAL_TYPE_SPS && spsLength == 0) {
+                spsOffset = nalOffset;
+                spsLength = nalLength;
+            } else if (nalType == HEVC_NAL_TYPE_PPS && ppsLength == 0) {
+                ppsOffset = nalOffset;
+                ppsLength = nalLength;
+            }
+        }
+
+        if (vpsLength > 0 && spsLength > 0 && ppsLength > 0) {
+            break;
+        }
+
+        searchOffset = nalOffset + nalLength;
+    }
+
+    if (vpsLength == 0 || spsLength == 0 || ppsLength == 0) {
+        USER_LOG_ERROR("failed to extract VPS/SPS/PPS from HEVC sample.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_NOT_FOUND;
+        goto out;
+    }
+
+    *prefixLength = vpsLength + spsLength + ppsLength;
+    *prefixData = malloc(*prefixLength);
+    if (*prefixData == NULL) {
+        USER_LOG_ERROR("malloc HEVC prefix buffer fail.");
+        returnCode = DJI_ERROR_SYSTEM_MODULE_CODE_MEMORY_ALLOC_FAILED;
+        goto out;
+    }
+
+    memcpy(*prefixData, fileData + vpsOffset, vpsLength);
+    memcpy(*prefixData + vpsLength, fileData + spsOffset, spsLength);
+    memcpy(*prefixData + vpsLength + spsLength, fileData + ppsOffset, ppsLength);
+
+    USER_LOG_INFO("Extracted HEVC prefix data: VPS=%u, SPS=%u, PPS=%u, total=%u",
+                  vpsLength, spsLength, ppsLength, *prefixLength);
+
+out:
+    if (fp != NULL) {
+        fclose(fp);
+    }
+
+    free(fileData);
+
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS && *prefixData != NULL) {
+        free(*prefixData);
+        *prefixData = NULL;
+        *prefixLength = 0;
+    }
+
+    return returnCode;
+}
+
 static T_DjiReturnCode DjiPlayback_StopPlay(T_DjiPlaybackInfo *playbackInfo)
 {
     T_DjiReturnCode returnCode;
@@ -1218,6 +1530,7 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
     uint16_t bufferReadSize = 0;
     char *videoFilePath = NULL;
     char *transcodedFilePath = NULL;
+    const char *streamSourcePath = NULL;
     float frameRate = 1.0f;
     uint32_t waitDuration = 1000 / SEND_VIDEO_TASK_FREQ;
     uint32_t rightNow = 0;
@@ -1226,17 +1539,22 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
     uint32_t frameNumber = 0;
     uint32_t frameCount = 0;
     uint32_t startTimeMs = 0;
+    uint32_t requestedFrameNumber = 0;
     bool sendVideoFlag = true;
     bool sendOneTimeFlag = false;
     bool findIntraFrame = false;
     T_DjiDataChannelState videoStreamState = {0};
     E_DjiCameraMode mode = DJI_CAMERA_MODE_SHOOT_PHOTO;
     T_DjiOsalHandler *osalHandler = DjiPlatform_GetOsalHandler();
-    uint32_t frameBufSize = 0;
+    uint32_t rawFrameBufSize = 0;
     E_DjiCameraVideoStreamType videoStreamType;
     char curFileDirPath[DJI_FILE_PATH_SIZE_MAX];
     char tempPath[DJI_FILE_PATH_SIZE_MAX];
     bool raspCameraState = false;
+    bool isH265Stream = false;
+    uint8_t *hevcPrefixData = NULL;
+    uint32_t hevcPrefixLength = 0;
+    bool isFirstFrameToSend = true;
 
     USER_UTIL_UNUSED(arg);
 
@@ -1245,10 +1563,18 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
         USER_LOG_ERROR("Get file current path error, stat = 0x%08llX", returnCode);
         exit(1);
     }
+    returnCode = DjiTest_CameraGetVideoStreamType(&videoStreamType);
+    if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get initial video stream type error: 0x%08llX.", returnCode);
+        exit(1);
+    }
+
     if (s_isMediaFileDirPathConfigured == true) {
-        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/PSDK_0005.h264", s_mediaFileDirPath);
+        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/%s", s_mediaFileDirPath,
+                 DjiTest_CameraMediaGetDefaultSampleFileName(videoStreamType));
     } else {
-        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/PSDK_0005.h264", curFileDirPath);
+        snprintf(tempPath, DJI_FILE_PATH_SIZE_MAX, "%smedia_file/%s", curFileDirPath,
+                 DjiTest_CameraMediaGetDefaultSampleFileName(videoStreamType));
     }
 
     videoFilePath = osalHandler->Malloc(DJI_FILE_PATH_SIZE_MAX);
@@ -1339,21 +1665,52 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
             DjiTest_RaspberryPiCameraLiveviewStatGet(&raspCameraState);
             if(raspCameraState == true) continue;
 #endif
-        // video send preprocess
-        returnCode = DjiPlayback_VideoFileTranscode(videoFilePath, "h264", transcodedFilePath,
-                                                    DJI_FILE_PATH_SIZE_MAX);
+        returnCode = DjiTest_CameraGetVideoStreamType(&videoStreamType);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("transcode video file error: 0x%08llX.", returnCode);
+            USER_LOG_ERROR("get video stream type error before preprocess: 0x%08llX.", returnCode);
             continue;
         }
 
-        returnCode = DjiPlayback_GetFrameRateOfVideoFile(transcodedFilePath, &frameRate);
+        isH265Stream = DjiTest_CameraMediaIsH265Stream(videoStreamType);
+
+        if (hevcPrefixData != NULL) {
+            free(hevcPrefixData);
+            hevcPrefixData = NULL;
+            hevcPrefixLength = 0;
+        }
+
+        if (isH265Stream) {
+            returnCode = DjiPlayback_VideoFileTranscode(videoFilePath, "hevc", transcodedFilePath,
+                                                        DJI_FILE_PATH_SIZE_MAX);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("transcode HEVC video file error: 0x%08llX.", returnCode);
+                continue;
+            }
+
+            streamSourcePath = transcodedFilePath;
+            returnCode = DjiTest_CameraMediaExtractHevcPrefix(streamSourcePath, &hevcPrefixData, &hevcPrefixLength);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("extract HEVC VPS/SPS/PPS error: 0x%08llX.", returnCode);
+                continue;
+            }
+        } else {
+            // video send preprocess
+            returnCode = DjiPlayback_VideoFileTranscode(videoFilePath, "h264", transcodedFilePath,
+                                                        DJI_FILE_PATH_SIZE_MAX);
+            if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("transcode video file error: 0x%08llX.", returnCode);
+                continue;
+            }
+            streamSourcePath = transcodedFilePath;
+        }
+
+        returnCode = DjiPlayback_GetFrameRateOfVideoFile(streamSourcePath, &frameRate);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get frame rate of video error: 0x%08llX.", returnCode);
             continue;
         }
 
-        returnCode = DjiPlayback_GetFrameInfoOfVideoFile(transcodedFilePath, frameInfo, VIDEO_FRAME_MAX_COUNT,
+        returnCode = DjiPlayback_GetFrameInfoOfVideoFile(streamSourcePath, frameInfo, VIDEO_FRAME_MAX_COUNT,
                                                          &frameCount);
         if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get frame info of video error: 0x%08llX.", returnCode);
@@ -1367,17 +1724,28 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
             continue;
         }
 
+        requestedFrameNumber = frameNumber;
+
         if(findIntraFrame == true) {
             frameNumber = frameInfo[frameNumber].lastIntraFrameNumber;
+            USER_LOG_INFO("Camera emu start frame select: requestedFrame=%u startFrame=%u frameType=%d lastIntra=%u codec=%s source=%s",
+                          requestedFrameNumber,
+                          frameNumber,
+                          frameInfo[frameNumber].frameType,
+                          frameInfo[requestedFrameNumber].lastIntraFrameNumber,
+                          isH265Stream ? "H265" : "H264",
+                          streamSourcePath);
             findIntraFrame = false;
         }
+
+        isFirstFrameToSend = true;
 
         if (fpFile != NULL)
             fclose(fpFile);
 
-        fpFile = fopen(transcodedFilePath, "rb+");
+        fpFile = fopen(streamSourcePath, "rb");
         if (fpFile == NULL) {
-            USER_LOG_ERROR("open video file:\"%s\" fail:%d.", transcodedFilePath, errno);
+            USER_LOG_ERROR("open video file:\"%s\" fail:%d.", streamSourcePath, errno);
             continue;
         }
 
@@ -1409,12 +1777,9 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
                 continue;
             }
 
-            frameBufSize = frameInfo[frameNumber].size;
-            if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
-                frameBufSize = frameBufSize + VIDEO_FRAME_AUD_LEN;
-            }
+            rawFrameBufSize = frameInfo[frameNumber].size;
 
-            dataBuffer = calloc(frameBufSize, 1);
+            dataBuffer = calloc(rawFrameBufSize, 1);
             if (dataBuffer == NULL) {
                 USER_LOG_ERROR("malloc fail.");
                 goto free;
@@ -1433,10 +1798,53 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
                 USER_LOG_DEBUG("read data from video file success, len = %d B\r\n", dataLength);
             }
 
-            if (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT) {
-                memcpy(&dataBuffer[frameInfo[frameNumber].size], s_frameAudInfo, VIDEO_FRAME_AUD_LEN);
-                dataLength = dataLength + VIDEO_FRAME_AUD_LEN;
+            {
+                uint8_t *outputFrameData = NULL;
+                uint32_t outputFrameLength = 0;
+                bool shouldLogFrameSummary = false;
+                bool hasEmbeddedHevcPrefix = false;
+                bool insertedHevcPrefix = false;
+
+                if (isH265Stream) {
+                    hasEmbeddedHevcPrefix = DjiTest_CameraMediaHevcFrameHasPrefix(dataBuffer, frameInfo[frameNumber].size);
+                    insertedHevcPrefix = (frameInfo[frameNumber].frameType == TEST_PAYLOAD_CAMERA_FRAME_TYPE_INTRA &&
+                                          !hasEmbeddedHevcPrefix);
+                }
+
+                returnCode = DjiTest_CameraMediaBuildFrameForSend(dataBuffer,
+                                                                  frameInfo[frameNumber].size,
+                                                                  &frameInfo[frameNumber],
+                                                                  videoStreamType,
+                                                                  hevcPrefixData,
+                                                                  hevcPrefixLength,
+                                                                  &outputFrameData,
+                                                                  &outputFrameLength);
+                if (returnCode != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    USER_LOG_ERROR("build frame for send error: 0x%08llX.", returnCode);
+                    free(outputFrameData);
+                    goto free;
+                }
+
+                shouldLogFrameSummary = isFirstFrameToSend ||
+                                        frameInfo[frameNumber].frameType == TEST_PAYLOAD_CAMERA_FRAME_TYPE_INTRA;
+                if (shouldLogFrameSummary) {
+                    USER_LOG_DEBUG("Camera emu send frame: codec=%s frameNumber=%u frameType=%d rawLen=%u finalLen=%u insertedPrefix=%d hasEmbeddedPrefix=%d tailAud=%d",
+                                  isH265Stream ? "H265" : "H264",
+                                  frameNumber,
+                                  frameInfo[frameNumber].frameType,
+                                  frameInfo[frameNumber].size,
+                                  outputFrameLength,
+                                  insertedHevcPrefix,
+                                  hasEmbeddedHevcPrefix,
+                                  isH265Stream ? 1 : (videoStreamType == DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT));
+                }
+
+                free(dataBuffer);
+                dataBuffer = (char *) outputFrameData;
+                dataLength = outputFrameLength;
             }
+
+            isFirstFrameToSend = false;
 
             lengthOfDataHaveBeenSent = 0;
             while (dataLength - lengthOfDataHaveBeenSent) {
@@ -1475,6 +1883,8 @@ static void *UserCameraMedia_SendVideoTask(void *arg)
         free:
             free(dataBuffer);
     }
+
+    free(hevcPrefixData);
 }
 
 #ifndef __CC_ARM

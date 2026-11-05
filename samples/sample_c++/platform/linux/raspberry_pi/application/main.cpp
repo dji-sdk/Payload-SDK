@@ -82,6 +82,7 @@ start:
         << "| [l] Run widget states manager sample, control widget states on other payload                     |\n"
         << "| [m] Run H.264 liveview sample with config param - save H.264 files custom configuration param    |\n"
         << "| [n] Run H.264 liveview sample - save H.264 files in the current directory                        |\n"
+        << "| [r] Run dual H.264 liveview sample - pull two streams with input position/source params         |\n"
         << "| [o] MOP channel client sample - connect to V4 payload server and transfer data                  |\n"
         << "| [p] AR Pixel-to-GPS - preset screen points + fixed distance -> GPS (only needs AR+FOV SEI)       |\n"
         << "|     Verifies the coordinate conversion pipeline. No AI detection required. Run this first.       |\n"
@@ -136,14 +137,17 @@ start:
         case 'n':
             DjiTest_LiveviewSample();
             break;
+        case 'r':
+            DjiTest_LiveviewDualStreamSample();
+            break;
         case 'o':
             DjiTest_MopChannelClientRun();
             break;
         case 'p':
-            DjiUser_RunArPixelToGpsSample();
+            DjiUser_RunArPixelToGpsSampleInteractive();
             break;
         case 'q':
-            DjiUser_RunSeiGeoConverterSample();
+            DjiUser_RunSeiGeoConverterSampleInteractive();
             break;
         default:
             break;

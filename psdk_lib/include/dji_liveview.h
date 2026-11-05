@@ -96,6 +96,9 @@ typedef enum {
     DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_VIS = 1,
     DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_IR  = 2,
     DJI_LIVEVIEW_CAMERA_SOURCE_M5TD_4K  = 3,
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5T_1080P = 0,  /* 1080P visible light */
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5T_4K    = 1,  /* 4K visible light */
+    DJI_LIVEVIEW_CAMERA_SOURCE_M5T_IR    = 3,  /* infrared */
 } E_DjiLiveViewCameraSource;
 
 /**

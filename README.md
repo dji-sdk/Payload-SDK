@@ -1,8 +1,8 @@
 # DJI Payload SDK (PSDK)
 
-![](https://img.shields.io/badge/version-V3.17.0-green.svg)
-![](https://img.shields.io/badge/platform-linux_|_rtos-blue.svg)
-![](https://img.shields.io/badge/license-MIT-orange.svg)
+![](https://img.shields.io/badge/version-V3.18.0-cyan.svg)
+![](https://img.shields.io/badge/platform-linux_|_rtos-purple.svg)
+![](https://img.shields.io/badge/license-MIT-yellow.svg)
 
 ## What is the DJI Payload SDK?
 

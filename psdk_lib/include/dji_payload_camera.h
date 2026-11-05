@@ -135,6 +135,8 @@ typedef enum {
      * When using this format to send a video stream, the video stream will be recoded by aircraft. No need to dynamically adjust
 	 * the bit rate to ensure the quality of transmission. But the bit rate of video stream can not exceed 8Mbps. */
     DJI_CAMERA_VIDEO_STREAM_TYPE_H264_DJI_FORMAT = 1,
+    /*! Camera video stream by h265 custom format, using raw HEVC Annex-B bitstream on the custom/IP channel. */
+    DJI_CAMERA_VIDEO_STREAM_TYPE_H265_CUSTOM_FORMAT = 2,
 } E_DjiCameraVideoStreamType;
 
 /**

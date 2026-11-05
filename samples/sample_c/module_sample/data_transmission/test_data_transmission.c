@@ -119,7 +119,8 @@ T_DjiReturnCode DjiTest_DataTransmissionStartService(void)
     }
 
     if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400 ||
-        s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD) {
+        s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD ||
+        s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5T) {
         uint8_t Channel_Callback_count = (sizeof(g_channelCallbacks) / sizeof(g_channelCallbacks[0]));
         for (uint8_t i = 0; i < Channel_Callback_count; i++) {
             const ChannelCallbackEntry *entry = &g_channelCallbacks[i];
@@ -272,9 +273,10 @@ static void *UserDataTransmission_Task(void *arg)
         }
 
         if (s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M400 ||
-            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD){
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5TD ||
+            s_aircraftInfoBaseInfo.aircraftType == DJI_AIRCRAFT_TYPE_M5T){
             /*!< Code Example for Data Transmission Between PSDK and PSDK. */
-            /*!< Only support Psdk on M400/M5TD. */
+            /*!< Only support Psdk on M400/M5T/M5TD. */
             // channelAddress = DJI_CHANNEL_ADDRESS_EXTENSION_PORT_V2_NO1;
             /*
 
