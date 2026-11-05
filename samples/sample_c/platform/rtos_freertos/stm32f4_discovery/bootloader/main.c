@@ -87,6 +87,19 @@ int main(void)
     /* Reset of all peripherals, Initializes the Systick. */
     HAL_Init();
 
+    /* 
+     * WORKAROUND: Disable SysTick interrupt temporarily.
+     * HAL_Init() configures and enables the SysTick interrupt by default.
+     * However, SystemClock_Config() may block while waiting for the passive 
+     * HSE crystal to stabilize. If the SysTick interrupt fires before 
+     * vTaskStartScheduler() is called, it will cause a HardFault inside 
+     * FreeRTOS (dereferencing a NULL pxCurrentTCB).
+     * 
+     * We disable the interrupt here. The FreeRTOS kernel will automatically 
+     * reconfigure and re-enable the SysTick interrupt when the scheduler starts.
+     */
+    SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
+
     /* Configure the system clock to have a system clock = 168 Mhz */
     SystemClock_Config();
 
