@@ -110,7 +110,7 @@ if (OPUS_FOUND)
     message(STATUS " - Libraries: ${OPUS_LIBRARY}")
 
     add_definitions(-DOPUS_INSTALLED)
-    target_link_libraries(${PROJECT_NAME} /usr/local/lib/libopus.a)
+    target_link_libraries(${PROJECT_NAME} opus)
 else ()
     message(STATUS "Cannot Find OPUS")
 endif (OPUS_FOUND)
