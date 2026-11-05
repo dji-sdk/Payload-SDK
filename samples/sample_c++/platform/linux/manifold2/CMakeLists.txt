@@ -85,9 +85,9 @@ if (FFMPEG_FOUND)
             OUTPUT_VARIABLE ffmpeg_version_output
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line ${ffmpeg_version_output})
-    string(REGEX MATCH " .* " ffmpeg_version ${ffmpeg_version_line})
-    string(REGEX MATCH "^ 5.*$" ffmpeg_major_version ${ffmpeg_version})
+    string(REGEX MATCH "version.*Copyright" ffmpeg_version_line "${ffmpeg_version_output}")
+    string(REGEX MATCH " .* " ffmpeg_version "${ffmpeg_version_line}")
+    string(REGEX MATCH "^ 5.*$" ffmpeg_major_version "${ffmpeg_version}")
 
     if (HEAD${ffmpeg_major_version} STREQUAL "HEAD")
         message(STATUS " - Version: ${ffmpeg_version}")
