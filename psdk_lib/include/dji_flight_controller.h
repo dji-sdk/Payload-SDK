@@ -70,7 +70,7 @@ typedef struct {
 #define EMERGENCY_STOP_MOTOR_MSG_MAX_LENGTH 10 /*!<  Max length of emergency stop motor message. */
 
 /* Exported types ------------------------------------------------------------*/
-typedef uint16_t E_DjiFlightControllerGoHomeAltitude; /*!< Unit:meter, range 20~500 */
+typedef uint16_t E_DjiFlightControllerGoHomeAltitude; /*!< Unit:meter, range 20~1500 */
 
 /**
  * @brief The aircraft's actions when RC is lost.
